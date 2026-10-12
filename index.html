@@ -546,7 +546,7 @@ const LEGENDS_ALL={
   mirror:{name:'Mirror Step',e:'🦋',genre:'elf',d:'Elves dodge half as often, but every dodged attack is thrown back at the attacker.'},
   martyr:{name:'Martyr\'s Vow',e:'🩸',genre:'grim',d:'Heroes start fights at half HP with an equal shield. Crusaders deal +40% damage below half HP.'},
   danger:{name:'Danger Close',e:'💣',genre:'army',d:'Artillery fires every 7s, at a pace nothing can speed up, but hits every enemy for triple damage.'},
-  brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +35% damage; Swarm crowds start with +2 bodies and keep regrowing past full (up to double).'},
+  brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +40% damage; Swarm crowds start with +3 bodies and keep regrowing past full (up to double).'},
   frenzy:{name:'Blood Frenzy',e:'🔥',genre:'orc',d:'Every enemy that falls makes your Orcs attack 15% faster for the rest of the fight.'},
   armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (3 times per fight).'},
   spinoff:{name:'Spin-off Deal',e:'📺',genre:null,d:'Your Commons and Uncommons can reach ★★★ (two ★★ combine) and get +30% HP and damage.'},
@@ -603,7 +603,7 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.lvCutG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.45,3.0,2.57],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.35,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:2,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.524,3.09,2.647],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,lvXp:[.1,.05],lvElite:1.35,lvTrial:1.1,lvTrialGold:5,lvExtra:.9,lvTwin:1.3,lvCastDrop:1,lvPart2:1.4,lvMerchant:2,lvFoe:.005,lvFoeFrom:4};
 buildSchedule(false);
@@ -702,15 +702,15 @@ const SK={
  fallback:{name:'Fall Back!',d:p=>`Swaps places with your most wounded front-liner (from the back row), then heals it for ${R(50*p)} and shields it for ${R(30*p)}.`,cast(u){const w=allies(u).filter(a=>a!==u&&a.row==='front'&&Z(a)===a.side&&!a.summon&&a.hp<a.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];
    if(w&&u.row==='back'&&Z(u)===u.side){[u.row,w.row]=[w.row,u.row];[u.col,w.col]=[w.col,u.col];float(w,'Fall back!','sp');}
    const t=w||wounded(u,1)[0];if(t){heal(u,t,50*u.p);shieldU(u,t,30*u.p);}}},
- tunnel:{name:'Tunnel',d:p=>`Burrows into the enemy back row and fights from there, hitting the weakest back-row enemy for ${R(60*p)}. A Swarm hatchling fills the hole it left.`,cast(u){const fs=u.side==='A'?'E':'A';
+ tunnel:{name:'Tunnel',d:p=>`Burrows into the enemy back row and fights from there, hitting the weakest back-row enemy for ${R(90*p)}. It starts every fight with full energy. A Swarm hatchling fills the hole it left.`,cast(u){const fs=u.side==='A'?'E':'A';
    if(Z(u)===u.side){const sl=emptySlots(fs).filter(x=>x[0]==='back');if(sl.length){const or=u.row,oc=u.col;u.zone=fs;u.row='back';u.col=sl[0][1];float(u,'Tunnel!','sp');if(u.side==='A'&&typeof summonHatch==='function')summonHatch(u);if(u.side==='A')fillFromBench(or,oc);}}
-   const t=backWeakest(u);if(t)spell(u,t,60);}},
+   const t=backWeakest(u);if(t)spell(u,t,90);}},
  ambush:{name:'Ambush',d:p=>`Hits the weakest back-row enemy for ${R(60*p)}, then vanishes for 1.5s.`,cast(u){const t=backWeakest(u);if(t)spell(u,t,60);u.untarget=1.5;}},
  spawn:{name:'Spawn Brood',d:p=>`All your crowds regrow 2 bodies, and a crowd of ${p>=3?7:p>=1.8?5:3} hatchlings joins your board. With no empty slot, they wait on the battle bench and step in when one opens (bench full: ${R(25*p)} damage to every enemy instead).`,cast(u){allies(u).filter(a=>a.crowd).forEach(a=>regrow(a,2));if(!summonHatch(u))targetFoes(u).forEach(x=>spell(u,x,25,true));}},
  bonevolley:{name:'Bone Volley',d:p=>`Every archer shoots a random enemy for 6 (${bodiesFromP(p)} archers).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,6*u.tierM);}}},
  infect:{name:'Infect',d:p=>`Each zombie bites its target for 5. A knockout regrows a zombie (${bodiesFromP(p)} zombies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;spellFlat(u,t,5*bodies(u)*u.tierM);if(!t.alive)regrow(u,1);}},
  siphon:{name:'Soul Siphon',d:p=>`Hits the weakest back-row enemy for ${R(55*p)} and heals itself for half.`,cast(u){const t=backWeakest(u);if(t){const d=spell(u,t,55);heal(null,u,d*.5);}}},
- darkpact:{name:'Dark Pact',d:p=>`Each of your crowds gives up to 2 bodies; every body given becomes a bolt that hits a random enemy for ${R(22*p)}. If no crowd can spare a body, it raises 3 skeletons instead (with no empty slot they wait on the battle bench; bench full: 3 bolts).`,cast(u){let n=0;allies(u).filter(a=>a.crowd&&a!==u&&bodies(a)>=2).forEach(a=>{const k=Math.min(2,bodies(a)-1);a.hp-=k*a.bodyHp;n+=k;float(a,'−'+k,'miss');bodyLost(a,k);});if(!n){if(summonSkeletons(u.side,3,u.p,'u'+u.uid,spawnCap(u)))return;n=3;}for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spell(u,t,22);}}},
+ darkpact:{name:'Dark Pact',d:p=>`Each of your crowds gives up to 2 bodies; every body given becomes a bolt that hits a random enemy for ${R(22*p)}. If no crowd can spare a body, it raises 5 skeletons instead (with no empty slot they wait on the battle bench; bench full: 3 bolts).`,cast(u){let n=0;allies(u).filter(a=>a.crowd&&a!==u&&bodies(a)>=2).forEach(a=>{const k=Math.min(2,bodies(a)-1);a.hp-=k*a.bodyHp;n+=k;float(a,'−'+k,'miss');bodyLost(a,k);});if(!n){if(summonSkeletons(u.side,5,u.p,'u'+u.uid,spawnCap(u)))return;n=3;}for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spell(u,t,22);}}},
  catchit:{name:'Catch!',d:()=>`Taunts for 3s and catches the next 2 attacks aimed at it (no damage); each catch brings one fallen player back.`,cast(u){u.taunt=3;u.catches=2;}},
  strikes:{name:'Three Strikes',d:p=>`Three fastballs at its target for ${R(15*p)} each; the third stuns for 1s.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;for(let i=0;i<3&&t.alive;i++){spell(u,t,15);ballFx(u,t);}if(t.alive)stunU(t,1);}},
  waterbreak:{name:'Water Break',d:p=>`Heals your 3 most wounded characters for ${R(40*p)}, ${R(20*p)} and ${R(20*p)}.`,cast(u){wounded(u,3).forEach((a,i)=>heal(u,a,(i?20:40)*u.p));}},
@@ -1167,6 +1167,7 @@ function applyMods(){
     if(G.undead>=2&&u.crowd){u.maxBodies+=1;u.hp+=u.bodyHp;u.maxHp+=u.bodyHp;}
     if(X.horde&&u.crowd){u.maxBodies+=2;u.hp+=u.bodyHp*2;u.maxHp+=u.bodyHp*2;}
     if(legend('brood')&&u.genre==='bug')u.dmgMult*=TUNE.broodDmg;
+    if(u.skill==='tunnel'&&u.manaMax)u.mana=u.manaMax; // Burrow Lurker tunnels at once
     if(legend('spinoff')&&HERO[u.id]&&HERO[u.id].tier<=2){const f=TUNE.spinoffMult;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
     if(legend('brood')&&u.genre==='bug'&&u.crowd){u.maxBodies+=TUNE.broodPlus;u.hp+=u.bodyHp*TUNE.broodPlus;u.capBodies=Math.round(u.maxBodies*TUNE.broodCap);u.maxHp=u.bodyHp*u.capBodies;}
     if(B.skel)u.dmgMult*=1+.2*B.skel;
