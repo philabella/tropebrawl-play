@@ -142,6 +142,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 @media (min-width:1000px){.endgrid{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);align-items:start}}
 .endcard{background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:12px;display:grid;gap:10px;align-content:start}
 .endcard h3{font-size:.85rem;color:var(--muted);letter-spacing:.04em}
+.endchip,.endrow{cursor:pointer}
 .endcard .sub{font-size:.78rem;color:var(--dim)}
 .bars{display:grid;gap:6px}
 .bar{display:grid;grid-template-columns:minmax(0,150px) minmax(0,1fr) 52px;gap:8px;align-items:center;font-size:.82rem;cursor:default;border-radius:6px;padding:2px 0}
@@ -298,6 +299,36 @@ strong.lvon{color:var(--gold);font-weight:800}
 #hovcard{position:fixed;z-index:70;width:min(320px,calc(100vw - 16px));max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 8px 28px rgba(0,0,0,.45);pointer-events:none;font-size:.88rem}
 .shopwrap.sellzone{outline:2px dashed var(--red);outline-offset:2px;position:relative}
 .shopwrap.sellzone::after{content:attr(data-sell);position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 70%,transparent);color:var(--red);font-family:var(--f-display);font-size:1.3rem;border-radius:14px;pointer-events:none}
+.evstage{background:radial-gradient(120% 90% at 50% 0%,color-mix(in srgb,var(--gold) 14%,var(--bg2)),var(--bg));border:1px solid color-mix(in srgb,var(--gold) 35%,var(--line));border-radius:18px;padding:22px 16px;max-width:640px;margin-inline:auto;text-align:center}
+.evart{font-size:64px;line-height:1;filter:drop-shadow(0 6px 18px rgba(0,0,0,.5))}
+.evtitle{font-family:var(--f-display);margin:10px 0 4px;font-size:1.6rem}
+.evflav{font-style:italic;color:var(--muted);margin:0 auto 14px;max-width:46ch}
+.evbody{display:grid;gap:8px;text-align:left}
+.wheelbox{position:relative;width:190px;height:190px;margin:4px auto 14px}
+.wptr{position:absolute;left:50%;top:-14px;transform:translateX(-50%);color:var(--gold);font-style:normal;font-size:1.3rem;z-index:2;text-shadow:0 2px 4px #000}
+.wheel{width:100%;height:100%;border-radius:50%;border:4px solid var(--gold);position:relative;transform:rotate(var(--rot));animation:wspin 2.2s cubic-bezier(.15,.85,.25,1) both;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.wheel span{position:absolute;left:50%;top:50%;width:84px;margin:-.6em 0 0 -42px;text-align:center;font-weight:800;font-size:.78rem;color:#fff;text-shadow:0 1px 2px #000}
+@keyframes wspin{from{transform:rotate(0deg)}to{transform:rotate(var(--rot))}}
+.evresult.late{animation:evlate .4s 2.1s both}
+@keyframes evlate{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.evduo{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.evcard{display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:14px;padding:16px 10px;font:inherit;cursor:pointer;min-height:190px}
+.evcard:hover:not(:disabled){border-color:var(--gold);transform:translateY(-2px)}
+.evcard:disabled{opacity:.45;cursor:not-allowed}
+.evcard .big{font-size:2.2rem;line-height:1}
+.evcard b{color:var(--gold);font-family:var(--f-display);font-size:1.02rem;letter-spacing:.02em}
+.evcard small{color:var(--muted);font-size:.8rem;line-height:1.35}
+.evcard .cost{color:var(--ink);font-weight:800;font-size:.85rem}
+.evgenres{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.evback{margin-top:12px}
+.evopt{display:block;width:100%;text-align:left;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:10px;padding:11px 13px;font:inherit;font-size:.92rem;cursor:pointer}
+.evopt:hover:not(:disabled){border-color:var(--gold);background:color-mix(in srgb,var(--gold) 10%,var(--panel))}
+.evopt:disabled{opacity:.45;cursor:not-allowed}
+.evopt b{color:var(--gold);font-weight:800}
+.evgroup{display:grid;gap:6px;border:1px solid var(--line);border-radius:12px;padding:10px;background:color-mix(in srgb,var(--bg) 40%,transparent)}
+.evgh{font-size:.95rem}
+.evnote{font-size:.85rem;color:var(--muted);text-align:center;margin:0}
+.evresult{font-size:1rem;text-align:center;margin:6px 0 10px}
 .scard .aimg{font-style:normal;font-size:.7rem;margin-right:1px}
 .proj{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--gc);box-shadow:0 0 10px var(--gc);pointer-events:none;z-index:4}
 .proj.ballp{width:auto;height:auto;background:none;box-shadow:none;font-family:var(--f-emoji);left:-10px;top:-10px;line-height:1}
@@ -400,7 +431,7 @@ const COPIES=[1,3,6];            // copies held by a hero at each level (sell va
 // shop rank N unlocks rarity N; odds are Common..Mythic per rank
 // the rank is a gauge (Dota Auto Chess style): ⬆️ Train buys shop XP, every round adds free XP, a full gauge ranks up and extra XP carries over
 // xp[N-1] = XP to go from rank N to N+1
-const RANK={odds:[[100,0,0,0,0],[70,30,0,0,0],[45,35,20,0,0],[30,30,25,15,0],[5,20,38.5,35,1.5]],xp:[4,10,16,24],train:4,trainXp:4,freeXp:1,board:[3,4,4,5,6],lv2:[0,0,0,0,0]};
+const RANK={odds:[[100,0,0,0,0],[70,30,0,0,0],[45,35,20,0,0],[30,30,25,15,0],[5,20,39.25,35,0.75]],xp:[4,10,16,24],train:4,trainXp:4,freeXp:1,board:[3,4,4,5,6],lv2:[0,0,0,0,0]};
 const BENCH=5, SHOP_SLOTS=5, REROLL=1;
 // rarity identity: Commons and Uncommons stop at ★★; Rare, Epic and Mythic count as 2 for their genre once they reach ★★★
 function maxLv(id){return HERO[id].tier>=3||legend('spinoff')?3:2;}
@@ -517,6 +548,7 @@ const CROSSOVERS_ALL=[
 ];
 const CROSSOVERS=CROSSOVERS_ALL.filter(x=>live(x.a)&&live(x.b));
 const TRINKETS=[
+ ['prop','Prop Master','R','🎭','Item picks get a reroll button: 🪙{v} for 3 new choices.',['3','2','1']],
 // {v} is the item's number at ★ / ★★ / ★★★ (taking a copy of an item you hold levels it up)
  ['kevlar','Kevlar Vest','C','🦺','All your characters have {v} more max HP.',['10%','15%','20%']],
  ['energy','Energy Drink','C','⚡','All your characters attack {v} faster.',['10%','15%','20%']],
@@ -603,7 +635,7 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.lvCutG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.524,3.09,2.647],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.335,2.858,2.448],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,lvXp:[.1,.05],lvElite:1.35,lvTrial:1.1,lvTrialGold:5,lvExtra:.9,lvTwin:1.3,lvCastDrop:1,lvPart2:1.4,lvMerchant:2,lvFoe:.005,lvFoeFrom:4};
 buildSchedule(false);
@@ -618,9 +650,16 @@ const EVENTS={
   // Plot Twists (Game Level 2+): one of these risky choices replaces a normal one
   trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +5 gold and pick 1 of 3 items.'},
   casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, one star lower (★ at least). None? Your best Rare becomes an Epic.'},
+  cut:{name:'The Cut',e:'✂️',d:'The studio is over budget: one genre is cut from the show for the rest of the run.'},
+  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin for Uncommon, Rare or Epic. In your next shop, characters of that rarity sell back for what you paid.'},
   merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙2. It comes one level higher (★★ when new). Or pass.'},
 };
 const PLOT=['trial','casting','merchant'];
+const NOPOOL=['cut',...PLOT]; // events that never come up at random
+const WHEEL=[2,3,4]; // Uncommon, Rare, Epic (never Common or Mythic)
+const EVFLAV={wheel:'A game-show host wheels out a giant prize wheel. The studio will buy back some of your cast at cost.',recruit:'A free agent is waiting by the stage door, headshot in hand.',payday:'The studio finally paid you back for the catering.',supply:'A crate of props arrives from the prop department.',
+  deal:'A shady producer offers a bag of cash. The fine print mentions your health.',promotion:'One of your extras has been working on their lines.',reinforce:'The understudies are ready to step in.',
+  trial:'A rival crew dares you to film the next scene without a safety net.',casting:'An agent swears they can get one of your actors a bigger part.',merchant:'A traveling prop seller rolls a cart onto the set.'};
 function evDesc(k){
   if(k==='recruit')return `Pick 1 of 3 ${RARITY[Math.min(S.rank,3)]} characters, free.`;
   if(k==='reinforce')return `+2 lives (up to ${maxLives()}).`;
@@ -771,7 +810,10 @@ function fielded(){return S.units.filter(u=>u.slot[0]!=='n');}
 function benched(){return S.units.filter(u=>u.slot[0]==='n');}
 function highestOf(id){return S.units.filter(u=>u.id===id).sort((a,b)=>b.level-a.level)[0];}
 function maxedIds(){return new Set(S.units.filter(u=>u.level>=maxLv(u.id)).map(u=>u.id));}
-function sellValue(u){return PRICE[HERO[u.id].tier-1]*COPIES[u.level-1];}
+function sellValue(u){const half=Math.floor(PRICE[HERO[u.id].tier-1]*COPIES[u.level-1]/2); // half of the list price, rounded down
+  // Buyback Wheel: this shop only, the rolled rarity sells back for what you actually paid (free characters: half as usual)
+  return buybackOn(u)?Math.max(half,u.cost|0):half;}
+function buybackOn(u){return !!(S.buyback&&S.buyback.r===S.round&&HERO[u.id].tier===S.buyback.tier);}
 function curRound(){return SCHEDULE[S.round-1];}
 
 function newRun(){
@@ -786,18 +828,18 @@ function newRun(){
 // ---- shop ----
 function shopOdds(){return RANK.odds[S.rank-1];}
 function rollTier(){const o=shopOdds();let r=rand()*100;for(let i=0;i<o.length;i++){if(r<o[i])return i+1;r-=o[i];}return 1;}
-function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])).map(h=>h[0]);return pool.length?pick(pool):null;}
+function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);return pool.length?pick(pool):null;}
 function rollShop(){
   if(typeof UI!=='undefined')UI.pick=null; // a new shop: no card stays half-selected
   const maxed=maxedIds();
   S.shop=[];
   for(let i=0;i<SHOP_SLOTS;i++){
     const tier=rollTier();
-    let pool=HEROES.filter(h=>h[4]===tier&&!maxed.has(h[0])).map(h=>h[0]);
+    let pool=HEROES.filter(h=>h[4]===tier&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);
     // gentle nudge toward heroes you already own, so merges stay reachable as the roster grows
     const mine=pool.filter(id=>S.units.some(u=>u.id===id));
     if(mine.length&&rand()<TUNE.ownBias)pool=mine;
-    if(!pool.length)pool=HEROES.filter(h=>!maxed.has(h[0])).map(h=>h[0]);
+    if(!pool.length)pool=HEROES.filter(h=>!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);
     if(!pool.length){S.shop.push(null);continue;}
     const id=pick(pool);
     // ready-made ★★: rare in a normal shop (RANK.lv2), common with the Talent Scout Legendary (any rarity)
@@ -827,8 +869,8 @@ function freeSlotFor(id){
 function buy(i){
   const c=canBuy(i);if(!c.ok){toast(c.why);return false;}
   const o=S.shop[i];const pr=shopPrice(o);S.gold-=pr;runStats().spend.buy+=pr;S.shop[i]=null;
-  if(o.level===2&&highestOf(o.id))levelUp(highestOf(o.id));
-  else{if(o.level===2){S.paid[o.id]=S.paid[o.id]||{};S.paid[o.id][2]=true;}S.units.push({uid:S.uid++,id:o.id,level:o.level,slot:freeSlotFor(o.id)||'tmp'});}
+  if(o.level===2&&highestOf(o.id)){const h=highestOf(o.id);h.cost=(h.cost||0)+pr;levelUp(h);}
+  else{if(o.level===2){S.paid[o.id]=S.paid[o.id]||{};S.paid[o.id][2]=true;}S.units.push({uid:S.uid++,id:o.id,level:o.level,slot:freeSlotFor(o.id)||'tmp',cost:pr});}
   checkMerges();
   S.units.forEach(u=>{if(u.slot==='tmp'){const s=freeSlotFor(u.id);if(s)u.slot=s;else{S.gold+=sellValue(u);u.slot='gone';}}});
   S.units=S.units.filter(u=>u.slot!=='gone');
@@ -886,7 +928,7 @@ function checkMerges(){
         if(same.length>=need){
           const parts=same.slice(0,need);
           parts.sort((a,b)=>(a.slot[0]==='n'||a.slot==='tmp')-(b.slot[0]==='n'||b.slot==='tmp'));
-          const keep=parts[0];
+          const keep=parts[0];keep.cost=parts.reduce((t,p)=>t+(p.cost||0),0);
           parts.slice(1).forEach(p=>{S.units=S.units.filter(x=>x!==p);});
           if(keep.slot==='tmp')keep.slot=freeSlotFor(keep.id)||'tmp';
           levelUp(keep);changed=true;
@@ -986,7 +1028,10 @@ function enemyStats(e){
 function startRound(){
   const ev=curRound();
   S.event=null;S.enemy=null;
-  if(ev.type==='event'){let opts=shuffle(Object.keys(EVENTS).filter(k=>!PLOT.includes(k))).slice(0,3);if(S.round===3&&!opts.includes('supply'))opts[2]='supply';
+  if(S.buyback&&S.buyback.r<0&&ev.type!=='event')S.buyback.r=S.round; // the Buyback Wheel applies to the next shop
+  // The Cut: the Act 3 event is always the cut, and it can't be skipped
+  if(ev.type==='event'&&ev.act===3&&TUNE.cutOn){S.event={opts:['cut'],picked:'cut',sub:{kind:'cut',ids:cutChoices()},cut:true};UI.screen='event';return;}
+  if(ev.type==='event'){let opts=shuffle(Object.keys(EVENTS).filter(k=>!NOPOOL.includes(k))).slice(0,3);if(S.round===3&&!opts.includes('supply'))opts[2]='supply';
     if(rule('plot'))opts[opts[2]==='supply'?1:2]=pick(PLOT); // Plot Twists: one risky choice
     S.event={opts,picked:null,sub:null};}
   else prepareFight();
@@ -1029,12 +1074,30 @@ function eventPick(key){
   if(key==='recruit'){
     // Free Agent: heroes exactly one rarity above your shop rank (Epic at most) - the low-rank side door
     const maxed=maxedIds();const rar=Math.min(S.rank+1,4);
-    e.sub={kind:'recruit',ids:shuffle(HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])).map(h=>h[0])).slice(0,3)};
+    e.sub={kind:'recruit',ids:shuffle(HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0])).slice(0,3)};
   }
   if(key==='supply')e.sub={kind:'trinket',ids:trinketChoices(2,false)};
+  if(key==='wheel'){const i=Math.floor(rand()*WHEEL.length),t=WHEEL[i];e.wheel={i,j:rand()};S.buyback={tier:t,r:-1};
+    e.msg=`The wheel lands on ${RARITY[t-1]}! In your next shop, ${RARITY[t-1]} characters sell back for what you paid (free ones still sell for half).`;}
 }
+// The Cut: your 3 biggest genres (by characters you own) are on the table; from Game Level TUNE.cutRandomLv one of them is drawn at random
+function ownedIn(g){return S.units.filter(u=>HERO[u.id].genre===g);}
+function cutChoices(){const live=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g));
+  const ranked=live.sort((a,b)=>ownedIn(b).length-ownedIn(a).length||rand()-.5).slice(0,3);
+  return (S.lv|0)>=TUNE.cutRandomLv?[pick(ranked)]:ranked;}
+function cutCost(g){return Math.max(TUNE.cutMin,TUNE.cutPer*ownedIn(g).length);}
+function doCut(g,keep){S.cut=S.cut||[];S.cut.push(g);const lost=ownedIn(g);
+  if(keep){const c=cutCost(g);S.gold-=c;return `${GENRES[g].name} is cut from the shop. You paid 🪙${c} and keep your ${lost.length} ${GENRES[g].name} character${lost.length===1?'':'s'}.`;}
+  const refund=lost.reduce((t,u)=>t+sellValue(u),0);S.gold+=refund;
+  S.units=S.units.filter(u=>HERO[u.id].genre!==g);return `${GENRES[g].name} is cut from the show: ${lost.length} character${lost.length===1?'':'s'} leave${lost.length===1?'s':''} with it (sold for 🪙${refund}), and it won't appear in the shop again.`;}
 function eventSub(id){
   const e=S.event;if(!e||!e.sub||e.subDone)return;
+  if(e.sub.kind==='cut'){
+    // bots (and a missing choice) take the free cut of the genre they own least of
+    if(!id){const g=e.sub.ids.slice().sort((a,b)=>ownedIn(a).length-ownedIn(b).length)[0];id=g;}
+    const keep=id.endsWith('+'),g=id.replace('+','');if(!e.sub.ids.includes(g))return;
+    if(keep&&S.gold<cutCost(g))return;
+    e.subDone=true;e.msg=doCut(g,keep);return;}
   e.subDone=true;
   if(e.sub.kind==='recruit'){
     if(!id){S.gold+=3;e.msg='+3 gold.';return;}
@@ -1229,6 +1292,7 @@ function dealDamage(src,t,amt,type,aoe){
   if(aoe&&t.crowd)amt*=2;
   if(t.side==='E'&&t.crowd&&B.syn.X.bughunt)amt*=1.4;
   if(t.vuln>0)amt*=1.25;
+  const amt0=amt; // before damage reduction, armor and shields (for 'damage blocked')
   if(t.row==='front'&&B.frontDR[t.side])amt*=1-B.frontDR[t.side];
   // Cover: a back-row character directly behind a living Guardian takes less damage
   if(t.row==='back'&&TUNE.coverDR&&Z(t)===t.side&&B.units.some(g=>g.alive&&g.side===t.side&&Z(g)===g.side&&g.row==='front'&&g.col===t.col&&g.trait==='guardian'))amt*=1-TUNE.coverDR;
@@ -1239,6 +1303,7 @@ function dealDamage(src,t,amt,type,aoe){
   const dealt=amt;
   const b0=t.crowd?bodies(t):0;
   if(t.shield>0){const s=Math.min(t.shield,amt);t.shield-=s;amt-=s;}
+  t.blocked=(t.blocked||0)+Math.max(0,amt0-amt);
   t.hp-=amt;
   if(t.crowd){const lost=b0-bodies(t);if(lost>0)bodyLost(t,lost);}
   if(!src&&t.side==='E'&&B.envSrc){B.env=B.env||{};B.env[B.envSrc]=(B.env[B.envSrc]||0)+dealt;}
@@ -1279,12 +1344,13 @@ function kill(t,src){
 }
 function heal(src,t,amt,silent){
   if(!t.alive)return 0;amt*=src?src.healMult:1;
+  const healer=src;
   // Neighbors: Medics heal the characters right beside them more
   if(src&&src!==t&&src.trait==='medic'&&src.side===t.side&&Z(src)===Z(t)&&src.row===t.row&&Math.abs(src.col-t.col)===1)amt*=1+TUNE.medicNear;
   const real=Math.min(t.maxHp-t.hp,amt);if(real<=0)return 0;
-  t.hp+=real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
+  t.hp+=real;if(healer)healer.healDone=(healer.healDone||0)+real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
 }
-function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;float(t,'+'+R(amt),'shd');}
+function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;if(src)src.healDone=(src.healDone||0)+amt;float(t,'+'+R(amt),'shd');}
 function stunU(t,d){if(!t.alive||t.ccImmune)return;t.stun=Math.max(t.stun,d);
   // a stunned ball holder fumbles: the pass streak resets
   if(B&&B.ball&&B.ball.holder===t&&B.ball.streak){B.ball.streak=0;float(t,'Fumble!','ko');}}
@@ -1434,6 +1500,8 @@ function settle(){
   S.stats.fights++;
   const A=B.units.filter(u=>u.side==='A'&&!u.summon);
   const rs=runStats();const seen=new Set();
+  rs.heal=rs.heal||{};rs.block=rs.block||{};
+  A.forEach(u=>{if(u.healDone)rs.heal[u.id]=(rs.heal[u.id]||0)+u.healDone;if(u.blocked)rs.block[u.id]=(rs.block[u.id]||0)+u.blocked;});
   A.forEach(u=>{const e=rs.dmg[u.id]||(rs.dmg[u.id]={d:0,f:0,best:0});e.d+=u.dmgDone;e.best=Math.max(e.best,u.dmgDone);if(!seen.has(u.id)){seen.add(u.id);e.f++;}});
   Object.entries(B.threat).forEach(([k,v])=>{rs.taken[k]=(rs.taken[k]||0)+v;});
   const env=Object.assign({},B.env||{});const sd=B.units.filter(u=>u.side==='A'&&u.summon).reduce((a,u)=>a+u.dmgDone,0);if(sd)env.summons=sd;
@@ -1606,7 +1674,7 @@ function itemIcons(){return [
   ].join('');}
 function topBar(){
   const p2=S.part===2;
-  const strip=SCHEDULE.map((r,i)=>{const n=i+1;const mini=rule('elite')&&r.type==='fight'&&SCHEDULE[i+1]&&SCHEDULE[i+1].type==='boss';const ic=r.type==='boss'?'💀':r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${mini?': mini-boss':''}">${ic}</i>`;}).join('')
+  const strip=SCHEDULE.map((r,i)=>{const n=i+1;const mini=rule('elite')&&r.type==='fight'&&SCHEDULE[i+1]&&SCHEDULE[i+1].type==='boss';const cutR=r.type==='event'&&r.act===3&&TUNE.cutOn;const ic=r.type==='boss'?'💀':cutR?'✂️':r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${mini?': mini-boss':r.type==='boss'?': boss':cutR?': The Cut (one genre leaves the show, can\'t be skipped)':r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;}).join('')
     +(rule('finale2')?`<i class="${p2?'now':''} bossp" title="Finale, part 2">💀</i>`:'');
   const inc=income();const next=inc.base+inc.interest+inc.coin+inc.ledger;
   const items=itemIcons();
@@ -1679,6 +1747,7 @@ function shopHTML(){
   return `<section class="shopwrap" aria-label="Shop">
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: <span class="tier${nx}" style="color:var(--tc)">${RARITY[nx-1]}</span> · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
     <div class="shop">${cards}</div>
+    ${S.buyback&&S.buyback.r===S.round?`<p class="evnote">🎡 Buyback: ${RARITY[S.buyback.tier-1]} characters sell back for what you paid, this shop only.</p>`:''}
     <p class="holdhint">Tap a card to buy it. Hover (hold on phones) to see details. Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
@@ -1736,16 +1805,38 @@ SCR.battle=()=>{
     <div style="margin-top:10px">${synHTML(fielded())}</div>
   </section>`;
 };
+function wheelHTML(w){const n=WHEEL.length,seg=360/n,cols=['#4fa36b','#4f86d6','#a05bd6'];
+  const grad=WHEEL.map((t,k)=>`${cols[k%3]} ${k*seg}deg ${(k+1)*seg}deg`).join(',');
+  const rot=RM?360-(w.i+.5)*seg:1440+360-(w.i+.5)*seg+(w.j-.5)*seg*.6;
+  const lab=WHEEL.map((t,k)=>`<span style="transform:rotate(${(k+.5)*seg}deg) translateY(-62px) rotate(${-(k+.5)*seg}deg)">${RARITY[t-1]}</span>`).join('');
+  return `<div class="wheelbox"><i class="wptr">▼</i><div class="wheel" style="background:conic-gradient(${grad});--rot:${rot}deg">${lab}</div></div>`;}
 SCR.event=()=>{
-  const e=S.event;let body;
-  if(!e.picked)body=`<div class="choices">${e.opts.map(k=>`<button class="choice" data-a="event" data-v="${k}"><span class="big">${EVENTS[k].e}</span><b>${EVENTS[k].name}</b><span>${evDesc(k)}</span></button>`).join('')}</div>`;
-  else if(e.sub&&!e.subDone){
+  const e=S.event;let body,art='🎬',title='Intermission',flav='Between scenes, the crew comes to you with a choice.';
+  if(e.cut&&!e.subDone){
+    art='✂️';title='The Cut';flav='The studio is over budget. One storyline has to go, and the writers won\'t take no for an answer.';
+    const one=e.sub.ids.length===1,costs=e.sub.ids.map(cutCost),lo=Math.min(...costs),hi=Math.max(...costs);
+    const half=g=>ownedIn(g).reduce((t,u)=>t+sellValue(u),0);
+    if(!UI.cutMode){
+      body=(one?`<p class="evnote">At this Game Level the studio picks the genre: ${GENRES[e.sub.ids[0]].e} ${GENRES[e.sub.ids[0]].name}.</p>`:'')+`<div class="evduo">
+        <button class="evcard" data-a="cut-mode" data-v="free"><span class="big">✂️</span><b>Cut it</b><span class="cost">Free</span><small>The genre leaves the shop for good. Your characters of that genre leave too, sold for half price.</small></button>
+        <button class="evcard" data-a="cut-mode" data-v="keep" ${S.gold>=lo?'':'disabled'}><span class="big">🎬</span><b>Keep the cast</b><span class="cost">🪙${lo===hi?lo:lo+'–'+hi}</span><small>The genre leaves the shop for good, but you keep the characters you have. Costs 🪙${TUNE.cutPer} per character (🪙${TUNE.cutMin} at least).</small></button></div>`;
+    }else{
+      const keep=UI.cutMode==='keep';
+      body=`<p class="evnote">${keep?'Keep the cast: pick the genre to cut. You keep its characters.':'Cut it: pick the genre to cut. Its characters leave with it.'}</p><div class="evgenres">${e.sub.ids.map(g=>{const n=ownedIn(g).length,c=cutCost(g);
+        return `<button class="evcard" data-a="event-sub" data-v="${g}${keep?'+':''}" ${keep&&S.gold<c?'disabled':''}><span class="big">${GENRES[g].e}</span><b>${GENRES[g].name}</b><span class="cost">${keep?'🪙'+c:n?'+🪙'+half(g):'Free'}</span><small>You own ${n}. ${keep?(n?'They stay on your team.':'Nothing to keep.'):(n?`They leave, sold for 🪙${half(g)}.`:'Nothing leaves.')}</small></button>`;}).join('')}</div>
+        <div class="row evback" style="justify-content:center"><button class="btn ghost" data-a="cut-mode" data-v="">← Back</button></div>`;
+    }
+  }else if(!e.picked){
+    body=e.opts.map(k=>`<button class="evopt" data-a="event" data-v="${k}"><span class="emo">${EVENTS[k].e}</span> <b>[${esc(EVENTS[k].name)}]</b> ${evDesc(k)}</button>`).join('');
+    if(e.opts.length)flav=e.opts.map(k=>EVFLAV[k]).filter(Boolean)[0]||flav;
+  }else if(e.sub&&!e.subDone){
+    art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav=EVFLAV[e.picked]||flav;
     if(e.sub.kind==='trinket'&&e.sub.ids.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){e.sub.ids=trinketChoices(2,false);save();}
     if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span></button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
     else if(UI.swap&&UI.swap.a==='event-sub'&&S.trinkets.length>=TRINKET_CAP)body=swapHTML();
-    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It comes one level higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':'Take 🪙3 instead'}</button></div>`;
-  }else body=`<div class="choice" style="cursor:default"><span class="big">${EVENTS[e.picked].e}</span><b>${esc(e.msg||'Done.')}</b></div><div class="row"><button class="btn primary big" data-a="event-done">Continue</button></div>`;
-  return `${topBar()}<section class="screen" style="margin-top:12px"><h2>Intermission</h2>${body}</section>`;
+    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It comes one level higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=tv('prop')?'':'disabled'}>🔄 New choices · 🪙${tv('prop')}</button>`:''}</div>`;
+  }else{art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav='';body=(e.wheel?wheelHTML(e.wheel):'')+`<p class="evresult${e.wheel&&!RM?' late':''}">${esc(e.msg||'Done.')}</p><div class="row" style="justify-content:center"><button class="btn primary big" data-a="event-done">Continue</button></div>`;}
+  return `${topBar()}<section class="screen evstage" style="margin-top:12px"><div class="evart">${art}</div><h2 class="evtitle">${title}</h2>${flav?`<p class="evflav">${flav}</p>`:''}<div class="evbody">${body}</div></section>`;
 };
 const fmtN=n=>{n=Math.round(n);return n>=10000?(n/1000).toFixed(1).replace(/\.0$/,'')+'K':n.toLocaleString('en-US');};
 SCR.end=()=>{
@@ -1777,8 +1868,10 @@ SCR.end=()=>{
     if(x.t==='event'){const ev=EVENTS[x.k];return `<span data-tip="Round ${x.r}: ${ev?ev.name:'Event'}"><b>${ev?ev.e:'❓'}</b>R${x.r}</span>`;}
     return `<span class="${x.w?'w':'l'}" data-tip="Round ${x.r}: ${x.t==='boss'?'boss ':''}${x.w?'won':'lost'}"><b>${x.t==='boss'?'💀':'⚔️'}</b><i>${x.w?'✓':'✗'}</i></span>`;}).join('');
   const th=Object.entries(st.taken).sort((a,b)=>b[1]-a[1])[0];const te=th&&foeInfo(th[0]);
-  const team=fielded().map(u=>{const d=HERO[u.id];return `<span>${heroPt(u.id,'sm')}${esc(d.name)} ${stars(u.level)}</span>`;}).join('');
-  const items=[S.legend?`<span><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
+  const team=fielded().map(u=>{const d=HERO[u.id];return `<span class="endchip" data-a="endhero" data-v="${u.id}" data-l="${u.level}" tabindex="0">${heroPt(u.id,'sm')}${esc(d.name)} ${stars(u.level)}</span>`;}).join('');
+  const topOf=(m,k)=>Object.entries(m||{}).filter(([id])=>HERO[id]).sort((a,b)=>b[1]-a[1]).slice(0,k);
+  const lst=(rows,ic)=>rows.length?rows.map(([id,v])=>`<div class="row endrow" data-a="endhero" data-v="${id}" data-l="${final.get(id)||1}">${heroPt(id,'sm')}<span><b>${esc(HERO[id].name)}</b><br><span class="sub">${ic} ${fmtN(v)}</span></span></div>`).join(''):'<p class="sub">None this run.</p>';
+  const items=[S.legend?`<span><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.lv?'Game Level '+S.lv+' · ':''}${win?(rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
     <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1></div>
@@ -1787,6 +1880,8 @@ SCR.end=()=>{
     <div class="endgrid">
       <div class="endcard"><h3>DAMAGE THIS RUN</h3>${bars||'<p class="sub">No fights yet.</p>'}<p class="sub">Your top ${top.length} damage sources across every fight, including artillery, items and summons. Hover or tap a bar for details.</p></div>
       <div style="display:grid;gap:12px">
+        <div class="endcard"><h3>TOP HEALERS (heals + shields)</h3>${lst(topOf(st.heal,3),'💚')}</div>
+        <div class="endcard"><h3>MOST DAMAGE BLOCKED</h3>${lst(topOf(st.block,3),'🛡️')}<p class="sub">Damage stopped by armor, shields and damage reduction.</p></div>
         <div class="endcard"><h3>WHERE YOUR GOLD WENT</h3>${spendBar}</div>
         <div class="endcard"><h3>ROUND BY ROUND</h3><div class="rstrip">${strip}</div></div>
         ${te?`<div class="endcard"><h3>TOUGHEST ENEMY</h3><div class="row" style="gap:10px">${pt({e:te.e,foe:true},'sm')}<span><b>${esc(te.name)}</b><br><span class="sub">${fmtN(th[1])} damage to your characters</span></span></div></div>`:''}
@@ -1932,6 +2027,10 @@ SCR.codex=()=>{
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1 and Act 2 bosses you choose a Legendary (win or lose). You hold one at a time. Win, and a bonus item is offered too.</p>
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic swaps in for a wounded front-liner, and the Burrow Lurker tunnels into the enemy back row.</p>
+    <p><b>The Cut.</b> The Act 3 event is always The Cut: one of your three biggest genres leaves the shop for good. Cut it for free and lose your characters of that genre, or pay gold to keep them. From Game Level 6 the studio picks the genre.</p>
+    <p><b>Events</b> always happen on the same rounds: the 3rd round of each act (❓ on the round track). The Act 3 event is always ✂️ The Cut. An event never follows another event.</p>
+    <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. In your next shop, characters of that rarity sell back for what you actually paid (free ones still sell for half).</p>
+    <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>
     <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; then a character waiting to rise (Bone Dragon) - characters always go before summons; then the oldest bench card steps in as one crowd.</p>
     <p><b>Positioning.</b> Lanes: characters attack the enemy front-liner in their own column first. Cover: a back-row character directly behind one of your Guardians takes 25% less damage. Neighbors: Medics heal the characters right beside them 50% more. Splash hits neighbors too.</p>
     <p><b>Overtime.</b> After 30 seconds everyone takes growing damage and Swarm crowds stop regrowing, so fights always end.</p>
@@ -1966,7 +2065,7 @@ function showPending(){
   sheet(`<div class="eyebrow">Item pick</div><h3 style="color:var(--gold)">${p.kind==='elite'?'🌟 Mini-boss beaten!':p.kind==='trial'?'🔥 Trial by Fire won!':`${HERO[p.id].e} ${esc(HERO[p.id].name)} reached ${'★'.repeat(p.level)}!`}</h3>
     <p class="muted" style="font-size:.85rem">Pick an item for your whole team, not just this character.</p>
     <div class="choices">${p.choices.map(t=>itemCard(t,'pend')).join('')}</div>
-    <div class="row"><button class="btn ghost" data-a="pend" data-v="">Take 🪙3 instead</button></div>`,true);
+    <div class="row"><button class="btn ghost" data-a="pend" data-v="">Take 🪙3 instead</button>${has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=tv('prop')?'':'disabled'}>🔄 New choices · 🪙${tv('prop')}</button>`:''}</div>`,true);
 }
 function resolvePending(v){
   const p=S.pending.shift();if(!p)return;UI.swap=null;
@@ -2011,7 +2110,13 @@ function onAction(a,v,el){
     case 'skip':skipBattle();break;
     case 'after-fight':delete S.toAdvance;if(S.over){UI.screen='end';clearSave();render();window.scrollTo(0,0);break;}advanceAfterFight(UI.lastRes);go();window.scrollTo(0,0);break;
     case 'event':eventPick(v);UI.freshAt=Date.now();go();break;
-    case 'event-sub':eventSub(v||null);go();break;
+    case 'cut-mode':UI.cutMode=v||null;render();break;
+    case 'event-sub':eventSub(v||null);UI.cutMode=null;go();break;
+    case 'item-reroll':{const c=tv('prop');if(!has('prop')||S.gold<c)break;S.gold-=c;runStats().spend.reroll+=c;
+      const p=S.pending[0];if(UI.screen!=='event'&&p&&p.kind!=='legend'){p.choices=trinketChoices(p.level,false);save();showPending();}
+      else if(S.event&&S.event.sub&&S.event.sub.kind==='trinket'){S.event.sub.ids=trinketChoices(2,false);go();}break;}
+    case 'endhero':if(!isWide()||!canHover)sheet(heroDetail(v,+(el&&el.dataset.l)||1));break;
+    case 'enditem':if(!isWide()||!canHover){const b=infoBody({kind:'trinket',id:v});if(b)sheet(b);}break;
     case 'event-done':finishEvent();go();window.scrollTo(0,0);break;
     case 'pend':case 'pend-leg':resolvePending(v||null);break;
     case 'trinket':UI.armItem=null;showInfo({kind:'trinket',id:v});break;
@@ -2103,6 +2208,8 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.sheetOpen==='inf
 function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
   let html='';if(el.dataset.a==='pick'){const o=S.shop[+el.dataset.v];if(o)html=heroDetail(o.id,o.level||1);}
   else if(el.dataset.a==='slot'){const u=unitAt(el.dataset.v);if(u)html=infoBody({kind:'unit',uid:u.uid});}
+  else if(el.dataset.a==='endhero')html=heroDetail(el.dataset.v,+el.dataset.l||1);
+  else if(el.dataset.a==='enditem')html=infoBody({kind:'trinket',id:el.dataset.v});
   if(!html){if(c)c.remove();return;}
   if(!c){c=document.createElement('div');c.id='hovcard';c.setAttribute('role','tooltip');document.body.appendChild(c);}
   if(c.dataset.k!==el.dataset.a+el.dataset.v){c.innerHTML=html;c.dataset.k=el.dataset.a+el.dataset.v;}
@@ -2112,7 +2219,7 @@ function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
   c.style.left=x+'px';c.style.top=y+'px';}
 const canHover=typeof matchMedia==='function'&&matchMedia('(hover:hover) and (pointer:fine)').matches;
 document.addEventListener('mouseover',e=>{
-  if(canHover&&UI.screen==='plan'&&!PT.drag){const el=e.target.closest&&e.target.closest('[data-a="pick"],[data-a="slot"]');hoverCard(el&&!(isWide()&&el.dataset.a==='pick')?el:null);}
+  if(canHover&&(UI.screen==='plan'||UI.screen==='end')&&!PT.drag){const el=e.target.closest&&e.target.closest('[data-a="pick"],[data-a="slot"],[data-a="endhero"],[data-a="enditem"]');hoverCard(el&&!(isWide()&&el.dataset.a==='pick')?el:null);}
   if(UI.screen!=='plan'||UI.sel||!isWide())return;
   const h=e.target.closest&&e.target.closest('[data-hov]');if(!h)return;
   const i=+h.dataset.hov;const o=S.shop[i];if(!o)return;
@@ -2124,7 +2231,7 @@ if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');con
 
 // ================= render / save / boot =================
 function render(){
-  if(typeof UI!=='undefined'&&UI.screen!=='plan'&&typeof hoverCard==='function')hoverCard(null);
+  if(typeof UI!=='undefined'&&UI.screen!=='plan'&&UI.screen!=='end'&&typeof hoverCard==='function')hoverCard(null);
   if(!S&&UI.screen!=='title'&&UI.screen!=='codex')UI.screen='title';
   $('#app').innerHTML=SCR[UI.screen]();
   if(UI.screen!=='battle'&&!UI.sheetOpen)showPending();
