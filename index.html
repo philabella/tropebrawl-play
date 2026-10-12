@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"></head><body>
-<title>Tropebrawl</title>
+<title>Tropebrawl v10 test</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&display=swap">
@@ -810,9 +810,9 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.218,2.715,2.326],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,rrStep:3,poolSize:[12,10,9,8,7],rivalTake:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.08,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.218,2.715,2.326],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.08,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.15,lvEliteGold:3,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:0,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.25,lvEliteGold:3,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:.004,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
@@ -835,7 +835,7 @@ const EVENTS={
   cursed:{name:'Cursed Script',e:'📜',d:'A free ★★ item, but enemies get stronger for the rest of the run.'},
   insurance:{name:'Stunt Insurance',e:'🛡️',d:'Pay now and your next lost fight costs no lives.'},
   reboot:{name:'Reboot',e:'🔁',d:'Your lowest-rarity character is recast as a random character one rarity higher.'},
-  cut:{name:'The Cut',e:'✂️',d:'The studio is over budget: one of YOUR genres is cut from the show for the rest of the run. Pay to keep the cast, or fight it with lives.'},
+  cut:{name:'The Cut',e:'✂️',d:'The studio is over budget and goes after your biggest genre: it leaves the shop for the rest of the run. Pay to keep the cast, let them go, or fight it with lives.'},
   wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin the wheel. If it lands on a rarity you own, those characters sell back at full price for the rest of the run. Rarities you don\'t own are Duds; a thin ALL sliver covers everyone.'},
   merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙2. It comes one level higher (★★ when new). Or pass.'},
 };
@@ -863,7 +863,7 @@ function evDesc(k){
 // Unlocks live in their own localStorage key, so runs and saves are untouched.
 const pctOf=k=>Math.round(100*k)+'%';
 const LEVELS=[
-  {id:'rivals',e:'🏢',name:'Rival Studios',d:()=>`Rival studios draft from the same character pools: ${TUNE.rivalTake} copies every round, half of them from your biggest genre.`},
+  {id:'limited',e:'📉',name:'Limited Run',d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies, so ★★★ characters are harder to finish.`},
   {id:'plot',e:'🎲',name:'Plot Twists',d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant.'},
   {id:'xp1',e:'🐢',name:'Slow Promotions',d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP.`},
   {id:'elite',e:'🌟',name:'Guest Stars',d:()=>`The fight before each boss is a mini-boss: enemies get +${pctOf(TUNE.lvElite-1)} HP and damage, and a win pays 🪙${TUNE.lvEliteGold}.`},
@@ -1026,17 +1026,11 @@ function newRun(){
 function shopOdds(){return RANK.odds[S.rank-1];}
 function rollTier(){const o=shopOdds();let r=rand()*100;for(let i=0;i<o.length;i++){if(r<o[i])return i+1;r-=o[i];}return 1;}
 // character pools: a fixed number of copies per character (by rarity); buying takes copies out, selling puts them back
-function poolMax(id){return TUNE.poolSize[HERO[id].tier-1];}
+function poolMax(id){return TUNE.poolSize[HERO[id].tier-1]-(rule('limited')?TUNE.poolCut:0);}
 function poolLeft(id){return S.pool&&S.pool[id]!=null?S.pool[id]:poolMax(id);}
 function poolTake(id,n){S.pool=S.pool||{};S.pool[id]=Math.max(0,poolLeft(id)-n);}
 function poolGive(id,n){S.pool=S.pool||{};S.pool[id]=Math.min(poolMax(id),poolLeft(id)+n);}
 function poolOpen(id){const shown=(S.shop||[]).filter(o=>o&&o.id===id).reduce((t,o)=>t+COPIES[o.level-1],0);return poolLeft(id)-shown>0;}
-// Rival Studios (Game Level 1+): other studios take copies every round, half of them from your biggest genre
-function rivalDraft(){if(!rule('rivals'))return;const own={};S.units.forEach(u=>{const g=HERO[u.id].genre;own[g]=(own[g]||0)+1;});
-  const top=Object.keys(own).sort((a,b)=>own[b]-own[a])[0],tmax=topTier(S.rank);
-  for(let k=0;k<TUNE.rivalTake;k++){let ids=HEROES.filter(h=>h[4]<=tmax&&!(S.cut||[]).includes(h[2])&&poolLeft(h[0])>0&&(k%2===0&&top?h[2]===top:true)).map(h=>h[0]);
-    if(!ids.length)ids=HEROES.filter(h=>h[4]<=tmax&&poolLeft(h[0])>0).map(h=>h[0]);if(!ids.length)return;
-    const tot=ids.reduce((t,id)=>t+poolLeft(id),0);let x=rand()*tot,id=ids[0];for(const c of ids){x-=poolLeft(c);if(x<=0){id=c;break;}}poolTake(id,1);S.rivalTook=(S.rivalTook||0)+1;}}
 function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);return pool.length?pick(pool):null;}
 function rollShop(){
   if(typeof UI!=='undefined')UI.pick=null; // a new shop: no card stays half-selected
@@ -1253,7 +1247,7 @@ function income(){const cap=2;const interest=legend('wallet')?0:Math.min(cap,Mat
   // free shop XP every round; the Interest Ledger adds more (paid as gold once the shop is max rank)
   const led=lvl('ledger')?Math.min(tv('ledger'),Math.floor(S.gold/5)):0,max=S.rank>=RMAX;
   return {base:5,interest,coin:0,ledger:max?led:0,xp:max?0:RANK.freeXp+led};}
-function payIncome(extra){rivalDraft();S.rrRound=0;const inc=income();const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
+function payIncome(extra){S.rrRound=0;const inc=income();const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
   const r0=S.rank,b0=boardSize();gainXp(inc.xp,true);
   if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}S.locked=false;
   if(S.rank>r0)toast(rankMsg(b0).replace('⬆️','⬆️ Free XP filled the gauge.'));}
@@ -1302,11 +1296,12 @@ function eventPick(key){
 }
 // The Cut: your 3 biggest genres (by characters you own) are on the table; from Game Level TUNE.cutRandomLv one of them is drawn at random
 function ownedIn(g){return S.units.filter(u=>HERO[u.id].genre===g);}
-// The Cut only ever threatens genres you own: your two biggest (from Game Level TUNE.cutRandomLv, just your biggest)
-function cutChoices(){const own=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g)&&ownedIn(g).length).sort((a,b)=>ownedIn(b).length-ownedIn(a).length);
-  return own.slice(0,(S.lv|0)>=TUNE.cutRandomLv?1:2);}
+// The Cut always goes after your biggest genre (counted in copies, so ★★ and ★★★ weigh more; ties broken at random).
+// No picking a genre you barely use: keep the cast (gold), lose it (half refund), or fight it (lives).
+function cutChoices(){const cw=g=>ownedIn(g).reduce((t,u)=>t+COPIES[u.level-1],0);
+  const own=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g)&&ownedIn(g).length).map(g=>({g,w:cw(g)+rand()*.5})).sort((a,b)=>b.w-a.w);
+  return own.slice(0,1).map(o=>o.g);}
 function cutRound(){return null;} // random events are a surprise: no LEAVING SOON warning
-function cutSoon(){if(!TUNE.cutOn||!S)return 0;const c=cutRound();if(!c||S.round>=c)return 0;const n=c-S.round;return n<=3?n:0;}
 function atRisk(){const live=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g)),n=g=>ownedIn(g).length;
   const sorted=live.slice().sort((a,b)=>n(b)-n(a));if(sorted.length<=3)return sorted;const bar=n(sorted[2]);return sorted.filter(g=>n(g)>=bar);}
 // on shop cards, only when it narrows things down (if every genre is at risk the banner says so instead)
@@ -2032,11 +2027,10 @@ function vsStrip(){
   const twin=tu?`<button class="foe" data-a="twin" aria-label="Evil twin of your ${esc(HERO[tw.id].name)}">${pt({e:HERO[tw.id].e,foe:true},'sm')}<small>${tu.crowd?'×'+tu.maxBodies:R(tu.maxHp)}</small><span class="ab">😈</span></button>`:'';
   const tag=e.part?'BOSS 2/2':e.boss?'BOSS':e.elite?'MINI-BOSS':e.trial?'TRIAL':'NEXT';
   const lead=EN[e.enc[0].key],kind=e.part?'Season finale, part 2':e.boss?'Season finale':e.elite?'Mini-boss':e.trial?'Trial by fire':'Next episode';
-  const cs=cutSoon(),risk=cs?atRisk().map(g=>GENRES[g].name):[];
   return `<section class="vs feat${e.boss||e.elite||e.trial?' boss':''}"><span class="fart emo" aria-hidden="true">${lead.e}</span>
     <div class="fhd"><small>${kind} · Ep ${S.round} of ${SCHEDULE.length}${e.boss&&S.bossTries?` · enemies −${S.bossTries*10}%`:''}</small><b>${esc(e.title||lead.name)}</b></div>
     <div class="foes">${foes}${twin}</div>
-    ${cs?`<p class="cutwarn"><span class="sbdg lv">LEAVING SOON</span> The Cut in ${cs} round${cs>1?'s':''}: ${risk.join(', ')} ${risk.length>1?'are':'is'} at risk.</p>`:''}</section>`;
+    </section>`;
 }
 function boardHTML(){
   const sel=UI.sel;const bs=boardSize();
@@ -2073,8 +2067,8 @@ function shopHTML(){
     const d=HERO[o.id];const c=canBuy(i);const owned=S.units.filter(u=>u.id===o.id);
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
     return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
-      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${cutSoon()&&cardRisk().includes(d.genre)?`<span class="sbdg lv" title="The Cut is in ${cutSoon()} round${cutSoon()>1?'s':''}: ${GENRES[d.genre].name} may be cut">LEAVING SOON</span>`:''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
-      ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} left in the pool">${poolLeft(o.id)} left</span></button>
+      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
+      ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)} in pool</span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -2252,7 +2246,7 @@ function targetText(id){const d=HERO[id],b=TBASE[d.trait],a=AIM[aimRule(id)];let
   return t+' Taunting enemies are always hit first.';}
 function targetShort(id){const a=AIM[aimRule(id)];return a.e+' '+a.name;}
 function heroDetail(id,level){
-  const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);const poolLine=S?`<p class="poolln">Pool: <b>${poolLeft(id)}</b> of ${poolMax(id)} copies left${rule('rivals')?' (rival studios draft from it too)':''}. ★★ takes 3 copies, ★★★ takes 6.</p>`:'';
+  const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);const poolLine=S?`<p class="poolln">Pool: <b>${poolLeft(id)}</b> of ${poolMax(id)} copies left. ★★ takes 3 copies, ★★★ takes 6.</p>`:'';
   const range=d.genre==='ball'?'Throws':b.range==='melee'?'Melee':'Ranged';
   return `<div class="hs-head">${heroPt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
     <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for genre':' · max ★★'}</span></div>
@@ -2610,7 +2604,7 @@ function devHTML(){
     <label class="dvchk"><input type="checkbox" id="dv-all" data-d="all" ${DEV.all?'checked':''}> Unlock every level (wins aren't saved while this is on)</label>
     <div class="dvrow"><button class="dvb hot" data-d="newrun">Start a run at Level ${UI.lv|0}</button></div></div>
   <div class="dvsec"><h4>Open an event</h4><div class="dvrow">${evs}<button class="dvb" data-d="ev" data-v="round">🎲 Random 3-pick</button></div>
-    <p class="dvnote">Starts a run with a sample cast if you have none. The Cut uses your owned genres (one random genre from Level ${TUNE.cutRandomLv}).</p></div>
+    <p class="dvnote">Starts a run with a sample cast if you have none. The Cut always targets your biggest genre.</p></div>
   <div class="dvsec"><h4>Buyback Wheel lands on</h4><div class="dvrow">${wh}</div></div>
   <div class="dvsec"><h4>Run</h4><div class="dvrow">
     <button class="dvb" data-d="gold" data-v="10">+🪙10</button><button class="dvb" data-d="lives" data-v="2">+2 ❤️</button><button class="dvb" data-d="lives" data-v="-2">−2 ❤️</button>
