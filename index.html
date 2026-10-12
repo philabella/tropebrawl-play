@@ -1032,7 +1032,7 @@ function freeSlotFor(id){
   const room=id&&fielded().length<boardSize();
   const dupe=id&&fielded().some(u=>u.id===id);
   const melee=id&&TBASE[HERO[id].trait].range==='melee'&&HERO[id].genre!=='ball'&&HERO[id].trait!=='stalker';
-  if(room&&!dupe){const order=melee?['f1','f0','f2']:['b1','b0','b2','f1','f0','f2'];for(const s of order)if(!unitAt(s))return s;}
+  if(room&&!dupe){const order=melee?['f1','f0','f2','b1','b0','b2']:['b1','b0','b2','f1','f0','f2'];for(const s of order)if(!unitAt(s))return s;}
   for(const s of benchSlots)if(!unitAt(s))return s;
   if(room)for(const s of ['f1','f0','f2','b1','b0','b2'])if(!unitAt(s))return s;
   if(!id)for(const s of fieldSlots)if(!unitAt(s)&&fielded().length<boardSize())return s;
@@ -1370,6 +1370,7 @@ function startBattle(silent){
   S.enemy.enc.forEach(e=>B.units.push(enemyUnit(e)));
   if(S.enemy.boss&&rule('twin')){const tw=twinUnit();if(tw)B.units.push(tw);}
   applyMods();
+  ['A','E'].forEach(sd=>[0,1,2].forEach(c=>stepUp(sd,c)));
 }
 function applyMods(){
   const {G,T,X}=B.syn;
@@ -1525,7 +1526,8 @@ function kill(t,src){
   }
   // a slot opened. Priority: spawns left behind by the fallen character (Undead 6, above) already took it;
   // otherwise the next summon waiting on your battle bench steps in (first come, first served)
-  if(t.side==='A'&&Z(t)===t.side)fillFromBench(t.row,t.col);
+  if(Z(t)===t.side&&t.row==='front'&&stepUp(t.side,t.col)){if(t.side==='A')fillFromBench('back',t.col);}
+  else if(t.side==='A'&&Z(t)===t.side)fillFromBench(t.row,t.col);
   if(B.ball&&B.ball.holder===t){const nx=nextBallHolder(t);B.ball.holder=nx;if(nx)nx.timer=Math.min(nx.timer,.4);if(B.ball.streak)float(nx||t,'Fumble!','ko');B.ball.streak=0;}
 }
 function heal(src,t,amt,silent){
@@ -1630,7 +1632,11 @@ function throwBall(u){
     // the ball bounces off the enemy to the catcher (who throws again after one of its own attack intervals)
     if(!B.silent&&!RM){const sp=B.speed,g=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);setTimeout(()=>{if(B&&!B.done&&t.el&&nx.el)projectile(t,nx,'ballp','⚽',14+g*7,240);},260/sp);}}
 }
-function blocked(u){return u.range==='melee'&&u.row==='back'&&!isDiver(u)&&u.genre!=='ball'&&!u.summon&&B.units.some(x=>x.side===u.side&&x.alive&&x.row==='front');}
+function stepper(u){return u.alive&&u.range==='melee'&&u.row==='back'&&Z(u)===u.side&&!isDiver(u)&&u.genre!=='ball'&&!u.summon;}
+function blocked(u){return stepper(u)&&B.units.some(x=>x.side===u.side&&x.alive&&x.row==='front'&&x.col===u.col&&Z(x)===Z(u));}
+// Step up: when the front square in its column is empty, a waiting back-row melee character moves into it
+function stepUp(side,col){if(B.units.some(x=>x.alive&&Z(x)===side&&x.row==='front'&&x.col===col))return false;
+  const u=B.units.find(x=>x.side===side&&x.col===col&&stepper(x));if(!u)return false;u.row='front';if(!B.silent)float(u,'Step up!','sp');return true;}
 function act(u){
   if(u.skill&&u.manaMax&&u.mana>=u.manaMax){
     u.mana=0;
@@ -2099,7 +2105,7 @@ const AIM={lane:{e:'↕️',name:'Lane',d:'Hits the enemy front-liner straight a
   sharp:{e:'🎯',name:'Sharpshooter',d:'Shoots the lowest-HP enemy anywhere, ignoring lanes.'},
   backline:{e:'🗡️',name:'Backline',d:'Leaps at the weakest enemy in the back row.'}};
 function targetText(id){const d=HERO[id],b=TBASE[d.trait],a=AIM[aimRule(id)];let t=`${a.e} ${a.name}: ${a.d}`;
-  if(d.genre==='ball')t+=' Throws from either row.';else if(b.range==='melee'&&d.trait!=='stalker')t+=' In the back row it waits until your front row falls.';
+  if(d.genre==='ball')t+=' Throws from either row.';else if(b.range==='melee'&&d.trait!=='stalker')t+=' In the back row it waits behind its lane and steps up as soon as the square in front of it is empty.';
   return t+' Taunting enemies are always hit first.';}
 function targetShort(id){const a=AIM[aimRule(id)];return a.e+' '+a.name;}
 function heroDetail(id,level){
@@ -2216,7 +2222,7 @@ SCR.codex=()=>{
     <p><b>Rarity and shop rank.</b> Characters are <span class="tier1" style="color:var(--tc)">Common</span>, <span class="tier2" style="color:var(--tc)">Uncommon</span>, <span class="tier3" style="color:var(--tc)">Rare</span>, <span class="tier4" style="color:var(--tc)">Epic</span> or <span class="tier5" style="color:var(--tc)">Mythic</span> (🪙1–5). ⬆️ Train the shop (🪙${RANK.train} for ${RANK.trainXp} XP; it also gets ${RANK.freeXp} XP free every round). Each full gauge is a rank, which unlocks the next rarity; ranks 2, 4 and 5 also add a board slot. Mythics only show up at Rank 5, and rarely. <button class="btn sm" data-a="rank-info">See the odds</button></p>
     <p><b>Leveling up.</b> 3 copies of a character combine into ★★; two ★★ combine into ★★★. Commons and Uncommons stop at ★★ (the Spin-off Deal Legendary lifts that). Maxed characters stop appearing in the shop. With the Talent Scout Legendary, the shop also offers ready-made ★★ cards; buying one levels up your best copy. The first time a Rare, Epic or Mythic character reaches ★★ or ★★★ you pick an item for your whole team (hold up to 5; pick one you have again to level it up, or sell one to free a slot).</p>
     <p><b>Board.</b> The top row is your front row; it gets hit first. Benched characters don't fight.</p>
-    <p><b>Who attacks whom.</b> Taunting enemies are always hit first. Otherwise melee characters hit the nearest front-row enemy, ranged characters shoot the lowest-HP enemy anywhere, and Stalkers leap at the weakest back-row enemy. A melee character in your back row waits until your front row falls (Stalkers and Sportsball characters don't). When a side's front row is wiped out, its back row steps forward.</p>
+    <p><b>Who attacks whom.</b> Taunting enemies are always hit first. Otherwise melee characters hit the nearest front-row enemy, ranged characters shoot the lowest-HP enemy anywhere, and Stalkers leap at the weakest back-row enemy. A melee character in your back row waits behind its own lane (the front square in its column) and <b>steps up</b> into it as soon as it is empty: at the start of the fight or the moment the front-liner falls. It steps up before your bench fills the gap, and charges its ability a little while it waits (Stalkers and Sportsball characters don't wait). When a side's whole front row is wiped out, its back row steps forward. New characters you buy go where they fight best: melee to an empty front square, everyone else to the back.</p>
     <p><b>Energy and skills.</b> Characters gain energy by attacking and getting hit. A full blue bar casts their skill.</p>
     <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
