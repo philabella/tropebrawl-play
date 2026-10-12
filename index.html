@@ -3,20 +3,22 @@
 <title>Tropebrawl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bungee&family=Archivo:wght@400;500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap">
 <style>
 /* Layout: one centered column (max 760px) that fits a phone screen without reading: top bar, next fight,
    board + bench, synergy icons, shop, action bar. Details live in tap-to-open sheets. Battle = enemy rows
    above the clash line, yours below. Single dark look by design: every color is a token on :root. */
 :root{
-  --bg:#121016; --bg2:#19161f; --panel:#221e2a; --panel2:#2b2635; --line:#393245;
-  --ink:#f1ebe0; --muted:#a79fb0; --dim:#6f6779;
-  --gold:#f2c14e; --gold-dk:#8d6d22; --red:#e0533d; --good:#6cc47a; --mana:#5d95e6; --shield:#d9e1ec; --leg:#ff9f43;
+  /* Night Ink: flat charcoal page, ink-black panels with hard square shadows, one punchy yellow. The board is a grid of
+     crisp square tiles with black outlines on a faint halftone, so every position reads at a glance. */
+  --bg:#1e1d21; --bg2:#26252a; --panel:#121114; --panel2:#2d2c32; --line:#3d3b43;
+  --ink:#f3eee4; --muted:#aaa49b; --dim:#6d6962;
+  --gold:#ffcc2e; --gold-dk:#a37800; --red:#ff4d3d; --ground:#2f2924; --ground2:#3a322b; --inkline:#000; --good:#6cc47a; --mana:#5d95e6; --shield:#d9e1ec; --leg:#ff9f43;
   --dud:#3a3340;
   --r1:#b4adbf; --r2:#62d98b; --r3:#5aa9ff; --r4:#b98cff; --r5:#ff6b9d;
   --g-army:#a3b462; --g-orc:#de6f47; --g-elf:#5fcab8; --g-fin:#e9c352; --g-grim:#d84d60; --g-bug:#ab80ea; --g-ball:#4fa3f7; --g-undead:#8fd18a; --foe:#c45a4e;
-  --f-display:"Bungee","Archivo Black",Impact,sans-serif;
-  --f-body:"Archivo","Segoe UI",system-ui,sans-serif;
+  --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
+  --f-body:"Barlow Condensed","Arial Narrow","Segoe UI",system-ui,sans-serif;
   --f-emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
   color-scheme:dark;
 }
@@ -423,6 +425,71 @@ strong.lvon{color:var(--gold);font-weight:800}
 .dvchk{display:flex;gap:6px;align-items:center;color:#a7c4ad;font-size:.78rem}
 #dev select{font:inherit;font-size:.78rem;background:#1f2a21;color:#e3f3e6;border:1px solid #35503b;border-radius:6px;padding:.25em}
 .dvnote{color:#7f9a85;font-size:.72rem;margin:0}
+
+/* ===================== Night Ink skin ===================== */
+body{font-size:16.5px;font-weight:500;background:radial-gradient(circle,rgba(255,255,255,.035) 1px,transparent 1.4px) 0 0/7px 7px,var(--bg);min-height:100vh}
+h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
+.eyebrow{font-family:var(--f-body);font-weight:800;letter-spacing:.12em}
+/* panels: ink-black boxes with a hard comic drop shadow, flat, no gradients */
+.top,.vs,.insp,.endcard,.shopwrap,.lvpick,.kpi,.ccard,.steps>div,#sheet .sh{border-radius:3px;border:2px solid var(--inkline);background:var(--panel);box-shadow:4px 4px 0 var(--inkline)}
+.top{background:var(--panel);padding:10px 12px}
+.res span{font-family:var(--f-display);font-size:1.3rem;letter-spacing:.02em}
+.strip i{border-radius:2px;background:var(--panel2)}
+.strip i.now{background:var(--gold);box-shadow:0 0 0 2px var(--inkline)}
+/* buttons: flat fill, black outline, hard shadow, press down */
+.btn{border-radius:3px;border:2px solid var(--inkline);background:var(--panel2);box-shadow:3px 3px 0 var(--inkline);text-transform:uppercase;letter-spacing:.04em;transition:transform .05s,box-shadow .05s}
+.btn:hover:not(:disabled){border-color:var(--inkline);background:#3a3940}
+.btn:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--inkline)}
+.btn.primary{background:var(--gold);color:#141012;border-color:var(--inkline)}
+.btn.primary:hover:not(:disabled){background:#ffd84f}
+.btn.big{font-family:var(--f-display);font-size:1.35rem;letter-spacing:.04em}
+.btn.ghost{box-shadow:none;border-color:var(--line)}
+.lvn{border-radius:3px;border:2px solid var(--inkline);background:var(--panel2);font-family:var(--f-display);letter-spacing:.04em}
+.lvn.on{background:var(--gold);color:#141012}
+.title-word{font-size:clamp(3.4rem,15vw,6.2rem);color:var(--gold);letter-spacing:.02em;text-transform:uppercase;text-shadow:4px 4px 0 var(--inkline)}
+/* the board and the battlefield: crisp square tiles with ink outlines on a faint halftone */
+.board,.field{border-radius:3px;border:2px solid var(--inkline);box-shadow:4px 4px 0 var(--inkline);
+  background:radial-gradient(circle,rgba(255,255,255,.06) 1.1px,transparent 1.5px) 0 0/8px 8px,#18171b}
+.slot,.unit{border-radius:2px;border:2px solid var(--inkline);background:var(--panel2);box-shadow:3px 3px 0 var(--inkline)}
+.slot:not(.empty){border-color:var(--inkline);border-top:4px solid var(--gc)}
+.slot.tier3,.slot.tier4,.slot.tier5{border-top:4px solid var(--tc)}
+.slot.empty{background:rgba(0,0,0,.25);border:2px dashed rgba(243,238,228,.16);box-shadow:none}
+.slot .pt,.unit .pt{border:2px solid var(--inkline);box-shadow:0 0 0 2px var(--gc)}
+.slot .nm{font-size:.76rem}
+.slot.sel{box-shadow:0 0 0 3px var(--gold),3px 3px 0 var(--inkline);border-color:var(--inkline)}
+.slot.dropok{outline:3px dashed var(--gold);outline-offset:-4px}
+.slot:active:not(.empty){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--inkline)}
+.slot.fullsell{border:2px solid var(--inkline);border-top:4px solid var(--gold);background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 16%,var(--panel2)),var(--panel2));box-shadow:0 0 0 2px var(--gold),0 0 14px color-mix(in srgb,var(--gold) 45%,transparent),3px 3px 0 var(--inkline);animation:none}
+.bslot{border:2px dashed rgba(243,238,228,.08);border-radius:2px}
+.unit{border-top:4px solid var(--gc)}
+.unit.foe{background:color-mix(in srgb,var(--red) 10%,var(--panel2));border-top-color:var(--red)}
+.hpb{border:2px solid var(--inkline);border-radius:1px;height:12px;background:#151316}
+.clashline{background:repeating-linear-gradient(90deg,var(--red) 0 10px,transparent 10px 16px);height:3px}
+/* shop cards: flat ink cards, rarity stripe on top */
+.scard{border-radius:3px;border:2px solid var(--inkline);background:var(--panel2);box-shadow:3px 3px 0 var(--inkline)}
+.scard:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--inkline)}
+.syn{border-radius:3px;border:2px solid var(--inkline)}
+/* events: a comic panel, flavor text in a caption box */
+.evstage{border-radius:3px;border:3px solid var(--inkline);box-shadow:6px 6px 0 var(--inkline);background:radial-gradient(circle,rgba(255,255,255,.05) 1.2px,transparent 1.6px) 0 0/9px 9px,var(--bg2)}
+.evtitle{font-size:2.1rem;color:var(--gold);text-shadow:3px 3px 0 var(--inkline)}
+.evflav{font-style:normal;color:var(--muted);font-weight:600}
+.evopt{border-radius:3px;border:2px solid var(--inkline);background:var(--panel);box-shadow:3px 3px 0 var(--inkline)}
+.evopt:hover:not(:disabled){border-color:var(--inkline);background:var(--panel2)}
+.evcard{border-radius:3px;border:3px solid var(--inkline);background:var(--panel);box-shadow:5px 5px 0 var(--inkline)}
+.evcard:hover:not(:disabled){border-color:var(--inkline);background:var(--panel2);transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--inkline)}
+.evcard b{font-family:var(--f-display);font-size:1.2rem;letter-spacing:.03em;text-transform:uppercase}
+.wheel{border:4px solid var(--inkline);box-shadow:5px 5px 0 var(--inkline)}
+.wptr{color:var(--gold);-webkit-text-stroke:1px #000}
+.hpb{flex:none}
+/* info sits on a "ground" strip along the bottom of every square */
+.board .slot{--gh:41px}
+.board .slot[data-v^="n"]{--gh:22px}
+.board .slot:not(.empty){justify-content:space-between;padding:8px 3px 5px;background:linear-gradient(to top,#0e0d10 0 var(--gh,36px),#000 var(--gh,36px) calc(var(--gh,36px) + 2px),var(--panel2) calc(var(--gh,36px) + 2px))}
+.board .slot:not(.empty) .nm{background:none;border:0;padding:0}
+.board .slot.fullsell{background:linear-gradient(to top,#0e0d10 0 var(--gh,36px),var(--gold) var(--gh,36px) calc(var(--gh,36px) + 2px),color-mix(in srgb,var(--gold) 16%,var(--panel2)) calc(var(--gh,36px) + 2px))}
+.unit{background:linear-gradient(to top,#0e0d10 0 26px,#000 26px 28px,var(--panel2) 28px);padding-bottom:5px}
+.unit.foe{background:linear-gradient(to top,#0e0d10 0 26px,#000 26px 28px,color-mix(in srgb,var(--red) 10%,var(--panel2)) 28px)}
+.unit .hpb{margin-top:auto}
 </style>
 
 <div id="app"></div>
