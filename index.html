@@ -514,6 +514,12 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .scard .pleft{font-size:.6rem;color:var(--muted);font-weight:700;letter-spacing:.02em}
 .poolln{font-size:.78rem;color:var(--muted);margin:6px 0 0}
 .res small i{font-style:normal;color:var(--gold)}
+.intm{display:inline-flex;gap:2px;align-items:center;margin-left:-4px}
+.intm i{width:5px;height:12px;border-radius:1px;background:var(--line,#3d3b43)}
+.intm i.on{background:var(--gold,#ffcc2e)}
+.stk{font-weight:800;font-size:.85em;padding:0 .45em;border-radius:3px;border:1px solid currentColor}
+.stk.w{color:#ff9a3d}.stk.l{color:#7fc8ff}
+@media (max-width:560px){.scard .plw{display:none}}
 
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
@@ -558,6 +564,13 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .spr,.crowdspr img{filter:none}
 .board .rowlbl span,.board .rowlbl b{background:rgba(14,13,16,.85);padding:1px 5px;border-radius:2px}
 .board .slot.hasspr .crowdspr~.nm,.board .slot.hasspr .row{position:relative;z-index:4}
+.sart{position:relative;display:block;width:100%;height:70px;overflow:hidden;pointer-events:none}
+.sart img{position:absolute;left:50%;top:-11px;width:90px;height:90px;transform:translateX(calc(-50% + var(--x,0px))) translateY(var(--y,0px)) scale(var(--k,1)) scaleX(var(--m,1));transform-origin:50% 88%}
+.sart.crowd img:first-child{filter:brightness(.8)}
+.sart svg{position:absolute;right:6px;bottom:4px;width:18px;height:18px;padding:3px;border-radius:50%;background:var(--panel2,#2d2c32);stroke:var(--ink,#f3eee4);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;box-shadow:0 0 0 1px #000}
+.sart.lg{width:96px;height:96px;flex:none;border-radius:6px;background:color-mix(in srgb,var(--panel2,#2d2c32) 60%,transparent)}
+.sart.lg img{top:-14px;width:120px;height:120px}
+.sart.lg svg{right:4px;bottom:4px}
 </style>
 
 <div id="app"></div>
@@ -604,14 +617,14 @@ function genreWeight(id,units){if(HERO[id].tier<3)return 1;const lv=Math.max(0,.
 const PARKED=new Set(['orc','elf','fin','grim']);
 const live=k=>!PARKED.has(k);
 const GENRES_ALL={
-  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 6s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +40% HP and damage.']},
+  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +40% HP and damage.']},
   orc:{name:'Orcs',e:'👹',tiers:[2,4],d:['Orcs deal +7% damage for each living ally.','Orcs get +12% per living ally, and every other hero gets +5%.']},
   elf:{name:'Elves',e:'🍃',tiers:[2,4],d:['Elves dodge 30% of attacks and regenerate 1.5% HP per second.','Elves dodge 45%, and every hero dodges 15%.']},
   fin:{name:'Finance',e:'💰',tiers:[2,4],d:['+2 gold after every fight. Finance heroes deal +1% damage per gold you hold (max +25%).','+4 gold after every fight, and every hero gets the gold damage bonus.']},
   grim:{name:'Crusaders',e:'✝️',tiers:[2,4],d:['Crusaders can\'t be stunned and gain +5 armor.','Every hero gains +5 armor. Crusaders deal +20% damage below half HP.']},
   bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 4s.','Swarm crowds regrow every 2s, and Swarm characters heal 10% when an enemy falls.','Swarm crowds regrow every second.']},
   undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +4 attack (max +60).','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight). Full Cast: Undead characters get +35% HP and damage.']},
-  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 35%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 70%. Full Cast: Sportsball characters get +45% HP and damage.']},
+  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 55%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 70%. Full Cast: Sportsball characters get +45% HP and damage.']},
 };
 const GENRES=Object.fromEntries(Object.entries(GENRES_ALL).filter(([k])=>live(k)));
 const TRAITS={
@@ -733,7 +746,7 @@ const TRINKETS=[
  ['spikes','Spiked Armor','C','🌵','Your front-row characters reflect {v} of melee damage.',['30%','45%','60%']],
  ['flare','Signal Flare','C','🎆','All your characters attack instantly and 30% faster for the first {v}.',['5s','7s','10s']],
  ['plating','Iron Plating','C','🔩','Your front-row characters gain {v} armor.',['+5','+7','+9']],
- ['ledger','Interest Ledger','C','📒','Your interest also trains the shop: +1 shop XP per 🪙5 you hold, up to {v} a round. At max rank it pays gold instead.',['+1','+2','+3']],
+ ['ledger','Interest Ledger','C','📒','Your interest also trains the shop: +1 shop XP per 🪙10 you hold, up to {v} a round. At max rank it pays gold instead.',['+1','+2','+3']],
  ['overclock','Overclock Chip','R','💾','All your characters\' skills hit {v} harder.',['70%','100%','130%']],
  ['tesla','Tesla Coil','R','🌩️','Every {v}, lightning hits a random enemy.',['4s','3s','2s']],
  ['extralife','Extra Life','R','💖','Your first character to fall each fight revives at {v} HP.',['50%','75%','100%']],
@@ -810,9 +823,9 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.218,2.715,2.326],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.08,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.513,3.077,2.636],bossF:[1.9,1.6,0.95],lossCost:[2,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.55,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.08,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.25,lvEliteGold:3,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:.004,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:0,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
@@ -957,7 +970,7 @@ const SK={
  numbers:{name:'Strength in Numbers',d:p=>`Stings its target for ${R(30*p)}, +${R(2*p)} per body in your crowds (max 20 bodies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;const n=allies(u).reduce((s,a)=>s+(a.crowd?bodies(a):0),0);spell(u,t,30+2*Math.min(20,n));}},
  asone:{name:'Strike as One',d:p=>`Right now, each of your crowds attacks ${Math.min(8,R(p))} extra time${Math.min(8,R(p))===1?'':'s'} and your other characters attack ${Math.max(1,R(p/2))===1?'once':Math.max(1,R(p/2))+' times'}.`,cast(u){const k=Math.min(8,R(u.p));allies(u).forEach(a=>{if(a===u||a.stun>0||blocked(a)||(B.ball&&a.genre==='ball'))return;const n=a.crowd?k:Math.max(1,R(u.p/2));for(let i=0;i<n&&a.alive;i++){const t=pickTarget(a);if(!t)break;attack(a,t);}});}},
  jugular:{name:'Go for the Throat',d:p=>`${R(40*p)} damage to the lowest-HP enemy anywhere, doubled if it is below half HP.`,cast(u){const t=lowest(targetFoes(u));if(t)spell(u,t,t.hp<t.maxHp/2?80:40);}},
- meatshield:{name:'Meat Shield',d:()=>`Taunts for 3s. Meanwhile, a third of the damage it takes goes to your biggest crowd instead.`,cast(u){u.taunt=3;u.meatShield=true;}},
+ meatshield:{name:'Meat Shield',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, a third of the damage it takes goes to your biggest crowd instead.`,cast(u){u.taunt=3;u.meatShield=true;shieldU(u,u,40*u.p);}},
  stitchup:{name:'Stitch Up',d:p=>`Heals your most wounded character for ${R(50*p)}. Your most wounded crowd also regrows ${Math.max(1,R(1.5*p))} bodies.`,cast(u){const a=wounded(u,1)[0];if(a)heal(u,a,50*u.p);const c=allies(u).filter(x=>x.crowd).sort((x,y)=>x.hp/x.maxHp-y.hp/y.maxHp)[0];if(c)regrow(c,Math.max(1,R(1.5*u.p)));}},
  graveroar:{name:'Grave Roar',d:p=>`Hits its target for ${R(50*p)}. All your fallen characters rise at ${Math.min(100,R(20*p))}% HP (each only once).`,cast(u){const t=pickTarget(u)||randFoe(u);if(t)spell(u,t,50);raiseFallen(u,Math.min(1,.2*u.p));}},
  pyramid:{name:'Human Pyramid',d:p=>`Shields your front-row characters for ${12*bodiesFromP(p)} (12 per cheerleader).`,cast(u){const s=12*bodies(u)*u.tierM;allies(u).filter(a=>a.row==='front').forEach(a=>shieldU(u,a,s));}},
@@ -1014,7 +1027,7 @@ function curRound(){return SCHEDULE[S.round-1];}
 
 function newRun(){
   const lv=Math.max(0,Math.min(LV_MAX,UI.lv|0));
-  S={lv,rules:rulesFor(lv),part:1,round:1,lives:10,gold:6,rank:1,xp:0,wins:0,units:[],trinkets:[],tlv:{},legend:null,shop:[],locked:false,uid:1,paid:{},pending:[],freeRerolls:0,
+  S={lv,rules:rulesFor(lv),part:1,round:1,lives:10,gold:6,streak:0,rank:1,xp:0,wins:0,units:[],trinkets:[],tlv:{},legend:null,shop:[],locked:false,uid:1,paid:{},pending:[],freeRerolls:0,
      bossTries:0,lastWin:null,stats:{fights:0,won:0,merges:0,gold:0,lost:0},over:false,enemy:null,event:null};
   S.maxLives=10-(rule('life1')?1:0)-(rule('life2')?1:0);S.lives=S.maxLives;
   buildSchedule(rule('cut'));
@@ -1080,7 +1093,7 @@ function buy(i){
   S.units=S.units.filter(u=>u.slot!=='gone');
   return true;
 }
-function rerollCost(){return REROLL+Math.floor((S.rrRound||0)/TUNE.rrStep);}
+function rerollCost(){return TUNE.reroll;}
 function reroll(){
   if(S.freeRerolls>0)S.freeRerolls--;
   else{const c=rerollCost();if(S.gold<c){toast('Not enough gold');return false;}S.gold-=c;runStats().spend.reroll+=c;S.rrRound=(S.rrRound||0)+1;}
@@ -1243,11 +1256,15 @@ function startRound(){
   else prepareFight();
   UI.screen=ev.type==='event'?'event':'plan';
 }
-function income(){const cap=2;const interest=legend('wallet')?0:Math.min(cap,Math.floor(S.gold/5));
+// interest: 🪙1 per TUNE.intPer held when the round ends, up to TUNE.intCap
+function income(){const interest=legend('wallet')?0:Math.min(TUNE.intCap,Math.floor(Math.max(0,S.gold)/TUNE.intPer));
   // free shop XP every round; the Interest Ledger adds more (paid as gold once the shop is max rank)
-  const led=lvl('ledger')?Math.min(tv('ledger'),Math.floor(S.gold/5)):0,max=S.rank>=RMAX;
+  const led=lvl('ledger')?Math.min(tv('ledger'),Math.floor(Math.max(0,S.gold)/TUNE.intPer)):0,max=S.rank>=RMAX;
   return {base:5,interest,coin:0,ledger:max?led:0,xp:max?0:RANK.freeXp+led};}
-function payIncome(extra){S.rrRound=0;const inc=income();const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
+function intMeter(inc){if(legend('wallet'))return '';const n=inc.interest,nx=n<TUNE.intCap?TUNE.intPer*(n+1)-S.gold:0;
+  return `<span class="intm" title="Interest: 🪙1 per 🪙${TUNE.intPer} you hold when the round ends, up to 🪙${TUNE.intCap} at 🪙${TUNE.intPer*TUNE.intCap}. ${nx>0?`🪙${nx} more for +${n+1}.`:'Maxed.'}" aria-label="Interest +${n} of ${TUNE.intCap}">${Array.from({length:TUNE.intCap},(_,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;}
+function streakGold(n){const t=TUNE.streakGold;return t[Math.min(t.length-1,Math.abs(n|0))];}
+function payIncome(extra){S.rrRound=0;const inc=income();S.stats.int=(S.stats.int||0)+inc.interest;const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
   const r0=S.rank,b0=boardSize();gainXp(inc.xp,true);
   if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}S.locked=false;
   if(S.rank>r0)toast(rankMsg(b0).replace('⬆️','⬆️ Free XP filled the gauge.'));}
@@ -1509,7 +1526,7 @@ function applyMods(){
   const A=B.units.filter(u=>u.side==='A');
   B.frontDR.A=T.guardian>=2?.18:T.guardian>=1?.12:0;
   const danger=legend('danger')&&G.army;
-  B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?6:0;B.art=danger?4:B.artEvery;B.artMult=G.army>=3?2:1;
+  B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?TUNE.artEvery1:0;B.art=danger?4:B.artEvery;B.artMult=G.army>=3?2:1;
   B.broodEvery=G.bug>=3?1:G.bug>=2?2:G.bug>=1?4:0;
   const star=legend('blockbuster')?A.slice().sort((a,b)=>b.tier-a.tier||b.level-a.level||b.maxHp-a.maxHp)[0]:null;
   if(legend('skeleton'))B.skel=Math.min(3,Math.max(0,boardSize()-A.length));
@@ -1529,7 +1546,7 @@ function applyMods(){
     if(G.grim>=2){if(u.genre!=='grim')u.arm+=5;if(u.genre==='grim')u.lowHpBonus=.2;}
     if(legend('martyr')){u.hp=u.maxHp*.5;u.shield+=u.maxHp*.5;if(u.genre==='grim')u.lowHpBonus=.4;}
     if(G.bug>=2&&u.genre==='bug')u.devour=.10;
-    if(G.ball&&u.genre==='ball'){u.bounces=G.ball>=2?2:1;u.bouncePct=G.ball>=3?.7:.35;}
+    if(G.ball&&u.genre==='ball'){u.bounces=G.ball>=2?2:1;u.bouncePct=G.ball>=3?.7:TUNE.ballBounce1;}
     else if(G.ball>=2){u.bounces=1;u.bouncePct=.2;}
     if(X.bees&&u.crowd&&u.bouncePct<.25){u.bounces=Math.max(u.bounces,1);u.bouncePct=.25;}
     if(T.brawler&&u.trait==='brawler'){u.stackAtk=T.brawler>=2?4:2;u.stackCap=T.brawler>=2?60:30;}
@@ -1834,6 +1851,7 @@ function settle(){
   const th=Object.entries(B.threat).sort((a,b)=>b[1]-a[1])[0];res.threat=th?{e:foeInfo(th[0]).e,name:foeInfo(th[0]).name,dmg:R(th[1])}:null;
   const {G,X}=B.syn;
   let g=B.goldEarned+(G.fin?(G.fin>=2?4:2):0);
+  const sk=win?Math.max(0,S.streak||0)+1:Math.min(0,S.streak||0)-1;S.streak=sk;res.streak=sk;res.sgold=streakGold(sk);g+=res.sgold;S.stats.streak=(S.stats.streak||0)+res.sgold;
   if(win){
     S.wins++;S.stats.won++;g+=1+tv('coin');if(X.profit)g+=2;
     if(res.boss)g+=3;
@@ -1842,7 +1860,7 @@ function settle(){
     let cost=TUNE.lossCost[ev.act-1]+(res.boss?1:0);
     if(S.insured){S.insured=0;cost=0;res.insured=true;}
     S.lives-=cost;res.lives=cost;S.stats.lost++;
-    g+=TUNE.comeback;S.freeRerolls+=1;
+    g+=TUNE.lossGold;S.freeRerolls+=1;
     res.tip=lossTip();
     if(res.boss&&ev.act===3)S.bossTries++;
   }
@@ -1874,6 +1892,9 @@ function advanceAfterFight(res){
 // ================= view helpers =================
 function pt(o,cls){const gc=o.foe?'g-foe':'g-'+(o.genre||'foe');return `<span class="pt ${gc} ${cls||''}">${o.e}${o.trait?tsvg(o.trait):''}</span>`;}
 function heroPt(id,cls){const d=HERO[id];return pt({e:d.e,genre:d.genre,trait:d.trait},cls);}
+function heroArt(id,cls){const d=HERO[id];if(!SPRITES[id])return heroPt(id,cls);const v=crowdArt(id);
+  const im=d.crowd?[[0,-5,.86,v[1%v.length]],[-17,0,.94,v[0]],[17,0,.94,v[2%v.length]]].map(([x,y,k,src],j)=>`<img src="${src}" alt="" draggable="false" style="--x:${x}px;--y:${y}px;--k:${k}${j===2?';--m:-1':''}">`).join(''):`<img src="${SPRITES[id]}" alt="" draggable="false">`;
+  return `<span class="sart ${cls||''}${d.crowd?' crowd':''}">${im}${tsvg(d.trait)}</span>`;}
 function stars(n){return `<span class="stars">${'★'.repeat(n)}</span>`;}
 function float(u,txt,cls){
   if(!B||B.silent||!u.el||(RM&&cls!=='sp'&&cls!=='ko'))return;
@@ -1987,11 +2008,11 @@ function showResult(){
   const f=$('#field');if(!f)return;
   let body;
   if(res.win){
-    body=`<h2>Victory</h2><div class="rw"><span class="goldv">+${res.gold} 🪙</span>${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
+    body=`<h2>Victory</h2><div class="rw"><span class="goldv">+${res.gold} 🪙</span>${res.sgold?`<span class="stk w" title="Win streak gold">🔥${res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
       ${res.mvp?`<div class="why"><span class="emo" style="font-size:1.6rem">${res.mvp.e}</span><span><b>MVP: ${esc(res.mvp.name)}</b><br><span class="muted">${res.mvp.dmg} damage</span></span></div>`:''}${res.part2?'<p class="muted" style="font-size:.85rem">Part 2 next: the first two bosses return together.</p>':''}`;
   }else{
     const finalBoss=res.boss&&res.act===3&&!S.over;
-    body=`<h2>Defeat</h2><div class="rw"><span style="color:var(--red)">−${res.lives} ❤️</span><span class="goldv">+${res.gold} 🪙</span>${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
+    body=`<h2>Defeat</h2><div class="rw"><span style="color:var(--red)">−${res.lives} ❤️</span><span class="goldv">+${res.gold} 🪙</span>${res.sgold&&!res.win?`<span class="stk l" title="Losing streak gold">🧊${-res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
       ${res.threat?`<div class="why"><span class="emo" style="font-size:1.6rem">${res.threat.e}</span><span><b>${esc(res.threat.name)}</b> hurt you most<br><span class="muted">${res.threat.dmg} damage</span></span></div>`:''}
       <div class="tip">💡 ${esc(res.tip)}</div>
       ${finalBoss?'<p class="muted" style="font-size:.85rem">Rehearsal round: +4 gold and 2 free rerolls. The boss returns 10% weaker.</p>':(res.boss&&!S.over?'<p class="muted" style="font-size:.85rem">The show goes on: on to the next act.</p>':'')}`;
@@ -2017,7 +2038,7 @@ function topBar(){
   const items=itemIcons();
   return `<header class="top">
     <div class="r1">
-      <div class="res"><span title="Lives">❤️ ${S.lives}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest (1 per 🪙5 held, up to 2)`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span><span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span>${S.lv?`<button class="lvb" data-a="lv-info" title="Game Level ${S.lv}: tap for its rules" aria-label="Game Level ${S.lv}: see its rules">Lv ${S.lv}</button>`:''}</div>
+      <div class="res"><span title="Lives">❤️ ${S.lives}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span>${S.lv?`<button class="lvb" data-a="lv-info" title="Game Level ${S.lv}: tap for its rules" aria-label="Game Level ${S.lv}: see its rules">Lv ${S.lv}</button>`:''}</div>
       <span class="row" style="gap:6px"><button class="btn sm" data-a="codex" aria-label="Open the Codex">📖 Codex</button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}</div>
@@ -2075,7 +2096,7 @@ function shopHTML(){
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
     return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
-      ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)} in pool</span></button>
+      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -2092,7 +2113,7 @@ function shopHTML(){
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
-      <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Rerolls cost 🪙1 for the first ${TUNE.rrStep} each round, then 1 more every ${TUNE.rrStep}">🔄 ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
+      <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Reroll the shop: 🪙${TUNE.reroll}">🔄 ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
       <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop">${S.locked?'🔒':'🔓'}</button>
       <button class="btn sm rankbtn" data-a="rank" ${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (unlocks ${RARITY[nx-1]}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:'Shop rank 5, the max'}">${gauge}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
       <span class="grow"></span>
@@ -2255,7 +2276,7 @@ function targetShort(id){const a=AIM[aimRule(id)];return a.e+' '+a.name;}
 function heroDetail(id,level){
   const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);const poolLine=S?`<p class="poolln">Pool: <b>${poolLeft(id)}</b> of ${poolMax(id)} copies left. ★★ takes 3 copies, ★★★ takes 6.</p>`:'';
   const range=d.genre==='ball'?'Throws':b.range==='melee'?'Melee':'Ranged';
-  return `<div class="hs-head">${heroPt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
+  return `<div class="hs-head">${heroArt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
     <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for genre':' · max ★★'}</span></div>
     <div class="statrow"><span>❤️ HP<b>${R(st.hp)}${d.crowd?' each':''}</b></span><span>⚔️ ATK<b>${R(st.atk)}${d.crowd?' each':''}</b></span><span>🛡️ Armor<b>${b.arm}</b></span><span>⏱ Speed<b>${b.spd}s</b></span></div>
     <div class="skill"><b>${SK[d.skill].name}</b> <span class="muted">· ${b.mana} energy</span><br>${SK[d.skill].d(st.p)}</div>
@@ -2362,7 +2383,8 @@ SCR.codex=()=>{
   let body='';
   if(tab==='how')body=`<div class="rules">
     <p><b>Each round</b> you get gold, shop, set up your board, then fight. At Game Level 0: 15 rounds of fights, 3 events and 3 bosses. You start with 10 ❤️; a loss costs 1–3 depending on the act (+1 for a boss). Beat the final boss to win.</p>
-    <p><b>Shop.</b> 🔄 rerolls for 🪙1 and 🔓 locks the shop for next round. Holding gold pays interest: 🪙1 per 5 held, up to 🪙2.</p>
+    <p><b>Shop.</b> 🔄 rerolls for 🪙2 and 🔓 locks the shop for next round.</p>
+    <p><b>Gold.</b> Every round pays 🪙5. <b>Interest:</b> 🪙1 for every 🪙10 you hold when the round ends, up to 🪙5 at 🪙50, so saving pays, but gold in the bank doesn't fight. <b>Streaks:</b> 2 or 3 fights in a row pay +1, 4 pay +2, 5 or more pay +3, for wins and for losses. A win pays +1 and a loss +1 and a free reroll. A good rhythm: bank early in each act and spend before the boss.</p>
     <p><b>Rarity and shop rank.</b> Characters are <span class="tier1" style="color:var(--tc)">Common</span>, <span class="tier2" style="color:var(--tc)">Uncommon</span>, <span class="tier3" style="color:var(--tc)">Rare</span>, <span class="tier4" style="color:var(--tc)">Epic</span> or <span class="tier5" style="color:var(--tc)">Mythic</span> (🪙1–5). ⬆️ Train the shop (🪙${RANK.train} for ${RANK.trainXp} XP; it also gets ${RANK.freeXp} XP free every round). Each full gauge is a rank, which unlocks the next rarity; ranks 2, 4 and 5 also add a board slot. Mythics only show up at Rank 5, and rarely. <button class="btn sm" data-a="rank-info">See the odds</button></p>
     <p><b>Leveling up.</b> 3 copies of a character combine into ★★; two ★★ combine into ★★★. Commons and Uncommons stop at ★★ (the Spin-off Deal Legendary lifts that). Maxed characters stop appearing in the shop. With the Talent Scout Legendary, the shop also offers ready-made ★★ cards; buying one levels up your best copy. The first time a Rare, Epic or Mythic character reaches ★★ or ★★★ you pick an item for your whole team (hold up to 5; pick one you have again to level it up, or sell one to free a slot).</p>
     <p><b>Board.</b> The top row is your front row; it gets hit first. Benched characters don't fight.</p>
