@@ -513,7 +513,7 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
 .spr{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;user-select:none;z-index:3;filter:drop-shadow(0 4px 2px rgba(0,0,0,.45))}
-.board .slot.hasspr{min-height:96px;justify-content:flex-end}
+.board .slot.hasspr{justify-content:flex-end}
 .board .slot.hasspr .nm,.board .slot.hasspr .row{position:relative;z-index:4}
 .board .slot.hasspr .spr{height:112px;bottom:calc(var(--gh,41px) + 10px - 15px)}
 .board .slot.hasspr[data-v^="n"] .spr{height:96px;bottom:calc(var(--gh,22px) + 8px - 11.5px)}
@@ -533,18 +533,24 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .board .slot.hasspr[data-v^="n"]{--sh:90px;--sb:calc(var(--gh,22px) + 8px);--sx:.55}
 .unit.hasspr{--sh:100px;--sb:36px}
 /* tall art rises out of the squares: leave headroom above each row and keep the row labels readable on top */
-.board{padding-top:22px}
-/* room for standing characters: taller squares (all of them, so rows line up), art scaled to fit; it may rise into the
-   gap above its square but never onto another square */
+.board{padding-top:10px}
+/* every board square is the same size whatever stands on it; the rows are spaced apart so standing art rises into the
+   gap above its square, never onto another square. Labels live above the board (header) and under the bench. */
 .field .bslot{min-height:128px}
-.board .slot{min-height:128px}
-.board .slot[data-v^="n"]{min-height:100px}
+.board .slot,.board .slot.hasspr{min-height:96px;height:96px}
+.board .slot[data-v^="n"],.board .slot.hasspr[data-v^="n"]{min-height:84px;height:84px}
+.board .frow{margin-top:40px}
+.board .bhead+.frow{margin-top:34px}
+.board .frow.bench{margin-top:44px}
+.board .bfoot{margin-top:2px}
+.board .slot.empty[data-v^="f"]::after,.board .slot.empty[data-v^="b"]::after{position:absolute;inset:0;display:grid;place-items:center;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:rgba(243,238,228,.22)}
+.board .slot.empty[data-v^="f"]::after{content:"Front"}
+.board .slot.empty[data-v^="b"]::after{content:"Back"}
 @media (max-width:560px){.board .slot.hasspr{--sx:.62}.board .slot.hasspr[data-v^="n"]{--sx:.4}.field .unit.hasspr{--sx:.62}}
-.board .rowlbl{position:relative;z-index:6;margin-top:18px}
+.board .rowlbl{position:relative;z-index:6}
 /* the ground shadow is baked into each image (under the bottom of the sprite), so no extra CSS shadows */
 .board .slot.hasspr::after,.unit.hasspr::after{content:none}
 .spr,.crowdspr img{filter:none}
-.board .rowlbl:first-child{margin-top:4px}
 .board .rowlbl span,.board .rowlbl b{background:rgba(14,13,16,.85);padding:1px 5px;border-radius:2px}
 .board .slot.hasspr .crowdspr~.nm,.board .slot.hasspr .row{position:relative;z-index:4}
 </style>
@@ -1898,12 +1904,11 @@ function boardHTML(){
   };
   const full=fielded().length>=bs;
   return `<section class="board" aria-label="Your board">
-      <div class="rowlbl"><span>Front row</span><b style="${full?'color:var(--gold)':''}">${fielded().length}/${bs} on board</b></div>
-      <div class="frow">${['f0','f1','f2'].map(cell).join('')}</div>
-      <div class="rowlbl"><span>Back row</span></div>
-      <div class="frow">${['b0','b1','b2'].map(cell).join('')}</div>
-      <div class="rowlbl"><span>Bench · doesn't fight</span></div>
+      <div class="rowlbl bhead"><span>Your board · front row faces the enemy</span><b style="${full?'color:var(--gold)':''}">${fielded().length}/${bs} on board</b></div>
+      <div class="frow" aria-label="Front row">${['f0','f1','f2'].map(cell).join('')}</div>
+      <div class="frow" aria-label="Back row">${['b0','b1','b2'].map(cell).join('')}</div>
       <div class="frow bench" aria-label="Bench">${benchSlots.map(cell).join('')}</div>
+      <div class="rowlbl bfoot"><span>Bench · doesn't fight</span></div>
     </section>`;
 }
 function synHTML(units){
