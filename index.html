@@ -635,7 +635,7 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.lvCutG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.335,2.858,2.448],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.335,2.858,2.448],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,buybackShops:2,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,lvXp:[.1,.05],lvElite:1.35,lvTrial:1.1,lvTrialGold:5,lvExtra:.9,lvTwin:1.3,lvCastDrop:1,lvPart2:1.4,lvMerchant:2,lvFoe:.005,lvFoeFrom:4};
 buildSchedule(false);
@@ -651,7 +651,7 @@ const EVENTS={
   trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +5 gold and pick 1 of 3 items.'},
   casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, one star lower (★ at least). None? Your best Rare becomes an Epic.'},
   cut:{name:'The Cut',e:'✂️',d:'The studio is over budget: one genre is cut from the show for the rest of the run.'},
-  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin for Uncommon, Rare or Epic. In your next shop, characters of that rarity sell back for what you paid.'},
+  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin for Uncommon, Rare or Epic. For your next 2 shops, characters of that rarity you already own sell back for what you paid.'},
   merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙2. It comes one level higher (★★ when new). Or pass.'},
 };
 const PLOT=['trial','casting','merchant'];
@@ -811,9 +811,12 @@ function benched(){return S.units.filter(u=>u.slot[0]==='n');}
 function highestOf(id){return S.units.filter(u=>u.id===id).sort((a,b)=>b.level-a.level)[0];}
 function maxedIds(){return new Set(S.units.filter(u=>u.level>=maxLv(u.id)).map(u=>u.id));}
 function sellValue(u){const half=Math.floor(PRICE[HERO[u.id].tier-1]*COPIES[u.level-1]/2); // half of the list price, rounded down
-  // Buyback Wheel: this shop only, the rolled rarity sells back for what you actually paid (free characters: half as usual)
-  return buybackOn(u)?Math.max(half,u.cost|0):half;}
-function buybackOn(u){return !!(S.buyback&&S.buyback.r===S.round&&HERO[u.id].tier===S.buyback.tier);}
+  // Buyback Wheel: for 2 shops, characters of the rolled rarity that you owned when the wheel stopped sell back for what
+  // you had paid for them then (free ones: half as usual). Anything bought after the spin sells for half, so you can't
+  // rent a board for a fight and return it.
+  return buybackOn(u)?Math.max(half,S.buyback.cost[u.uid]|0):half;}
+function buybackLive(){const b=S.buyback;return !!(b&&b.r>0&&S.round>=b.r&&S.round<b.r+TUNE.buybackShops);}
+function buybackOn(u){return buybackLive()&&HERO[u.id].tier===S.buyback.tier&&S.buyback.cost[u.uid]!=null;}
 function curRound(){return SCHEDULE[S.round-1];}
 
 function newRun(){
@@ -1077,8 +1080,8 @@ function eventPick(key){
     e.sub={kind:'recruit',ids:shuffle(HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0])).slice(0,3)};
   }
   if(key==='supply')e.sub={kind:'trinket',ids:trinketChoices(2,false)};
-  if(key==='wheel'){const i=Math.floor(rand()*WHEEL.length),t=WHEEL[i];e.wheel={i,j:rand()};S.buyback={tier:t,r:-1};
-    e.msg=`The wheel lands on ${RARITY[t-1]}! In your next shop, ${RARITY[t-1]} characters sell back for what you paid (free ones still sell for half).`;}
+  if(key==='wheel'){const i=Math.floor(rand()*WHEEL.length),t=WHEEL[i];e.wheel={i,j:rand()};S.buyback={tier:t,r:-1,cost:Object.fromEntries(S.units.filter(u=>HERO[u.id].tier===t).map(u=>[u.uid,u.cost|0]))};
+    e.msg=`The wheel lands on ${RARITY[t-1]}! For your next ${TUNE.buybackShops} shops, the ${RARITY[t-1]} characters you own now sell back for what you paid (free ones still sell for half).`;}
 }
 // The Cut: your 3 biggest genres (by characters you own) are on the table; from Game Level TUNE.cutRandomLv one of them is drawn at random
 function ownedIn(g){return S.units.filter(u=>HERO[u.id].genre===g);}
@@ -1747,7 +1750,7 @@ function shopHTML(){
   return `<section class="shopwrap" aria-label="Shop">
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: <span class="tier${nx}" style="color:var(--tc)">${RARITY[nx-1]}</span> · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
     <div class="shop">${cards}</div>
-    ${S.buyback&&S.buyback.r===S.round?`<p class="evnote">🎡 Buyback: ${RARITY[S.buyback.tier-1]} characters sell back for what you paid, this shop only.</p>`:''}
+    ${buybackLive()?`<p class="evnote">🎡 Buyback: ${RARITY[S.buyback.tier-1]} characters you owned at the spin sell back for what you paid${S.round===S.buyback.r+TUNE.buybackShops-1?' (last shop)':' (this shop and the next)'}.</p>`:''}
     <p class="holdhint">Tap a card to buy it. Hover (hold on phones) to see details. Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
@@ -2029,7 +2032,7 @@ SCR.codex=()=>{
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic swaps in for a wounded front-liner, and the Burrow Lurker tunnels into the enemy back row.</p>
     <p><b>The Cut.</b> The Act 3 event is always The Cut: one of your three biggest genres leaves the shop for good. Cut it for free and lose your characters of that genre, or pay gold to keep them. From Game Level 6 the studio picks the genre.</p>
     <p><b>Events</b> always happen on the same rounds: the 3rd round of each act (❓ on the round track). The Act 3 event is always ✂️ The Cut. An event never follows another event.</p>
-    <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. In your next shop, characters of that rarity sell back for what you actually paid (free ones still sell for half).</p>
+    <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. For your next 2 shops, the characters of that rarity you owned at the spin sell back for what you actually paid (free ones still sell for half; anything bought after the spin sells for half).</p>
     <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>
     <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; then a character waiting to rise (Bone Dragon) - characters always go before summons; then the oldest bench card steps in as one crowd.</p>
     <p><b>Positioning.</b> Lanes: characters attack the enemy front-liner in their own column first. Cover: a back-row character directly behind one of your Guardians takes 25% less damage. Neighbors: Medics heal the characters right beside them 50% more. Splash hits neighbors too.</p>
