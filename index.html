@@ -812,7 +812,7 @@ function buildSchedule(cut){
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
 const TUNE={growth:1.09,actMul:[2.218,2.715,2.326],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,rrStep:3,poolSize:[12,10,9,8,7],rivalTake:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.08,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.1,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:-0.006,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.15,lvEliteGold:3,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:0,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
@@ -866,7 +866,7 @@ const LEVELS=[
   {id:'rivals',e:'🏢',name:'Rival Studios',d:()=>`Rival studios draft from the same character pools: ${TUNE.rivalTake} copies every round, half of them from your biggest genre.`},
   {id:'plot',e:'🎲',name:'Plot Twists',d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant.'},
   {id:'xp1',e:'🐢',name:'Slow Promotions',d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP.`},
-  {id:'elite',e:'🌟',name:'Guest Stars',d:()=>`The fight before each boss is a mini-boss: enemies get +${pctOf(TUNE.lvElite-1)} HP and damage, and a win pays an item.`},
+  {id:'elite',e:'🌟',name:'Guest Stars',d:()=>`The fight before each boss is a mini-boss: enemies get +${pctOf(TUNE.lvElite-1)} HP and damage, and a win pays 🪙${TUNE.lvEliteGold}.`},
   {id:'life1',e:'💔',name:'Short Season',d:()=>'You start with 9 lives.'},
   {id:'twin',e:'😈',name:'Evil Twin',d:()=>`Bosses bring an evil twin of your strongest character, with +${pctOf(TUNE.lvTwin-1)} HP and damage but no skill.`},
   {id:'extras',e:'👥',name:'Crowd Scenes',d:()=>'From Act 2, normal fights bring an extra crowd of Nameless Mooks.'},
@@ -1857,7 +1857,8 @@ function settle(){
   S.gold+=g;S.stats.gold+=g;res.gold=g;
   if(res.boss&&ev.act<3&&S.lives>0)S.pending.push({kind:'legend',win});
   // Guest Stars / Trial by Fire: a win pays an item pick
-  if(win&&S.enemy&&(S.enemy.elite||S.enemy.trial)&&S.lives>0)S.pending.push({kind:S.enemy.elite?'elite':'trial',level:3});
+  if(win&&S.enemy&&S.enemy.trial&&S.lives>0)S.pending.push({kind:'trial',level:3});
+  if(win&&S.enemy&&S.enemy.elite){S.gold+=TUNE.lvEliteGold;}
   if(win&&S.enemy&&S.enemy.trial){S.gold+=TUNE.lvTrialGold;S.stats.gold+=TUNE.lvTrialGold;res.gold+=TUNE.lvTrialGold;}
   if(S.enemy&&S.enemy.trial)S.trial=0;
   S.lastWin=win;
