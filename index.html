@@ -292,7 +292,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .aim.mine{background:linear-gradient(90deg,transparent,var(--gold))}
 .aim.theirs{background:linear-gradient(90deg,transparent,var(--red))}
 @keyframes aimf{0%{opacity:.9}100%{opacity:0}}
-.scard.picked{outline:2px solid var(--gold);outline-offset:1px}
+#hovcard{position:fixed;z-index:70;width:min(320px,calc(100vw - 16px));max-height:70vh;overflow:auto;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 8px 28px rgba(0,0,0,.45);pointer-events:none;font-size:.88rem}
 .shopwrap.sellzone{outline:2px dashed var(--red);outline-offset:2px;position:relative}
 .shopwrap.sellzone::after{content:attr(data-sell);position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 70%,transparent);color:var(--red);font-family:var(--f-display);font-size:1.3rem;border-radius:14px;pointer-events:none}
 .scard .aimg{font-style:normal;font-size:.7rem;margin-right:1px}
@@ -1649,7 +1649,7 @@ function shopHTML(){
   return `<section class="shopwrap" aria-label="Shop">
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: <span class="tier${nx}" style="color:var(--tc)">${RARITY[nx-1]}</span> · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
     <div class="shop">${cards}</div>
-    <p class="holdhint">Tap a card to see it, tap again to buy. Drag a card onto a slot to buy it there, drag characters to move them, or onto the shop to sell.</p>
+    <p class="holdhint">Tap a card to buy it. Hover (hold on phones) to see details. Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
@@ -1960,10 +1960,7 @@ function onAction(a,v,el){
   switch(a){
     case 'new':clearSave();UI.insp=null;UI.sel=null;UI.swap=null;newRun(false);go();break;
     case 'continue':{const sv=loadSave();if(sv){restore(sv);go();}break;}
-    case 'pick':{const i=+v,o=S.shop[i];if(!o)break;
-      if(UI.pick===i){UI.pick=null;if(buy(i)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
-      UI.pick=i;const I={kind:'hero',id:o.id,level:o.level,shop:i};
-      if(isWide())showInfo(I);else{render();sheet(infoBody(I));}break;}
+    case 'pick':{hoverCard(null);if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
     case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
     case 'reroll':if(reroll())go();break;
     case 'lock':S.locked=!S.locked;go();break;
@@ -2072,7 +2069,20 @@ document.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.clos
 document.addEventListener('focusout',()=>vtip(null));
 document.addEventListener('touchstart',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');vtip(el);},{passive:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.sheetOpen==='info')closeSheet();});
+// hover card: on devices with a mouse, hovering a shop card or a board character shows its details next to it
+function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
+  let html='';if(el.dataset.a==='pick'){const o=S.shop[+el.dataset.v];if(o)html=heroDetail(o.id,o.level||1);}
+  else if(el.dataset.a==='slot'){const u=unitAt(el.dataset.v);if(u)html=infoBody({kind:'unit',uid:u.uid});}
+  if(!html){if(c)c.remove();return;}
+  if(!c){c=document.createElement('div');c.id='hovcard';c.setAttribute('role','tooltip');document.body.appendChild(c);}
+  if(c.dataset.k!==el.dataset.a+el.dataset.v){c.innerHTML=html;c.dataset.k=el.dataset.a+el.dataset.v;}
+  const r=el.getBoundingClientRect(),w=c.offsetWidth,h=c.offsetHeight;let x=r.right+8,y=r.top;
+  if(x+w>innerWidth-8)x=r.left-w-8;if(x<8)x=Math.max(8,Math.min(innerWidth-w-8,r.left+r.width/2-w/2));
+  if(y+h>innerHeight-8)y=Math.max(8,innerHeight-h-8);if(r.left-w-8<8&&r.right+8+w>innerWidth-8)y=r.top-h-8<8?r.bottom+8:r.top-h-8;
+  c.style.left=x+'px';c.style.top=y+'px';}
+const canHover=typeof matchMedia==='function'&&matchMedia('(hover:hover) and (pointer:fine)').matches;
 document.addEventListener('mouseover',e=>{
+  if(canHover&&UI.screen==='plan'&&!PT.drag){const el=e.target.closest&&e.target.closest('[data-a="pick"],[data-a="slot"]');hoverCard(el&&!(isWide()&&el.dataset.a==='pick')?el:null);}
   if(UI.screen!=='plan'||UI.sel||!isWide())return;
   const h=e.target.closest&&e.target.closest('[data-hov]');if(!h)return;
   const i=+h.dataset.hov;const o=S.shop[i];if(!o)return;
@@ -2084,6 +2094,7 @@ if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');con
 
 // ================= render / save / boot =================
 function render(){
+  if(typeof UI!=='undefined'&&UI.screen!=='plan'&&typeof hoverCard==='function')hoverCard(null);
   if(!S&&UI.screen!=='title'&&UI.screen!=='codex')UI.screen='title';
   $('#app').innerHTML=SCR[UI.screen]();
   if(UI.screen!=='battle'&&!UI.sheetOpen)showPending();
