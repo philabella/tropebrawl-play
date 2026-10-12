@@ -530,7 +530,7 @@ const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[
 const TRINKET_CAP=5, ITEM_MAX=3;
 // legendaries: one held at a time, offered after the Act 1 and Act 2 bosses
 const LEGENDS_ALL={
-  gameball:{name:'Game Ball',e:'⚽',genre:'ball',d:'Sportsball characters pass one ball instead of attacking. Each throw hits for their combined attack, +15% per pass (up to 2.5×).'},
+  gameball:{name:'Game Ball',e:'⚽',genre:'ball',d:'Sportsball characters pass one ball instead of attacking. The holder throws it at an enemy for the team\'s combined attack, and it bounces to the next Sportsball teammate: +15% per pass (up to 2.5×). Faster attackers throw sooner. A stunned or knocked-out holder fumbles and the streak resets.'},
   corner:{name:'Corner Office',e:'🏢',genre:'fin',d:'Your highest-level Finance hero also gets +3% damage per gold you hold, with no cap.'},
   mirror:{name:'Mirror Step',e:'🦋',genre:'elf',d:'Elves dodge half as often, but every dodged attack is thrown back at the attacker.'},
   martyr:{name:'Martyr\'s Vow',e:'🩸',genre:'grim',d:'Heroes start fights at half HP with an equal shield. Crusaders deal +40% damage below half HP.'},
@@ -1252,7 +1252,7 @@ function kill(t,src){
     if(legend('armydead')&&(B.raised||0)<TUNE.adMax&&summonSkeletons('A',3,1+TUNE.adP*B.round))B.raised=(B.raised||0)+1;
     if(src&&src.genre==='ball'&&B.syn.X.sponsor&&B.sponsor<3){B.sponsor++;B.goldEarned++;float(src,'+1🪙','heal');}
   }
-  if(B.ball&&B.ball.holder===t){const nx=nextBallHolder(t);B.ball.holder=nx;if(nx)nx.timer=Math.min(nx.timer,.4);}
+  if(B.ball&&B.ball.holder===t){const nx=nextBallHolder(t);B.ball.holder=nx;if(nx)nx.timer=Math.min(nx.timer,.4);if(B.ball.streak)float(nx||t,'Fumble!','ko');B.ball.streak=0;}
 }
 function heal(src,t,amt,silent){
   if(!t.alive)return 0;amt*=src?src.healMult:1;
@@ -1262,7 +1262,9 @@ function heal(src,t,amt,silent){
   t.hp+=real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
 }
 function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;float(t,'+'+R(amt),'shd');}
-function stunU(t,d){if(!t.alive||t.ccImmune)return;t.stun=Math.max(t.stun,d);}
+function stunU(t,d){if(!t.alive||t.ccImmune)return;t.stun=Math.max(t.stun,d);
+  // a stunned ball holder fumbles: the pass streak resets
+  if(B&&B.ball&&B.ball.holder===t&&B.ball.streak){B.ball.streak=0;float(t,'Fumble!','ko');}}
 function spell(u,t,base,aoe){return dealDamage(u,t,base*u.p*u.spellMult*outMult(u,t),'spell',aoe);}
 function spellFlat(u,t,amt){return dealDamage(u,t,amt*u.spellMult*outMult(u,t),'spell',false);}
 function regrow(u,n){if(!u.alive||!u.crowd)return;const cap=(u.capBodies||u.maxBodies)*u.bodyHp;const missing=cap-u.hp;if(missing<=0)return;u.hp+=Math.min(missing,n*u.bodyHp);if(u.hp>u.maxHp)u.maxHp=u.hp;}
@@ -1322,12 +1324,14 @@ function throwBall(u){
   const best={};ballOrder().forEach(b=>{const a=b.crowd?b.bodyAtk*bodies(b):b.atk+b.atkStack;best[b.id]=Math.max(best[b.id]||0,a);});
   const comb=Object.values(best).reduce((s,x)=>s+x,0);
   const mult=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);
-  ballFx(u,t,null,mult);
+  ballFx(u,t,null,mult);recoil(u,t,14);
   dealDamage(u,t,comb*mult*outMult(u,t),'attack');
   ballOrder().forEach(b=>{if(b.manaMax)b.mana=Math.min(b.manaMax,b.mana+TUNE.gbEnergy);});
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
   const nx=nextBallHolder(u);
-  if(nx&&nx!==u&&nx.id!==u.id){B.ball.holder=nx;B.ball.streak++;nx.timer=Math.min(nx.timer,nx.interval*TUNE.gbPass);}
+  if(nx&&nx!==u&&nx.id!==u.id){B.ball.holder=nx;B.ball.streak++;nx.timer=Math.min(nx.timer,nx.interval*TUNE.gbPass);
+    // the ball bounces off the enemy to the catcher (who throws again after one of its own attack intervals)
+    if(!B.silent&&!RM){const sp=B.speed,g=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);setTimeout(()=>{if(B&&!B.done&&t.el&&nx.el)projectile(t,nx,'ballp','⚽',14+g*7,240);},260/sp);}}
 }
 function blocked(u){return u.range==='melee'&&u.row==='back'&&!isDiver(u)&&u.genre!=='ball'&&!u.summon&&B.units.some(x=>x.side===u.side&&x.alive&&x.row==='front');}
 function act(u){
@@ -1443,13 +1447,16 @@ function projectile(u,t,cls,glyph,size){
   if(!B||B.silent||RM||!u.el||!t.el)return;
   const f=$('#field');if(!f)return;const fr=f.getBoundingClientRect(),ar=u.el.getBoundingClientRect(),br=t.el.getBoundingClientRect();
   const p=document.createElement('i');p.className='proj '+cls;if(glyph){p.textContent=glyph;p.style.fontSize=(size||20)+'px';}f.appendChild(p);
-  const an=p.animate([{transform:`translate(${ar.left+ar.width/2-fr.left}px,${ar.top+ar.height/2-fr.top}px) rotate(0deg)`},{transform:`translate(${br.left+br.width/2-fr.left}px,${br.top+br.height/2-fr.top}px) rotate(${glyph?360:0}deg)`}],{duration:260/B.speed,easing:'ease-in'});
+  const an=p.animate([{transform:`translate(${ar.left+ar.width/2-fr.left}px,${ar.top+ar.height/2-fr.top}px) rotate(0deg)`},{transform:`translate(${br.left+br.width/2-fr.left}px,${br.top+br.height/2-fr.top}px) rotate(${glyph?360:0}deg)`}],{duration:(arguments[5]||260)/B.speed,easing:'ease-in'});
   an.onfinish=()=>p.remove();
 }
 function ballFx(u,t,from,mult){if(!B||B.silent)return;projectile(from||u,t,'ballp',mult?'⚽':(BALLS[u.id]||'⚾'),mult?14+mult*7:18);}
+// ranged recoil: the shooter kicks back away from its target
+function recoil(u,t,px){if(!B||B.silent||RM||!u.el||!t||!t.el)return;const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect();const dx=(rb.left+rb.width/2)-(ra.left+ra.width/2),dy=(rb.top+rb.height/2)-(ra.top+ra.height/2),d=Math.hypot(dx,dy)||1;
+  u.el.animate([{transform:'translate(0,0) rotate(0deg)'},{transform:`translate(${-dx/d*px}px,${-dy/d*px}px) rotate(${dx>0?-4:4}deg)`,offset:.2},{transform:'translate(0,0) rotate(0deg)'}],{duration:280/B.speed,easing:'ease-out'});}
 function animAttack(u,t){
   if(B.silent||RM||!u.el||!t.el)return;
-  if(u.genre==='ball'){ballFx(u,t);return;}
+  if(u.genre==='ball'){ballFx(u,t);recoil(u,t,14);return;}
   // make every attack readable: the attacker glows; melee lunges at its target
   u.el.classList.remove('atk');void u.el.offsetWidth;u.el.classList.add('atk');
   const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect();
@@ -1463,7 +1470,7 @@ function animAttack(u,t){
   }else{
     // ranged: the shot flies, and the shooter recoils away from its target
     projectile(u,t,u.genre?'g-'+u.genre:'g-foe');
-    u.el.animate([{transform:'translate(0,0)'},{transform:`translate(${-dx/dist*9}px,${-dy/dist*9}px)`,offset:.25},{transform:'translate(0,0)'}],{duration:240/B.speed,easing:'ease-out'});
+    recoil(u,t,14);
   }
 }
 function mountUnit(u){
