@@ -12,6 +12,7 @@
   --bg:#121016; --bg2:#19161f; --panel:#221e2a; --panel2:#2b2635; --line:#393245;
   --ink:#f1ebe0; --muted:#a79fb0; --dim:#6f6779;
   --gold:#f2c14e; --gold-dk:#8d6d22; --red:#e0533d; --good:#6cc47a; --mana:#5d95e6; --shield:#d9e1ec; --leg:#ff9f43;
+  --dud:#3a3340;
   --r1:#b4adbf; --r2:#62d98b; --r3:#5aa9ff; --r4:#b98cff; --r5:#ff6b9d;
   --g-army:#a3b462; --g-orc:#de6f47; --g-elf:#5fcab8; --g-fin:#e9c352; --g-grim:#d84d60; --g-bug:#ab80ea; --g-ball:#4fa3f7; --g-undead:#8fd18a; --foe:#c45a4e;
   --f-display:"Bungee","Archivo Black",Impact,sans-serif;
@@ -92,6 +93,12 @@ button{font:inherit;color:inherit}
 .board{display:grid;gap:6px;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
 .frow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
 .frow.bench{grid-template-columns:repeat(5,minmax(0,1fr));padding-top:6px;border-top:1px dashed var(--line)}
+/* Buyback Wheel: characters that sell back at full price get a running gold border */
+@property --fsa{syntax:'<angle>';inherits:false;initial-value:0deg}
+.slot.fullsell{border-color:transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,conic-gradient(from var(--fsa),var(--gold),#fff6d6,var(--gold-dk),var(--gold),#fff6d6,var(--gold-dk),var(--gold)) border-box;border:3px solid transparent;box-shadow:0 0 14px color-mix(in srgb,var(--gold) 45%,transparent),inset 0 0 10px color-mix(in srgb,var(--gold) 18%,transparent);animation:fsspin 3s linear infinite}
+.slot.fullsell::after{content:'🎡';position:absolute;top:3px;left:4px;font-size:.62rem;font-family:var(--f-emoji)}
+@keyframes fsspin{to{--fsa:360deg}}
+@media (prefers-reduced-motion:reduce){.slot.fullsell{animation:none}}
 .slot{appearance:none;cursor:pointer;position:relative;min-height:88px;min-width:0;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 3px 6px;text-align:center}
 .slot.empty{border-style:dashed;background:transparent;color:var(--dim);font-size:1rem}
 .slot:not(.empty){border-color:color-mix(in srgb,var(--gc) 50%,var(--line))}
@@ -307,6 +314,8 @@ strong.lvon{color:var(--gold);font-weight:800}
 .wheelbox{position:relative;width:190px;height:190px;margin:4px auto 14px}
 .wptr{position:absolute;left:50%;top:-14px;transform:translateX(-50%);color:var(--gold);font-style:normal;font-size:1.3rem;z-index:2;text-shadow:0 2px 4px #000}
 .wheel{width:100%;height:100%;border-radius:50%;border:4px solid var(--gold);position:relative;transform:rotate(var(--rot));animation:wspin 2.2s cubic-bezier(.15,.85,.25,1) both;box-shadow:0 6px 24px rgba(0,0,0,.45)}
+.wheel span.dud{color:var(--muted);text-shadow:none}
+.wheel span.jack{font-size:.62rem;color:#1a1408;text-shadow:none}
 .wheel span{position:absolute;left:50%;top:50%;width:84px;margin:-.6em 0 0 -42px;text-align:center;font-weight:800;font-size:.78rem;color:#fff;text-shadow:0 1px 2px #000}
 @keyframes wspin{from{transform:rotate(0deg)}to{transform:rotate(var(--rot))}}
 .evresult.late{animation:evlate .4s 2.1s both}
@@ -399,12 +408,28 @@ strong.lvon{color:var(--gold);font-weight:800}
   .scard .pt{width:36px;height:36px;font-size:1.15rem}
 }
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* test panel */
+#dev{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:60;font-size:.85rem}
+#dev.open{left:12px;top:calc(12px + env(safe-area-inset-top,0px));display:flex;justify-content:flex-end;pointer-events:none}
+.dvfab{font:inherit;font-weight:800;background:#1d2a1f;color:#b9f2c4;border:1px dashed #6cc47a;border-radius:8px;padding:.5em .8em;cursor:pointer}
+.dvpanel{pointer-events:auto;width:min(420px,100%);max-height:100%;overflow:auto;background:#141a15;color:#e3f3e6;border:1px dashed #6cc47a;border-radius:10px;padding:12px;display:grid;gap:12px;box-shadow:0 12px 40px rgba(0,0,0,.6);font-family:ui-monospace,"Courier Prime",Menlo,monospace}
+.dvhead{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.dvhead b{color:#8fe3a0;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem}.dvhead span{flex:1;min-width:0;color:#a7c4ad;font-size:.78rem}
+.dvx{background:none;border:0;color:#a7c4ad;font-size:1rem;cursor:pointer}
+.dvsec{display:grid;gap:6px}.dvsec h4{margin:0;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:#6cc47a}
+.dvrow{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.dvb{font:inherit;font-size:.78rem;background:#1f2a21;color:#e3f3e6;border:1px solid #35503b;border-radius:6px;padding:.35em .6em;cursor:pointer}
+.dvb:hover{border-color:#8fe3a0}.dvb.on{background:#2f5a38;border-color:#8fe3a0}.dvb.hot{background:#6cc47a;color:#0c140e;border-color:#6cc47a;font-weight:800}
+.dvchk{display:flex;gap:6px;align-items:center;color:#a7c4ad;font-size:.78rem}
+#dev select{font:inherit;font-size:.78rem;background:#1f2a21;color:#e3f3e6;border:1px solid #35503b;border-radius:6px;padding:.25em}
+.dvnote{color:#7f9a85;font-size:.72rem;margin:0}
 </style>
 
 <div id="app"></div>
 <div id="scrim" hidden></div>
 <div id="sheet" hidden></div>
 <div id="toast" hidden></div>
+<div id="dev" hidden></div>
 
 <script>
 'use strict';
@@ -635,7 +660,7 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.lvCutG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.335,2.858,2.448],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,buybackShops:2,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.335,2.858,2.448],bossF:[1.9,1.6,0.95],lossCost:[1,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,lvXp:[.1,.05],lvElite:1.35,lvTrial:1.1,lvTrialGold:5,lvExtra:.9,lvTwin:1.3,lvCastDrop:1,lvPart2:1.4,lvMerchant:2,lvFoe:.005,lvFoeFrom:4};
 buildSchedule(false);
@@ -651,13 +676,13 @@ const EVENTS={
   trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +5 gold and pick 1 of 3 items.'},
   casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, one star lower (★ at least). None? Your best Rare becomes an Epic.'},
   cut:{name:'The Cut',e:'✂️',d:'The studio is over budget: one genre is cut from the show for the rest of the run.'},
-  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin for Uncommon, Rare or Epic. For your next 2 shops, characters of that rarity you already own sell back for what you paid.'},
+  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin the wheel. If it lands on a rarity you own, those characters sell back at full price for the rest of the run. Rarities you don\'t own are Duds; a thin ALL sliver covers everyone.'},
   merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙2. It comes one level higher (★★ when new). Or pass.'},
 };
 const PLOT=['trial','casting','merchant'];
 const NOPOOL=['cut',...PLOT]; // events that never come up at random
-const WHEEL=[2,3,4]; // Uncommon, Rare, Epic (never Common or Mythic)
-const EVFLAV={wheel:'A game-show host wheels out a giant prize wheel. The studio will buy back some of your cast at cost.',recruit:'A free agent is waiting by the stage door, headshot in hand.',payday:'The studio finally paid you back for the catering.',supply:'A crate of props arrives from the prop department.',
+const WHEEL=[1,2,3,4]; // Common..Epic (never Mythic); a rarity you own none of is a Dud
+const EVFLAV={wheel:'A game-show host wheels out a giant prize wheel. The studio will buy back part of your cast at full price, forever.',recruit:'A free agent is waiting by the stage door, headshot in hand.',payday:'The studio finally paid you back for the catering.',supply:'A crate of props arrives from the prop department.',
   deal:'A shady producer offers a bag of cash. The fine print mentions your health.',promotion:'One of your extras has been working on their lines.',reinforce:'The understudies are ready to step in.',
   trial:'A rival crew dares you to film the next scene without a safety net.',casting:'An agent swears they can get one of your actors a bigger part.',merchant:'A traveling prop seller rolls a cart onto the set.'};
 function evDesc(k){
@@ -703,8 +728,9 @@ function lvDials(n){const R=rulesFor(n),h=id=>R.includes(id);
   return `${rounds} rounds · ${lives} lives · shop XP ${xp?'+'+pctOf(xp):'normal'} · ${bosses} bosses${h('elite')?' + 3 mini-bosses':''}${foeStep(n)?' · enemies +'+pctOf(foeStep(n)):''}`;}
 function lvLoad(){let j={};try{j=JSON.parse(localStorage.getItem(LV_KEY)||'{}')||{};}catch(e){}
   const open=Math.max(0,Math.min(LV_MAX,j.open|0));
+  if(DEV.on&&DEV.all)return {open:LV_MAX,won:Array.isArray(j.won)?j.won:[],pick:Math.max(0,Math.min(LV_MAX,j.pick|0)),dev:1};
   return {open,won:Array.isArray(j.won)?j.won.filter(n=>n>=0&&n<=open):[],pick:Math.max(0,Math.min(open,j.pick|0))};}
-function lvStore(p){try{localStorage.setItem(LV_KEY,JSON.stringify(p));}catch(e){}}
+function lvStore(p){if(p.dev){try{const j=JSON.parse(localStorage.getItem(LV_KEY)||'{}')||{};j.pick=p.pick;localStorage.setItem(LV_KEY,JSON.stringify(j));}catch(e){}return;}try{localStorage.setItem(LV_KEY,JSON.stringify(p));}catch(e){}}
 // called once when a run ends (from the result screen): a win unlocks the next level and selects it
 function lvRecord(){
   if(!S||!S.over||S.recorded)return;S.recorded=true;
@@ -811,12 +837,12 @@ function benched(){return S.units.filter(u=>u.slot[0]==='n');}
 function highestOf(id){return S.units.filter(u=>u.id===id).sort((a,b)=>b.level-a.level)[0];}
 function maxedIds(){return new Set(S.units.filter(u=>u.level>=maxLv(u.id)).map(u=>u.id));}
 function sellValue(u){const half=Math.floor(PRICE[HERO[u.id].tier-1]*COPIES[u.level-1]/2); // half of the list price, rounded down
-  // Buyback Wheel: for 2 shops, characters of the rolled rarity that you owned when the wheel stopped sell back for what
-  // you had paid for them then (free ones: half as usual). Anything bought after the spin sells for half, so you can't
-  // rent a board for a fight and return it.
-  return buybackOn(u)?Math.max(half,S.buyback.cost[u.uid]|0):half;}
-function buybackLive(){const b=S.buyback;return !!(b&&b.r>0&&S.round>=b.r&&S.round<b.r+TUNE.buybackShops);}
-function buybackOn(u){return buybackLive()&&HERO[u.id].tier===S.buyback.tier&&S.buyback.cost[u.uid]!=null;}
+  // Buyback Wheel: characters you owned when the wheel stopped on their rarity sell back for what you paid for them
+  // then, for the rest of the run (free ones: half as usual). The refund is locked at the spin, so nothing bought later
+  // counts and no refund can exceed what you spent.
+  if(!buybackOn(u))return half;const full=S.fullSell[u.uid]|0;
+  return Math.max(half,full+Math.floor(Math.max(0,(u.cost|0)-full)/2));}
+function buybackOn(u){return !!(S.fullSell&&S.fullSell[u.uid]!=null);}
 function curRound(){return SCHEDULE[S.round-1];}
 
 function newRun(){
@@ -932,6 +958,7 @@ function checkMerges(){
           const parts=same.slice(0,need);
           parts.sort((a,b)=>(a.slot[0]==='n'||a.slot==='tmp')-(b.slot[0]==='n'||b.slot==='tmp'));
           const keep=parts[0];keep.cost=parts.reduce((t,p)=>t+(p.cost||0),0);
+          if(S.fullSell&&parts.some(p=>S.fullSell[p.uid]!=null)){const fs=parts.reduce((t,p)=>t+(S.fullSell[p.uid]|0),0);parts.forEach(p=>delete S.fullSell[p.uid]);S.fullSell[keep.uid]=fs;}
           parts.slice(1).forEach(p=>{S.units=S.units.filter(x=>x!==p);});
           if(keep.slot==='tmp')keep.slot=freeSlotFor(keep.id)||'tmp';
           levelUp(keep);changed=true;
@@ -1031,7 +1058,6 @@ function enemyStats(e){
 function startRound(){
   const ev=curRound();
   S.event=null;S.enemy=null;
-  if(S.buyback&&S.buyback.r<0&&ev.type!=='event')S.buyback.r=S.round; // the Buyback Wheel applies to the next shop
   // The Cut: the Act 3 event is always the cut, and it can't be skipped
   if(ev.type==='event'&&ev.act===3&&TUNE.cutOn){S.event={opts:['cut'],picked:'cut',sub:{kind:'cut',ids:cutChoices()},cut:true};UI.screen='event';return;}
   if(ev.type==='event'){let opts=shuffle(Object.keys(EVENTS).filter(k=>!NOPOOL.includes(k))).slice(0,3);if(S.round===3&&!opts.includes('supply'))opts[2]='supply';
@@ -1080,8 +1106,16 @@ function eventPick(key){
     e.sub={kind:'recruit',ids:shuffle(HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0])).slice(0,3)};
   }
   if(key==='supply')e.sub={kind:'trinket',ids:trinketChoices(2,false)};
-  if(key==='wheel'){const i=Math.floor(rand()*WHEEL.length),t=WHEEL[i];e.wheel={i,j:rand()};S.buyback={tier:t,r:-1,cost:Object.fromEntries(S.units.filter(u=>HERO[u.id].tier===t).map(u=>[u.uid,u.cost|0]))};
-    e.msg=`The wheel lands on ${RARITY[t-1]}! For your next ${TUNE.buybackShops} shops, the ${RARITY[t-1]} characters you own now sell back for what you paid (free ones still sell for half).`;}
+  if(key==='wheel'){
+    // segments: Common..Epic; a rarity you own none of (board + bench) is a Dud
+    // plus a thin jackpot sliver ('all': every character you own except Mythics)
+    const segs=[...WHEEL.map(t=>S.units.some(u=>HERO[u.id].tier===t)?t:0),'all'],w=segs.map(t=>t==='all'?TUNE.wheelJackpot:(1-TUNE.wheelJackpot)/WHEEL.length);
+    let x=rand(),i=0;while(i<segs.length-1&&x>=w[i]){x-=w[i];i++;}if(DEV.on&&DEV.wheel){const k=DEV.wheel==='all'?segs.length-1:DEV.wheel==='dud'?segs.indexOf(0):segs.indexOf(+DEV.wheel);if(k>=0)i=k;}const t=segs[i];e.wheel={i,j:rand(),segs,w};
+    if(!t){e.msg='Dud! The wheel stops on a rarity you don\'t own. Nothing happens.';}
+    else{S.fullSell=S.fullSell||{};const got=S.units.filter(u=>(t==='all'?HERO[u.id].tier<5:HERO[u.id].tier===t)&&S.fullSell[u.uid]==null);const rn=t==='all'?'':RARITY[t-1]+' ';got.forEach(u=>{S.fullSell[u.uid]=u.cost|0;});
+      const paid=got.filter(u=>u.cost>0).length;
+      e.msg=`${t==='all'?'JACKPOT! ':''}The wheel lands on ${t==='all'?'ALL':RARITY[t-1]}! ${got.length===1?'Your':'All '+got.length} ${rn}character${got.length===1?'':'s'} now sell${got.length===1?'s':''} back at full price for the rest of the run${t==='all'?' (Mythics excluded)':''}${paid<got.length?'; free ones still sell for half':''}. Characters you buy later don't count.`;}
+  }
 }
 // The Cut: your 3 biggest genres (by characters you own) are on the table; from Game Level TUNE.cutRandomLv one of them is drawn at random
 function ownedIn(g){return S.units.filter(u=>HERO[u.id].genre===g);}
@@ -1708,7 +1742,7 @@ function boardHTML(){
     const u=unitAt(slot);const isSel=sel===slot;
     if(!u)return `<button class="slot empty" data-a="slot" data-v="${slot}" aria-label="Empty slot"></button>`;
     const d=HERO[u.id];
-    return `<button class="slot g-${d.genre} tier${d.tier}${isSel?' sel':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${heroPt(u.id)}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
+    return `<button class="slot g-${d.genre} tier${d.tier}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${heroPt(u.id)}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
   };
   const full=fielded().length>=bs;
   return `<section class="board" aria-label="Your board">
@@ -1750,7 +1784,7 @@ function shopHTML(){
   return `<section class="shopwrap" aria-label="Shop">
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: <span class="tier${nx}" style="color:var(--tc)">${RARITY[nx-1]}</span> · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
     <div class="shop">${cards}</div>
-    ${buybackLive()?`<p class="evnote">🎡 Buyback: ${RARITY[S.buyback.tier-1]} characters you owned at the spin sell back for what you paid${S.round===S.buyback.r+TUNE.buybackShops-1?' (last shop)':' (this shop and the next)'}.</p>`:''}
+    ${S.units.some(buybackOn)?`<p class="evnote">🎡 ${S.units.filter(buybackOn).length} of your characters sell back at full price (Buyback Wheel).</p>`:''}
     <p class="holdhint">Tap a card to buy it. Hover (hold on phones) to see details. Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
@@ -1808,10 +1842,11 @@ SCR.battle=()=>{
     <div style="margin-top:10px">${synHTML(fielded())}</div>
   </section>`;
 };
-function wheelHTML(w){const n=WHEEL.length,seg=360/n,cols=['#4fa36b','#4f86d6','#a05bd6'];
-  const grad=WHEEL.map((t,k)=>`${cols[k%3]} ${k*seg}deg ${(k+1)*seg}deg`).join(',');
-  const rot=RM?360-(w.i+.5)*seg:1440+360-(w.i+.5)*seg+(w.j-.5)*seg*.6;
-  const lab=WHEEL.map((t,k)=>`<span style="transform:rotate(${(k+.5)*seg}deg) translateY(-62px) rotate(${-(k+.5)*seg}deg)">${RARITY[t-1]}</span>`).join('');
+function wheelHTML(w){const segs=w.segs||WHEEL,n=segs.length,ws=w.w||segs.map(()=>1/n),a0=ws.map((x,k)=>360*ws.slice(0,k).reduce((p,q)=>p+q,0)),sz=ws.map(x=>360*x);
+  const col=t=>t==='all'?'var(--gold)':t?`var(--r${t})`:'var(--dud)';
+  const grad=segs.map((t,k)=>`${col(t)} ${a0[k]}deg ${a0[k]+sz[k]}deg`).join(',');
+  const mid=a0[w.i]+sz[w.i]/2,rot=RM?360-mid:1440+360-mid+(w.j-.5)*sz[w.i]*.6;
+  const lab=segs.map((t,k)=>`<span class="${t==='all'?'jack':t?'':'dud'}" style="transform:rotate(${a0[k]+sz[k]/2}deg) translateY(-${t==='all'?70:58}px) rotate(${-(a0[k]+sz[k]/2)}deg)">${t==='all'?'ALL':t?RARITY[t-1]:'Dud'}</span>`).join('');
   return `<div class="wheelbox"><i class="wptr">▼</i><div class="wheel" style="background:conic-gradient(${grad});--rot:${rot}deg">${lab}</div></div>`;}
 SCR.event=()=>{
   const e=S.event;let body,art='🎬',title='Intermission',flav='Between scenes, the crew comes to you with a choice.';
@@ -2032,7 +2067,7 @@ SCR.codex=()=>{
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic swaps in for a wounded front-liner, and the Burrow Lurker tunnels into the enemy back row.</p>
     <p><b>The Cut.</b> The Act 3 event is always The Cut: one of your three biggest genres leaves the shop for good. Cut it for free and lose your characters of that genre, or pay gold to keep them. From Game Level 6 the studio picks the genre.</p>
     <p><b>Events</b> always happen on the same rounds: the 3rd round of each act (❓ on the round track). The Act 3 event is always ✂️ The Cut. An event never follows another event.</p>
-    <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. For your next 2 shops, the characters of that rarity you owned at the spin sell back for what you actually paid (free ones still sell for half; anything bought after the spin sells for half).</p>
+    <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. Spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud. A thin gold ALL sliver (6%) covers every rarity but Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
     <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>
     <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; then a character waiting to rise (Bone Dragon) - characters always go before summons; then the oldest bench card steps in as one crowd.</p>
     <p><b>Positioning.</b> Lanes: characters attack the enemy front-liner in their own column first. Cover: a back-row character directly behind one of your Guardians takes 25% less damage. Neighbors: Medics heal the characters right beside them 50% more. Splash hits neighbors too.</p>
@@ -2147,7 +2182,7 @@ function clickSlot(slot){
   if(unitAt(slot)){const u=unitAt(slot);UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};render();return;}
   UI.sel=null;UI.insp=null;render();
 }
-function go(){save();render();}
+function go(){save();render();if(DEV.on)devPaint();}
 // ---- hold a shop card or character to see it; drag a card or character onto a slot to buy or move ----
 const PT={src:null};
 function holdView(src){
@@ -2245,11 +2280,67 @@ function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.removeIt
 function snapshot(){return S?{v:SAVE_KEY,S,screen:UI.screen==='battle'?'plan':UI.screen,speed:UI.speed}:{};}
 // restore a saved run; a fight that was already settled on the result screen is advanced, never replayed
 function restore(sv){S=sv.S;buildSchedule(rule('cut'));S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=sv.speed||1;UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
+
+// ================= test panel (for Philippe; playtesters never see it) =================
+// Open: add #dev to the link, or press the ` key. Lets you pick any Game Level and open any event screen.
+const DEV_KEY='tropebrawl-dev';
+const DEV=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(DEV_KEY)||'{}')||{};}catch(e){}return {on:!!d.on,all:d.all!==false,wheel:'',open:false};})();
+function devSave(){try{localStorage.setItem(DEV_KEY,JSON.stringify({on:DEV.on,all:DEV.all}));}catch(e){}}
+function devRun(){if(!S||S.over){clearSave();newRun(false);}if(!S.units.length)devCast();}
+function devCast(){const by=t=>HEROES.filter(h=>h[4]===t&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);const free=['f1','f0','f2','b1','b0','b2'].filter(x=>!S.units.some(u=>u.slot===x)).slice(0,Math.max(0,boardSize()-fielded().length)),slots=[...free,'n0','n1','n2','n3','n4'].filter(x=>!S.units.some(u=>u.slot===x));
+  [1,1,2,2,3,3,4,1].forEach((t,k)=>{const p=by(t);if(!p.length||!slots[k])return;const id=p[(k*7)%p.length];if(S.units.some(u=>u.slot===slots[k]))return;S.units.push({uid:S.uid++,id,level:1,slot:slots[k],cost:PRICE[t-1]});});}
+function devEvent(k){devRun();UI.cutMode=null;UI.sheetOpen=false;
+  if(k==='cut')S.event={opts:['cut'],picked:'cut',sub:{kind:'cut',ids:cutChoices()},cut:true};
+  else if(k==='round'){let o=shuffle(Object.keys(EVENTS).filter(x=>!NOPOOL.includes(x))).slice(0,3);S.event={opts:o,picked:null,sub:null};}
+  else S.event={opts:[k],picked:null,sub:null};
+  UI.screen='event';go();}
+function devHTML(){
+  const lvs=[0,...LEVELS.map((_,i)=>i+1)].map(n=>`<button class="dvb${(UI.lv|0)===n?' on':''}" data-d="lv" data-v="${n}">${n}</button>`).join('');
+  const evs=[...Object.keys(EVENTS).filter(k=>k!=='cut'),'cut'].map(k=>`<button class="dvb" data-d="ev" data-v="${k}">${EVENTS[k].e} ${EVENTS[k].name}</button>`).join('');
+  const wh=[['','Random'],['1','Common'],['2','Uncommon'],['3','Rare'],['4','Epic'],['all','ALL'],['dud','Dud']].map(([v,n])=>`<button class="dvb${DEV.wheel===v?' on':''}" data-d="wheel" data-v="${v}">${n}</button>`).join('');
+  const run=S&&!S.over;
+  return `<div class="dvhead"><b>Test panel</b><span>${run?`Round ${S.round} · Level ${S.lv} · 🪙${S.gold} · ❤️${S.lives} · Rank ${S.rank}`:'No run yet: any button below starts one'}</span><button class="dvx" data-d="close" aria-label="Close test panel">✕</button></div>
+  <div class="dvsec"><h4>Game Level</h4><div class="dvrow">${lvs}</div>
+    <label class="dvchk"><input type="checkbox" id="dv-all" data-d="all" ${DEV.all?'checked':''}> Unlock every level (wins aren't saved while this is on)</label>
+    <div class="dvrow"><button class="dvb hot" data-d="newrun">Start a run at Level ${UI.lv|0}</button></div></div>
+  <div class="dvsec"><h4>Open an event</h4><div class="dvrow">${evs}<button class="dvb" data-d="ev" data-v="round">🎲 Random 3-pick</button></div>
+    <p class="dvnote">Starts a run with a sample cast if you have none. The Cut uses your owned genres (one random genre from Level ${TUNE.cutRandomLv}).</p></div>
+  <div class="dvsec"><h4>Buyback Wheel lands on</h4><div class="dvrow">${wh}</div></div>
+  <div class="dvsec"><h4>Run</h4><div class="dvrow">
+    <button class="dvb" data-d="gold" data-v="10">+🪙10</button><button class="dvb" data-d="lives" data-v="2">+2 ❤️</button><button class="dvb" data-d="lives" data-v="-2">−2 ❤️</button>
+    <button class="dvb" data-d="rank">Rank up</button><button class="dvb" data-d="cast">Add sample cast</button>
+    <button class="dvb" data-d="end">End screen</button></div>
+    <div class="dvrow"><label class="dvchk" for="dv-round">Jump to round</label><select id="dv-round" data-d="round">${SCHEDULE.map((x,i)=>`<option value="${i+1}" ${run&&S.round===i+1?'selected':''}>${i+1} · ${x.type==='event'?(x.act===3&&TUNE.cutOn?'The Cut':'event'):x.type}</option>`).join('')}</select></div></div>
+  <div class="dvsec"><div class="dvrow"><button class="dvb" data-d="off">Turn test mode off</button></div></div>`;}
+function devPaint(){const el=document.getElementById('dev');if(!el)return;el.hidden=!DEV.on;if(!DEV.on)return;
+  el.className=DEV.open?'open':'';el.innerHTML=DEV.open?`<div class="dvpanel" role="dialog" aria-label="Test panel">${devHTML()}</div>`:`<button class="dvfab" data-d="open">🛠 Test</button>`;}
+function devAct(d,v,el){
+  switch(d){
+    case 'open':DEV.open=true;break;
+    case 'close':DEV.open=false;break;
+    case 'off':DEV.on=false;DEV.open=false;devSave();break;
+    case 'all':DEV.all=!!el.checked;devSave();break;
+    case 'lv':{UI.lv=+v;const p=lvLoad();p.pick=Math.min(+v,p.open);lvStore(p);UI.lv=+v;if(UI.screen==='title')render();break;}
+    case 'newrun':clearSave();UI.insp=null;UI.sel=null;UI.swap=null;newRun(false);DEV.open=false;go();break;
+    case 'ev':devEvent(v);DEV.open=false;break;
+    case 'wheel':DEV.wheel=v;break;
+    case 'gold':devRun();S.gold+=+v;go();break;
+    case 'lives':devRun();S.lives=Math.max(1,Math.min(maxLives(),S.lives+(+v)));go();break;
+    case 'rank':devRun();if(S.rank<5){S.rank++;S.xp=0;}go();break;
+    case 'cast':devRun();devCast();go();break;
+    case 'end':devRun();S.over=true;S.result=S.result||'lose';UI.screen='end';DEV.open=false;render();break;
+    case 'round':devRun();S.round=+v;S.event=null;startRound();DEV.open=false;go();break;
+  }
+  devPaint();}
+document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest('#dev [data-d]');if(!t||t.tagName==='SELECT')return;devAct(t.dataset.d,t.dataset.v,t);});
+document.addEventListener('change',e=>{const t=e.target.closest&&e.target.closest('#dev [data-d]');if(t&&(t.tagName==='SELECT'))devAct(t.dataset.d,t.value,t);});
+document.addEventListener('keydown',e=>{if(e.key==='`'&&!/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))){DEV.on=true;DEV.open=!DEV.open;devSave();devPaint();}});
+if(typeof location!=='undefined'&&location.hash==='#dev'){DEV.on=true;devSave();}
 function start(data){
   UI.lv=lvLoad().pick;
   if(data&&(data.v===SAVE_KEY||data.v===OLD_SAVE_KEY)&&data.S&&!data.S.over)restore(data);
   else UI.screen='title';
-  render();
+  render();devPaint();
 }
 window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
