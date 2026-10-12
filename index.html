@@ -288,6 +288,11 @@ strong.lvon{color:var(--gold);font-weight:800}
 .flt{position:absolute;top:22%;left:50%;transform:translateX(-50%);font-family:var(--f-display);font-size:.95rem;pointer-events:none;white-space:nowrap;text-shadow:0 2px 0 var(--bg),0 0 5px var(--bg);animation:rise .9s ease-out forwards;z-index:3}
 .flt.crit{color:var(--gold);font-size:1.3rem}.flt.heal{color:var(--good)}.flt.sp{color:var(--mana);font-size:.75rem}.flt.shd{color:var(--shield);font-size:.8rem}.flt.miss{color:var(--muted);font-size:.75rem}.flt.ko{color:var(--red);font-size:1.25rem}
 @keyframes rise{0%{opacity:0;translate:0 6px}15%{opacity:1}100%{opacity:0;translate:0 -32px}}
+.aim{position:absolute;height:2px;transform-origin:0 50%;pointer-events:none;z-index:3;border-radius:2px;animation:aimf .42s ease-out forwards}
+.aim.mine{background:linear-gradient(90deg,transparent,var(--gold))}
+.aim.theirs{background:linear-gradient(90deg,transparent,var(--red))}
+@keyframes aimf{0%{opacity:.9}100%{opacity:0}}
+.scard .aimg{font-style:normal;font-size:.7rem;margin-right:1px}
 .proj{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--gc);box-shadow:0 0 10px var(--gc);pointer-events:none;z-index:4}
 .proj.ballp{width:auto;height:auto;background:none;box-shadow:none;font-family:var(--f-emoji);left:-10px;top:-10px;line-height:1}
 .streak{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-size:.9rem;color:var(--leg);padding:.15em .6em;border:1px solid var(--leg);border-radius:999px}
@@ -441,7 +446,7 @@ const HEROES_ALL=[
  ['commando','Commando','army','stalker',1,0,'snatch','🔪','Face paint on, knife out, already behind you.'],
  ['radio','Radio Operator','army','mystic',2,0,'artillery','📻','Coordinates are a love language.'],
  ['mule','Ammo Mule','army','brawler',2,0,'moreshells','🎒','Eighty pounds of shells. Zero complaints. Some punching.'],
- ['fieldmed','Field Medic','army','medic',3,0,'triage','⛑️','Has carried every one of you at least once.'],
+ ['fieldmed','Field Medic','army','medic',3,0,'fallback','⛑️','Has carried every one of you at least once.'],
  ['observer','Forward Observer','army','guardian',4,0,'onmypos','📡','Calls shells on himself. Somehow walks away every time.'],
  ['gunny','Gunnery Sergeant','army','gunner',5,0,'openfire','📣','Has one volume setting: OPEN FIRE.'],
  ['ironhide','Ironhide','orc','guardian',1,0,'warcry','🐗','Scarred, grinning, immovable.'],
@@ -463,7 +468,7 @@ const HEROES_ALL=[
  ['ravager','Ravager Brood','bug','brawler',1,1,'frenzy','🐜','Hungry from the moment they hatch.'],
  ['spitters','Acid Spitters','bug','gunner',1,1,'acid','🐛','The acid is the argument.'],
  ['beetles','Shellback Beetles','bug','guardian',1,1,'swell','🐞','Step on one and two more show up.'],
- ['lurker','Burrow Lurker','bug','stalker',2,0,'ambush','🪱','The ground was quiet. Then it wasn\'t.'],
+ ['lurker','Burrow Lurker','bug','stalker',2,0,'tunnel','🪱','The ground was quiet. Then it wasn\'t.'],
  ['nurse','Nurse Bee','bug','medic',2,0,'wastenot','🐝','Nothing in the hive goes to waste.'],
  ['queen','Brood Queen','bug','mystic',3,0,'spawn','🕷️','Every child is a weapon.'],
  ['scorpion','Emperor Scorpion','bug','brawler',4,0,'numbers','🦂','Fights harder with the whole hive watching.'],
@@ -688,6 +693,12 @@ const SK={
  scream:{name:'Psychic Scream',d:p=>`${R(40*p)} damage to 3 random enemies and a 1s stun each.`,cast(u){shuffle(targetFoes(u)).slice(0,3).forEach(x=>{spell(u,x,40,true);stunU(x,1);});}},
  frenzy:{name:'Feeding Frenzy',d:p=>`Bites its target for 5 per body and heals itself for the damage (${bodiesFromP(p)} bodies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(t){const d=spellFlat(u,t,5*bodies(u)*u.tierM);heal(null,u,d);}}},
  acid:{name:'Acid Volley',d:p=>`Every body spits at a random enemy for 8 and −3 armor (${bodiesFromP(p)} spits).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,8*u.tierM);t.armDown=Math.max(t.armDown,3);t.armDownT=4;}}},
+ fallback:{name:'Fall Back!',d:p=>`Swaps places with your most wounded front-liner (from the back row), then heals it for ${R(50*p)} and shields it for ${R(30*p)}.`,cast(u){const w=allies(u).filter(a=>a!==u&&a.row==='front'&&Z(a)===a.side&&!a.summon&&a.hp<a.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];
+   if(w&&u.row==='back'&&Z(u)===u.side){[u.row,w.row]=[w.row,u.row];[u.col,w.col]=[w.col,u.col];float(w,'Fall back!','sp');}
+   const t=w||wounded(u,1)[0];if(t){heal(u,t,50*u.p);shieldU(u,t,30*u.p);}}},
+ tunnel:{name:'Tunnel',d:p=>`Burrows into the enemy back row and fights from there, hitting the weakest back-row enemy for ${R(60*p)}. A Swarm hatchling fills the hole it left.`,cast(u){const fs=u.side==='A'?'E':'A';
+   if(Z(u)===u.side){const sl=emptySlots(fs).filter(x=>x[0]==='back');if(sl.length){u.zone=fs;u.row='back';u.col=sl[0][1];float(u,'Tunnel!','sp');if(u.side==='A'&&typeof summonHatch==='function')summonHatch(u);}}
+   const t=backWeakest(u);if(t)spell(u,t,60);}},
  ambush:{name:'Ambush',d:p=>`Hits the weakest back-row enemy for ${R(60*p)}, then vanishes for 1.5s.`,cast(u){const t=backWeakest(u);if(t)spell(u,t,60);u.untarget=1.5;}},
  spawn:{name:'Spawn Brood',d:p=>`All your crowds regrow 2 bodies; ${p>=3?7:p>=1.8?5:3} hatchlings join you (or ${R(25*p)} to every enemy).`,cast(u){allies(u).filter(a=>a.crowd).forEach(a=>regrow(a,2));if(!summonHatch(u))targetFoes(u).forEach(x=>spell(u,x,25,true));}},
  bonevolley:{name:'Bone Volley',d:p=>`Every archer shoots a random enemy for 6 (${bodiesFromP(p)} archers).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,6*u.tierM);}}},
@@ -1174,7 +1185,7 @@ const randFoe=u=>{const f=targetFoes(u);return f.length?pick(f):null;};
 const lowest=l=>l.length?l.reduce((a,b)=>b.hp<a.hp?b:a):null;
 function wounded(u,n){return allies(u).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp).slice(0,n);}
 function backWeakest(u){const f=targetFoes(u);const bk=f.filter(x=>x.row==='back');return lowest(bk.length?bk:f);}
-function beside(t){return B.units.filter(x=>x!==t&&x.side===t.side&&targetable(x)&&x.row===t.row&&Math.abs(x.col-t.col)===1);}
+function beside(t){return B.units.filter(x=>x!==t&&x.side===t.side&&Z(x)===Z(t)&&targetable(x)&&x.row===t.row&&Math.abs(x.col-t.col)===1);}
 function rowMost(u){const f=targetFoes(u);const fr=f.filter(x=>x.row==='front'),bk=f.filter(x=>x.row==='back');const cnt=l=>l.reduce((s,x)=>s+bodies(x),0);return cnt(fr)>=cnt(bk)?fr:bk;}
 function nearest(u,l){return l.reduce((a,b)=>{const da=Math.abs(a.col-u.col),db=Math.abs(b.col-u.col);return (db<da||(db===da&&b.hp<a.hp))?b:a;});}
 function isDiver(u){return u.trait==='stalker'||u.dive;}
@@ -1183,7 +1194,8 @@ function pickTarget(u){
   const ta=f.filter(x=>x.taunt>0);if(ta.length)return nearest(u,ta);
   if(isDiver(u)){const bk=f.filter(x=>x.row==='back');return lowest(bk.length?bk:f);}
   // Lanes: attack the enemy front-liner in your own column first
-  if(TUNE.lanes){const own=f.filter(x=>x.row==='front'&&x.col===u.col);if(own.length)return own[0];}
+  // Lanes: attack the enemy front-liner in your own column first (Sharpshooters - Gunners - skip this)
+  if(TUNE.lanes&&u.trait!=='gunner'){const own=f.filter(x=>x.row==='front'&&x.col===u.col&&Z(x)===x.side);if(own.length)return own[0];}
   if(false){const bk=f.filter(x=>x.row==='back');return lowest(bk.length?bk:f);}
   if(u.range==='ranged')return lowest(f);
   const fr=f.filter(x=>x.row==='front');return nearest(u,fr.length?fr:f);
@@ -1211,7 +1223,7 @@ function dealDamage(src,t,amt,type,aoe){
   if(t.vuln>0)amt*=1.25;
   if(t.row==='front'&&B.frontDR[t.side])amt*=1-B.frontDR[t.side];
   // Cover: a back-row character directly behind a living Guardian takes less damage
-  if(t.row==='back'&&TUNE.coverDR&&B.units.some(g=>g.alive&&g.side===t.side&&g.row==='front'&&g.col===t.col&&g.trait==='guardian'))amt*=1-TUNE.coverDR;
+  if(t.row==='back'&&TUNE.coverDR&&Z(t)===t.side&&B.units.some(g=>g.alive&&g.side===t.side&&Z(g)===g.side&&g.row==='front'&&g.col===t.col&&g.trait==='guardian'))amt*=1-TUNE.coverDR;
   if(t.side==='A'&&B.skel)amt*=1-.1*B.skel;
   if(type==='attack'||type==='bounce'||type==='reflect')amt*=20/(20+effArm(t));
   // Grave Golem: while he taunts, the biggest crowd soaks a third of his damage
@@ -1257,7 +1269,7 @@ function kill(t,src){
 function heal(src,t,amt,silent){
   if(!t.alive)return 0;amt*=src?src.healMult:1;
   // Neighbors: Medics heal the characters right beside them more
-  if(src&&src!==t&&src.trait==='medic'&&src.side===t.side&&src.row===t.row&&Math.abs(src.col-t.col)===1)amt*=1+TUNE.medicNear;
+  if(src&&src!==t&&src.trait==='medic'&&src.side===t.side&&Z(src)===Z(t)&&src.row===t.row&&Math.abs(src.col-t.col)===1)amt*=1+TUNE.medicNear;
   const real=Math.min(t.maxHp-t.hp,amt);if(real<=0)return 0;
   t.hp+=real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
 }
@@ -1279,7 +1291,7 @@ function summonSkeletons(side,n,p){
 function pullFront(t){if(!t.alive||t.row!=='back')return;const sl=emptySlots(t.side).find(x=>x[0]==='front');if(!sl)return;t.row='front';t.col=sl[1];float(t,'Pulled!','miss');}
 // Bone Dragon: every fallen (non-summoned) ally stands back up once per fight
 function raiseFallen(u,f){let n=0;B.units.filter(x=>x.side===u.side&&!x.alive&&!x.summon&&!x.raisedOnce).forEach(x=>{if(B.units.some(y=>y.alive&&y.side===x.side&&y.row===x.row&&y.col===x.col)){const sl=emptySlots(x.side);if(!sl.length)return;[x.row,x.col]=sl[0];}x.raisedOnce=true;x.alive=true;x.hp=Math.max(1,x.maxHp*f);x.stun=0;x.vuln=0;x.armDownT=0;x.mana=0;x.timer=.5;float(x,'Rises!','heal');n++;});return n;}
-function emptySlots(side){const occ=new Set(B.units.filter(u=>u.side===side&&u.alive).map(u=>u.row+u.col));const out=[];for(const row of ['front','back'])for(const col of [1,0,2])if(!occ.has(row+col))out.push([row,col]);return out;}
+function emptySlots(side){const occ=new Set(B.units.filter(u=>Z(u)===side&&u.alive).map(u=>u.row+u.col));const out=[];for(const row of ['front','back'])for(const col of [1,0,2])if(!occ.has(row+col))out.push([row,col]);return out;}
 function summonHatch(u){
   const sl=emptySlots(u.side);if(!sl.length||B.summons>=2)return false;B.summons++;
   const n=u.p>=3?7:u.p>=1.8?5:3;const bh=24*u.tierM*(u.p/1.5);
@@ -1454,7 +1466,12 @@ function ballFx(u,t,from,mult){if(!B||B.silent)return;projectile(from||u,t,'ball
 // ranged recoil: the shooter kicks back away from its target
 function recoil(u,t,px){if(!B||B.silent||RM||!u.el||!t||!t.el)return;const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect();const dx=(rb.left+rb.width/2)-(ra.left+ra.width/2),dy=(rb.top+rb.height/2)-(ra.top+ra.height/2),d=Math.hypot(dx,dy)||1;
   u.el.animate([{transform:'translate(0,0) rotate(0deg)'},{transform:`translate(${-dx/d*px}px,${-dy/d*px}px) rotate(${dx>0?-4:4}deg)`,offset:.2},{transform:'translate(0,0) rotate(0deg)'}],{duration:280/B.speed,easing:'ease-out'});}
+function aimLine(u,t){if(!B||B.silent||RM||!u.el||!t.el)return;const f=$('#field');if(!f)return;const fr=f.getBoundingClientRect(),a=u.el.getBoundingClientRect(),b=t.el.getBoundingClientRect();
+  const x1=a.left+a.width/2-fr.left,y1=a.top+a.height/2-fr.top,x2=b.left+b.width/2-fr.left,y2=b.top+b.height/2-fr.top;
+  const l=document.createElement('i');l.className='aim '+(u.side==='A'?'mine':'theirs');l.style.left=x1+'px';l.style.top=y1+'px';l.style.width=Math.hypot(x2-x1,y2-y1)+'px';l.style.transform=`rotate(${Math.atan2(y2-y1,x2-x1)}rad)`;
+  f.appendChild(l);setTimeout(()=>l.remove(),420/B.speed);}
 function animAttack(u,t){
+  aimLine(u,t);
   if(B.silent||RM||!u.el||!t.el)return;
   if(u.genre==='ball'){ballFx(u,t);recoil(u,t,14);return;}
   // make every attack readable: the attacker glows; melee lunges at its target
@@ -1484,11 +1501,16 @@ function mountUnit(u){
   if(!u.manaMax)el.querySelector('.mpb').style.visibility='hidden';
   placeUnit(u);
 }
+// which side of the board a character stands on (an invader stands on the enemy side but still fights for its own)
+function Z(u){return u.zone||u.side;}
 function placeUnit(u){
-  const slot=document.querySelector(`#field .bslot[data-k="${u.side}${u.row[0]}${u.col}"]`);
+  const slot=document.querySelector(`#field .bslot[data-k="${Z(u)}${u.row[0]}${u.col}"]`);
   if(!slot||u.el.parentNode===slot)return;
   slot.querySelectorAll('.unit.dead').forEach(d=>{d.remove();const du=B.units.find(x=>x.el===d);if(du)du.el=null;});
+  // characters that change places slide to their new slot instead of teleporting
+  const was=u.el.parentNode&&!B.silent&&!RM?u.el.getBoundingClientRect():null;
   slot.appendChild(u.el);
+  if(was){const now=u.el.getBoundingClientRect();u.el.animate([{transform:`translate(${was.left-now.left}px,${was.top-now.top}px)`},{transform:'translate(0,0)'}],{duration:320/B.speed,easing:'ease-out'});}
 }
 function drawBattle(){
   for(const u of B.units){
@@ -1612,7 +1634,7 @@ function shopHTML(){
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
     return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}" data-a="buy" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':o.preview?`<span class="newr" title="You just unlocked ${RARITY[d.tier-1]} characters: here is one">NEW ${RARITY[d.tier-1].toUpperCase()}</span>`:''}${owned.length?`<span class="own">${owned.map(u=>'★'.repeat(u.level)).join(' ')}</span>`:''}
-      ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags">${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span></button>
+      ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -1748,14 +1770,15 @@ function heroStatsAt(id,level){
   if(d.crowd){const n=BODIES[level-1];return {hp:b.hp*FRAC*t,atk:b.atk*FRAC*t,p:t*n/3,n};}
   return {hp:b.hp*t*LV[level-1],atk:b.atk*t*LV[level-1],p:t*LV[level-1]};
 }
-function targetText(id){
-  const d=HERO[id];const b=TBASE[d.trait];
-  if(d.trait==='stalker')return 'Leaps at the weakest enemy in the back row.';
-  let t=b.range==='ranged'?'Shoots the enemy with the lowest HP, anywhere.':'Hits the nearest enemy in the front row.';
-  if(d.genre==='ball')t+=' Throws from either row.';else if(b.range==='melee')t+=' In the back row it waits until your front row falls.';
-  return t+' Taunting enemies are always hit first.';
-}
-function targetShort(id){const d=HERO[id];if(d.trait==='stalker')return 'Weakest back-row enemy';return TBASE[d.trait].range==='ranged'?'Lowest-HP enemy':'Nearest front-row enemy';}
+// targeting rules, one per character (shown on cards and in details)
+function aimRule(id){const d=HERO[id];return d.trait==='stalker'?'backline':d.trait==='gunner'?'sharp':'lane';}
+const AIM={lane:{e:'↕️',name:'Lane',d:'Hits the enemy front-liner straight across (same column). If that lane is empty, it hits the nearest front-liner (ranged: the lowest-HP enemy).'},
+  sharp:{e:'🎯',name:'Sharpshooter',d:'Shoots the lowest-HP enemy anywhere, ignoring lanes.'},
+  backline:{e:'🗡️',name:'Backline',d:'Leaps at the weakest enemy in the back row.'}};
+function targetText(id){const d=HERO[id],b=TBASE[d.trait],a=AIM[aimRule(id)];let t=`${a.e} ${a.name}: ${a.d}`;
+  if(d.genre==='ball')t+=' Throws from either row.';else if(b.range==='melee'&&d.trait!=='stalker')t+=' In the back row it waits until your front row falls.';
+  return t+' Taunting enemies are always hit first.';}
+function targetShort(id){const a=AIM[aimRule(id)];return a.e+' '+a.name;}
 function heroDetail(id,level){
   const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);
   const range=d.genre==='ball'?'Throws':b.range==='melee'?'Melee':'Ranged';
@@ -1763,7 +1786,7 @@ function heroDetail(id,level){
     <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for genre':' · max ★★'}</span></div>
     <div class="statrow"><span>❤️ HP<b>${R(st.hp)}${d.crowd?' each':''}</b></span><span>⚔️ ATK<b>${R(st.atk)}${d.crowd?' each':''}</b></span><span>🛡️ Armor<b>${b.arm}</b></span><span>⏱ Speed<b>${b.spd}s</b></span></div>
     <div class="skill"><b>${SK[d.skill].name}</b> <span class="muted">· ${b.mana} energy</span><br>${SK[d.skill].d(st.p)}</div>
-    <p class="targ">🎯 ${targetText(id)}</p>`;
+    <p class="targ">${targetText(id)}</p>`;
 }
 function synDetail(k){
   const def=GENRES[k]||TRAITS[k];const isG=!!GENRES[k];
@@ -1807,7 +1830,7 @@ function enemyDetail(key,st){
   const d=EN[key];
   return `<div class="hs-head">${pt({e:d.e,foe:true},'lg')}<div><div class="eyebrow">${d.x.boss?'Boss':'Enemy'}</div><div class="hs-name">${esc(d.name)}</div></div></div>
     ${st?`<div class="statrow"><span>❤️ HP<b>${R(st.hp)}</b></span><span>⚔️ ATK<b>${R(st.atk)}${st.crowd?' each':''}</b></span><span>🛡️ Armor<b>${d.arm}</b></span>${st.crowd?`<span>👥<b>×${st.crowd}</b></span>`:''}</div>`:''}
-    <p class="targ">🎯 ${d.x.dive?'Goes for your back row.':d.range==='ranged'?'Shoots your character with the lowest HP.':'Hits the nearest character in your front row.'}${d.x.ls?' Heals from damage dealt.':''}</p>
+    <p class="targ">${d.x.dive?'🗡️ Backline: goes for your back row.':'↕️ Lane: hits your front-liner straight across; if that lane is empty, '+(d.range==='ranged'?'shoots your lowest-HP character.':'the nearest front-liner.')}${d.x.ls?' Heals from damage dealt.':''}</p>
     ${d.skill?`<div class="skill"><b>${SK[d.skill].name}</b><br>${SK[d.skill].d(st?st.p:1)}</div>`:''}`;
 }
 function itemsList(){
@@ -1875,6 +1898,7 @@ SCR.codex=()=>{
     <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1 and Act 2 bosses you choose a Legendary (win or lose). You hold one at a time. Win, and a bonus item is offered too.</p>
+    <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic swaps in for a wounded front-liner, and the Burrow Lurker tunnels into the enemy back row.</p>
     <p><b>Positioning.</b> Lanes: characters attack the enemy front-liner in their own column first. Cover: a back-row character directly behind one of your Guardians takes 25% less damage. Neighbors: Medics heal the characters right beside them 50% more. Splash hits neighbors too.</p>
     <p><b>Overtime.</b> After 30 seconds everyone takes growing damage and Swarm crowds stop regrowing, so fights always end.</p>
     <p><b>Game Levels.</b> Win a run to unlock the next Game Level: the same game plus one new rule, stacked on the earlier ones. Pick any unlocked level on the title screen.</p></div>`;
