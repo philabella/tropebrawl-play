@@ -1298,7 +1298,8 @@ function bodyLost(t,n){if(t.side!=='A')return;B.lost=(B.lost||0)+n;if(!B.syn.G.u
 function spawnCap(u){return Infinity;}
 function spawnsOut(owner){return B.units.filter(x=>x.owner===owner&&x.alive).length+(B.reserve||[]).filter(x=>x.owner===owner).length;}
 function fillFromBench(row,col){if(!B.reserve||!B.reserve.length)return;if(B.units.some(u=>u.alive&&Z(u)==='A'&&u.row===row&&u.col===col))return;
-  const o=B.reserve.shift();o.row=row;o.col=col;const nu=mkUnit(o);nu.subIn=true;B.units.push(nu);}
+  const o=B.reserve.shift();if(o.rise){o.rise.row=row;o.rise.col=col;riseUnit(o.rise,o.f);return;}
+  o.row=row;o.col=col;const nu=mkUnit(o);nu.subIn=true;B.units.push(nu);}
 function deploy(o,owner,cap){if(owner!=null){if(spawnsOut(owner)>=cap)return false;o.owner=owner;}
   const sl=emptySlots(o.side);
   if(sl.length){o.row=sl[0][0];o.col=sl[0][1];B.units.push(mkUnit(o));return true;}
@@ -1316,7 +1317,14 @@ function summonSkeletons(side,n,p,owner,cap){
 // Commando: drag a back-row enemy into its front row when there is room
 function pullFront(t){if(!t.alive||t.row!=='back')return;const sl=emptySlots(t.side).find(x=>x[0]==='front');if(!sl)return;t.row='front';t.col=sl[1];float(t,'Pulled!','miss');}
 // Bone Dragon: every fallen (non-summoned) ally stands back up once per fight
-function raiseFallen(u,f){let n=0;B.units.filter(x=>x.side===u.side&&!x.alive&&!x.summon&&!x.raisedOnce).forEach(x=>{if(B.units.some(y=>y.alive&&y.side===x.side&&y.row===x.row&&y.col===x.col)){const sl=emptySlots(x.side);if(!sl.length)return;[x.row,x.col]=sl[0];}x.raisedOnce=true;x.alive=true;x.hp=Math.max(1,x.maxHp*f);x.stun=0;x.vuln=0;x.armDownT=0;x.mana=0;x.timer=.5;float(x,'Rises!','heal');n++;});return n;}
+function riseUnit(x,f){x.zone=null;x.alive=true;x.hp=Math.max(1,x.maxHp*f);x.stun=0;x.vuln=0;x.armDownT=0;x.mana=0;x.timer=.5;float(x,'Rises!','heal');}
+// a fallen character rises in its slot, or in any free slot; with none free it goes to the FRONT of the battle bench
+// (characters beat summons) and steps in at the next opening
+function raiseFallen(u,f){let n=0;B.units.filter(x=>x.side===u.side&&!x.alive&&!x.summon&&!x.raisedOnce).forEach(x=>{x.raisedOnce=true;n++;
+  if(B.units.some(y=>y.alive&&Z(y)===x.side&&y.row===x.row&&y.col===x.col)){const sl=emptySlots(x.side);
+    if(!sl.length){if(x.side==='A'&&B.reserve){B.reserve.unshift({rise:x,f,e:x.e,name:'rise',maxBodies:1});float(u,'Rises soon','heal');}return;}
+    [x.row,x.col]=sl[0];}
+  riseUnit(x,f);});return n;}
 function emptySlots(side){const occ=new Set(B.units.filter(u=>Z(u)===side&&u.alive).map(u=>u.row+u.col));const out=[];for(const row of ['front','back'])for(const col of [1,0,2])if(!occ.has(row+col))out.push([row,col]);return out;}
 function summonHatch(u){
   const n=u.p>=3?7:u.p>=1.8?5:3;const bh=24*u.tierM*(u.p/1.5)*TUNE.hatchMul;
@@ -1552,7 +1560,7 @@ function drawBattle(){
     if(u._st!==st){u.$st.textContent=st;u._st=st;}
   }
   const ck=$('#clock');if(ck){ck.textContent=B.t.toFixed(1)+'s'+(B.t>30?' · OVERTIME':'');ck.classList.toggle('ot',B.t>30);}
-  {const bn=$('#bbench');if(bn){const n=(B.reserve||[]).length;bn.hidden=!n;bn.textContent='🪑 Bench: '+B.reserve.map(c=>c.e+'×'+c.maxBodies).join('  ');}}
+  {const bn=$('#bbench');if(bn){const n=(B.reserve||[]).length;bn.hidden=!n;bn.textContent='🪑 Bench: '+B.reserve.map(c=>c.rise?'⬆️'+c.e:c.e+'×'+c.maxBodies).join('  ');}}
   const sk=$('#streak');if(sk&&B.ball){sk.hidden=false;sk.textContent='⚽ ×'+Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak).toFixed(1);}
 }
 function battleLoop(ts){
@@ -1924,7 +1932,7 @@ SCR.codex=()=>{
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1 and Act 2 bosses you choose a Legendary (win or lose). You hold one at a time. Win, and a bonus item is offered too.</p>
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic swaps in for a wounded front-liner, and the Burrow Lurker tunnels into the enemy back row.</p>
-    <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; otherwise the oldest bench card steps in as one crowd.</p>
+    <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; then a character waiting to rise (Bone Dragon) - characters always go before summons; then the oldest bench card steps in as one crowd.</p>
     <p><b>Positioning.</b> Lanes: characters attack the enemy front-liner in their own column first. Cover: a back-row character directly behind one of your Guardians takes 25% less damage. Neighbors: Medics heal the characters right beside them 50% more. Splash hits neighbors too.</p>
     <p><b>Overtime.</b> After 30 seconds everyone takes growing damage and Swarm crowds stop regrowing, so fights always end.</p>
     <p><b>Game Levels.</b> Win a run to unlock the next Game Level: the same game plus one new rule, stacked on the earlier ones. Pick any unlocked level on the title screen.</p></div>`;
