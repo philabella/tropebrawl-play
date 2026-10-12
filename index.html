@@ -490,6 +490,25 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .unit{background:linear-gradient(to top,#0e0d10 0 26px,#000 26px 28px,var(--panel2) 28px);padding-bottom:5px}
 .unit.foe{background:linear-gradient(to top,#0e0d10 0 26px,#000 26px 28px,color-mix(in srgb,var(--red) 10%,var(--panel2)) 28px)}
 .unit .hpb{margin-top:auto}
+
+/* Streaming touches: the next fight is a featured episode, plus NEW / LEAVING SOON / FULL REFUND badges */
+.vs.feat{position:relative;overflow:hidden;display:grid;gap:8px;align-items:start;padding:12px 14px;
+  background:linear-gradient(90deg,var(--panel) 0 45%,transparent 85%),radial-gradient(70% 140% at 88% 50%,#4a1716,var(--panel) 75%)}
+.vs.feat.boss{background:linear-gradient(90deg,var(--panel) 0 40%,transparent 85%),radial-gradient(70% 140% at 88% 50%,#7a1a14,var(--panel) 75%)}
+.vs.feat .fart{position:absolute;right:16px;top:50%;transform:translateY(-50%);font-size:58px;opacity:.95;filter:drop-shadow(0 6px 14px rgba(0,0,0,.6));pointer-events:none}
+.vs.feat .fhd{display:grid;gap:1px;position:relative;padding-right:76px}
+.vs.feat .fhd small{font-weight:800;font-size:.68rem;letter-spacing:.14em;text-transform:uppercase;color:var(--red)}
+.vs.feat .fhd b{font-family:var(--f-display);font-weight:400;font-size:1.45rem;text-transform:uppercase;letter-spacing:.02em;line-height:1.05}
+.vs.feat .foes{position:relative;padding-right:76px}
+.cutwarn{position:relative;font-size:.8rem;color:var(--muted);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.sbdg{display:inline-block;font-family:var(--f-body);font-weight:900;font-size:.56rem;letter-spacing:.06em;line-height:1;padding:3px 5px 2px;border-radius:2px;border:1.5px solid var(--inkline);white-space:nowrap}
+.sbdg.nw{background:var(--red);color:#fff}
+.sbdg.lv{background:var(--ink);color:#141012}
+.sbdg.fr{background:var(--gold);color:#141012}
+.scard .sbdg{position:absolute;top:-8px;left:6px;z-index:2}
+.scard .sbdg.lv{top:auto;bottom:-8px;left:50%;transform:translateX(-50%)}
+.slot .sbdg.fr{position:absolute;top:-8px;left:50%;transform:translateX(-50%);z-index:2}
+.slot.fullsell::after{content:none}
 </style>
 
 <div id="app"></div>
@@ -941,6 +960,7 @@ function rollShop(){
     // ready-made ★★: rare in a normal shop (RANK.lv2), common with the Talent Scout Legendary (any rarity)
     S.shop.push({id,level:(legend('scout')?rand()<TUNE.scoutChance:HERO[id].tier<=2&&rand()<RANK.lv2[S.rank-1])?2:1});
   }
+  S.seen=S.seen||{};S.shop.forEach(o=>{if(o&&!S.seen[o.id]){o.nw=1;S.seen[o.id]=1;}});
 }
 function shopPrice(o){const p=PRICE[HERO[o.id].tier-1];return o.level===2?Math.round(p*(legend('scout')?TUNE.scoutMult:3)):p;}
 function canBuy(i){
@@ -1189,6 +1209,12 @@ function ownedIn(g){return S.units.filter(u=>HERO[u.id].genre===g);}
 function cutChoices(){const live=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g));
   const ranked=live.sort((a,b)=>ownedIn(b).length-ownedIn(a).length||rand()-.5).slice(0,3);
   return (S.lv|0)>=TUNE.cutRandomLv?[pick(ranked)]:ranked;}
+function cutRound(){const i=SCHEDULE.findIndex(x=>x.type==='event'&&x.act===3);return i<0?null:i+1;}
+function cutSoon(){if(!TUNE.cutOn||!S)return 0;const c=cutRound();if(!c||S.round>=c)return 0;const n=c-S.round;return n<=3?n:0;}
+function atRisk(){const live=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g)),n=g=>ownedIn(g).length;
+  const sorted=live.slice().sort((a,b)=>n(b)-n(a));if(sorted.length<=3)return sorted;const bar=n(sorted[2]);return sorted.filter(g=>n(g)>=bar);}
+// on shop cards, only when it narrows things down (if every genre is at risk the banner says so instead)
+function cardRisk(){const r=atRisk(),live=Object.keys(GENRES).filter(g=>!(S.cut||[]).includes(g));return r.length<live.length?r:[];}
 function cutCost(g){return Math.max(TUNE.cutMin,TUNE.cutPer*ownedIn(g).length);}
 function doCut(g,keep){S.cut=S.cut||[];S.cut.push(g);const lost=ownedIn(g);
   if(keep){const c=cutCost(g);S.gold-=c;return `${GENRES[g].name} is cut from the shop. You paid 🪙${c} and keep your ${lost.length} ${GENRES[g].name} character${lost.length===1?'':'s'}.`;}
@@ -1800,7 +1826,12 @@ function vsStrip(){
   const tu=tw&&twinUnit();
   const twin=tu?`<button class="foe" data-a="twin" aria-label="Evil twin of your ${esc(HERO[tw.id].name)}">${pt({e:HERO[tw.id].e,foe:true},'sm')}<small>${tu.crowd?'×'+tu.maxBodies:R(tu.maxHp)}</small><span class="ab">😈</span></button>`:'';
   const tag=e.part?'BOSS 2/2':e.boss?'BOSS':e.elite?'MINI-BOSS':e.trial?'TRIAL':'NEXT';
-  return `<section class="vs${e.boss||e.elite||e.trial?' boss':''}"><span class="tag">${tag}</span><div class="foes">${foes}${twin}</div>${e.boss&&S.bossTries?`<span class="tag">−${S.bossTries*10}%</span>`:''}</section>`;
+  const lead=EN[e.enc[0].key],kind=e.part?'Season finale, part 2':e.boss?'Season finale':e.elite?'Mini-boss':e.trial?'Trial by fire':'Next episode';
+  const cs=cutSoon(),risk=cs?atRisk().map(g=>GENRES[g].name):[];
+  return `<section class="vs feat${e.boss||e.elite||e.trial?' boss':''}"><span class="fart emo" aria-hidden="true">${lead.e}</span>
+    <div class="fhd"><small>${kind} · Ep ${S.round} of ${SCHEDULE.length}${e.boss&&S.bossTries?` · enemies −${S.bossTries*10}%`:''}</small><b>${esc(e.title||lead.name)}</b></div>
+    <div class="foes">${foes}${twin}</div>
+    ${cs?`<p class="cutwarn"><span class="sbdg lv">LEAVING SOON</span> The Cut in ${cs} round${cs>1?'s':''}: ${risk.join(', ')} ${risk.length>1?'are':'is'} at risk.</p>`:''}</section>`;
 }
 function boardHTML(){
   const sel=UI.sel;const bs=boardSize();
@@ -1809,7 +1840,7 @@ function boardHTML(){
     const u=unitAt(slot);const isSel=sel===slot;
     if(!u)return `<button class="slot empty" data-a="slot" data-v="${slot}" aria-label="Empty slot"></button>`;
     const d=HERO[u.id];
-    return `<button class="slot g-${d.genre} tier${d.tier}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${heroPt(u.id)}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
+    return `<button class="slot g-${d.genre} tier${d.tier}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${buybackOn(u)?'<span class="sbdg fr" title="Buyback Wheel: sells back for what you paid">FULL REFUND</span>':''}${heroPt(u.id)}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
   };
   const full=fielded().length>=bs;
   return `<section class="board" aria-label="Your board">
@@ -1838,7 +1869,7 @@ function shopHTML(){
     const d=HERO[o.id];const c=canBuy(i);const owned=S.units.filter(u=>u.id===o.id);
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
     return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
-      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':o.preview?`<span class="newr" title="You just unlocked ${RARITY[d.tier-1]} characters: here is one">NEW ${RARITY[d.tier-1].toUpperCase()}</span>`:''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
+      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':o.preview?`<span class="newr" title="You just unlocked ${RARITY[d.tier-1]} characters: here is one">NEW ${RARITY[d.tier-1].toUpperCase()}</span>`:''}${o.nw?'<span class="sbdg nw" title="First time this run">NEW</span>':''}${cutSoon()&&cardRisk().includes(d.genre)?`<span class="sbdg lv" title="The Cut is in ${cutSoon()} round${cutSoon()>1?'s':''}: ${GENRES[d.genre].name} may be cut">LEAVING SOON</span>`:''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
       ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
