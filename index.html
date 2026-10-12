@@ -292,6 +292,9 @@ strong.lvon{color:var(--gold);font-weight:800}
 .aim.mine{background:linear-gradient(90deg,transparent,var(--gold))}
 .aim.theirs{background:linear-gradient(90deg,transparent,var(--red))}
 @keyframes aimf{0%{opacity:.9}100%{opacity:0}}
+.scard.picked{outline:2px solid var(--gold);outline-offset:1px}
+.shopwrap.sellzone{outline:2px dashed var(--red);outline-offset:2px;position:relative}
+.shopwrap.sellzone::after{content:attr(data-sell);position:absolute;inset:0;display:grid;place-items:center;background:color-mix(in srgb,var(--bg) 70%,transparent);color:var(--red);font-family:var(--f-display);font-size:1.3rem;border-radius:14px;pointer-events:none}
 .scard .aimg{font-style:normal;font-size:.7rem;margin-right:1px}
 .proj{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--gc);box-shadow:0 0 10px var(--gc);pointer-events:none;z-index:4}
 .proj.ballp{width:auto;height:auto;background:none;box-shadow:none;font-family:var(--f-emoji);left:-10px;top:-10px;line-height:1}
@@ -700,26 +703,26 @@ const SK={
    if(Z(u)===u.side){const sl=emptySlots(fs).filter(x=>x[0]==='back');if(sl.length){u.zone=fs;u.row='back';u.col=sl[0][1];float(u,'Tunnel!','sp');if(u.side==='A'&&typeof summonHatch==='function')summonHatch(u);}}
    const t=backWeakest(u);if(t)spell(u,t,60);}},
  ambush:{name:'Ambush',d:p=>`Hits the weakest back-row enemy for ${R(60*p)}, then vanishes for 1.5s.`,cast(u){const t=backWeakest(u);if(t)spell(u,t,60);u.untarget=1.5;}},
- spawn:{name:'Spawn Brood',d:p=>`All your crowds regrow 2 bodies; ${p>=3?7:p>=1.8?5:3} hatchlings join you (or ${R(25*p)} to every enemy).`,cast(u){allies(u).filter(a=>a.crowd).forEach(a=>regrow(a,2));if(!summonHatch(u))targetFoes(u).forEach(x=>spell(u,x,25,true));}},
+ spawn:{name:'Spawn Brood',d:p=>`All your crowds regrow 2 bodies, and a crowd of ${p>=3?7:p>=1.8?5:3} hatchlings joins your board. If you have no empty slot, it deals ${R(25*p)} damage to every enemy instead.`,cast(u){allies(u).filter(a=>a.crowd).forEach(a=>regrow(a,2));if(!summonHatch(u))targetFoes(u).forEach(x=>spell(u,x,25,true));}},
  bonevolley:{name:'Bone Volley',d:p=>`Every archer shoots a random enemy for 6 (${bodiesFromP(p)} archers).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,6*u.tierM);}}},
  infect:{name:'Infect',d:p=>`Each zombie bites its target for 5. A knockout regrows a zombie (${bodiesFromP(p)} zombies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;spellFlat(u,t,5*bodies(u)*u.tierM);if(!t.alive)regrow(u,1);}},
  siphon:{name:'Soul Siphon',d:p=>`Hits the weakest back-row enemy for ${R(55*p)} and heals itself for half.`,cast(u){const t=backWeakest(u);if(t){const d=spell(u,t,55);heal(null,u,d*.5);}}},
- darkpact:{name:'Dark Pact',d:p=>`Sacrifice up to 2 bodies from each of your crowds; each hits a random enemy for ${R(22*p)}. None to spare? Raise 3 skeletons (no room: 3 bolts).`,cast(u){let n=0;allies(u).filter(a=>a.crowd&&a!==u&&bodies(a)>=2).forEach(a=>{const k=Math.min(2,bodies(a)-1);a.hp-=k*a.bodyHp;n+=k;float(a,'−'+k,'miss');bodyLost(a,k);});if(!n){if(summonSkeletons(u.side,3,u.p))return;n=3;}for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spell(u,t,22);}}},
- catchit:{name:'Catch!',d:()=>`Taunts for 3s and catches the next 2 attacks on itself; each catch brings a player back.`,cast(u){u.taunt=3;u.catches=2;}},
+ darkpact:{name:'Dark Pact',d:p=>`Each of your crowds gives up to 2 bodies; every body given becomes a bolt that hits a random enemy for ${R(22*p)}. If no crowd can spare a body, it raises 3 skeletons in an empty slot instead (no empty slot: 3 bolts).`,cast(u){let n=0;allies(u).filter(a=>a.crowd&&a!==u&&bodies(a)>=2).forEach(a=>{const k=Math.min(2,bodies(a)-1);a.hp-=k*a.bodyHp;n+=k;float(a,'−'+k,'miss');bodyLost(a,k);});if(!n){if(summonSkeletons(u.side,3,u.p))return;n=3;}for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spell(u,t,22);}}},
+ catchit:{name:'Catch!',d:()=>`Taunts for 3s and catches the next 2 attacks aimed at it (no damage); each catch brings one fallen player back.`,cast(u){u.taunt=3;u.catches=2;}},
  strikes:{name:'Three Strikes',d:p=>`Three fastballs at its target for ${R(15*p)} each; the third stuns for 1s.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;for(let i=0;i<3&&t.alive;i++){spell(u,t,15);ballFx(u,t);}if(t.alive)stunU(t,1);}},
  waterbreak:{name:'Water Break',d:p=>`Heals your 3 most wounded characters for ${R(40*p)}, ${R(20*p)} and ${R(20*p)}.`,cast(u){wounded(u,3).forEach((a,i)=>heal(u,a,(i?20:40)*u.p));}},
- hailmary:{name:'Hail Mary',d:p=>`${R(50*p)} to the weakest back-row enemy, +15% per other Sportsball character on your team. Each knockout throws again (3 throws max).`,cast(u){const n=allies(u).filter(a=>a!==u&&a.genre==='ball').length;for(let i=0;i<3;i++){const t=backWeakest(u);if(!t)return;ballFx(u,t);spell(u,t,50*(1+.15*n));if(t.alive)return;}}},
+ hailmary:{name:'Hail Mary',d:p=>`Throws at the weakest back-row enemy for ${R(50*p)} damage, +15% for each other Sportsball character on your team. If the throw knocks it out, it throws again (up to 3 throws).`,cast(u){const n=allies(u).filter(a=>a!==u&&a.genre==='ball').length;for(let i=0;i<3;i++){const t=backWeakest(u);if(!t)return;ballFx(u,t);spell(u,t,50*(1+.15*n));if(t.alive)return;}}},
  // ---- new heroes (rarity update) ----
  snatch:{name:'Snatch and Grab',d:p=>`${R(45*p)} damage to the weakest back-row enemy. It takes 25% more damage for 3s and is dragged forward if there's room.`,cast(u){const t=backWeakest(u);if(!t)return;spell(u,t,45);if(t.alive){t.vuln=3;pullFront(t);}}},
  moreshells:{name:'More Shells!',d:p=>`Hits its target for ${R(40*p)}. Your artillery deals +${R(6*p)} for the rest of the fight.`,cast(u){const t=pickTarget(u)||randFoe(u);if(t)spell(u,t,40);B.artBonus=(B.artBonus||0)+6*u.p;}},
  onmypos:{name:'Fire on My Position',d:p=>`Taunts all enemies for 3s and shields itself for ${R(40*p)}. Artillery fires twice as fast meanwhile.`,cast(u){u.taunt=3;u.observer=true;shieldU(u,u,40*u.p);}},
  openfire:{name:'Open Fire!',d:p=>`All your characters attack ${R(20*p)}% faster for 5s, and artillery fires now.`,cast(u){allies(u).forEach(a=>a.hastes.push({m:.2*u.p,t:5}));if(B.artEvery)B.art=0;}},
  swell:{name:'Swell the Ranks',d:()=>`Adds 2 bodies to itself, even past full (up to 4 extra).`,cast(u){const g=Math.max(0,Math.min(2,4-(u.grown||0)));if(g){u.grown=(u.grown||0)+g;u.maxBodies+=g;u.maxHp+=g*u.bodyHp;if(u.capBodies)u.capBodies+=g;}regrow(u,2);}},
- wastenot:{name:'Waste Not',d:p=>`Heals your most wounded character and those beside it for ${R(40*p)}, +${R(p)} per body your crowds lost (max +${R(30*p)}).`,cast(u){const a=wounded(u,1)[0];if(!a)return;const amt=(40+Math.min(30,B.lost||0))*u.p;[a,...B.units.filter(x=>x!==a&&x.side===a.side&&x.alive&&x.row===a.row&&Math.abs(x.col-a.col)===1)].forEach(x=>heal(u,x,amt));}},
+ wastenot:{name:'Waste Not',d:p=>`Heals your most wounded character and the characters beside it for ${R(40*p)}, plus ${R(p)} more for every body your crowds have lost this fight (up to +${R(30*p)}).`,cast(u){const a=wounded(u,1)[0];if(!a)return;const amt=(40+Math.min(30,B.lost||0))*u.p;[a,...B.units.filter(x=>x!==a&&x.side===a.side&&x.alive&&x.row===a.row&&Math.abs(x.col-a.col)===1)].forEach(x=>heal(u,x,amt));}},
  numbers:{name:'Strength in Numbers',d:p=>`Stings its target for ${R(30*p)}, +${R(2*p)} per body in your crowds (max 20 bodies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;const n=allies(u).reduce((s,a)=>s+(a.crowd?bodies(a):0),0);spell(u,t,30+2*Math.min(20,n));}},
- asone:{name:'Strike as One',d:p=>`Your crowds each attack ${Math.min(8,R(p))} times right now. Your other characters attack ${Math.max(1,R(p/2))} times.`,cast(u){const k=Math.min(8,R(u.p));allies(u).forEach(a=>{if(a===u||a.stun>0||blocked(a)||(B.ball&&a.genre==='ball'))return;const n=a.crowd?k:Math.max(1,R(u.p/2));for(let i=0;i<n&&a.alive;i++){const t=pickTarget(a);if(!t)break;attack(a,t);}});}},
+ asone:{name:'Strike as One',d:p=>`Right now, each of your crowds attacks ${Math.min(8,R(p))} extra time${Math.min(8,R(p))===1?'':'s'} and your other characters attack ${Math.max(1,R(p/2))===1?'once':Math.max(1,R(p/2))+' times'}.`,cast(u){const k=Math.min(8,R(u.p));allies(u).forEach(a=>{if(a===u||a.stun>0||blocked(a)||(B.ball&&a.genre==='ball'))return;const n=a.crowd?k:Math.max(1,R(u.p/2));for(let i=0;i<n&&a.alive;i++){const t=pickTarget(a);if(!t)break;attack(a,t);}});}},
  jugular:{name:'Go for the Throat',d:p=>`${R(40*p)} damage to the lowest-HP enemy anywhere, doubled if it is below half HP.`,cast(u){const t=lowest(targetFoes(u));if(t)spell(u,t,t.hp<t.maxHp/2?80:40);}},
- meatshield:{name:'Meat Shield',d:()=>`Taunts for 3s, passing a third of the damage it takes to your biggest crowd.`,cast(u){u.taunt=3;u.meatShield=true;}},
+ meatshield:{name:'Meat Shield',d:()=>`Taunts for 3s. Meanwhile, a third of the damage it takes goes to your biggest crowd instead.`,cast(u){u.taunt=3;u.meatShield=true;}},
  stitchup:{name:'Stitch Up',d:p=>`Heals your most wounded character for ${R(50*p)}. Your most wounded crowd also regrows ${Math.max(1,R(1.5*p))} bodies.`,cast(u){const a=wounded(u,1)[0];if(a)heal(u,a,50*u.p);const c=allies(u).filter(x=>x.crowd).sort((x,y)=>x.hp/x.maxHp-y.hp/y.maxHp)[0];if(c)regrow(c,Math.max(1,R(1.5*u.p)));}},
  graveroar:{name:'Grave Roar',d:p=>`Hits its target for ${R(50*p)}. All your fallen characters rise at ${Math.min(100,R(20*p))}% HP (each only once).`,cast(u){const t=pickTarget(u)||randFoe(u);if(t)spell(u,t,50);raiseFallen(u,Math.min(1,.2*u.p));}},
  pyramid:{name:'Human Pyramid',d:p=>`Shields your front-row characters for ${12*bodiesFromP(p)} (12 per cheerleader).`,cast(u){const s=12*bodies(u)*u.tierM;allies(u).filter(a=>a.row==='front').forEach(a=>shieldU(u,a,s));}},
@@ -782,6 +785,7 @@ function shopOdds(){return RANK.odds[S.rank-1];}
 function rollTier(){const o=shopOdds();let r=rand()*100;for(let i=0;i<o.length;i++){if(r<o[i])return i+1;r-=o[i];}return 1;}
 function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])).map(h=>h[0]);return pool.length?pick(pool):null;}
 function rollShop(){
+  if(typeof UI!=='undefined')UI.pick=null; // a new shop: no card stays half-selected
   const maxed=maxedIds();
   S.shop=[];
   for(let i=0;i<SHOP_SLOTS;i++){
@@ -1471,7 +1475,6 @@ function aimLine(u,t){if(!B||B.silent||RM||!u.el||!t.el)return;const f=$('#field
   const l=document.createElement('i');l.className='aim '+(u.side==='A'?'mine':'theirs');l.style.left=x1+'px';l.style.top=y1+'px';l.style.width=Math.hypot(x2-x1,y2-y1)+'px';l.style.transform=`rotate(${Math.atan2(y2-y1,x2-x1)}rad)`;
   f.appendChild(l);setTimeout(()=>l.remove(),420/B.speed);}
 function animAttack(u,t){
-  aimLine(u,t);
   if(B.silent||RM||!u.el||!t.el)return;
   if(u.genre==='ball'){ballFx(u,t);recoil(u,t,14);return;}
   // make every attack readable: the attacker glows; melee lunges at its target
@@ -1632,7 +1635,7 @@ function shopHTML(){
     if(!o)return `<div class="scard sold" aria-hidden="true"></div>`;
     const d=HERO[o.id];const c=canBuy(i);const owned=S.units.filter(u=>u.id===o.id);
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
-    return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}" data-a="buy" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
+    return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':o.preview?`<span class="newr" title="You just unlocked ${RARITY[d.tier-1]} characters: here is one">NEW ${RARITY[d.tier-1].toUpperCase()}</span>`:''}${owned.length?`<span class="own">${owned.map(u=>'★'.repeat(u.level)).join(' ')}</span>`:''}
       ${heroPt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
@@ -1646,7 +1649,7 @@ function shopHTML(){
   return `<section class="shopwrap" aria-label="Shop">
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: <span class="tier${nx}" style="color:var(--tc)">${RARITY[nx-1]}</span> · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
     <div class="shop">${cards}</div>
-    <p class="holdhint">Hold a card or character to see it. Drag to buy into a slot or to move.</p>
+    <p class="holdhint">Tap a card to see it, tap again to buy. Drag a card onto a slot to buy it there, drag characters to move them, or onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
@@ -1957,7 +1960,11 @@ function onAction(a,v,el){
   switch(a){
     case 'new':clearSave();UI.insp=null;UI.sel=null;UI.swap=null;newRun(false);go();break;
     case 'continue':{const sv=loadSave();if(sv){restore(sv);go();}break;}
-    case 'buy':if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
+    case 'pick':{const i=+v,o=S.shop[i];if(!o)break;
+      if(UI.pick===i){UI.pick=null;if(buy(i)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
+      UI.pick=i;const I={kind:'hero',id:o.id,level:o.level,shop:i};
+      if(isWide())showInfo(I);else{render();sheet(infoBody(I));}break;}
+    case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
     case 'reroll':if(reroll())go();break;
     case 'lock':S.locked=!S.locked;go();break;
     case 'rank':{const b0=boardSize(),r0=S.rank;if(train()){UI.gaugePop=true;toast(S.rank>r0?rankMsg(b0):`⬆️ +${RANK.trainXp} shop XP · ${S.xp}/${xpNeed()} to Rank ${S.rank+1}`);go();}break;}
@@ -2000,6 +2007,8 @@ function clickSlot(slot){
   if(!sel){const u=unitAt(slot);if(u){UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};}render();return;}
   if(sel===slot){UI.sel=null;UI.insp=null;render();return;}
   if(!unitAt(sel)){const u=unitAt(slot);UI.sel=u?slot:null;UI.insp=u?{kind:'unit',uid:u.uid}:null;render();return;}
+  // tapping another character just shows it; moving is drag-and-drop or tap-then-empty-slot
+  if(unitAt(slot)){const u=unitAt(slot);UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};render();return;}
   if(move(sel,slot)){UI.sel=null;save();}
   render();
 }
@@ -2014,8 +2023,8 @@ function holdView(src){
 document.addEventListener('pointerdown',e=>{
   PT.suppress=0; // a new gesture: the guard only covers the click of the drag/hold that set it
   if(UI.screen!=='plan'||UI.sheetOpen||(e.button||0)>0)return;
-  const el=e.target.closest&&e.target.closest('[data-a="buy"],[data-a="slot"]');if(!el)return;
-  const src=el.dataset.a==='buy'?(S.shop[+el.dataset.v]?{kind:'shop',i:+el.dataset.v,el}:null):(unitAt(el.dataset.v)?{kind:'unit',slot:el.dataset.v,el}:null);
+  const el=e.target.closest&&e.target.closest('[data-a="pick"],[data-a="slot"]');if(!el)return;
+  const src=el.dataset.a==='pick'?(S.shop[+el.dataset.v]?{kind:'shop',i:+el.dataset.v,el}:null):(unitAt(el.dataset.v)?{kind:'unit',slot:el.dataset.v,el}:null);
   if(!src)return;
   PT.src=src;PT.x=e.clientX;PT.y=e.clientY;PT.drag=false;PT.held=false;clearTimeout(PT.t);
   PT.t=setTimeout(()=>{if(PT.src&&!PT.drag){PT.held=true;holdView(PT.src);}},420);
@@ -2028,6 +2037,7 @@ document.addEventListener('pointermove',e=>{
   PT.ghost.style.left=e.clientX+'px';PT.ghost.style.top=e.clientY+'px';
   document.querySelectorAll('.slot.dropok').forEach(x=>x.classList.remove('dropok'));
   const t=document.elementFromPoint(e.clientX,e.clientY);const sl=t&&t.closest&&t.closest('[data-a="slot"]');if(sl)sl.classList.add('dropok');
+  const sw=document.querySelector('.shopwrap');if(sw&&PT.src.kind==='unit'){const over=!!(t&&t.closest&&t.closest('.shopwrap'));const u=unitAt(PT.src.slot);sw.classList.toggle('sellzone',over);if(u)sw.dataset.sell=`Drop to sell · 🪙${sellValue(u)}`;}
 });
 function ptEnd(e){
   clearTimeout(PT.t);const src=PT.src;PT.src=null;if(!src)return;
@@ -2035,7 +2045,11 @@ function ptEnd(e){
   if(!PT.drag)return;
   PT.suppress=Date.now();if(PT.ghost){PT.ghost.remove();PT.ghost=null;}
   document.querySelectorAll('.slot.dropok').forEach(x=>x.classList.remove('dropok'));
-  const t=e&&document.elementFromPoint(e.clientX,e.clientY);const sl=t&&t.closest&&t.closest('[data-a="slot"]');if(!sl)return;
+  const sw=document.querySelector('.shopwrap');if(sw)sw.classList.remove('sellzone');
+  const t=e&&document.elementFromPoint(e.clientX,e.clientY);
+  // a character dropped on the shop is sold
+  if(src.kind==='unit'&&t&&t.closest&&t.closest('.shopwrap')){const u=unitAt(src.slot);if(u){const g=sellValue(u);sell(u.uid);UI.sel=null;UI.insp=null;UI.armSell=null;toast(`Sold ${HERO[u.id].name} for 🪙${g}.`);go();}return;}
+  const sl=t&&t.closest&&t.closest('[data-a="slot"]');if(!sl)return;
   const to=sl.dataset.v;UI.armSell=null;UI.sel=null;
   if(src.kind==='unit'){if(src.slot!==to&&move(src.slot,to))save();render();return;}
   const before=new Set(S.units.map(u=>u.uid));
