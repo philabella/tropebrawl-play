@@ -3,14 +3,14 @@
 <title>Tropebrawl</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow+Condensed:wght@500;600;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Barlow:wght@400;500;600;700;800&display=swap">
 <style>
 /* Layout: one centered column (max 760px) that fits a phone screen without reading: top bar, next fight,
    board + bench, synergy icons, shop, action bar. Details live in tap-to-open sheets. Battle = enemy rows
    above the clash line, yours below. Single dark look by design: every color is a token on :root. */
 :root{
   /* Night Ink: flat charcoal page, ink-black panels with hard square shadows, one punchy yellow. The board is a grid of
-     crisp square tiles with black outlines on a faint halftone, so every position reads at a glance. */
+     crisp square tiles with black outlines, so every position reads at a glance. */
   --bg:#1e1d21; --bg2:#26252a; --panel:#121114; --panel2:#2d2c32; --line:#3d3b43;
   --ink:#f3eee4; --muted:#aaa49b; --dim:#6d6962;
   --gold:#ffcc2e; --gold-dk:#a37800; --red:#ff4d3d; --ground:#2f2924; --ground2:#3a322b; --inkline:#000; --good:#6cc47a; --mana:#5d95e6; --shield:#d9e1ec; --leg:#ff9f43;
@@ -18,7 +18,7 @@
   --r1:#b4adbf; --r2:#62d98b; --r3:#5aa9ff; --r4:#b98cff; --r5:#ff6b9d;
   --g-army:#a3b462; --g-orc:#de6f47; --g-elf:#5fcab8; --g-fin:#e9c352; --g-grim:#d84d60; --g-bug:#ab80ea; --g-ball:#4fa3f7; --g-undead:#8fd18a; --foe:#c45a4e;
   --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
-  --f-body:"Barlow Condensed","Arial Narrow","Segoe UI",system-ui,sans-serif;
+  --f-body:"Barlow","Segoe UI",system-ui,sans-serif;
   --f-emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
   color-scheme:dark;
 }
@@ -427,7 +427,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .dvnote{color:#7f9a85;font-size:.72rem;margin:0}
 
 /* ===================== Night Ink skin ===================== */
-body{font-size:16.5px;font-weight:500;background:radial-gradient(circle,rgba(255,255,255,.035) 1px,transparent 1.4px) 0 0/7px 7px,var(--bg);min-height:100vh}
+body{font-size:15px;font-weight:500;background:var(--bg);min-height:100vh}
 h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .eyebrow{font-family:var(--f-body);font-weight:800;letter-spacing:.12em}
 /* panels: ink-black boxes with a hard comic drop shadow, flat, no gradients */
@@ -447,15 +447,15 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .lvn{border-radius:3px;border:2px solid var(--inkline);background:var(--panel2);font-family:var(--f-display);letter-spacing:.04em}
 .lvn.on{background:var(--gold);color:#141012}
 .title-word{font-size:clamp(3.4rem,15vw,6.2rem);color:var(--gold);letter-spacing:.02em;text-transform:uppercase;text-shadow:4px 4px 0 var(--inkline)}
-/* the board and the battlefield: crisp square tiles with ink outlines on a faint halftone */
+/* the board and the battlefield: crisp square tiles with ink outlines */
 .board,.field{border-radius:3px;border:2px solid var(--inkline);box-shadow:4px 4px 0 var(--inkline);
-  background:radial-gradient(circle,rgba(255,255,255,.06) 1.1px,transparent 1.5px) 0 0/8px 8px,#18171b}
+  background:#18171b}
 .slot,.unit{border-radius:2px;border:2px solid var(--inkline);background:var(--panel2);box-shadow:3px 3px 0 var(--inkline)}
 .slot:not(.empty){border-color:var(--inkline);border-top:4px solid var(--gc)}
 .slot.tier3,.slot.tier4,.slot.tier5{border-top:4px solid var(--tc)}
 .slot.empty{background:rgba(0,0,0,.25);border:2px dashed rgba(243,238,228,.16);box-shadow:none}
 .slot .pt,.unit .pt{border:2px solid var(--inkline);box-shadow:0 0 0 2px var(--gc)}
-.slot .nm{font-size:.76rem}
+.slot .nm{font-size:.74rem;font-weight:700}
 .slot.sel{box-shadow:0 0 0 3px var(--gold),3px 3px 0 var(--inkline);border-color:var(--inkline)}
 .slot.dropok{outline:3px dashed var(--gold);outline-offset:-4px}
 .slot:active:not(.empty){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--inkline)}
@@ -470,7 +470,7 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .scard:active{transform:translate(2px,2px);box-shadow:1px 1px 0 var(--inkline)}
 .syn{border-radius:3px;border:2px solid var(--inkline)}
 /* events: a comic panel, flavor text in a caption box */
-.evstage{border-radius:3px;border:3px solid var(--inkline);box-shadow:6px 6px 0 var(--inkline);background:radial-gradient(circle,rgba(255,255,255,.05) 1.2px,transparent 1.6px) 0 0/9px 9px,var(--bg2)}
+.evstage{border-radius:3px;border:3px solid var(--inkline);box-shadow:6px 6px 0 var(--inkline);background:var(--bg2)}
 .evtitle{font-size:2.1rem;color:var(--gold);text-shadow:3px 3px 0 var(--inkline)}
 .evflav{font-style:normal;color:var(--muted);font-weight:600}
 .evopt{border-radius:3px;border:2px solid var(--inkline);background:var(--panel);box-shadow:3px 3px 0 var(--inkline)}
