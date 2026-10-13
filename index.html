@@ -576,6 +576,9 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .sw i{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--muted);transition:transform .15s,background .15s}
 .sw.on{background:color-mix(in srgb,var(--gold) 45%,var(--panel2))}
 .sw.on i{transform:translateX(18px);background:var(--gold)}
+.syn.combo.near{background:transparent;border-style:dashed;color:var(--gold)}
+.syn.combo.near .c{font-size:.6rem;margin-left:3px}
+.scard .xo{position:absolute;top:5px;left:50%;transform:translateX(-50%);z-index:2;width:max-content;max-width:90%;white-space:normal;text-align:center;line-height:1.15;font-size:.55rem;font-weight:900;letter-spacing:.03em;padding:2px 5px;border-radius:2px;background:var(--gold);color:#141018;box-shadow:2px 2px 0 var(--inkline);pointer-events:none}
 
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
@@ -672,9 +675,9 @@ const RMAX=RANK.odds.length;
 // the rarest rarity a shop rank can show
 function topTier(r){const o=RANK.odds[Math.max(0,Math.min(RMAX,r)-1)];let t=1;o.forEach((p,i)=>{if(p>0)t=i+1;});return t;}
 const BENCH=5, SHOP_SLOTS=5, REROLL=1;
-// rarity identity: Commons and Uncommons stop at ★★; Rare, Epic and Mythic count as 2 for their genre once they reach ★★★
+// rarity identity: Commons and Uncommons stop at ★★; Rare, Epic and Mythic count as 2 for their genre from ★★ (v19.3)
 function maxLv(id){return HERO[id].tier>=3||legend('spinoff')?3:2;}
-function genreWeight(id,units){if(HERO[id].tier<3&&!legend('spinoff'))return 1;const lv=Math.max(0,...(units||[]).filter(u=>u.id===id).map(u=>u.level||1));return lv>=3?2:1;}
+function genreWeight(id,units){const rare=HERO[id].tier>=3;if(!rare&&!legend('spinoff'))return 1;const lv=Math.max(0,...(units||[]).filter(u=>u.id===id).map(u=>u.level||1));return lv>=(rare?2:3)?2:1;}
 
 // Parked while we balance 4 genres: their data stays in the file. Remove a key here to bring a genre back.
 const PARKED=new Set(['orc','elf','fin','grim']);
@@ -927,9 +930,9 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.551,3.123,2.676,2.08],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.551,3.342,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.008,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.01,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
@@ -2258,26 +2261,32 @@ function boardHTML(){
       <div class="rowlbl bfoot"><span>Bench · doesn't fight</span></div>
     </section>`;
 }
+function xoRoom(units,x){return units.length<boardSize()||units.some(u=>{const g=HERO[u.id].genre;return g!==x.a&&g!==x.b||units.filter(v=>v.id===u.id).length>1;});}
 function synHTML(units){
   const s=activeSyn(units);const c=s.c;const items=[];
   for(const k in GENRES){const n=c.g[k]||0;if(!n)continue;const def=GENRES[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'genre',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.G[k]>0,html:`<span class="e">${def.e}</span>`});}
   for(const k in TRAITS){const n=c.t[k]||0;if(!n)continue;const def=TRAITS[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'trait',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.T[k]>0,html:tsvg(k)});}
   items.sort((a,b)=>b.on-a.on||b.n-a.n);
   const combos=CROSSOVERS.filter(x=>s.X[x.id]);
+  // crossovers one character away (wide play made visible): 2 of one genre and 1 of the other, on the board
+  const need=legend('crossep')?1:2,rl=s.real||{};
+  const near=CROSSOVERS.filter(x=>!s.X[x.id]&&xoRoom(units,x)&&GENRES[x.a]&&GENRES[x.b]&&((rl[x.a]||0)>=need&&(rl[x.b]||0)===need-1||(rl[x.b]||0)>=need&&(rl[x.a]||0)===need-1)&&need-1>=0&&((rl[x.a]||0)+(rl[x.b]||0)>0)).slice(0,3);
   if(!items.length)return '';
-  return `<div class="syns">${items.map(i=>`<button class="syn${i.on?' on':''}${i.kind==='genre'?' g-'+i.k:''}" data-a="syn" data-v="${i.k}" title="${esc((GENRES[i.k]||TRAITS[i.k]).name)}: ${i.n} counted${i.kind==='genre'?' (Rare and up count as 2)':''}">${i.html}<span class="c">${i.max?'MAX':i.n+'/'+i.nx}</span></button>`).join('')}
-    ${combos.map(x=>`<button class="syn combo" data-a="combo" data-v="${x.id}">🔗 ${esc(x.name)}</button>`).join('')}</div>`;
+  return `<div class="syns">${items.map(i=>`<button class="syn${i.on?' on':''}${i.kind==='genre'?' g-'+i.k:''}" data-a="syn" data-v="${i.k}" title="${esc((GENRES[i.k]||TRAITS[i.k]).name)}: ${i.n} counted${i.kind==='genre'?' (Rare and up count as 2 from ★★)':''}">${i.html}<span class="c">${i.max?'MAX':i.n+'/'+i.nx}</span></button>`).join('')}
+    ${combos.map(x=>`<button class="syn combo" data-a="combo" data-v="${x.id}">🔗 ${esc(x.name)}</button>`).join('')}${near.map(x=>{const m=(rl[x.a]||0)<need?x.a:x.b;return `<button class="syn combo near" data-a="combo" data-v="${x.id}" title="One more ${esc(GENRES[m].name)} character on your board switches on ${esc(x.name)}">🔗 ${esc(x.name)} <span class="c">${GENRES[x.a].e}${Math.min(need,rl[x.a]||0)}/${need} ${GENRES[x.b].e}${Math.min(need,rl[x.b]||0)}/${need}</span></button>`;}).join('')}</div>`;
 }
 function shopHTML(){
   const deal=UI.deal&&!RM;UI.deal=0;
   const l1={};S.units.forEach(u=>{if(u.level===1)l1[u.id]=(l1[u.id]||0)+1;});
+  const fieldNow=fielded(),xNow=activeSyn(fieldNow).X;
   const cards=S.shop.map((o,i)=>{
     if(!o)return `<div class="scard sold" aria-hidden="true"></div>`;
     const d=HERO[o.id];const c=canBuy(i);const owned=S.units.filter(u=>u.id===o.id);
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
+    const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
     return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
-      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -2469,7 +2478,7 @@ function heroDetail(id,level){
   const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);const poolLine=S?`<p class="poolln">Pool: <b>${poolLeft(id)}</b> of ${poolMax(id)} copies left. ★★ takes 3 copies, ★★★ takes 6.</p>`:'';
   const range=d.genre==='ball'?'Throws':b.range==='melee'?'Melee':'Ranged';
   return `<div class="hs-head">${heroArt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
-    <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for genre':' · max ★★'}</span></div>
+    <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 from ★★':' · max ★★'}</span></div>
     <div class="statrow"><span>❤️ HP<b>${R(st.hp)}${d.crowd?' each':''}</b></span><span>⚔️ ATK<b>${R(st.atk)}${d.crowd?' each':''}</b></span><span>🛡️ Armor<b>${b.arm}</b></span><span>⏱ Speed<b>${b.spd}s</b></span></div>
     <div class="lvrow"><span class="muted">${'★'.repeat(1)} / ${'★'.repeat(2)}${maxLv(id)>2?' / '+'★'.repeat(3):''}</span>${d.crowd?`<span>👥 ${starVals(id,level,s=>s.n)} bodies</span>`:`<span>❤️ ${starVals(id,level,s=>R(s.hp))}</span><span>⚔️ ${starVals(id,level,s=>R(s.atk))}</span>`}</div>
     <div class="skill"><b>${SK[d.skill].name}</b> <span class="muted">· ${b.mana} energy</span><br>${skillStars(id,level)}</div>
@@ -2486,7 +2495,7 @@ function synDetail(k){
     ${def.tiers.map((t,i)=>`<p class="tl${n>=t?' on':''}"><b>${t}</b> ${def.d[i]}</p>`).join('')}
     <div class="row" style="gap:6px">${members.map(h=>`<button class="ic" style="width:auto;height:auto;border:none;background:none" data-a="hero-info" data-v="${h[0]}" title="${esc(h[1])}" aria-label="${esc(h[1])}"><span style="opacity:${S&&fielded().some(u=>u.id===h[0])?1:.45}">${heroPt(h[0],'sm')}</span>${isG&&h[4]>=3?'<small style="display:block;font-size:.6rem;font-weight:800;color:var(--muted)">×2</small>':''}</button>`).join('')}</div>
     ${how?`<p style="font-size:.85rem">${how}</p>`:''}
-    <p class="muted" style="font-size:.78rem">Counts different characters on your board.${isG?' Rare, Epic and Mythic characters at ★★★ count as 2.':''}</p>`;
+    <p class="muted" style="font-size:.78rem">Counts different characters on your board.${isG?' Rare, Epic and Mythic characters count as 2 from ★★.':''}</p>`;
 }
 // item text with every level's number and the current one highlighted ("10% / 15% / 20%"), or a level-up preview ("10% → 15%")
 function trText(id,cur){const t=TR[id];return esc(t.t).replace('{v}',t.v.map((x,i)=>i+1===cur?`<strong class="lvon">${x}</strong>`:x).join(' / '));}
@@ -2512,7 +2521,7 @@ function trinketDetail(id){const t=TR[id],L=S?ilv(id):0;
     +(L&&(UI.screen==='plan'||UI.screen==='event')?`<div class="row">${itemSellBtn(id)}</div>`:'');}
 function itemSellBtn(id){return `<button class="btn sm danger" data-a="sell-item" data-v="${id}">${UI.armItem===id?'Tap again to sell for ':'Sell for '}🪙${itemSellValue(id)}</button>`;}
 function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3><p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is your biggest genre.</p>`:''}`;}
-function comboDetail(id){const x=CROSSOVERS.find(c=>c.id===id);return `<div class="eyebrow">Crossover</div><h3 style="color:var(--gold)">🔗 ${esc(x.name)}</h3><p>${esc(x.d)}</p><p class="muted" style="font-size:.82rem">Needs ${legend('crossep')?1:2} ${GENRES[x.a].e} ${GENRES[x.a].name} + ${legend('crossep')?1:2} ${GENRES[x.b].e} ${GENRES[x.b].name} characters on your board (Rare and up count as 2).</p>`;}
+function comboDetail(id){const x=CROSSOVERS.find(c=>c.id===id);return `<div class="eyebrow">Crossover</div><h3 style="color:var(--gold)">🔗 ${esc(x.name)}</h3><p>${esc(x.d)}</p><p class="muted" style="font-size:.82rem">Needs ${legend('crossep')?1:2} ${GENRES[x.a].e} ${GENRES[x.a].name} + ${legend('crossep')?1:2} ${GENRES[x.b].e} ${GENRES[x.b].name} characters on your board (Rare and up count as 2 from ★★).</p>`;}
 function enemyDetail(key,st){
   const d=EN[key];
   return `<div class="hs-head">${pt({e:d.e,foe:true},'lg')}<div><div class="eyebrow">${d.x.boss?'Boss':'Enemy'}</div><div class="hs-name">${esc(d.name)}</div></div></div>
@@ -2583,7 +2592,7 @@ SCR.codex=()=>{
     <p><b>Board.</b> The top row is your front row; it gets hit first. Benched characters don't fight.</p>
     <p><b>Who attacks whom.</b> Taunting enemies are always hit first. Otherwise melee characters hit the nearest front-row enemy, ranged characters shoot the lowest-HP enemy anywhere, and Stalkers leap at the weakest back-row enemy. A melee character in your back row waits behind its own lane (the front square in its column) and <b>steps up</b> into it as soon as it is empty: at the start of the fight or the moment the front-liner falls. It steps up before your bench fills the gap, and charges its ability a little while it waits (Stalkers and Sportsball characters don't wait). When a side's whole front row is wiped out, its back row steps forward. New characters you buy go where they fight best: melee to an empty front square, everyone else to the back.</p>
     <p><b>Energy and skills.</b> Characters gain energy by attacking and getting hit. A full blue bar casts their skill.</p>
-    <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre.</p>
+    <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre from ★★, so a wide board of two or three genres fills up fast.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you choose a Legendary (win or lose). You hold one at a time. Win, and a bonus item is offered too.</p>
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic hops around the board, swapping places with whoever is hurt worst (front or back), and the Burrow Lurker tunnels into the enemy back row.</p>
@@ -2598,7 +2607,7 @@ SCR.codex=()=>{
   if(tab==='heroes')body=Object.keys(GENRES).map(g=>`<h3>${GENRES[g].e} ${GENRES[g].name}</h3><div class="cgrid">${HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]];const st=heroStatsAt(d.id,1);return `<button class="ccard g-${g}" data-a="hero-info" data-v="${d.id}" data-l="1" aria-label="${esc(d.name)} details"><div class="hd">${heroPt(d.id,'sm')}<span><b>${esc(d.name)}</b><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${TRAITS[d.trait].name}${d.crowd?' · 👥 crowd':''}</span></div><p><b>${SK[d.skill].name}:</b> ${skillStars(d.id,0)}</p><p>🎯 ${targetShort(d.id)}</p></button>`;}).join('')}</div>`).join('');
   if(tab==='syn')body=`<h3>Genres</h3><div class="cgrid">${Object.keys(GENRES).map(k=>`<div class="ccard g-${k}"><div class="hd"><span class="emo" style="font-size:1.4rem">${GENRES[k].e}</span><b>${GENRES[k].name}</b></div>${GENRES[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${GENRES[k].d[i]}</p>`).join('')}</div>`).join('')}</div>
     <h3>Traits</h3><div class="cgrid">${Object.keys(TRAITS).map(k=>`<div class="ccard"><div class="hd"><span class="syn" style="padding:.2em .4em">${tsvg(k)}</span><b>${TRAITS[k].name}</b></div>${TRAITS[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${TRAITS[k].d[i]}</p>`).join('')}</div>`).join('')}</div>
-    <h3>Crossovers</h3><p class="muted" style="font-size:.82rem">Rare and up count as 2 once they reach ★★★.</p><div class="cgrid">${CROSSOVERS.map(x=>`<div class="ccard"><div class="hd"><b>🔗 ${esc(x.name)}</b></div><p>${GENRES[x.a].e} ${GENRES[x.a].name} ×2 + ${GENRES[x.b].e} ${GENRES[x.b].name} ×2</p><p>${esc(x.d)}</p></div>`).join('')}</div>`;
+    <h3>Crossovers</h3><p class="muted" style="font-size:.82rem">Rare and up count as 2 from ★★.</p><div class="cgrid">${CROSSOVERS.map(x=>`<div class="ccard"><div class="hd"><b>🔗 ${esc(x.name)}</b></div><p>${GENRES[x.a].e} ${GENRES[x.a].name} ×2 + ${GENRES[x.b].e} ${GENRES[x.b].name} ×2</p><p>${esc(x.d)}</p></div>`).join('')}</div>`;
   if(tab==='trinkets')body='<p class="muted" style="font-size:.85rem">Items come from the first ★★ or ★★★ of a Rare, Epic or Mythic character, the Supply Drop, and Act 1, 2 and 3 boss wins. They help your whole team; you hold up to 5.</p><ul class="irules" style="font-size:.85rem"><li>Pick an item you have and the copy combines into it: ★ → ★★ → ★★★ (numbers below).</li><li>A pick of 3 includes one level-up and skips items your board can\'t use.</li><li>Tap an item to sell it for 🪙2 / 3 / 4 by level.</li><li>Full? A new item replaces one (that one is sold).</li></ul>'+['C','R'].map(r=>`<h3>${r==='R'?'Rare items':'Common items'}</h3><div class="cgrid">${TRINKETS.filter(t=>t[2]===r).map(t=>`<div class="ccard"><div class="hd"><span class="emo" style="font-size:1.4rem">${t[3]}</span><b>${esc(t[1])}</b></div><p>${trText(t[0],0)}</p></div>`).join('')}</div>`).join('');
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p></div>`;}).join('')}</div>`;
   if(tab==='enemies')body=Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...ENC[a].normal,...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
@@ -2794,7 +2803,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.2',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.3',TL_KEY='tropebrawl-runlog';let TL=null;
 // globalThis.__tlForce (sims only): record bot runs in the same format, into globalThis.__tlOut, to compare bots with people
 function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&!!(window.claude&&window.claude.use));}catch(e){return false;}}
 function tlCur(){if(!S||!tlOn())return null;
