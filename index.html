@@ -58,10 +58,12 @@ button{font:inherit;color:inherit}
 .res{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
 .res span{display:inline-flex;align-items:center;gap:5px;font-family:var(--f-display);font-size:1.1rem;font-variant-numeric:tabular-nums}
 .res small{font-family:var(--f-body);font-size:.72rem;color:var(--good);font-weight:800}
-.strip{display:flex;gap:3px;align-items:center;flex-wrap:wrap}
+.strip{display:flex;column-gap:7px;row-gap:4px;align-items:center;flex-wrap:wrap}
+.strip .act{display:flex;gap:3px;padding:2px;border-radius:3px}
+.strip .act.cur{background:color-mix(in srgb,var(--gold) 16%,transparent)}
 .strip i{font-style:normal;display:inline-grid;place-items:center;width:20px;height:20px;border-radius:6px;background:var(--panel);font-size:.7rem;opacity:.45;font-family:var(--f-emoji)}
 .strip i.done{opacity:.22}
-.strip.long{gap:2px}
+.strip.long .act{gap:2px}
 .strip.long i{width:15px;font-size:.62rem}
 .strip i.now{opacity:1;background:var(--gold);box-shadow:0 0 0 2px var(--gold)}
 .strip i.bossp{background:color-mix(in srgb,var(--red) 30%,var(--panel))}
@@ -520,6 +522,26 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .stk{font-weight:800;font-size:.85em;padding:0 .45em;border-radius:3px;border:1px solid currentColor}
 .stk.w{color:#ff9a3d}.stk.l{color:#7fc8ff}
 @media (max-width:560px){.scard .plw{display:none}}
+.evteam{max-width:760px;margin:12px auto 0;padding:0 0 4px}
+.evteam>summary{cursor:pointer;list-style:none;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:var(--muted);padding:6px 2px 8px}
+.evteam>summary::-webkit-details-marker{display:none}
+.evteam>summary::before{content:'▸ '}
+.evteam[open]>summary::before{content:'▾ '}
+.evteam .slot{cursor:default}
+.evteam .slot:active:not(.empty){transform:none;box-shadow:3px 3px 0 var(--inkline)}
+.evteam .slot.tgt{outline:3px solid var(--gold);outline-offset:-3px}
+.slot .tgs{position:absolute;top:-8px;right:3px;z-index:8;display:flex;flex-direction:column;align-items:flex-end;gap:3px;pointer-events:auto}
+.slot .sbdg.tg{position:static;background:var(--gold);color:#141012;white-space:nowrap;box-shadow:2px 2px 0 var(--inkline)}
+.evteam .ichips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.evteam .ichip{font-size:.74rem;font-weight:700;padding:3px 7px;border:2px solid var(--inkline);background:var(--panel2);border-radius:2px}
+.evteam .ichip.rare{border-top-color:var(--r3)}
+.choice .own{display:block;margin-top:2px;color:var(--gold);font-weight:800;font-size:.72rem}
+.shop .scard:not(.sold){border-top:5px solid var(--tc);background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 22%,var(--panel2)) 0,var(--panel2) 62%)}
+.scard .rarl{font-size:.5rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--tc);line-height:1}
+.lvrow{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.74rem;color:var(--muted);margin:8px 0 2px;align-items:baseline}
+.lvrow>span:first-child{font-size:.6rem;letter-spacing:.14em;text-transform:uppercase;font-weight:800}
+.lvrow .on{color:var(--ink);font-weight:800}
+.lvrow b{color:var(--gold);letter-spacing:-.05em}
 
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
@@ -768,7 +790,7 @@ const TRINKETS=[
  ['coin','Lucky Coin','C','🪙','{v} gold after every win.',['+1','+1','+2']],
  ['battery','Battery Pack','C','🔋','All your characters start fights with {v} energy.',['30%','45%','60%']],
  ['fangs','Vampire Fangs','C','🦷','All your characters heal for {v} of damage dealt.',['12%','18%','24%']],
- ['smoke','Smoke Grenade','C','💨','Your back-row characters can\'t be targeted for the first {v}.',['7s','10s','14s']],
+ ['smoke','Smoke Grenade','C','💨','For the first 10s of a fight, your characters dodge {v} of attacks.',['20%','30%','40%']],
  ['hollow','Hollow Points','C','💢','All your characters deal {v} more damage to enemies below half HP.',['50%','75%','100%']],
  ['spikes','Spiked Armor','C','🌵','Your front-row characters reflect {v} of melee damage.',['45%','65%','85%']],
  ['flare','Signal Flare','C','🎆','All your characters attack instantly and 30% faster for the first {v}.',['5s','7s','10s']],
@@ -784,9 +806,9 @@ const TRINKETS=[
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
 const TRINKET_CAP=5, ITEM_MAX=3;
-// legendaries: one held at a time, offered after the Act 1 and Act 2 bosses
+// legendaries: one held at a time, offered after the Act 1, 2 and 3 bosses
 const LEGENDS_ALL={
-  gameball:{name:'Game Ball',e:'⚽',genre:'ball',d:'Sportsball characters pass one ball instead of attacking. The holder throws it at an enemy for the team\'s combined attack, and it bounces to the next Sportsball teammate: +15% per pass (up to 2.5×). The catcher throws once the ball lands, after half its attack time, so faster characters keep it moving. A stunned or knocked-out holder fumbles and the streak resets.'},
+  gameball:{name:'Game Ball',e:'⚽',genre:'ball',d:'Sportsball characters pass one ball instead of attacking. The holder throws it at an enemy for the team\'s combined attack (each different Sportsball character adds its attack once; a second copy of the same character only adds a body), and it bounces to the next Sportsball teammate: +15% per pass (up to 2.5×). The catcher throws once the ball lands, after half its attack time, so faster characters keep it moving. A stunned or knocked-out holder fumbles and the streak resets.'},
   corner:{name:'Corner Office',e:'🏢',genre:'fin',d:'Your highest-level Finance hero also gets +3% damage per gold you hold, with no cap.'},
   mirror:{name:'Mirror Step',e:'🦋',genre:'elf',d:'Elves dodge half as often, but every dodged attack is thrown back at the attacker.'},
   martyr:{name:'Martyr\'s Vow',e:'🩸',genre:'grim',d:'Heroes start fights at half HP with an equal shield. Crusaders deal +40% damage below half HP.'},
@@ -794,11 +816,11 @@ const LEGENDS_ALL={
   brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +40% damage; Swarm crowds start with +3 bodies and keep regrowing past full (up to double).'},
   frenzy:{name:'Blood Frenzy',e:'🔥',genre:'orc',d:'Every enemy that falls makes your Orcs attack 15% faster for the rest of the fight.'},
   armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (3 times per fight).'},
-  vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙8 at 🪙80, and Heist characters\' gold damage bonus has no cap.'},
+  vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙8 at 🪙80, and Heist characters\' gold damage bonus goes up to +80% (at 🪙80).'},
   quickdraw:{name:'Quick Draw',e:'⏱️',genre:'west',d:'High Noon strikes again every 10s: your Wild West characters\' next shot is instant and deals double damage.'},
   underdog:{name:'Underdog Story',e:'🥊',genre:null,d:'Your characters get +5% HP and damage for every life you have lost (up to +50%).'},
   ensemble:{name:'Ensemble Cast',e:'🎭',genre:null,d:'Your characters get +6% HP and damage for every different genre on your board.'},
-  plotarmor:{name:'Plot Armor',e:'📖',genre:null,d:'Each of your characters survives its first knockout each fight with 25% HP and can\'t be targeted for 1.5s.'},
+  plotarmor:{name:'Main Character Energy',e:'🌟',genre:null,d:'Each of your characters survives its first knockout each fight with 25% HP and can\'t be targeted for 1.5s.'},
   dircut:{name:'Director\'s Cut',e:'🎬',genre:null,d:'Rerolls cost 🪙1 and you get 2 free rerolls every round, but interest is capped at 🪙2.'},
   spinoff:{name:'Spin-off Deal',e:'📺',genre:null,d:'Your Commons and Uncommons can reach ★★★ (two ★★ combine), count as 2 for their genre at ★★★, and get +45% HP and damage.'},
   wallet:{name:'Haunted Wallet',e:'👻',genre:null,d:'All your characters start every fight with full energy, but your interest is capped at 🪙1.'},
@@ -830,6 +852,12 @@ const ENEMIES=[
  ['continuity','Continuity Error','⏳',310,12,8,1.5,'melee',80,'e_regen',{}],
  ['plotarmor','Plot Armor','🦾',230,10,14,1.4,'melee',70,'e_aegis',{}],
  ['deus','Deus Ex Machina','⚙️',960,18,8,1.3,'ranged',70,'e_divine',{boss:1}],
+ ['exec','The Network Executive','🏢',820,16,7,1.3,'ranged',70,'e_drain',{boss:1,ls:.2}],
+ ['cgi','CGI Army','💾',0,0,3,1.0,'melee',0,null,{crowd:7,bodyHp:22,bodyAtk:4}],
+ ['twist','Plot Twist','🔀',140,14,2,1.2,'ranged',60,'e_hex',{}],
+ ['monologue','Villain Monologue','🎤',160,10,3,1.5,'ranged',70,'e_wail',{}],
+ ['captain','Henchman Captain','🦹',340,14,10,1.4,'melee',80,'e_guard',{}],
+ ['cliff','Cliffhanger','🧗',150,16,3,.9,'melee',70,'e_vanish',{dive:1}],
 ];
 const EN={};
 ENEMIES.forEach(a=>EN[a[0]]={key:a[0],name:a[1],e:a[2],hp:a[3],atk:a[4],arm:a[5],spd:a[6],range:a[7],mana:a[8],skill:a[9],x:a[10]});
@@ -842,21 +870,23 @@ const ENC={
  2:{normal:['f1:mech b0:sniper b2:auditor','f0:ninjas f2:figures b1:auditor','f0:figures f1:mech f2:ninjas','f1:mech b0:sniper b1:sniper'],
     boss:'f0:mech f2:figures b1:shared'},
  3:{normal:['f0:retcons f2:spoiler b1:breaker','f1:continuity b0:breaker b2:breaker','f0:plotarmor f2:retcons b1:spoiler','f0:continuity f1:retcons f2:plotarmor b1:breaker'],
-    boss:'f0:plotarmor f2:continuity b1:deus'},
+    boss:'f0:plotarmor f2:continuity b1:exec'},
+ 4:{normal:['f0:cgi f2:captain b1:twist','f1:captain b0:monologue b2:twist','f0:cliff f2:cgi b1:monologue','f0:captain f1:cgi f2:cliff b1:twist'],
+    boss:'f0:captain f2:plotarmor b1:deus'},
 };
-// rounds: 3 acts of fight, fight, event, fight, boss. Extended Cut (Game Level 1+) adds a fight before each boss.
+// rounds: TUNE.acts acts of 7 (see buildSchedule).
 // g = the round's growth step for enemy strength (roundMult): the round index, or between the Level 0 position
 // and the round index for a longer schedule (TUNE.lvCutG = 1 means every round is one full step tougher).
 const SCHEDULE=[];
 function buildSchedule(cut){
   SCHEDULE.length=0;
-  // 3 acts of 7: fight, fight, event, fight, fight, fight, boss. Enemy growth follows the act (a 7-round act grows
+  // TUNE.acts acts of 7 (4 since v19): fight, fight, event, fight, fight, fight, boss. Enemy growth follows the act (a 7-round act grows
   // a little more than the old 5-round one, by TUNE.actLenG)
   const act=['fight','fight','event','fight','fight','fight','boss'];
-  for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
+  for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.551,3.123,2.676],bossF:[1.9,1.6,0.95],lossCost:[2,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.551,3.123,2.676,2.0],bossF:[1.9,1.6,1.9,0.5],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:0,lvFoeFrom:4};
 buildSchedule(false);
@@ -896,11 +926,40 @@ const EVFLAV={fanmail:'Sacks of fan mail block the stage door. Some of it has mo
   insurance:'A man in a cheap suit offers to cover your next disaster. For a fee.',reboot:'The studio wants a fresh take on one of your characters. Fans may riot.',wheel:'A game-show host wheels out a giant prize wheel. The studio will buy back part of your cast at full price, forever.',recruit:'A free agent is waiting by the stage door, headshot in hand.',payday:'The studio finally paid you back for the catering.',supply:'A crate of props arrives from the prop department.',
   deal:'A shady producer offers a bag of cash. The fine print mentions your health.',promotion:'One of your extras has been working on their lines.',reinforce:'The understudies are ready to step in.',
   trial:'A rival crew dares you to film the next scene without a safety net.',casting:'An agent swears they can get one of your actors a bigger part.',merchant:'A traveling prop seller rolls a cart onto the set.'};
+// Free Agent / Cameo cards: copies you already own of that character, and whether this one completes a merge
+function ownLine(id){const own=S.units.filter(u=>u.id===id);if(!own.length)return '';const n1=own.filter(u=>u.level===1).length;
+  return `<span class="own">${n1>=2&&maxLv(id)>=2?'Completes ★★ (you own 2 at ★)':`You own ${own.length}: ${own.map(u=>'★'.repeat(u.level)).join(' ')}`}</span>`;}
+// read-only team panel under event screens; tags mark the characters the current options would affect
+function evMarks(e){const m={},add=(u,txt,tip)=>{if(u&&u.slot)(m[u.slot]=m[u.slot]||[]).push({txt,tip});};
+  if(!e)return m;
+  if(e.cut&&!e.subDone)(e.sub.ids||[]).forEach(g=>ownedIn(g).forEach(u=>add(u,'✂️ CUT','The Cut: this genre is on the table')));
+  else if(e.sub&&e.sub.kind==='choice'&&!e.subDone){const k=e.picked,dt=e.sub.data||{};
+    if(k==='montage')add(bestToTrain(),'🏋️ +★','Train hard: this one gains a star');
+    if(k==='strike')add(weakestOnBoard(),'🪧 LEAVES','Let someone go: this one leaves the show');
+    if(k==='reboot')add(unitByUid(dt.uid),'🔁 REBOOT','Reboot them: this one is recast one rarity higher');
+    if(k==='cameo'&&dt.id)S.units.filter(u=>u.id===dt.id).forEach(u=>add(u,'🌟 COPY','The cameo is another copy of this one'));}
+  else if(!e.picked)(e.opts||[]).forEach(k=>{
+    if(k==='promotion')add(promoTarget(),'⭐ +★','Field Promotion levels this one up');
+    if(k==='casting'){const c=castTarget();add(c&&c.u,'🎭 RECAST','Casting Call recasts this one');}});
+  else if(e.sub&&e.sub.kind==='recruit'&&!e.subDone)S.units.filter(u=>e.sub.ids.includes(u.id)).forEach(u=>add(u,'🤝 COPY','A Free Agent pick adds a copy of this one'));
+  return m;}
+function evTeamHTML(e){
+  if(!S.units.length&&!S.trinkets.length)return '';
+  const m=evMarks(e),sel=UI.sel;UI.sel=null;let b=boardHTML();UI.sel=sel;
+  // the plan board, made read-only: no actions, tags on targeted characters
+  b=b.replace(/<button class="slot([^"]*)"([^>]*)>/g,(all,cls,rest)=>{const v=(/data-v="(\w+)"/.exec(rest)||[])[1],tg=m[v];
+    return `<div class="slot${cls}${tg?' tgt':''}"${rest.replace(/ data-a="slot"/,'').replace(/ aria-pressed="[^"]*"/,'')}>${tg?`<span class="tgs">${tg.map(t=>`<span class="sbdg tg" title="${esc(t.tip)}">${t.txt}</span>`).join('')}</span>`:''}`;}).replace(/<\/button>/g,'</div>').replace('aria-label="Your board"','aria-label="Your team (view only)"');
+  const nb=fielded().length,nn=S.units.length-nb;
+  const items=S.trinkets.length?`<div class="ichips">${S.trinkets.map(t=>`<span class="ichip${TR[t].rar==='R'?' rare':''}" title="${esc(TR[t].name)}"><span class="emo">${TR[t].e}</span> ${esc(TR[t].name)} ${istars(ilv(t))}</span>`).join('')}</div>`:'';
+  return `<details class="screen evteam" open><summary>Your team · ${nb} on board · ${nn} on bench${S.trinkets.length?` · ${S.trinkets.length} item${S.trinkets.length>1?'s':''}`:''}</summary>${S.units.length?b:''}${items}</details>`;}
 function evDesc(k){
   if(k==='recruit')return `Pick 1 of 3 ${RARITY[Math.min(topTier(S.rank)+1,4)-1]} characters, free.`;
   if(k==='reinforce')return `+2 lives (up to ${maxLives()}).`;
   if(k==='trial')return `Your next fight is tougher: enemies get +${Math.round(100*(TUNE.lvTrial-1))}% HP and damage. Win it: +${TUNE.lvTrialGold} gold and pick 1 of 3 items.`;
   if(k==='merchant')return `Buy 1 of 3 items for 🪙${TUNE.lvMerchant}. It comes one level higher (★★ when new). Or pass.`;
+  if(S&&k==='promotion'){const u=promoTarget();return u?`Your lowest-level character on the board levels up: <b>${esc(HERO[u.id].name)}</b> ${'★'.repeat(u.level)} → ${'★'.repeat(u.level+1)}.`:'Nobody on the board can level up (Epics and Mythics can\'t): +🪙5 instead.';}
+  if(S&&k==='casting'){const c=castTarget();return c?`<b>${esc(HERO[c.u.id].name)}</b> (${RARITY[HERO[c.u.id].tier-1]} ${'★'.repeat(c.u.level)}) is recast as a random ${GENRES[HERO[c.u.id].genre].name} ${RARITY[c.to-1]}, keeping its stars.`:'Nobody on the board to recast: +🪙5 instead.';}
+  if(S&&k==='wheel'){const own=WHEEL.filter(t=>S.units.some(u=>HERO[u.id].tier===t)).map(t=>`${RARITY[t-1]} ×${S.units.filter(u=>HERO[u.id].tier===t).length}`);return EVENTS[k].d+(own.length?` You own: ${own.join(' · ')}.`:'');}
   return EVENTS[k].d;
 }
 
@@ -932,10 +991,10 @@ function foeMul(){return 1+foeStep(S&&S.lv);}
 function xpMul(){return 1+(rule('xp1')?TUNE.lvXp[0]:0)+(rule('xp2')?TUNE.lvXp[1]:0);}
 function xpFor(i){return Math.round(RANK.xp[i]*xpMul());}
 // the dials at level n in one line: rounds, lives, shop XP, bosses
-function lvRounds(n){const R=rulesFor(n);return 21+(R.includes('finale2')?1:0);}
+function lvRounds(n){const R=rulesFor(n);return 7*TUNE.acts+(R.includes('finale2')?1:0);}
 function lvDials(n){const R=rulesFor(n),h=id=>R.includes(id);
   const rounds=lvRounds(n),lives=10-(h('life1')?1:0)-(h('life2')?1:0),xp=(h('xp1')?TUNE.lvXp[0]:0)+(h('xp2')?TUNE.lvXp[1]:0);
-  const bosses=3+(h('finale2')?1:0);
+  const bosses=TUNE.acts+(h('finale2')?1:0);
   return `${rounds} rounds · ${lives} lives · shop XP ${xp?'+'+pctOf(xp):'normal'} · ${bosses} bosses${h('elite')?' + 3 mini-bosses':''}${foeStep(n)?' · enemies +'+pctOf(foeStep(n)):''}`;}
 function lvLoad(){let j={};try{j=JSON.parse(localStorage.getItem(LV_KEY)||'{}')||{};}catch(e){}
   const open=Math.max(0,Math.min(LV_MAX,j.open|0));
@@ -1074,6 +1133,7 @@ function sellValue(u){const half=Math.floor(PRICE[HERO[u.id].tier-1]*COPIES[u.le
 function buybackOn(u){return !!(S.fullSell&&S.fullSell[u.uid]!=null);}
 function curRound(){return SCHEDULE[S.round-1];}
 
+setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
 function newRun(){
   const lv=Math.max(0,Math.min(LV_MAX,UI.lv|0));
   S={lv,rules:rulesFor(lv),part:1,round:1,lives:10,gold:6,streak:0,rank:1,xp:0,wins:0,units:[],trinkets:[],tlv:{},legend:null,shop:[],locked:false,uid:1,paid:{},pending:[],freeRerolls:0,
@@ -1097,13 +1157,13 @@ function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===r
 function rollShop(){
   if(typeof UI!=='undefined')UI.pick=null; // a new shop: no card stays half-selected
   const maxed=maxedIds();
-  S.shop=[];
+  S.shop=[];let nudged=0;
   for(let i=0;i<SHOP_SLOTS;i++){
     const tier=rollTier();
     let pool=HEROES.filter(h=>h[4]===tier&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])&&poolOpen(h[0])).map(h=>h[0]);
     // gentle nudge toward heroes you already own, so merges stay reachable as the roster grows
     const mine=pool.filter(id=>S.units.some(u=>u.id===id));
-    if(mine.length&&rand()<TUNE.ownBias)pool=mine;
+    if(mine.length&&rand()<TUNE.ownBias&&nudged<TUNE.ownCap){pool=mine;nudged++;}
     if(!pool.length)pool=HEROES.filter(h=>!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])&&poolOpen(h[0])).map(h=>h[0]);
     if(!pool.length){S.shop.push(null);continue;}
     const id=pick(pool);
@@ -1264,13 +1324,13 @@ function encParse(str){return str.split(' ').map(t=>{const [pos,key]=t.split(':'
 function enemyBase(e){const d=EN[e.key];if(d.x.crowd)return {hp:d.x.crowd*d.x.bodyHp,dps:d.x.crowd*d.x.bodyAtk/d.spd*(d.x.dive?1.3:1),arm:d.arm};return {hp:d.hp,dps:d.atk/d.spd+(d.mana?30/d.mana*12/d.spd:0),arm:d.arm};}
 function tplStrength(enc){let E=0,D=0;enc.forEach(e=>{const b=enemyBase(e);E+=b.hp*(20+b.arm)/20;D+=b.dps;});return E*D;}
 const ACT_REF={};
-for(const a of [1,2,3]){const s=ENC[a].normal.map(t=>tplStrength(encParse(t))).sort((x,y)=>x-y);ACT_REF[a]=s[Math.floor(s.length/2)];}
+for(let a=1;a<=TUNE.acts;a++){const s=ENC[a].normal.map(t=>tplStrength(encParse(t))).sort((x,y)=>x-y);ACT_REF[a]=s[Math.floor(s.length/2)];}
 // Two-Part Finale: after Deus Ex Machina, the first two bosses return together
 const FINALE2='f1:mech b0:editor b2:shared';
 function freeSlotsE(enc){return [['front',1],['front',0],['front',2],['back',1],['back',0],['back',2]].filter(([r,c])=>!enc.some(e=>e.row===r&&e.col===c));}
 function prepareFight(){
   const ev=curRound();
-  const p2=ev.type==='boss'&&ev.act===3&&S.part===2;
+  const p2=ev.type==='boss'&&ev.act===TUNE.acts&&S.part===2;
   let tpl;
   if(p2)tpl=FINALE2;
   else if(ev.type==='boss')tpl=ENC[ev.act].boss;
@@ -1318,6 +1378,15 @@ function payIncome(extra){S.rrRound=0;if(legend('dircut'))S.freeRerolls=(S.freeR
   if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}S.locked=false;
   if(S.rank>r0)toast(rankMsg(b0).replace('⬆️','⬆️ Free XP filled the gauge.'));}
 function nextRound(){payIncome();startRound();}
+// Field Promotion's target: your lowest-level character on the board that can still level up (Rare or below)
+function promoTarget(){return fielded().filter(u=>u.level<maxLv(u.id)&&HERO[u.id].tier<=3).sort((a,b)=>a.level-b.level||HERO[b.id].tier-HERO[a.id].tier)[0]||null;}
+// Casting Call's target: your best Common/Uncommon on the board (most stars) whose genre still has a Rare to give;
+// with none on the board, your best Rare (to an Epic). {u, to, pool} or null
+function castTarget(){
+  const maxed=maxedIds(),f=fielded(),by=(a,b)=>b.level-a.level||HERO[b.id].tier-HERO[a.id].tier;
+  const low=f.filter(u=>HERO[u.id].tier<=2).sort(by),cand=low.length?low:f.filter(u=>HERO[u.id].tier===3).sort(by);
+  for(const u of cand){const d=HERO[u.id],to=low.length?3:4,pool=HEROES.filter(h=>h[2]===d.genre&&h[4]===to&&!maxed.has(h[0])).map(h=>h[0]);if(pool.length)return {u,to,pool};}
+  return null;}
 function eventPick(key){
   const e=S.event;if(!e||e.picked)return;
   e.picked=key;
@@ -1328,19 +1397,14 @@ function eventPick(key){
   if(key==='casting'){
     // your best Common/Uncommon on the board (most stars) becomes a random Rare of its genre, TUNE.lvCastDrop stars lower;
     // with none on the board, your best Rare becomes an Epic
-    const maxed=maxedIds(),f=fielded(),by=(a,b)=>b.level-a.level||HERO[b.id].tier-HERO[a.id].tier;
-    const low=f.filter(u=>HERO[u.id].tier<=2).sort(by),cand=low.length?low:f.filter(u=>HERO[u.id].tier===3).sort(by);let done=false;
-    for(const u of cand){
-      const d=HERO[u.id],to=low.length?3:4,pool=HEROES.filter(h=>h[2]===d.genre&&h[4]===to&&!maxed.has(h[0])).map(h=>h[0]);
-      if(!pool.length)continue;
-      const nid=pick(pool);u.id=nid;u.level=Math.max(1,Math.min(u.level-TUNE.lvCastDrop,maxLv(nid)));e.msg=`${d.name} is recast as ${HERO[nid].name} (${RARITY[to-1]} ${'★'.repeat(u.level)}).`;checkMerges();done=true;break;
-    }
-    if(!done){S.gold+=5;S.stats.gold+=5;e.msg='Nobody to recast: +5 gold.';}
+    const c=castTarget();
+    if(c){const u=c.u,d=HERO[u.id],to=c.to,nid=pick(c.pool);u.id=nid;u.level=Math.max(1,Math.min(u.level-TUNE.lvCastDrop,maxLv(nid)));e.msg=`${d.name} is recast as ${HERO[nid].name} (${RARITY[to-1]} ${'★'.repeat(u.level)}).`;checkMerges();}
+    else{S.gold+=5;S.stats.gold+=5;e.msg='Nobody to recast: +5 gold.';}
   }
   if(key==='merchant'){const c=TUNE.lvMerchant;if(S.gold>=c)e.sub={kind:'trinket',ids:trinketChoices(3,false),price:c};else e.msg=`You need 🪙${c}. The merchant moves on.`;}
   if(key==='promotion'){
-    const cand=fielded().filter(u=>u.level<maxLv(u.id)&&HERO[u.id].tier<=3).sort((a,b)=>a.level-b.level||HERO[b.id].tier-HERO[a.id].tier);
-    if(cand.length){levelUp(cand[0]);e.msg=`${HERO[cand[0].id].name} is now ${'★'.repeat(cand[0].level)}.`;checkMerges();}
+    const pu=promoTarget();
+    if(pu){levelUp(pu);e.msg=`${HERO[pu.id].name} is now ${'★'.repeat(pu.level)}.`;checkMerges();}
     else{S.gold+=5;e.msg='Nobody to promote: +5 gold.';}
   }
   if(key==='recruit'){
@@ -1381,7 +1445,7 @@ const SPECIALS={
   fanmail:{ok:()=>true},craft:{ok:()=>true},review:{ok:()=>true},props:{ok:()=>true},
 };
 // one hidden window per act: every round of the act except its first fight and its boss
-function reWindows(){const w=[];[1,2,3].forEach(a=>{const rs=SCHEDULE.map((x,i)=>({x,n:i+1})).filter(o=>o.x.act===a);if(rs.length<3)return;w.push(rs.slice(1,-1).map(o=>o.n));});return w;}
+function reWindows(){const w=[];Array.from({length:TUNE.acts},(_,k)=>k+1).forEach(a=>{const rs=SCHEDULE.map((x,i)=>({x,n:i+1})).filter(o=>o.x.act===a);if(rs.length<3)return;w.push(rs.slice(1,-1).map(o=>o.n));});return w;}
 function reChance(L){return Math.min(1,TUNE.rePBase+TUNE.rePStep*L);}
 function reMix(L){const g=Math.max(0,TUNE.reGood[0]+TUNE.reGood[1]*L),b=Math.min(1,TUNE.reBad[0]+TUNE.reBad[1]*L);return {good:g,bad:b,trade:Math.max(0,1-g-b)};}
 // the run decides at the start which round of each window (if any) gets a random event, and of which kind; the
@@ -1598,7 +1662,7 @@ function applyMods(){
     if(legend('martyr')){u.hp=u.maxHp*.5;u.shield+=u.maxHp*.5;if(u.genre==='grim')u.lowHpBonus=.4;}
     if(G.bug>=2&&u.genre==='bug')u.devour=.10;
     // Heist Crew: gold you hold is damage (Heist only at 2, everyone at 4; cap +30%, +60% at 6)
-    if(G.heist&&(u.genre==='heist'||G.heist>=2))u.goldDmg=(u.goldDmg||0)+TUNE.heistBase+Math.min(legend('vault')&&u.genre==='heist'?9:G.heist>=3?2*TUNE.heistCap:TUNE.heistCap,S.gold*.01);
+    if(G.heist&&(u.genre==='heist'||G.heist>=2))u.goldDmg=(u.goldDmg||0)+TUNE.heistBase+Math.min(legend('vault')&&u.genre==='heist'?Math.max(TUNE.vaultCap,G.heist>=3?2*TUNE.heistCap:TUNE.heistCap):G.heist>=3?2*TUNE.heistCap:TUNE.heistCap,S.gold*.01);
     // Wild West: High Noon (first shot instant, double); at 4 +15% crit and crits ricochet
     if(G.west&&u.genre==='west'){u.timer=Math.min(u.timer,.05);u.nextMult=Math.max(u.nextMult||1,2);u.crit+=TUNE.westCrit1;if(G.west>=2){u.crit+=TUNE.westCrit2;u.ricochet=true;u.critX=TUNE.westCritX;}}
     if((B.syn.X.fixed&&(u.genre==='ball'||u.genre==='heist'))||(B.syn.X.stampede&&u.crowd))u.crit+=.2;
@@ -1642,7 +1706,7 @@ function applyMods(){
 }
 const sideUnits=s=>B.units.filter(u=>u.side===s&&u.alive);
 const allies=u=>sideUnits(u.side);
-function targetable(x){return x.alive&&x.untarget<=0&&!(has('smoke')&&x.side==='A'&&x.row==='back'&&B.t<tv('smoke'));}
+function targetable(x){return x.alive&&x.untarget<=0;}
 const targetFoes=u=>B.units.filter(x=>x.side!==u.side&&targetable(x));
 const randFoe=u=>{const f=targetFoes(u);return f.length?pick(f):null;};
 const lowest=l=>l.length?l.reduce((a,b)=>b.hp<a.hp?b:a):null;
@@ -1676,7 +1740,9 @@ function outMult(u,t){
 function dealDamage(src,t,amt,type,aoe){
   if(!t.alive||amt<=0)return 0;
   if(type==='attack'&&t.catches>0&&t.crowd){t.catches--;regrow(t,1);float(t,'Caught!','heal');return 0;}
-  if(type==='attack'&&t.dodge&&rand()<Math.min(.5,t.dodge)){
+  // Smoke Grenade: extra dodge for your characters during the first 10s (no rand() drawn when there is no dodge at all)
+  const dg=t.dodge+(t.side==='A'&&B.t<10&&has('smoke')?tv('smoke')/100:0);
+  if(type==='attack'&&dg&&rand()<Math.min(.5,dg)){
     float(t,'Dodge','miss');
     if(t.mirror&&src&&src.alive)dealDamage(t,src,amt,'reflect');
     return 0;
@@ -1931,13 +1997,13 @@ function settle(){
     S.lives-=cost;res.lives=cost;S.stats.lost++;
     g+=TUNE.lossGold;S.freeRerolls+=1;
     res.tip=lossTip();
-    if(res.boss&&ev.act===3)S.bossTries++;
+    if(res.boss&&ev.act===TUNE.acts)S.bossTries++;
   }
   rs.rounds.push({r:S.round,t:res.boss?'boss':'fight',w:win});
   if(X.draft)S.freeRerolls+=1;
   res.rerolls=(win?0:1)+(X.draft?1:0);
   S.gold+=g;S.stats.gold+=g;res.gold=g;
-  if(res.boss&&ev.act<3&&S.lives>0)S.pending.push({kind:'legend',win});
+  if(res.boss&&ev.act<TUNE.acts&&S.lives>0)S.pending.push({kind:'legend',win});
   // Guest Stars / Trial by Fire: a win pays an item pick
   if(win&&S.enemy&&S.enemy.trial&&S.lives>0)S.pending.push({kind:'trial',level:3});
   if(win&&S.enemy&&S.enemy.elite){S.gold+=TUNE.lvEliteGold;}
@@ -1954,7 +2020,7 @@ function settle(){
 function advanceAfterFight(res){
   if(S.over)return;
   if(res.part2){S.part=2;S.bossTries=0;prepareFight();UI.screen='plan';return;} // straight on: no income, no new shop
-  if(!res.win&&res.boss&&res.act===3){S.freeRerolls+=2;payIncome(4);startRound();return;} // final boss: rehearsal round, then a 10% weaker rematch
+  if(!res.win&&res.boss&&res.act===TUNE.acts){S.freeRerolls+=2;payIncome(4);startRound();return;} // final boss: rehearsal round, then a 10% weaker rematch
   S.round++;nextRound();
 }
 
@@ -2080,7 +2146,7 @@ function showResult(){
     body=`<h2>Victory</h2><div class="rw"><span class="goldv">+${res.gold} 🪙</span>${res.sgold?`<span class="stk w" title="Win streak gold">🔥${res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
       ${res.mvp?`<div class="why"><span class="emo" style="font-size:1.6rem">${res.mvp.e}</span><span><b>MVP: ${esc(res.mvp.name)}</b><br><span class="muted">${res.mvp.dmg} damage</span></span></div>`:''}${res.part2?'<p class="muted" style="font-size:.85rem">Part 2 next: the first two bosses return together.</p>':''}`;
   }else{
-    const finalBoss=res.boss&&res.act===3&&!S.over;
+    const finalBoss=res.boss&&res.act===TUNE.acts&&!S.over;
     body=`<h2>Defeat</h2><div class="rw"><span style="color:var(--red)">−${res.lives} ❤️</span><span class="goldv">+${res.gold} 🪙</span>${res.sgold&&!res.win?`<span class="stk l" title="Losing streak gold">🧊${-res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
       ${res.threat?`<div class="why"><span class="emo" style="font-size:1.6rem">${res.threat.e}</span><span><b>${esc(res.threat.name)}</b> hurt you most<br><span class="muted">${res.threat.dmg} damage</span></span></div>`:''}
       <div class="tip">💡 ${esc(res.tip)}</div>
@@ -2101,8 +2167,12 @@ function itemIcons(){return [
   ].join('');}
 function topBar(){
   const p2=S.part===2;
-  const strip=SCHEDULE.map((r,i)=>{const n=i+1;const mini=rule('elite')&&r.type==='fight'&&SCHEDULE[i+1]&&SCHEDULE[i+1].type==='boss';const sp=null,cutR=false;const ic=r.type==='boss'?'💀':sp?EVENTS[sp].e:r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${mini?': mini-boss':r.type==='boss'?': boss':sp?': special event: '+EVENTS[sp].name:r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;}).join('')
-    +(rule('finale2')?`<i class="${p2?'now':''} bossp" title="Finale, part 2">💀</i>`:'');
+  const stripI=SCHEDULE.map((r,i)=>{const n=i+1;const mini=rule('elite')&&r.type==='fight'&&SCHEDULE[i+1]&&SCHEDULE[i+1].type==='boss';const sp=null,cutR=false;const ic=r.type==='boss'?'💀':sp?EVENTS[sp].e:r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${mini?': mini-boss':r.type==='boss'?': boss':sp?': special event: '+EVENTS[sp].name:r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;});
+  if(rule('finale2'))stripI.push(`<i class="${p2?'now':''} bossp" title="Finale, part 2">💀</i>`);
+  // the strip in act groups of 7 (the Two-Part Finale joins the last act); the current act is highlighted
+  const curAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act;
+  const strip=Array.from({length:TUNE.acts},(_,k)=>{const a=k+1,ix=SCHEDULE.map((r,i)=>r.act===a?i:-1).filter(i=>i>=0);if(a===TUNE.acts&&rule('finale2'))ix.push(SCHEDULE.length);
+    return `<span class="act${a===curAct?' cur':''}" title="Act ${a} of ${TUNE.acts}">${ix.map(i=>stripI[i]).join('')}</span>`;}).join('');
   const inc=income();const next=inc.base+inc.interest+inc.coin+inc.ledger;
   const items=itemIcons();
   return `<header class="top">
@@ -2123,7 +2193,7 @@ function vsStrip(){
   const tu=tw&&twinUnit();
   const twin=tu?`<button class="foe" data-a="twin" aria-label="Evil twin of your ${esc(HERO[tw.id].name)}">${pt({e:HERO[tw.id].e,foe:true},'sm')}<small>${tu.crowd?'×'+tu.maxBodies:R(tu.maxHp)}</small><span class="ab">😈</span></button>`:'';
   const tag=e.part?'BOSS 2/2':e.boss?'BOSS':e.elite?'MINI-BOSS':e.trial?'TRIAL':'NEXT';
-  const lead=EN[e.enc[0].key],kind=e.part?'Season finale, part 2':e.boss?'Season finale':e.elite?'Mini-boss':e.trial?'Trial by fire':'Next episode';
+  const lead=EN[e.enc[0].key],eAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,kind=e.part?'Season finale, part 2':e.boss?(eAct>=TUNE.acts?'Season finale':`Act ${eAct} finale`):(e.elite?'Mini-boss':e.trial?'Trial by fire':'Next episode')+` · Act ${eAct}`;
   return `<section class="vs feat${e.boss||e.elite||e.trial?' boss':''}"><span class="fart emo" aria-hidden="true">${lead.e}</span>
     <div class="fhd"><small>${kind} · Ep ${S.round} of ${SCHEDULE.length}${e.boss&&S.bossTries?` · enemies −${S.bossTries*10}%`:''}</small><b>${esc(e.title||lead.name)}</b></div>
     <div class="foes">${foes}${twin}</div>
@@ -2165,17 +2235,19 @@ function shopHTML(){
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
     return `<div style="position:relative;min-width:0" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
-      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre once it reaches ★★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
   const rc=trainCost();const od=shopOdds();
   const nx=rc!=null?S.rank+1:null;const need=xpNeed(),xp=S.xp||0;
+  // nx is a RANK; nxT is the top rarity at that rank, and nxNew says whether that rank unlocks it
+  const nxT=nx?topTier(nx):0,nxNew=nx&&nxT>topTier(S.rank);
   // the gauge: solid = XP you have, faint = what one Train adds, ticks = one Train each
   const pct=need?Math.min(100,100*xp/need):100,nxt=need?Math.min(100,100*(xp+RANK.trainXp)/need):100;
-  const gauge=`<span class="gauge ${nx?'tier'+nx:'max'}${UI.gaugePop?' pop':''}" style="--p:${pct.toFixed(1)};--q:${nxt.toFixed(1)};--seg:${need?(360*RANK.trainXp/need).toFixed(1):360}deg" aria-hidden="true"><b>⬆️</b></span>`;UI.gaugePop=false;
+  const gauge=`<span class="gauge ${nx?'tier'+nxT:'max'}${UI.gaugePop?' pop':''}" style="--p:${pct.toFixed(1)};--q:${nxt.toFixed(1)};--seg:${need?(360*RANK.trainXp/need).toFixed(1):360}deg" aria-hidden="true"><b>⬆️</b></span>`;UI.gaugePop=false;
   return `<section class="shopwrap" aria-label="Shop">
-    <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: <span class="tier${nx}" style="color:var(--tc)">${RARITY[nx-1]}</span> · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
+    <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank} odds">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: ${nxNew?`<span class="tier${nxT}" style="color:var(--tc)">${RARITY[nxT-1]}</span>`:`Rank ${nx}`} · ${xp}/${need} XP</span>`:'<span>Max</span>'}</button>
     <div class="shop">${cards}</div>
     ${S.units.some(buybackOn)?`<p class="evnote">🎡 ${S.units.filter(buybackOn).length} of your characters sell back at full price (Buyback Wheel).</p>`:''}
     <p class="holdhint">Tap a card to buy it. Hover (hold on phones) to see details. Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
@@ -2184,7 +2256,7 @@ function shopHTML(){
       <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
       <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Reroll the shop: 🪙${TUNE.reroll}">🔄 ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
       <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop">${S.locked?'🔒':'🔓'}</button>
-      <button class="btn sm rankbtn" data-a="rank" ${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (unlocks ${RARITY[nx-1]}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:'Shop rank 5, the max'}">${gauge}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
+      <button class="btn sm rankbtn" data-a="rank" ${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
       <span class="grow"></span>
       <button class="btn primary big" data-a="fight" ${fielded().length?'':'disabled'}>Fight!</button>
     </div></section>`;
@@ -2267,11 +2339,11 @@ SCR.event=()=>{
   }else if(e.sub&&!e.subDone){
     art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav=EVFLAV[e.picked]||flav;
     if(e.sub.kind==='trinket'&&e.sub.ids.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){e.sub.ids=trinketChoices(2,false);save();}
-    if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span></button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
+    if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span>${ownLine(id)}</button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
     else if(UI.swap&&UI.swap.a==='event-sub'&&S.trinkets.length>=TRINKET_CAP)body=swapHTML();
     else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It comes one level higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=tv('prop')?'':'disabled'}>🔄 New choices · 🪙${tv('prop')}</button>`:''}</div>`;
   }else{art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav='';body=(e.wheel?wheelHTML(e.wheel):'')+`<p class="evresult${e.wheel&&!RM?' late':''}">${esc(e.msg||'Done.')}</p><div class="row" style="justify-content:center"><button class="btn primary big" data-a="event-done">Continue</button></div>`;}
-  return `${topBar()}<section class="screen evstage" style="margin-top:12px"><div class="evart">${art}</div><h2 class="evtitle">${title}</h2>${flav?`<p class="evflav">${flav}</p>`:''}<div class="evbody">${body}</div></section>`;
+  return `${topBar()}<section class="screen evstage" style="margin-top:12px"><div class="evart">${art}</div><h2 class="evtitle">${title}</h2>${flav?`<p class="evflav">${flav}</p>`:''}<div class="evbody">${body}</div></section>${evTeamHTML(e)}`;
 };
 const fmtN=n=>{n=Math.round(n);return n>=10000?(n/1000).toFixed(1).replace(/\.0$/,'')+'K':n.toLocaleString('en-US');};
 SCR.end=()=>{
@@ -2285,6 +2357,7 @@ SCR.end=()=>{
   const kpi=(label,val,sub)=>`<div class="kpi"><span>${label}</span><b>${val}</b>${sub?`<small>${sub}</small>`:''}</div>`;
   const kpis=[
     kpi('Rounds',`${reached}/${SCHEDULE.length}`,win?'All cleared':'Reached'),
+    kpi('Play time',`${Math.floor((S.playMs||0)/60000)}:${String(Math.floor((S.playMs||0)/1000)%60).padStart(2,'0')}`,`${(((S.playMs||0)/1000)/Math.max(1,reached)).toFixed(0)}s a round`),
     kpi('Fights won',`${st.won}/${st.fights}`,st.fights?Math.round(100*st.won/st.fights)+'%':''),
     kpi('Lives left',Math.max(0,S.lives),''),
     kpi('Gold earned',fmtN(st.gold),`🪙${fmtN(spent)} spent`),
@@ -2306,7 +2379,7 @@ SCR.end=()=>{
   const team=fielded().map(u=>{const d=HERO[u.id];return `<span class="endchip" data-a="endhero" data-v="${u.id}" data-l="${u.level}" tabindex="0">${heroPt(u.id,'sm')}${esc(d.name)} ${stars(u.level)}</span>`;}).join('');
   const topOf=(m,k)=>Object.entries(m||{}).filter(([id])=>HERO[id]).sort((a,b)=>b[1]-a[1]).slice(0,k);
   const lst=(rows,ic)=>rows.length?rows.map(([id,v])=>`<div class="row endrow" data-a="endhero" data-v="${id}" data-l="${final.get(id)||1}">${heroPt(id,'sm')}<span><b>${esc(HERO[id].name)}</b><br><span class="sub">${ic} ${fmtN(v)}</span></span></div>`).join(''):'<p class="sub">None this run.</p>';
-  const items=[S.legend?`<span><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
+  const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.lv?'Game Level '+S.lv+' · ':''}${win?(rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
     <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1></div>
@@ -2348,6 +2421,7 @@ function heroDetail(id,level){
   return `<div class="hs-head">${heroArt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
     <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for genre':' · max ★★'}</span></div>
     <div class="statrow"><span>❤️ HP<b>${R(st.hp)}${d.crowd?' each':''}</b></span><span>⚔️ ATK<b>${R(st.atk)}${d.crowd?' each':''}</b></span><span>🛡️ Armor<b>${b.arm}</b></span><span>⏱ Speed<b>${b.spd}s</b></span></div>
+    <div class="lvrow"><span class="muted">Per star</span>${[1,2,3].filter(l=>l<=maxLv(id)).map(l=>{const s=heroStatsAt(id,l),p1=heroStatsAt(id,1).p;return `<span class="${l===level?'on':''}"><b>${'★'.repeat(l)}</b> ${d.crowd?`👥 ${s.n} bodies`:`❤️ ${R(s.hp)} · ⚔️ ${R(s.atk)}`} · skill ×${(s.p/p1).toFixed(1)}</span>`;}).join('')}</div>
     <div class="skill"><b>${SK[d.skill].name}</b> <span class="muted">· ${b.mana} energy</span><br>${SK[d.skill].d(st.p)}</div>
     <p class="targ">${targetText(id)}</p>`;
 }
@@ -2387,7 +2461,7 @@ function trinketDetail(id){const t=TR[id],L=S?ilv(id):0;
     +(L?`<p class="muted" style="font-size:.78rem">${L<ITEM_MAX?'Pick it again later to level it up.':'Max level.'}</p>`:'')
     +(L&&(UI.screen==='plan'||UI.screen==='event')?`<div class="row">${itemSellBtn(id)}</div>`:'');}
 function itemSellBtn(id){return `<button class="btn sm danger" data-a="sell-item" data-v="${id}">${UI.armItem===id?'Tap again to sell for ':'Sell for '}🪙${itemSellValue(id)}</button>`;}
-function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3><p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1 or Act 2 boss when ${GENRES[L.genre].name} is your biggest genre.</p>`:''}`;}
+function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3><p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is your biggest genre.</p>`:''}`;}
 function comboDetail(id){const x=CROSSOVERS.find(c=>c.id===id);return `<div class="eyebrow">Crossover</div><h3 style="color:var(--gold)">🔗 ${esc(x.name)}</h3><p>${esc(x.d)}</p><p class="muted" style="font-size:.82rem">Needs ${legend('crossep')?1:2} ${GENRES[x.a].e} ${GENRES[x.a].name} + ${legend('crossep')?1:2} ${GENRES[x.b].e} ${GENRES[x.b].name} characters on your board (Rare and up count as 2).</p>`;}
 function enemyDetail(key,st){
   const d=EN[key];
@@ -2401,7 +2475,7 @@ function itemsList(){
   if(S.legend){const L=LEGENDS[S.legend];rows.push(`<button class="irow leg" data-a="legend-info"><span class="emo">${L.e}</span><span><b>${esc(L.name)}</b>${esc(L.d)}</span></button>`);}
   S.trinkets.forEach(t=>{const on=UI.screen==='plan'&&UI.insp&&UI.insp.kind==='trinket'&&UI.insp.id===t;
     rows.push(`<button class="irow${TR[t].rar==='R'?' rare':''}${on?' on':''}" data-a="trinket" data-v="${t}"><span class="emo">${TR[t].e}</span><span><b>${esc(TR[t].name)} ${istars(ilv(t))}</b>${trText(t,ilv(t))}</span></button>`+(on?`<div class="row" style="justify-content:flex-end">${itemSellBtn(t)}</div>`:''));});
-  return rows.length?`<div class="ilist">${rows.join('')}</div>`:'<p class="muted" style="font-size:.85rem">No items yet. You pick one when a Rare, Epic or Mythic character first reaches ★★ or ★★★, at the Supply Drop, and after an Act 1 or 2 boss win.</p>';
+  return rows.length?`<div class="ilist">${rows.join('')}</div>`:'<p class="muted" style="font-size:.85rem">No items yet. You pick one when a Rare, Epic or Mythic character first reaches ★★ or ★★★, at the Supply Drop, and after an Act 1, 2 or 3 boss win.</p>';
 }
 function rankDetail(){
   const row=(r,on)=>`<tr class="${on?'on':''}"><td style="text-align:left">${r}</td><td>${RANK.board[r-1]}</td>${RANK.odds[r-1].map(p=>`<td>${p?p+'%':'·'}</td>`).join('')}<td>${r>1?xpFor(r-2):''}</td></tr>`;
@@ -2451,7 +2525,7 @@ SCR.codex=()=>{
   const tab=UI.codexTab||'how';
   let body='';
   if(tab==='how')body=`<div class="rules">
-    <p><b>Each round</b> you get gold, shop, set up your board, then fight. At Game Level 0: 15 rounds of fights, 3 events and 3 bosses. You start with 10 ❤️; a loss costs 1–3 depending on the act (+1 for a boss). Beat the final boss to win.</p>
+    <p><b>Each round</b> you get gold, shop, set up your board, then fight. A run is 28 rounds in 4 acts of 7: fight, fight, event, three more fights, boss. You start with 10 ❤️; a loss costs 2–3 depending on the act (+1 for a boss). Beat the final boss to win.</p>
     <p><b>Shop.</b> 🔄 rerolls for 🪙2 and 🔓 locks the shop for next round.</p>
     <p><b>Gold.</b> Every round pays 🪙5. <b>Interest:</b> 🪙1 for every 🪙10 you hold when the round ends, up to 🪙5 at 🪙50, so saving pays, but gold in the bank doesn't fight. <b>Streaks:</b> 2 or 3 fights in a row pay +1, 4 pay +2, 5 or more pay +3, for wins and for losses. A win pays +1 and a loss +1 and a free reroll. A good rhythm: bank early in each act and spend before the boss.</p>
     <p><b>Rarity and shop rank.</b> Characters are <span class="tier1" style="color:var(--tc)">Common</span>, <span class="tier2" style="color:var(--tc)">Uncommon</span>, <span class="tier3" style="color:var(--tc)">Rare</span>, <span class="tier4" style="color:var(--tc)">Epic</span> or <span class="tier5" style="color:var(--tc)">Mythic</span> (🪙1–5). ⬆️ Train the shop (🪙${RANK.train} for ${RANK.trainXp} XP; it also gets ${RANK.freeXp} XP free every round). Each full gauge is a rank, which unlocks the next rarity; ranks 2, 4 and 5 also add a board slot. Mythics only show up at Rank 5, and rarely. <button class="btn sm" data-a="rank-info">See the odds</button></p>
@@ -2461,10 +2535,10 @@ SCR.codex=()=>{
     <p><b>Energy and skills.</b> Characters gain energy by attacking and getting hit. A full blue bar casts their skill.</p>
     <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
-    <p><b>Legendaries.</b> After the Act 1 and Act 2 bosses you choose a Legendary (win or lose). You hold one at a time. Win, and a bonus item is offered too.</p>
+    <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you choose a Legendary (win or lose). You hold one at a time. Win, and a bonus item is offered too.</p>
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic hops around the board, swapping places with whoever is hurt worst (front or back), and the Burrow Lurker tunnels into the enemy back row.</p>
-    <p><b>The Cut.</b> The Act 3 event is always The Cut: one of your three biggest genres leaves the shop for good. Cut it for free and lose your characters of that genre, or pay gold to keep them. From Game Level 6 the studio picks the genre.</p>
-    <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-4, 7-9 and 12-14 in a 15-round run). You never know exactly when: it pops up at the start of a round, before the shop. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props), or trade-offs (The Cut, Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher Game Levels bring more of them, and more bad ones: a window fires 40% of the time at Level 0, plus 6% per level.</p>
+    <p><b>The Cut.</b> A bad random event: the studio goes after your biggest genre and it leaves the shop for the rest of the run. Pay gold to keep your characters of that genre, let them go (sold for half), or fight it with lives.</p>
+    <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-6 of each act). You never know exactly when: it pops up at the start of a round, before the shop. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props), or trade-offs (The Cut, Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher Game Levels bring more of them, and more bad ones: a window fires 40% of the time at Level 0, plus 6% per level.</p>
     <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. Spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud. A thin gold ALL sliver (6%) covers every rarity but Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
     <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>
     <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; then a character waiting to rise (Bone Dragon) - characters always go before summons; then the oldest bench card steps in as one crowd.</p>
@@ -2475,9 +2549,9 @@ SCR.codex=()=>{
   if(tab==='syn')body=`<h3>Genres</h3><div class="cgrid">${Object.keys(GENRES).map(k=>`<div class="ccard g-${k}"><div class="hd"><span class="emo" style="font-size:1.4rem">${GENRES[k].e}</span><b>${GENRES[k].name}</b></div>${GENRES[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${GENRES[k].d[i]}</p>`).join('')}</div>`).join('')}</div>
     <h3>Traits</h3><div class="cgrid">${Object.keys(TRAITS).map(k=>`<div class="ccard"><div class="hd"><span class="syn" style="padding:.2em .4em">${tsvg(k)}</span><b>${TRAITS[k].name}</b></div>${TRAITS[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${TRAITS[k].d[i]}</p>`).join('')}</div>`).join('')}</div>
     <h3>Crossovers</h3><p class="muted" style="font-size:.82rem">Rare and up count as 2 once they reach ★★★.</p><div class="cgrid">${CROSSOVERS.map(x=>`<div class="ccard"><div class="hd"><b>🔗 ${esc(x.name)}</b></div><p>${GENRES[x.a].e} ${GENRES[x.a].name} ×2 + ${GENRES[x.b].e} ${GENRES[x.b].name} ×2</p><p>${esc(x.d)}</p></div>`).join('')}</div>`;
-  if(tab==='trinkets')body='<p class="muted" style="font-size:.85rem">Items come from the first ★★ or ★★★ of a Rare, Epic or Mythic character, the Supply Drop, and Act 1 and 2 boss wins. They help your whole team; you hold up to 5.</p><ul class="irules" style="font-size:.85rem"><li>Pick an item you have and the copy combines into it: ★ → ★★ → ★★★ (numbers below).</li><li>A pick of 3 includes one level-up and skips items your board can\'t use.</li><li>Tap an item to sell it for 🪙2 / 3 / 4 by level.</li><li>Full? A new item replaces one (that one is sold).</li></ul>'+['C','R'].map(r=>`<h3>${r==='R'?'Rare items':'Common items'}</h3><div class="cgrid">${TRINKETS.filter(t=>t[2]===r).map(t=>`<div class="ccard"><div class="hd"><span class="emo" style="font-size:1.4rem">${t[3]}</span><b>${esc(t[1])}</b></div><p>${trText(t[0],0)}</p></div>`).join('')}</div>`).join('');
+  if(tab==='trinkets')body='<p class="muted" style="font-size:.85rem">Items come from the first ★★ or ★★★ of a Rare, Epic or Mythic character, the Supply Drop, and Act 1, 2 and 3 boss wins. They help your whole team; you hold up to 5.</p><ul class="irules" style="font-size:.85rem"><li>Pick an item you have and the copy combines into it: ★ → ★★ → ★★★ (numbers below).</li><li>A pick of 3 includes one level-up and skips items your board can\'t use.</li><li>Tap an item to sell it for 🪙2 / 3 / 4 by level.</li><li>Full? A new item replaces one (that one is sold).</li></ul>'+['C','R'].map(r=>`<h3>${r==='R'?'Rare items':'Common items'}</h3><div class="cgrid">${TRINKETS.filter(t=>t[2]===r).map(t=>`<div class="ccard"><div class="hd"><span class="emo" style="font-size:1.4rem">${t[3]}</span><b>${esc(t[1])}</b></div><p>${trText(t[0],0)}</p></div>`).join('')}</div>`).join('');
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p></div>`;}).join('')}</div>`;
-  if(tab==='enemies')body=[1,2,3].map(a=>{const keys=[...new Set([...ENC[a].normal,...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
+  if(tab==='enemies')body=Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...ENC[a].normal,...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
   return `<section class="screen codex"><div class="row" style="justify-content:space-between"><h2>📖 Codex</h2><button class="btn" data-a="codex-back">Back</button></div>
     <div class="tabs" role="tablist">${CODEX_TABS.map(([k,n])=>`<button class="btn sm${tab===k?' on':''}" role="tab" aria-selected="${tab===k}" data-a="codex-tab" data-v="${k}">${n}</button>`).join('')}</div>${body}</section>`;
 };
@@ -2553,6 +2627,7 @@ function onAction(a,v,el){
       else if(S.event&&S.event.sub&&S.event.sub.kind==='trinket'){S.event.sub.ids=trinketChoices(2,false);go();}break;}
     case 'endhero':if(!isWide()||!canHover)sheet(heroDetail(v,+(el&&el.dataset.l)||1));break;
     case 'enditem':if(!isWide()||!canHover){const b=infoBody({kind:'trinket',id:v});if(b)sheet(b);}break;
+    case 'endleg':if(!isWide()||!canHover)sheet(legendDetail(v));break;
     case 'event-done':finishEvent();go();window.scrollTo(0,0);break;
     case 'pend':case 'pend-leg':resolvePending(v||null);break;
     case 'trinket':UI.armItem=null;showInfo({kind:'trinket',id:v});break;
@@ -2646,6 +2721,7 @@ function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
   else if(el.dataset.a==='slot'){const u=unitAt(el.dataset.v);if(u)html=infoBody({kind:'unit',uid:u.uid});}
   else if(el.dataset.a==='endhero')html=(el.dataset.x?`<p class="poolln" style="margin:0 0 6px">${esc(el.dataset.x)}</p>`:'')+heroDetail(el.dataset.v,+el.dataset.l||1);
   else if(el.dataset.a==='enditem')html=infoBody({kind:'trinket',id:el.dataset.v});
+  else if(el.dataset.a==='endleg')html=legendDetail(el.dataset.v);
   if(!html){if(c)c.remove();return;}
   if(!c){c=document.createElement('div');c.id='hovcard';c.setAttribute('role','tooltip');document.body.appendChild(c);}
   if(c.dataset.k!==el.dataset.a+el.dataset.v){c.innerHTML=html;c.dataset.k=el.dataset.a+el.dataset.v;}
@@ -2655,7 +2731,7 @@ function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
   c.style.left=x+'px';c.style.top=y+'px';}
 const canHover=typeof matchMedia==='function'&&matchMedia('(hover:hover) and (pointer:fine)').matches;
 document.addEventListener('mouseover',e=>{
-  if(canHover&&(UI.screen==='plan'||UI.screen==='end')&&!PT.drag){const el=e.target.closest&&e.target.closest('[data-a="pick"],[data-a="slot"],[data-a="endhero"],[data-a="enditem"]');hoverCard(el&&!(isWide()&&el.dataset.a==='pick')?el:null);}
+  if(canHover&&(UI.screen==='plan'||UI.screen==='end')&&!PT.drag){const el=e.target.closest&&e.target.closest('[data-a="pick"],[data-a="slot"],[data-a="endhero"],[data-a="enditem"],[data-a="endleg"]');hoverCard(el&&!(isWide()&&el.dataset.a==='pick')?el:null);}
   if(UI.screen!=='plan'||UI.sel||!isWide())return;
   const h=e.target.closest&&e.target.closest('[data-hov]');if(!h)return;
   const i=+h.dataset.hov;const o=S.shop[i];if(!o)return;
@@ -2708,7 +2784,7 @@ function devHTML(){
     <button class="dvb" data-d="gold" data-v="10">+🪙10</button><button class="dvb" data-d="lives" data-v="2">+2 ❤️</button><button class="dvb" data-d="lives" data-v="-2">−2 ❤️</button>
     <button class="dvb" data-d="rank">Rank up</button><button class="dvb" data-d="cast">Add sample cast</button>
     <button class="dvb" data-d="end">End screen</button></div>
-    <div class="dvrow"><label class="dvchk" for="dv-round">Jump to round</label><select id="dv-round" data-d="round">${SCHEDULE.map((x,i)=>`<option value="${i+1}" ${run&&S.round===i+1?'selected':''}>${i+1} · ${x.type==='event'?(x.act===3&&TUNE.cutOn?'The Cut':'event'):x.type}</option>`).join('')}</select></div></div>
+    <div class="dvrow"><label class="dvchk" for="dv-round">Jump to round</label><select id="dv-round" data-d="round">${SCHEDULE.map((x,i)=>`<option value="${i+1}" ${run&&S.round===i+1?'selected':''}>${i+1} · ${x.type==='event'?(false?'The Cut':'event'):x.type}</option>`).join('')}</select></div></div>
   <div class="dvsec"><div class="dvrow"><button class="dvb" data-d="off">Turn test mode off</button></div></div>`;}
 function devPaint(){const el=document.getElementById('dev');if(!el)return;el.hidden=!DEV.on;if(!DEV.on)return;
   el.className=DEV.open?'open':'';el.innerHTML=DEV.open?`<div class="dvpanel" role="dialog" aria-label="Test panel">${devHTML()}</div>`:`<button class="dvfab" data-d="open">🛠 Test</button>`;}
