@@ -564,6 +564,10 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 #banner span{font-size:.72rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);font-weight:800}
 #banner.bn-boss b{color:var(--red)}
 #banner.bn-fight{animation-duration:.9s;background:none}
+#banner.bn-win,#banner.bn-lose{animation-duration:.95s}
+#banner.bn-win b{color:var(--gold)}
+#banner.bn-lose b{color:var(--red)}
+#banner.bn-rank b{color:var(--s-rank,#19a974)}
 #banner.bn-fight b{font-size:clamp(2.4rem,9vw,4.4rem);color:var(--ink)}
 @keyframes bnIn{0%{opacity:0;transform:translateX(-12%) skewX(-8deg)}14%{opacity:1;transform:none}80%{opacity:1;transform:none}100%{opacity:0;transform:translateX(10%) skewX(-6deg)}}
 :root.noanim #banner,:root.noanim .dlt,:root.noanim .slot .mfx{display:none}
@@ -599,6 +603,19 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .bprev svg{width:13px;height:13px;vertical-align:-2px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .bwhy{margin:0;font-size:.82rem;color:var(--muted)}
 .chip.rowp{border-style:dashed}
+.tlsent{margin:0;font-size:.85rem;color:var(--gold)}
+.tlsent small{color:var(--muted);margin-left:4px}
+:root:not(.noanim) .unit.dead{animation:die .5s ease-out both}
+@keyframes die{0%{opacity:1;filter:brightness(2.4);transform:none}25%{opacity:1;filter:brightness(1.6);transform:scale(1.08) rotate(-5deg)}100%{opacity:.12;filter:grayscale(1);transform:scale(.84) rotate(7deg) translateY(6px)}}
+:root:not(.noanim) .unit.cheer{animation:cheer .5s ease-out 2 both;animation-delay:var(--cd,0ms)}
+@keyframes cheer{0%,100%{transform:none}40%{transform:translateY(-12px) scale(1.05)}}
+.castring{position:absolute;left:50%;top:40%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:3px solid var(--mana);box-shadow:0 0 12px var(--mana);pointer-events:none;z-index:2;animation:cring .55s ease-out forwards}
+@keyframes cring{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.9);opacity:0}}
+.flt.dmg.big{font-size:1.3rem;color:#ffd7cf}
+:root:not(.noanim) .unit.low .hpb .hf{animation:lowhp .7s ease-in-out infinite}
+@keyframes lowhp{50%{filter:brightness(2) saturate(1.4)}}
+:root:not(.noanim) .syn.newon{animation:synon .9s ease-out}
+@keyframes synon{0%{transform:scale(1)}25%{transform:scale(1.2);box-shadow:0 0 0 3px var(--gold),0 0 22px var(--gold)}100%{transform:scale(1)}}
 
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
@@ -1834,7 +1851,7 @@ function dealDamage(src,t,amt,type,aoe){
   if((type==='attack'||type==='spell')&&t.manaMax)t.mana=Math.min(t.manaMax,t.mana+Math.min(8,dealt*.25));
   if(src&&src.alive&&src.ls&&(type==='attack'||type==='spell'))heal(null,src,dealt*src.ls,true);
   if(!B.silent&&t.el){
-    float(t,''+R(dealt),'dmg');t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');
+    float(t,''+R(dealt),dealt>=t.maxHp*.25?'dmg big':'dmg');t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');
     if(dealt>t.maxHp*.3)shake();
   }
   if(type==='attack'&&src&&src.alive&&src.range==='melee'&&has('spikes')&&t.side==='A'&&t.row==='front')dealDamage(t,src,dealt*tv('spikes')/100,'true');
@@ -1986,7 +2003,8 @@ function stepUp(side,col){if(B.units.some(x=>x.alive&&Z(x)===side&&x.row==='fron
 function act(u){
   if(u.skill&&u.manaMax&&u.mana>=u.manaMax){
     u.mana=0;
-    if(!B.silent&&u.el){float(u,SK[u.skill].name,'sp');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);}
+    if(!B.silent&&u.el){float(u,SK[u.skill].name,'sp');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
+      if(!RM){const ring=document.createElement('i');ring.className='castring';el.appendChild(ring);setTimeout(()=>ring.remove(),550);}}
     SK[u.skill].cast(u);return;
   }
   if(B.ball&&u.side==='A'&&u.genre==='ball'){if(B.ball.holder===u)throwBall(u);return;}
@@ -2178,7 +2196,7 @@ function drawBattle(){
     // a character with an <id>_up sprite (Burrow Lurker) switches to it once it has tunneled into the enemy side
     if(u.side==='A'&&!u.summon&&SPRITES[u.id+'_up']){const im=u.el.querySelector('img.spr'),want=SPRITES[(u.zone||u.side)!==u.side?u.id+'_up':u.id];if(im&&im.getAttribute('src')!==want)im.setAttribute('src',want);}
     if(u.$cs&&+u.$cs.dataset.n!==Math.min(3,bodies(u))){const n=Math.min(3,bodies(u));u.$cs.dataset.n=n;u.$cs.innerHTML=crowdImgs(u.id,n);}
-    u.el.classList.toggle('dead',!u.alive);
+    u.el.classList.toggle('dead',!u.alive);u.el.classList.toggle('low',u.alive&&hp<u.maxHp*.25);
     u.el.classList.toggle('hidden',u.alive&&!targetable(u));
     let st='';
     if(u.alive){if(B.ball&&B.ball.holder===u)st+='⚽';if(u.stun>0)st+='💫';if(u.taunt>0)st+='🎯';if(u.vuln>0)st+='🔻';if(u.armDownT>0)st+='🛠️';if(u.catches>0)st+='🧤';if(u.markUntil>B.t)st+='📍';if(u.star)st+='🍿';}
@@ -2188,6 +2206,8 @@ function drawBattle(){
   {const bn=$('#bbench');if(bn){const n=(B.reserve||[]).length;bn.hidden=!n;bn.textContent='🪑 Bench: '+B.reserve.map(c=>c.rise?'⬆️'+c.e:c.e+'×'+c.maxBodies).join('  ');}}
   const sk=$('#streak');if(sk&&B.ball){sk.hidden=false;sk.textContent='⚽ ×'+Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak).toFixed(1);}
 }
+function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
+  B.units.filter(u=>u.alive&&u.el&&u.side===(win?'A':'E')).forEach((u,i)=>{u.el.style.setProperty('--cd',(i*70)+'ms');u.el.classList.add('cheer');});return true;}catch(e){return false;}}
 function battleLoop(ts){
   if(!B||UI.screen!=='battle')return;
   if(B.last==null)B.last=ts;
@@ -2197,7 +2217,7 @@ function battleLoop(ts){
     else{B.acc+=real*B.speed;while(B.acc>=DT&&!B.done){step(DT);B.acc-=DT;}}
   }
   drawBattle();
-  if(B.done){if(!B.ended){B.ended=true;setTimeout(showResult,500);}return;}
+  if(B.done){if(!B.ended){B.ended=true;const fx=battleEndFx();setTimeout(showResult,fx?950:500);}return;}
   requestAnimationFrame(battleLoop);
 }
 function skipBattle(){if(!B||B.done)return;B.silent=true;B.startDelay=0;let g=0;while(!B.done&&g++<20000)step(DT);B.silent=false;drawBattle();}
@@ -2294,6 +2314,9 @@ function crossListHTML(){return `<div class="eyebrow">Crossovers</div><h3 style=
 function xlistBtn(s){const n=CROSSOVERS.filter(x=>s.X[x.id]).length;return `<button class="syn xlist" data-a="xlist" title="Every crossover and how close you are">🔗 Crossovers${n?` <span class="c">${n} on</span>`:''}</button>`;}
 function synHTML(units,withList){
   const s=activeSyn(units);const c=s.c;const items=[];
+  const on={};for(const k in s.G)if(s.G[k])on['g'+k]=s.G[k];for(const k in s.T)if(s.T[k])on['t'+k]=s.T[k];for(const k in s.X)if(s.X[k])on['x'+k]=1;
+  const prev=withList&&S&&UI._synRid===S.rid?UI._syn:null;if(withList&&S){UI._syn=on;UI._synRid=S.rid;}
+  const pulse=k=>!RM&&prev&&on[k]&&(prev[k]||0)<on[k]?' newon':'';
   for(const k in GENRES){const n=c.g[k]||0;if(!n)continue;const def=GENRES[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'genre',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.G[k]>0,html:`<span class="e">${def.e}</span>`});}
   for(const k in TRAITS){const n=c.t[k]||0;if(!n)continue;const def=TRAITS[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'trait',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.T[k]>0,html:tsvg(k)});}
   items.sort((a,b)=>b.on-a.on||b.n-a.n);
@@ -2302,8 +2325,8 @@ function synHTML(units,withList){
   const need=legend('crossep')?1:2,rl=s.real||{};
   const near=CROSSOVERS.filter(x=>!s.X[x.id]&&xoRoom(units,x)&&GENRES[x.a]&&GENRES[x.b]&&((rl[x.a]||0)>=need&&(rl[x.b]||0)===need-1||(rl[x.b]||0)>=need&&(rl[x.a]||0)===need-1)&&need-1>=0&&((rl[x.a]||0)+(rl[x.b]||0)>0)).slice(0,3);
   if(!items.length)return withList?`<div class="syns">${xlistBtn(s)}</div>`:'';
-  return `<div class="syns">${items.map(i=>`<button class="syn${i.on?' on':''}${i.kind==='genre'?' g-'+i.k:''}" data-a="syn" data-v="${i.k}" title="${esc((GENRES[i.k]||TRAITS[i.k]).name)}: ${i.n} counted${i.kind==='genre'?' (Rare and up count as 2 from ★★)':''}">${i.html}<span class="c">${i.max?'MAX':i.n+'/'+i.nx}</span></button>`).join('')}
-    ${combos.map(x=>`<button class="syn combo" data-a="combo" data-v="${x.id}">🔗 ${esc(x.name)}</button>`).join('')}${near.map(x=>{const m=(rl[x.a]||0)<need?x.a:x.b;return `<button class="syn combo near" data-a="combo" data-v="${x.id}" title="One more ${esc(GENRES[m].name)} character on your board switches on ${esc(x.name)}">🔗 ${esc(x.name)} <span class="c">${GENRES[x.a].e}${Math.min(need,rl[x.a]||0)}/${need} ${GENRES[x.b].e}${Math.min(need,rl[x.b]||0)}/${need}</span></button>`;}).join('')}${withList?xlistBtn(s):''}</div>`;
+  return `<div class="syns">${items.map(i=>`<button class="syn${i.on?' on':''}${i.kind==='genre'?' g-'+i.k:''}${pulse((i.kind==='genre'?'g':'t')+i.k)}" data-a="syn" data-v="${i.k}" title="${esc((GENRES[i.k]||TRAITS[i.k]).name)}: ${i.n} counted${i.kind==='genre'?' (Rare and up count as 2 from ★★)':''}">${i.html}<span class="c">${i.max?'MAX':i.n+'/'+i.nx}</span></button>`).join('')}
+    ${combos.map(x=>`<button class="syn combo${pulse('x'+x.id)}" data-a="combo" data-v="${x.id}">🔗 ${esc(x.name)}</button>`).join('')}${near.map(x=>{const m=(rl[x.a]||0)<need?x.a:x.b;return `<button class="syn combo near" data-a="combo" data-v="${x.id}" title="One more ${esc(GENRES[m].name)} character on your board switches on ${esc(x.name)}">🔗 ${esc(x.name)} <span class="c">${GENRES[x.a].e}${Math.min(need,rl[x.a]||0)}/${need} ${GENRES[x.b].e}${Math.min(need,rl[x.b]||0)}/${need}</span></button>`;}).join('')}${withList?xlistBtn(s):''}</div>`;
 }
 function shopHTML(){
   const deal=UI.deal&&!RM;UI.deal=0;
@@ -2479,6 +2502,7 @@ SCR.end=()=>{
       </div>
     </div>
     <div class="endcard"><h3>YOUR FINAL TEAM</h3><div class="chiprow">${team||'<span>Nobody on the board</span>'}</div>${items?`<h3>ITEMS</h3><div class="chiprow">${items}</div>`:''}</div>
+    ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run sent to the developer. Thanks for playing! <small>Anonymous; turn it off in ⚙️ Settings.</small></p>':''}
     <div class="row"><button class="btn primary big" data-a="new">New run</button><button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;
 };
@@ -2855,9 +2879,17 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.4',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.5',TL_KEY='tropebrawl-runlog';let TL=null;
+// playtest copies (GitHub Pages) have no claude.ai database: finished runs go to a Google Form instead (anonymous)
+const TL_FORM={url:'',field:''};
+function tlForm(){return /^https:\/\/docs\.google\.com\/forms\//.test(TL_FORM.url)&&/^entry\.\d+$/.test(TL_FORM.field);}
+function tlDb(){try{return typeof window!=='undefined'&&!!(window.claude&&window.claude.use);}catch(e){return false;}}
+function tlPid(){try{let p=localStorage.getItem('tropebrawl-pid');if(!p){p='p_'+Math.random().toString(36).slice(2,10);localStorage.setItem('tropebrawl-pid',p);}return p;}catch(e){return 'p_anon';}}
+function tlPost(rec){try{let js=JSON.stringify(rec);if(js.length>45000){rec.r.forEach(x=>{if(x.f)delete x.f.n;});js=JSON.stringify(rec);}
+  const body=new URLSearchParams();body.set(TL_FORM.field,js);
+  if(!(navigator.sendBeacon&&navigator.sendBeacon(TL_FORM.url,body)))fetch(TL_FORM.url,{method:'POST',mode:'no-cors',body}).catch(()=>{});return true;}catch(e){return false;}}
 // globalThis.__tlForce (sims only): record bot runs in the same format, into globalThis.__tlOut, to compare bots with people
-function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&!!(window.claude&&window.claude.use));}catch(e){return false;}}
+function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&(tlDb()||tlForm()));}catch(e){return false;}}
 function tlCur(){if(!S||!tlOn())return null;
   if(!S.rid)S.rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   if(!TL){try{const j=JSON.parse(localStorage.getItem(TL_KEY)||'null');if(j&&j.rid===S.rid)TL=j;}catch(e){}}
@@ -2872,16 +2904,21 @@ function tlSave(){try{if(TL)localStorage.setItem(TL_KEY,JSON.stringify(TL));}cat
 async function tlEnd(quit){try{if(!tlOn())return;tlCur();if(!TL)return;
   const rec=Object.assign({},TL,{res:quit?'quit':S.result,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString()});TL=null;try{localStorage.removeItem(TL_KEY);}catch(e){}
   if(globalThis.__tlForce){(globalThis.__tlOut=globalThis.__tlOut||[]).push(rec);return;}
+  const sent=()=>{UI.tlSent=rec.rid;if(UI.screen==='end')render();};
+  if(!tlDb()){if(tlForm()&&tlPost(Object.assign(rec,{pid:tlPid(),src:'pages'})))sent();return;}
   const db=await window.claude.use('db'),user=await window.claude.use('user');if(!db||!user)return;const id=await user.id();if(!id)return;
   await db.collection('runs/'+id+'/r').doc(rec.rid).set(rec);
-  await db.doc('runs/'+id).set({last:rec.rid,at:rec.end,v:rec.v,lv:rec.lv,res:rec.res});
+  await db.doc('runs/'+id).set({last:rec.rid,at:rec.end,v:rec.v,lv:rec.lv,res:rec.res});sent();
 }catch(e){}}
+if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener('pagehide',()=>{try{
+  if(!TL||!S||S.over||tlDb()||!tlForm()||!tlOn()||TL.r.length<3||TL.sentAt===TL.r.length)return;TL.sentAt=TL.r.length;tlSave();
+  tlPost(Object.assign({},TL,{res:'open',round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString(),pid:tlPid(),src:'pages'}));}catch(e){}});
 function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
-    ${typeof window!=='undefined'&&window.claude?sw('share',SET.share,'Share my runs','Saves what you buy, sell, pick and fight each run with this game, so the developer can balance it and teach the bots how people play. No personal info.'):''}`;}
+    ${typeof window!=='undefined'&&(tlDb()||tlForm())?sw('share',SET.share,'Share my runs','Sends what you buy, sell, pick and fight each run to the developer, to balance the game and teach the bots how people play. Anonymous: no name, email or personal info.'):''}`;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
 function feel(){try{
   const scr=UI.screen,chg=UI._scr!==scr;UI._scr=scr;UI.pop=UI.merged=null;
@@ -2893,9 +2930,11 @@ function feel(){try{
     else if(first){const rs=SCHEDULE.map((r,i)=>r.act===ev.act?i+1:0).filter(Boolean);banner('Act '+ev.act,'Episodes '+rs[0]+'–'+rs[rs.length-1],'act');}
     else if(ev.type==='boss')banner(ev.act>=TUNE.acts?'Season finale':'Act '+ev.act+' finale','Boss episode','boss');}}
   if(scr==='battle'&&chg)banner(S.enemy&&S.enemy.boss?'Boss fight!':'Fight!','','fight');
+  if(scr==='plan'){const rk=S.rank;if(UI._rkRid===S.rid&&UI._rk!=null&&rk>UI._rk&&!document.getElementById('banner')){const r0=UI._rk,nt=topTier(rk)>topTier(r0),sl=RANK.board[rk-1]>RANK.board[r0-1];
+    banner('Rank '+rk,[nt?RARITY[topTier(rk)-1]+'s unlocked':'',sl?'+1 board slot':'',!nt&&!sl?'Better odds':''].filter(Boolean).join(' · '),'rank');}UI._rk=rk;UI._rkRid=S.rid;}
 }catch(e){}}
 function banner(t,sub,kind){try{let b=document.getElementById('banner');if(b)b.remove();b=document.createElement('div');b.id='banner';b.className='bn-'+kind;b.setAttribute('aria-hidden','true');
-  b.innerHTML=`<b>${esc(t)}</b>${sub?`<span>${esc(sub)}</span>`:''}`;document.body.appendChild(b);setTimeout(()=>{if(b.parentNode)b.remove();},kind==='fight'?900:1700);}catch(e){}}
+  b.innerHTML=`<b>${esc(t)}</b>${sub?`<span>${esc(sub)}</span>`:''}`;document.body.appendChild(b);setTimeout(()=>{if(b.parentNode)b.remove();},kind==='fight'||kind==='win'||kind==='lose'?950:1700);}catch(e){}}
 // floating +/- next to gold and lives when they change between two renders
 function dfl(k,v){const o=UI['_'+k];UI['_'+k]=v;if(RM||o==null||o===v)return '';const d=v-o;return `<i class="dlt ${d>0?'up':'dn'}" aria-hidden="true">${d>0?'+':'−'}${Math.abs(d)}</i>`;}
 function render(){
