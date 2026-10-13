@@ -989,9 +989,9 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,fhHeal:1,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:12,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.08,graveMax:.8,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.25,indieMax:.75,hypePer:.06,hypeMax:.48,placeMax:4,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,bankTip:25,fhHeal:1,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:12,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.08,graveMax:.8,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.25,indieMax:.75,hypePer:.06,hypeMax:.48,placeMax:4,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.01,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
@@ -2098,6 +2098,7 @@ function step(dt){
 // ---- after a fight ----
 function lossTip(){
   if(fielded().length<boardSize())return 'You had empty board slots. Fill every slot before the fight.';
+  if(S.gold>=TUNE.bankTip){const cap=intCap(),top=TUNE.intPer*cap;return `You lost with 🪙${S.gold} unspent. Interest pays at most 🪙${cap} a round${S.gold>top?` and nothing past 🪙${top}`:''}. ⬆️ Train and 🔄 rerolls before a fight make your board stronger.`;}
   if(S.round>=6&&fielded().filter(u=>HERO[u.id].tier<=2).length>=Math.ceil(fielded().length*.6))return 'Commons and Uncommons stop at ★★ and fall behind late. Rank up and buy Rare or better.';
   const lv1=fielded().filter(u=>u.level===1).length;
   if(lv1>=Math.ceil(fielded().length*.6))return 'Most of your characters are ★. Buy copies: 3 combine into ★★, 80% stronger.';
@@ -2938,7 +2939,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.7',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.8',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
