@@ -902,6 +902,18 @@ const LEGENDS_ALL={
   danger:{name:'Danger Close',e:'💣',genre:'army',d:'Artillery fires every 7s, at a pace nothing can speed up, but hits every enemy for triple damage.'},
   brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +40% damage; Swarm crowds start with +3 bodies and keep regrowing past full (up to double).'},
   frenzy:{name:'Blood Frenzy',e:'🔥',genre:'orc',d:'Every enemy that falls makes your Orcs attack 15% faster for the rest of the fight.'},
+  shock:{name:'Shock and Awe',e:'🎆',genre:'army',d:'For the first 8s, your artillery fires every 0.5s at its usual power. After that it stops.'},
+  pheromone:{name:'Pheromone Trail',e:'🐜',genre:'bug',d:'Every Swarm hit marks its target for 3s: marked enemies take 40% more damage from everything.'},
+  graveyard:{name:'Graveyard Shift',e:'🌙',genre:'undead',d:'Undead characters deal +8% damage for every character that has fallen this fight, on either side (up to +80%).'},
+  insidejob:{name:'Inside Job',e:'🗝️',genre:'heist',d:'The toughest enemy starts every fight at 55% HP, and Heist characters deal 50% more damage to it.'},
+  sixgun:{name:'Six-Shooter',e:'🔫',genre:'west',d:'Every 4th shot by a Wild West character fans the hammer: it also hits every other enemy for 80%.'},
+  halftime:{name:'Halftime Show',e:'📯',genre:'ball',d:'Once a fight, when your team drops below half its total HP (or at 10s if sooner), everyone heals 40% of their max HP and Sportsball characters attack 50% faster for the rest of the fight.'},
+  fieldhosp:{name:'Field Hospital',e:'🏥',genre:'army',d:'Every artillery shell also heals your most wounded character for the shell\'s full damage.'},
+  feeding:{name:'Feeding Frenzy',e:'🦗',genre:'bug',d:'Each enemy that falls makes your Swarm characters attack 12% faster for the rest of the fight (up to 6 times) and regrows 2 bodies on every Swarm crowd.'},
+  bloodline:{name:'Bloodline',e:'🧛',genre:'undead',d:'Undead characters heal for 30% of the damage they deal, and healing past full HP becomes a shield (up to 50% of their max HP).'},
+  getaway:{name:'Clean Getaway',e:'🏃',genre:'heist',d:'Once a fight, each Heist character that drops below 35% HP vanishes for 2s and heals 35% of its max HP.'},
+  wanted:{name:'Wanted Posters',e:'📜',genre:'west',d:'Every enemy knocked out by a Wild West character pays 🪙1 (up to 🪙3 a fight).'},
+  press:{name:'Full-Court Press',e:'🏀',genre:'ball',d:'Sportsball hits and bounces drain 12 energy from enemies, holding back their skills.'},
   armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (3 times per fight).'},
   vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙8 at 🪙80, and Heist characters\' gold damage bonus goes up to +80% (at 🪙80).'},
   quickdraw:{name:'Quick Draw',e:'⏱️',genre:'west',d:'High Noon strikes again every 10s: your Wild West characters\' next shot is instant and deals double damage.'},
@@ -977,7 +989,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,indiePer:.25,indieMax:.75,hypePer:.06,hypeMax:.48,placeMax:4,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,fhHeal:1,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:12,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.08,graveMax:.8,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.25,indieMax:.75,hypePer:.06,hypeMax:.48,placeMax:4,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.01,lvFoeFrom:4};
 buildSchedule(false);
@@ -1405,7 +1417,7 @@ function legendChoices(n){n=n||2;
   const g=genreCounts(fielded());
   const ranked=Object.keys(g).filter(k=>g[k]>=2).sort((a,b)=>g[b]-g[a]);
   const out=[];
-  for(const k of ranked){const L=Object.keys(LEGENDS).find(id=>LEGENDS[id].genre===k&&id!==S.legend);if(L){out.push(L);break;}}
+  for(const k of ranked){const Ls=Object.keys(LEGENDS).filter(id=>LEGENDS[id].genre===k&&id!==S.legend);if(Ls.length){out.push(pick(Ls));if(out.length>=(n>=3?2:1))break;}}
   const cross=shuffle(Object.keys(LEGENDS).filter(id=>!LEGENDS[id].genre&&id!==S.legend&&!out.includes(id)));
   while(out.length<n&&cross.length)out.push(cross.shift());
   return out;
@@ -1734,6 +1746,7 @@ function startBattle(silent){if(!silent)tlFight();
   B.under=has('understudy')?benched().slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level).slice(0,tv('understudy')).map(h=>Object.assign(heroUnit(h),{under:true})):null;
   S.enemy.enc.forEach(e=>B.units.push(enemyUnit(e)));
   if(S.enemy.boss&&rule('twin')){const tw=twinUnit();if(tw)B.units.push(tw);}
+  if(legend('insidejob')){const e=B.units.filter(x=>x.side==='E').sort((a,b)=>b.maxHp-a.maxHp)[0];if(e){e.hp*=TUNE.ijHp;e.insideJob=true;}}
   applyMods();
   if(B.under){B.reserve.push(...B.under);B.under=null;}
   ['A','E'].forEach(sd=>[0,1,2].forEach(c=>stepUp(sd,c)));
@@ -1743,7 +1756,7 @@ function applyMods(){
   const A=B.units.filter(u=>u.side==='A');
   B.frontDR.A=T.guardian>=2?.18:T.guardian>=1?.12:0;
   const danger=legend('danger')&&G.army;
-  B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?TUNE.artEvery1:0;B.art=danger?4:B.artEvery;B.artMult=G.army>=3?2:1;
+  B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?TUNE.artEvery1:0;B.art=danger?4:legend('shock')&&B.artEvery?TUNE.shockEvery:B.artEvery;B.artMult=G.army>=3?2:1;
   B.broodEvery=G.bug?TUNE.bugRegrow[G.bug-1]:0;
   B.indie=legend('indie')&&A.length<=4?1+Math.min(TUNE.indieMax,TUNE.indiePer*Math.max(0,boardSize()-A.length)):0;
   const star=legend('blockbuster')?A.slice().sort((a,b)=>b.tier-a.tier||b.level-a.level||b.maxHp-a.maxHp)[0]:null;
@@ -1794,6 +1807,7 @@ function applyMods(){
     if(X.horde&&u.crowd){u.maxBodies+=2;u.hp+=u.bodyHp*2;u.maxHp+=u.bodyHp*2;}
     if(has('extras')&&u.crowd){const k=tv('extras');u.maxBodies+=k;u.hp+=u.bodyHp*k;u.maxHp+=u.bodyHp*k;}
     if(legend('brood')&&u.genre==='bug')u.dmgMult*=TUNE.broodDmg;
+    if(legend('bloodline')&&u.genre==='undead'){u.ls+=TUNE.blLs;u.overShield=TUNE.blCap;}
     if(u.skill==='tunnel'&&u.manaMax)u.mana=u.manaMax; // Burrow Lurker tunnels at once
     if(legend('spinoff')&&HERO[u.id]&&HERO[u.id].tier<=2){const f=TUNE.spinoffMult;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
     if(legend('brood')&&u.genre==='bug'&&u.crowd){u.maxBodies+=TUNE.broodPlus;u.hp+=u.bodyHp*TUNE.broodPlus;u.capBodies=Math.round(u.maxBodies*TUNE.broodCap);u.maxHp=u.bodyHp*u.capBodies;}
@@ -1861,6 +1875,9 @@ function dealDamage(src,t,amt,type,aoe){
   if(t.side==='E'&&t.crowd&&B.syn.X.bughunt)amt*=1.4;
   if(t.vuln>0)amt*=1.25;
   if(B.burn&&src&&src.side==='A'&&t.side==='E'&&B.t>=TUNE.burnAt)amt*=B.burn; // Slow Burn
+  if(src&&src.side==='A'&&src.genre==='undead'&&legend('graveyard'))amt*=1+Math.min(TUNE.graveMax,TUNE.gravePer*B.units.reduce((n,x)=>n+(x.alive?0:1),0));
+  if(t.insideJob&&src&&src.genre==='heist')amt*=1+TUNE.ijDmg;
+  if(t.pheroT>B.t)amt*=1+TUNE.pheroAmp; // Pheromone Trail mark
   const amt0=amt; // before damage reduction, armor and shields (for 'damage blocked')
   if(t.row==='front'&&B.frontDR[t.side])amt*=1-B.frontDR[t.side];
   // Cover: a back-row character directly behind a living Guardian takes less damage
@@ -1875,6 +1892,7 @@ function dealDamage(src,t,amt,type,aoe){
   t.blocked=(t.blocked||0)+Math.max(0,amt0-amt);
   t.hp-=amt;
   if(t.crowd){const lost=b0-bodies(t);if(lost>0)bodyLost(t,lost);}
+  if(t.hp>0&&t.side==='A'&&t.genre==='heist'&&!t.gotAway&&t.hp<t.maxHp*TUNE.cgAt&&legend('getaway')){t.gotAway=true;t.untarget=Math.max(t.untarget,TUNE.cgFor);heal(null,t,t.maxHp*TUNE.cgHeal,true);float(t,'Getaway!','heal');}
   if(!src&&t.side==='E'&&B.envSrc){B.env=B.env||{};B.env[B.envSrc]=(B.env[B.envSrc]||0)+dealt;}
   if(src){src.dmgDone+=dealt;if(src.side==='E'&&t.side==='A'){const k=src.key||src.name;B.threat[k]=(B.threat[k]||0)+dealt;}}
   // energy from being hit (bounces, reflects and overtime give none)
@@ -1906,6 +1924,8 @@ function kill(t,src){
   }
   if(t.side==='E'){
     if(B.syn.X.ants)sideUnits('A').filter(a=>a.crowd).forEach(a=>regrow(a,1));
+    if(legend('feeding')){const bugs=sideUnits('A').filter(a=>a.genre==='bug');if((B.feed||0)<TUNE.feedMax){B.feed=(B.feed||0)+1;bugs.forEach(a=>a.hastes.push({m:TUNE.feedHaste,t:999}));}bugs.filter(a=>a.crowd).forEach(a=>regrow(a,TUNE.feedRegrow));}
+    if(legend('wanted')&&src&&src.side==='A'&&src.genre==='west'&&(B.bounty||0)<TUNE.bountyMax){B.bounty=(B.bounty||0)+1;B.goldEarned++;float(src,'+1🪙','heal');}
     B.units.filter(u=>u.side==='A'&&u.alive&&u.devour).forEach(u=>heal(null,u,u.maxHp*u.devour));
     if(legend('frenzy'))B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='orc').forEach(u=>u.frenzy=(u.frenzy||0)+.15);
     if(legend('armydead')&&(B.raised||0)<TUNE.adMax&&summonSkeletons('A',3,1+TUNE.adP*B.round,'armydead',TUNE.adMax))B.raised=(B.raised||0)+1;
@@ -1925,7 +1945,9 @@ function heal(src,t,amt,silent){
   const healer=src;
   // Neighbors: Medics heal the characters right beside them more
   if(src&&src!==t&&src.trait==='medic'&&src.side===t.side&&Z(src)===Z(t)&&src.row===t.row&&Math.abs(src.col-t.col)===1)amt*=1+TUNE.medicNear;
-  const real=Math.min(t.maxHp-t.hp,amt);if(real<=0)return 0;
+  const real=Math.min(t.maxHp-t.hp,amt);
+  if(t.overShield&&amt>real)t.shield=Math.min(t.maxHp*t.overShield,t.shield+(amt-real)); // Bloodline
+  if(real<=0)return 0;
   t.hp+=real;if(healer)healer.healDone=(healer.healDone||0)+real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
 }
 function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;if(src)src.healDone=(src.healDone||0)+amt;float(t,'+'+R(amt),'shd');}
@@ -1994,12 +2016,15 @@ function attack(u,t){
   animAttack(u,t);
   const d=dealDamage(u,t,dmg,'attack');
   if(crit&&d>0)float(t,'CRIT','crit');
+  if(u.genre==='ball'&&u.side==='A'&&legend('press'))t.mana=Math.max(0,(t.mana||0)-TUNE.pressDrain);
+  if(u.genre==='bug'&&u.side==='A'&&t.alive&&legend('pheromone'))t.pheroT=B.t+TUNE.pheroFor;
+  if(u.genre==='west'&&u.side==='A'&&legend('sixgun')){u.shots=(u.shots||0)+1;if(u.shots%TUNE.sixEvery===0){sideUnits('E').filter(x=>x!==t&&targetable(x)).forEach(x=>dealDamage(u,x,dmg*TUNE.sixPct,'bounce'));float(u,'Fan the hammer!','sp');}}
   if(crit&&u.ricochet){const nx=nearestOther(t,[t]);if(nx)dealDamage(u,nx,dmg,'bounce');}
   if(u.crowd&&u.side==='A'&&B.syn.X.locusts&&t.alive)t.mana=Math.max(0,(t.mana||0)-5);
   if(u.manaMax)u.mana=Math.min(u.manaMax,u.mana+10+(crit?u.critRefund:0));
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
   // bounces: a share of the hit jumps to nearby enemies; they give no energy to anyone
-  if(u.bounces){const hy=allies(u).some(a=>a.hype&&a.taunt>0)?2:1;let from=t;const hit=[t];for(let i=0;i<u.bounces;i++){const nx=markOf(u,hit)||nearestOther(from,hit);if(!nx)break;if(u.genre==='ball')ballFx(u,nx,from);dealDamage(u,nx,dmg*Math.min(1,u.bouncePct*hy),'bounce');hit.push(nx);from=nx;}}
+  if(u.bounces){const hy=allies(u).some(a=>a.hype&&a.taunt>0)?2:1;let from=t;const hit=[t];for(let i=0;i<u.bounces;i++){const nx=markOf(u,hit)||nearestOther(from,hit);if(!nx)break;if(u.genre==='ball')ballFx(u,nx,from);dealDamage(u,nx,dmg*Math.min(1,u.bouncePct*hy),'bounce');if(u.genre==='ball'&&u.side==='A'&&legend('press'))nx.mana=Math.max(0,(nx.mana||0)-TUNE.pressDrain);hit.push(nx);from=nx;}}
 }
 // ---- Game Ball ----
 function ballOrder(){return B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='ball').sort((a,b)=>(a.row===b.row?0:a.row==='front'?-1:1)||a.col-b.col);}
@@ -2047,9 +2072,11 @@ function step(dt){
   B.t+=dt;
   if(B.syn.X.cavalry&&!B.cav&&B.t>=10){B.cav=true;sideUnits('A').forEach(a=>a.hastes.push({m:.25,t:999}));}
   if(legend('quickdraw')&&B.syn.G.west&&B.t>=(B.qd||10)){B.qd=(B.qd||10)+10;sideUnits('A').filter(a=>a.genre==='west').forEach(a=>{a.timer=Math.min(a.timer,.05);a.nextMult=Math.max(a.nextMult||1,2);float(a,'Draw!','sp');});}
-  if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1)*TUNE.artDmg*(B.syn.X.armsdeal?1+Math.min(.4,(B.gold||0)*.01):1);const danger=legend('danger');
+  if(legend('halftime')&&!B.half&&(B.t>=TUNE.halfAt||(()=>{const a=B.units.filter(x=>x.side==='A'&&!x.summon);return a.reduce((n,x)=>n+Math.max(0,x.alive?x.hp:0),0)<.5*a.reduce((n,x)=>n+x.maxHp,0);})())){B.half=true;sideUnits('A').forEach(a=>{heal(null,a,a.maxHp*TUNE.halfHeal,true);if(a.genre==='ball')a.hastes.push({m:TUNE.halfHaste,t:999});float(a,'Halftime!','sp');});}
+  if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=legend('shock')?(B.t<TUNE.shockFor?TUNE.shockEvery:1e9):B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1)*TUNE.artDmg*(B.syn.X.armsdeal?1+Math.min(.4,(B.gold||0)*.01):1);const danger=legend('danger');
     const f=danger?B.units.filter(x=>x.side==='E'&&targetable(x)):rowMost({side:'A'});
-    B.envSrc='artillery';f.forEach(x=>dealDamage(null,x,amt*(danger?TUNE.dangerMult:1),'spell',true));B.envSrc=null;if(f.length)shake();}}
+    B.envSrc='artillery';f.forEach(x=>dealDamage(null,x,amt*(danger?TUNE.dangerMult:1),'spell',true));B.envSrc=null;
+    if(f.length&&legend('fieldhosp')){const w=sideUnits('A').filter(a=>a.hp<a.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];if(w)heal(null,w,amt*TUNE.fhHeal);}if(f.length)shake();}}
   if(has('tesla')){B.tesla-=dt;if(B.tesla<=0){B.tesla+=tv('tesla');const f=B.units.filter(x=>x.side==='E'&&targetable(x));if(f.length){B.envSrc='tesla';dealDamage(null,pick(f),8+3*B.round,'true');B.envSrc=null;}}}
   if(B.t>30){B.ot=(B.ot||.5)-dt;if(B.ot<=0){B.ot=.5;const k=.02*(1+(B.t-30)/8);B.envSrc='overtime';B.units.forEach(u=>{if(u.alive)dealDamage(null,u,u.maxHp*k,'true');});B.envSrc=null;}}
   for(const u of B.units){
@@ -2534,7 +2561,7 @@ SCR.end=()=>{
       </div>
     </div>
     <div class="endcard"><h3>YOUR FINAL TEAM</h3><div class="chiprow">${team||'<span>Nobody on the board</span>'}</div>${items?`<h3>ITEMS</h3><div class="chiprow">${items}</div>`:''}</div>
-    ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run recorded. Thanks for playing! <small>Anonymous; turn it off in ⚙️ Settings.</small></p>':''}
+    ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run recorded</p>':''}
     <div class="row"><button class="btn primary big" data-a="new">New run</button><button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;
 };
@@ -2626,7 +2653,7 @@ function trinketDetail(id){const t=TR[id],L=S?ilv(id):0;
     +(L?`<p class="muted" style="font-size:.78rem">${L<ITEM_MAX?'Pick it again later to level it up.':'Max level.'}</p>`:'')
     +(L&&(UI.screen==='plan'||UI.screen==='event')?`<div class="row">${itemSellBtn(id)}</div>`:'');}
 function itemSellBtn(id){return `<button class="btn sm danger" data-a="sell-item" data-v="${id}">${UI.armItem===id?'Tap again to sell for ':'Sell for '}🪙${itemSellValue(id)}</button>`;}
-function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3><p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is your biggest genre.</p>`:''}`;}
+function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3><p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is one of your biggest genres (2 or more).</p>`:''}`;}
 function comboDetail(id){const x=CROSSOVERS.find(c=>c.id===id);return `<div class="eyebrow">Crossover</div><h3 style="color:var(--gold)">🔗 ${esc(x.name)}</h3><p>${esc(x.d)}</p><p class="muted" style="font-size:.82rem">Needs ${legend('crossep')?1:2} ${GENRES[x.a].e} ${GENRES[x.a].name} + ${legend('crossep')?1:2} ${GENRES[x.b].e} ${GENRES[x.b].name} characters on your board (Rare and up count as 2 from ★★).</p><div class="row"><button class="btn sm" data-a="xlist">🔗 All crossovers</button></div>`;}
 function enemyDetail(key,st){
   const d=EN[key];
@@ -2911,11 +2938,17 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.6',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.7',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
 function tlRelay(){return /^https:\/\/ntfy\.sh\/[a-z0-9-]{20,64}$/.test(TL_SINK);}
+// and to the developer's Google Form (a private Sheet), one row per run: Timestamp | run (JSON)
+const TL_FORM={url:'https://docs.google.com/forms/d/e/1FAIpQLSf_eZB3usb1EU_m4smb5nb7aK3B7G5xwk8IYqp9CVZbTmSEyw/formResponse',field:'entry.59978046'};
+function tlForm(){return /^https:\/\/docs\.google\.com\/forms\/d\/e\/[A-Za-z0-9_-]+\/formResponse$/.test(TL_FORM.url)&&/^entry\.\d+$/.test(TL_FORM.field);}
+function tlFormPost(rec){try{let js=JSON.stringify(rec);if(js.length>45000){rec=JSON.parse(js);rec.r.forEach(x=>{if(x.f)delete x.f.n;});js=JSON.stringify(rec);}
+  const body=new URLSearchParams();body.set(TL_FORM.field,js);
+  if(!(navigator.sendBeacon&&navigator.sendBeacon(TL_FORM.url,body)))fetch(TL_FORM.url,{method:'POST',mode:'no-cors',body}).catch(()=>{});return true;}catch(e){return false;}}
 function tlDb(){try{return typeof window!=='undefined'&&!!(window.claude&&window.claude.use);}catch(e){return false;}}
 function tlPid(){try{let p=localStorage.getItem('tropebrawl-pid');if(!p){p='p_'+Math.random().toString(36).slice(2,10);localStorage.setItem('tropebrawl-pid',p);}return p;}catch(e){return 'p_anon';}}
 async function tlPack(js){try{if(typeof CompressionStream==='function'){const st=new Blob([js]).stream().pipeThrough(new CompressionStream('gzip'));
@@ -2929,7 +2962,7 @@ async function tlSend(rec,beacon){try{const p=beacon?{enc:'j',data:JSON.stringif
   return true;}catch(e){return false;}}
 function tlSnap(res){return Object.assign({},TL,{res,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString(),pid:tlPid(),src:'pages'});}
 // globalThis.__tlForce (sims only): record bot runs in the same format, into globalThis.__tlOut, to compare bots with people
-function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&(tlDb()||tlRelay()));}catch(e){return false;}}
+function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&typeof window!=='undefined'&&(tlDb()||tlRelay()||tlForm()));}catch(e){return false;}}
 function tlCur(){if(!S||!tlOn())return null;
   if(!S.rid)S.rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   if(!TL){try{const j=JSON.parse(localStorage.getItem(TL_KEY)||'null');if(j&&j.rid===S.rid)TL=j;}catch(e){}}
@@ -2946,19 +2979,19 @@ async function tlEnd(quit){try{if(!tlOn())return;tlCur();if(!TL)return;
   const rec=Object.assign({},TL,{res:quit?'quit':S.result,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString()});TL=null;try{localStorage.removeItem(TL_KEY);}catch(e){}
   if(globalThis.__tlForce){(globalThis.__tlOut=globalThis.__tlOut||[]).push(rec);return;}
   const sent=()=>{UI.tlSent=rec.rid;if(UI.screen==='end')render();};
-  if(!tlDb()){if(tlRelay()&&await tlSend(Object.assign(rec,{pid:tlPid(),src:'pages'})))sent();return;}
+  if(!tlDb()){Object.assign(rec,{pid:tlPid(),src:'pages'});const fa=tlForm()&&tlFormPost(rec),ra=tlRelay()&&await tlSend(rec);if(fa||ra)sent();return;}
   const db=await window.claude.use('db'),user=await window.claude.use('user');if(!db||!user)return;const id=await user.id();if(!id)return;
   await db.collection('runs/'+id+'/r').doc(rec.rid).set(rec);
   await db.doc('runs/'+id).set({last:rec.rid,at:rec.end,v:rec.v,lv:rec.lv,res:rec.res});sent();
 }catch(e){}}
 if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener('pagehide',()=>{try{
-  if(!TL||!S||S.over||tlDb()||!tlRelay()||!tlOn()||TL.r.length<2||TL.sentAt===TL.r.length)return;TL.sentAt=TL.r.length;tlSave();tlSend(tlSnap('open'),true);}catch(e){}});
+  if(!TL||!S||S.over||tlDb()||!(tlRelay()||tlForm())||!tlOn()||TL.r.length<2||TL.sentAt===TL.r.length)return;TL.sentAt=TL.r.length;tlSave();const sn=tlSnap('open');if(tlRelay())tlSend(sn,true);if(tlForm())tlFormPost(sn);}catch(e){}});
 function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
-    ${typeof window!=='undefined'&&(tlDb()||tlRelay())?sw('share',SET.share,'Share my runs','Sends what you buy, sell, pick and fight each run to the developer, to balance the game and teach the bots how people play. Anonymous: no name, email or personal info.'):''}`;}
+`;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
 function feel(){try{
   const scr=UI.screen,chg=UI._scr!==scr;UI._scr=scr;UI.pop=UI.merged=null;
