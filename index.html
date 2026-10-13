@@ -2502,7 +2502,7 @@ SCR.end=()=>{
       </div>
     </div>
     <div class="endcard"><h3>YOUR FINAL TEAM</h3><div class="chiprow">${team||'<span>Nobody on the board</span>'}</div>${items?`<h3>ITEMS</h3><div class="chiprow">${items}</div>`:''}</div>
-    ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run sent to the developer. Thanks for playing! <small>Anonymous; turn it off in ⚙️ Settings.</small></p>':''}
+    ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run recorded. Thanks for playing! <small>Anonymous; turn it off in ⚙️ Settings.</small></p>':''}
     <div class="row"><button class="btn primary big" data-a="new">New run</button><button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;
 };
@@ -2880,16 +2880,24 @@ if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');con
 
 // ================= render / save / boot =================
 const TB_VERSION='19.5',TL_KEY='tropebrawl-runlog';let TL=null;
-// playtest copies (GitHub Pages) have no claude.ai database: finished runs go to a Google Form instead (anonymous)
-const TL_FORM={url:'',field:''};
-function tlForm(){return /^https:\/\/docs\.google\.com\/forms\//.test(TL_FORM.url)&&/^entry\.\d+$/.test(TL_FORM.field);}
+// copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
+// Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
+const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
+function tlRelay(){return /^https:\/\/ntfy\.sh\/[a-z0-9-]{20,64}$/.test(TL_SINK);}
 function tlDb(){try{return typeof window!=='undefined'&&!!(window.claude&&window.claude.use);}catch(e){return false;}}
 function tlPid(){try{let p=localStorage.getItem('tropebrawl-pid');if(!p){p='p_'+Math.random().toString(36).slice(2,10);localStorage.setItem('tropebrawl-pid',p);}return p;}catch(e){return 'p_anon';}}
-function tlPost(rec){try{let js=JSON.stringify(rec);if(js.length>45000){rec.r.forEach(x=>{if(x.f)delete x.f.n;});js=JSON.stringify(rec);}
-  const body=new URLSearchParams();body.set(TL_FORM.field,js);
-  if(!(navigator.sendBeacon&&navigator.sendBeacon(TL_FORM.url,body)))fetch(TL_FORM.url,{method:'POST',mode:'no-cors',body}).catch(()=>{});return true;}catch(e){return false;}}
+async function tlPack(js){try{if(typeof CompressionStream==='function'){const st=new Blob([js]).stream().pipeThrough(new CompressionStream('gzip'));
+  const b=new Uint8Array(await new Response(st).arrayBuffer());let bin='';for(let i=0;i<b.length;i+=0x8000)bin+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return {enc:'g',data:btoa(bin)};}}catch(e){}
+  return {enc:'j',data:js};}
+// send one record; beacon = the tab is closing (no time to compress)
+async function tlSend(rec,beacon){try{const p=beacon?{enc:'j',data:JSON.stringify(rec)}:await tlPack(JSON.stringify(rec));
+  const N=3400,n=Math.max(1,Math.ceil(p.data.length/N)),seq=(rec.res==='open'?'o':'f')+(rec.r?rec.r.length:0);if(n>40)return false;
+  for(let i=0;i<n;i++){const body=`TB1|${rec.rid}|${seq}|${i}|${n}|${p.enc}|`+p.data.slice(i*N,(i+1)*N);
+    if(beacon&&navigator.sendBeacon)navigator.sendBeacon(TL_SINK,body);else await fetch(TL_SINK,{method:'POST',body,keepalive:true});}
+  return true;}catch(e){return false;}}
+function tlSnap(res){return Object.assign({},TL,{res,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString(),pid:tlPid(),src:'pages'});}
 // globalThis.__tlForce (sims only): record bot runs in the same format, into globalThis.__tlOut, to compare bots with people
-function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&(tlDb()||tlForm()));}catch(e){return false;}}
+function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&(tlDb()||tlRelay()));}catch(e){return false;}}
 function tlCur(){if(!S||!tlOn())return null;
   if(!S.rid)S.rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   if(!TL){try{const j=JSON.parse(localStorage.getItem(TL_KEY)||'null');if(j&&j.rid===S.rid)TL=j;}catch(e){}}
@@ -2899,26 +2907,26 @@ function tlCur(){if(!S||!tlOn())return null;
   return r;}
 function tlAct(k,v){try{const r=tlCur();if(r)r.a.push(v==null?k:k+':'+v);}catch(e){}}
 function tlFight(){try{const r=tlCur();if(!r)return;r.f={b:fielded().map(u=>u.id+':'+u.level+':'+u.slot),n:S.units.filter(u=>u.slot[0]==='n').map(u=>u.id+':'+u.level),g:S.gold,rk:S.rank,it:S.trinkets.map(t=>t+':'+ilv(t)),lg:S.legend||null,en:S.enemy?S.enemy.title:null};}catch(e){}}
-function tlRes(win){try{if(!tlOn())return;const r=tlCur();if(r&&r.f)r.f.w=win?1:0;}catch(e){}}
+function tlRes(win){try{if(!tlOn())return;const r=tlCur();if(r&&r.f)r.f.w=win?1:0;
+  if(!globalThis.__tlForce&&!tlDb()&&tlRelay()&&TL&&(curRound()||{}).type==='boss'&&!S.over)tlSend(tlSnap('open'));}catch(e){}}
 function tlSave(){try{if(TL)localStorage.setItem(TL_KEY,JSON.stringify(TL));}catch(e){}}
 async function tlEnd(quit){try{if(!tlOn())return;tlCur();if(!TL)return;
   const rec=Object.assign({},TL,{res:quit?'quit':S.result,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString()});TL=null;try{localStorage.removeItem(TL_KEY);}catch(e){}
   if(globalThis.__tlForce){(globalThis.__tlOut=globalThis.__tlOut||[]).push(rec);return;}
   const sent=()=>{UI.tlSent=rec.rid;if(UI.screen==='end')render();};
-  if(!tlDb()){if(tlForm()&&tlPost(Object.assign(rec,{pid:tlPid(),src:'pages'})))sent();return;}
+  if(!tlDb()){if(tlRelay()&&await tlSend(Object.assign(rec,{pid:tlPid(),src:'pages'})))sent();return;}
   const db=await window.claude.use('db'),user=await window.claude.use('user');if(!db||!user)return;const id=await user.id();if(!id)return;
   await db.collection('runs/'+id+'/r').doc(rec.rid).set(rec);
   await db.doc('runs/'+id).set({last:rec.rid,at:rec.end,v:rec.v,lv:rec.lv,res:rec.res});sent();
 }catch(e){}}
 if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener('pagehide',()=>{try{
-  if(!TL||!S||S.over||tlDb()||!tlForm()||!tlOn()||TL.r.length<3||TL.sentAt===TL.r.length)return;TL.sentAt=TL.r.length;tlSave();
-  tlPost(Object.assign({},TL,{res:'open',round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString(),pid:tlPid(),src:'pages'}));}catch(e){}});
+  if(!TL||!S||S.over||tlDb()||!tlRelay()||!tlOn()||TL.r.length<2||TL.sentAt===TL.r.length)return;TL.sentAt=TL.r.length;tlSave();tlSend(tlSnap('open'),true);}catch(e){}});
 function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
-    ${typeof window!=='undefined'&&(tlDb()||tlForm())?sw('share',SET.share,'Share my runs','Sends what you buy, sell, pick and fight each run to the developer, to balance the game and teach the bots how people play. Anonymous: no name, email or personal info.'):''}`;}
+    ${typeof window!=='undefined'&&(tlDb()||tlRelay())?sw('share',SET.share,'Share my runs','Sends what you buy, sell, pick and fight each run to the developer, to balance the game and teach the bots how people play. Anonymous: no name, email or personal info.'):''}`;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
 function feel(){try{
   const scr=UI.screen,chg=UI._scr!==scr;UI._scr=scr;UI.pop=UI.merged=null;
