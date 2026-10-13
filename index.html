@@ -16,7 +16,7 @@
   --gold:#ffcc2e; --gold-dk:#a37800; --red:#ff4d3d; --ground:#2f2924; --ground2:#3a322b; --inkline:#000; --good:#6cc47a; --mana:#5d95e6; --shield:#d9e1ec; --leg:#ff9f43;
   --dud:#3a3340;
   --r1:#b4adbf; --r2:#62d98b; --r3:#5aa9ff; --r4:#b98cff; --r5:#ff6b9d;
-  --g-army:#a3b462; --g-orc:#de6f47; --g-elf:#5fcab8; --g-fin:#e9c352; --g-grim:#d84d60; --g-bug:#ab80ea; --g-ball:#4fa3f7; --g-undead:#8fd18a; --foe:#c45a4e;
+  --g-army:#a3b462; --g-orc:#de6f47; --g-elf:#5fcab8; --g-fin:#e9c352; --g-grim:#d84d60; --g-bug:#ab80ea; --g-ball:#4fa3f7; --g-undead:#8fd18a; --g-heist:#e9c352; --g-west:#e0874f; --foe:#c45a4e;
   --f-display:"Anton","Impact","Arial Narrow Bold",sans-serif;
   --f-body:"Barlow","Segoe UI",system-ui,sans-serif;
   --f-emoji:"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif;
@@ -49,7 +49,7 @@ button{font:inherit;color:inherit}
 .goldv{color:var(--gold)}
 
 /* genre + tier color hooks */
-.g-army{--gc:var(--g-army)}.g-orc{--gc:var(--g-orc)}.g-elf{--gc:var(--g-elf)}.g-fin{--gc:var(--g-fin)}.g-grim{--gc:var(--g-grim)}.g-bug{--gc:var(--g-bug)}.g-ball{--gc:var(--g-ball)}.g-undead{--gc:var(--g-undead)}.g-foe{--gc:var(--foe)}
+.g-army{--gc:var(--g-army)}.g-orc{--gc:var(--g-orc)}.g-elf{--gc:var(--g-elf)}.g-fin{--gc:var(--g-fin)}.g-grim{--gc:var(--g-grim)}.g-bug{--gc:var(--g-bug)}.g-ball{--gc:var(--g-ball)}.g-undead{--gc:var(--g-undead)}.g-heist{--gc:var(--g-heist)}.g-west{--gc:var(--g-west)}.g-foe{--gc:var(--foe)}
 .tier1{--tc:var(--r1)}.tier2{--tc:var(--r2)}.tier3{--tc:var(--r3)}.tier4{--tc:var(--r4)}.tier5{--tc:var(--r5)}
 
 /* top bar */
@@ -611,20 +611,22 @@ function topTier(r){const o=RANK.odds[Math.max(0,Math.min(RMAX,r)-1)];let t=1;o.
 const BENCH=5, SHOP_SLOTS=5, REROLL=1;
 // rarity identity: Commons and Uncommons stop at ★★; Rare, Epic and Mythic count as 2 for their genre once they reach ★★★
 function maxLv(id){return HERO[id].tier>=3||legend('spinoff')?3:2;}
-function genreWeight(id,units){if(HERO[id].tier<3)return 1;const lv=Math.max(0,...(units||[]).filter(u=>u.id===id).map(u=>u.level||1));return lv>=3?2:1;}
+function genreWeight(id,units){if(HERO[id].tier<3&&!legend('spinoff'))return 1;const lv=Math.max(0,...(units||[]).filter(u=>u.id===id).map(u=>u.level||1));return lv>=3?2:1;}
 
 // Parked while we balance 4 genres: their data stays in the file. Remove a key here to bring a genre back.
 const PARKED=new Set(['orc','elf','fin','grim']);
 const live=k=>!PARKED.has(k);
 const GENRES_ALL={
-  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +40% HP and damage.']},
+  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +55% HP and damage.']},
   orc:{name:'Orcs',e:'👹',tiers:[2,4],d:['Orcs deal +7% damage for each living ally.','Orcs get +12% per living ally, and every other hero gets +5%.']},
   elf:{name:'Elves',e:'🍃',tiers:[2,4],d:['Elves dodge 30% of attacks and regenerate 1.5% HP per second.','Elves dodge 45%, and every hero dodges 15%.']},
   fin:{name:'Finance',e:'💰',tiers:[2,4],d:['+2 gold after every fight. Finance heroes deal +1% damage per gold you hold (max +25%).','+4 gold after every fight, and every hero gets the gold damage bonus.']},
   grim:{name:'Crusaders',e:'✝️',tiers:[2,4],d:['Crusaders can\'t be stunned and gain +5 armor.','Every hero gains +5 armor. Crusaders deal +20% damage below half HP.']},
-  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 4s.','Swarm crowds regrow every 2s, and Swarm characters heal 10% when an enemy falls.','Swarm crowds regrow every second.']},
+  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 5s.','Swarm crowds regrow every 2.5s, and Swarm characters heal 10% when an enemy falls.','Swarm crowds regrow every second.']},
   undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +4 attack (max +60).','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight). Full Cast: Undead characters get +35% HP and damage.']},
-  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 55%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 70%. Full Cast: Sportsball characters get +45% HP and damage.']},
+  heist:{name:'Heist Crew',e:'💼',tiers:[2,4,6],d:['Heist characters deal +45% damage, plus 1% per 🪙 you hold (max +40%).','Knockouts by Heist characters steal 🪙1 (max 2 a fight), and all your characters get the gold damage bonus.','The Big Score: the gold damage bonus goes up to +80%. Full Cast: Heist characters get +50% HP and damage.']},
+  west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +20% crit chance.','Wild West characters get another +20% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 25 energy. Full Cast: Wild West characters get +50% HP and damage.']},
+  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +70% HP and damage.']},
 };
 const GENRES=Object.fromEntries(Object.entries(GENRES_ALL).filter(([k])=>live(k)));
 const TRAITS={
@@ -702,6 +704,22 @@ const HEROES_ALL=[
  ['headcoach','Head Coach','ball','mystic',3,0,'runplay','📋','Drew the play on a napkin. It works.'],
  ['mascot','Team Mascot','ball','guardian',4,0,'showboat','🐻','Nobody knows who is inside. Nobody asks.'],
  ['qb','Star Quarterback','ball','stalker',5,0,'hailmary','🏈','Peaked in high school. Plans to keep peaking.'],
+ ['muscle','The Muscle','heist','guardian',1,0,'bodyguard','💪','Doesn\'t talk. Doesn\'t need to.'],
+ ['lookouts','Lookouts','heist','gunner',1,1,'flashlight','🔦','Three guys, three flashlights, one job.'],
+ ['driver','Getaway Driver','heist','stalker',1,0,'smashgrab','🚗','Engine running since before you got here.'],
+ ['safecracker','Safecracker','heist','brawler',2,0,'cracksafe','🔐','Listens to the tumblers like a symphony.'],
+ ['hacker','The Hacker','heist','mystic',2,0,'syscrash','💻','"I\'m in."'],
+ ['fixer','The Fixer','heist','medic',3,0,'cleanup','🧹','Bodies, alibis, bullet holes. Same rate.'],
+ ['insideman','Inside Man','heist','guardian',4,0,'insidejob','🕴️','Twenty years at the bank. Twenty minutes to rob it.'],
+ ['mastermind','The Mastermind','heist','gunner',5,0,'theplan','🎩','Planned for everything. Especially you.'],
+ ['outlaws','Outlaw Gang','west','brawler',1,1,'holdup','🐎','Wanted in four territories. Unwanted in the fifth.'],
+ ['deputy','Deputy','west','guardian',1,0,'badge','⭐','Got the badge on Tuesday. Still polishing it.'],
+ ['doc','Saloon Doc','west','medic',1,0,'whiskey','🥃','Whiskey for the pain. Whiskey for the doctor.'],
+ ['bounty','Bounty Hunter','west','stalker',2,0,'wanted','📜','Dead or alive. Prefers the paperwork for dead.'],
+ ['prospector','Prospector','west','mystic',2,0,'dynamite','🧨','Struck gold once. Has been blowing up hills since.'],
+ ['gunslinger','The Gunslinger','west','gunner',3,0,'fanhammer','🔫','Fastest draw west of anywhere.'],
+ ['sheriff','The Sheriff','west','guardian',4,0,'showdown','🤠','This town ain\'t big enough. It never is.'],
+ ['noname','The Man With No Name','west','stalker',5,0,'deadeye','🌵','Says nothing. Squints a lot. Never misses.'],
 ];
 const HEROES=HEROES_ALL.filter(h=>live(h[2]));
 const HERO={};
@@ -723,6 +741,15 @@ const CROSSOVERS_ALL=[
  {id:'draft',name:'Draft Day',a:'army',b:'ball',d:'Get a free reroll after every fight.'},
  {id:'ants',name:'Zombie Ants',a:'bug',b:'undead',d:'Each enemy knockout regrows a body in all your crowds.'},
  {id:'bees',name:'Killer Bees',a:'bug',b:'ball',d:'Your crowds\' attacks bounce to a second enemy for 25%.'},
+ {id:'armsdeal',name:'Arms Deal',a:'army',b:'heist',d:'Artillery deals +1% damage per 🪙 you hold (max +40%).'},
+ {id:'locusts',name:'Plague of Locusts',a:'bug',b:'heist',d:'Your crowds\' attacks drain 5 energy from their target.'},
+ {id:'graverob',name:'Grave Robbers',a:'undead',b:'heist',d:'When one of your characters falls, gain 🪙1 (max 2 a fight).'},
+ {id:'fixed',name:'Fixed Match',a:'ball',b:'heist',d:'Sportsball and Heist characters get +20% crit chance.'},
+ {id:'cavalry',name:'The Cavalry',a:'army',b:'west',d:'After 10s, all your characters attack 25% faster.'},
+ {id:'stampede',name:'Stampede',a:'bug',b:'west',d:'Your crowds get +20% crit chance.'},
+ {id:'ghosttown',name:'Ghost Town',a:'undead',b:'west',d:'The first of your characters to fall each fight rises at 40% HP.'},
+ {id:'rodeo',name:'Rodeo',a:'ball',b:'west',d:'Your stuns last 0.5s longer.'},
+ {id:'trainjob',name:'The Great Train Robbery',a:'heist',b:'west',d:'The first enemy to fall each fight pays 🪙2.'},
  {id:'sudden',name:'Sudden Death',a:'undead',b:'ball',d:'Undead and Sportsball hits finish off non-boss enemies under 15% HP.'},
  {id:'profit',name:'War Profiteers',a:'army',b:'fin',d:'Every won fight pays +2 gold.'},
  {id:'horde',name:'Endless Horde',a:'orc',b:'bug',d:'Your crowds start each fight with +2 bodies.'},
@@ -734,26 +761,26 @@ const CROSSOVERS_ALL=[
 ];
 const CROSSOVERS=CROSSOVERS_ALL.filter(x=>live(x.a)&&live(x.b));
 const TRINKETS=[
- ['prop','Prop Master','R','🎭','Item picks get a reroll button: 🪙{v} for 3 new choices.',['3','2','1']],
+ ['prop','Prop Master','R','🎭','Item picks get a reroll button: 🪙{v} for 3 new choices.',['2','1','0']],
 // {v} is the item's number at ★ / ★★ / ★★★ (taking a copy of an item you hold levels it up)
- ['kevlar','Kevlar Vest','C','🦺','All your characters have {v} more max HP.',['10%','15%','20%']],
+ ['kevlar','Kevlar Vest','C','🦺','All your characters have {v} more max HP.',['15%','22%','30%']],
  ['energy','Energy Drink','C','⚡','All your characters attack {v} faster.',['10%','15%','20%']],
  ['coin','Lucky Coin','C','🪙','{v} gold after every win.',['+1','+1','+2']],
  ['battery','Battery Pack','C','🔋','All your characters start fights with {v} energy.',['30%','45%','60%']],
- ['fangs','Vampire Fangs','C','🦷','All your characters heal for {v} of damage dealt.',['8%','12%','16%']],
- ['smoke','Smoke Grenade','C','💨','Your back-row characters can\'t be targeted for the first {v}.',['5s','7s','10s']],
- ['hollow','Hollow Points','C','💢','All your characters deal {v} more damage to enemies below half HP.',['40%','60%','80%']],
- ['spikes','Spiked Armor','C','🌵','Your front-row characters reflect {v} of melee damage.',['30%','45%','60%']],
+ ['fangs','Vampire Fangs','C','🦷','All your characters heal for {v} of damage dealt.',['12%','18%','24%']],
+ ['smoke','Smoke Grenade','C','💨','Your back-row characters can\'t be targeted for the first {v}.',['7s','10s','14s']],
+ ['hollow','Hollow Points','C','💢','All your characters deal {v} more damage to enemies below half HP.',['50%','75%','100%']],
+ ['spikes','Spiked Armor','C','🌵','Your front-row characters reflect {v} of melee damage.',['45%','65%','85%']],
  ['flare','Signal Flare','C','🎆','All your characters attack instantly and 30% faster for the first {v}.',['5s','7s','10s']],
  ['plating','Iron Plating','C','🔩','Your front-row characters gain {v} armor.',['+5','+7','+9']],
- ['ledger','Interest Ledger','C','📒','Your interest also trains the shop: +1 shop XP per 🪙10 you hold, up to {v} a round. At max rank it pays gold instead.',['+1','+2','+3']],
+ ['ledger','Interest Ledger','C','📒','Your interest cap goes up by {v} (🪙1 per 🪙10 you hold).',['+1','+2','+3']],
  ['overclock','Overclock Chip','R','💾','All your characters\' skills hit {v} harder.',['70%','100%','130%']],
  ['tesla','Tesla Coil','R','🌩️','Every {v}, lightning hits a random enemy.',['4s','3s','2s']],
  ['extralife','Extra Life','R','💖','Your first character to fall each fight revives at {v} HP.',['50%','75%','100%']],
  ['crest','Crossover Crest','R','🔗','Counts one extra character in {v}, where it helps most.',['1 genre','2 genres','3 genres']],
- ['glass','Glass Cannon','R','🧨','All your characters deal {v} more damage but have 10% less HP.',['45%','65%','85%']],
- ['scope','Sniper Scope','R','🔭','Your ranged characters deal {v} more damage.',['30%','45%','60%']],
- ['banner','War Banner','R','🚩','Your melee characters deal {v} more damage.',['30%','45%','60%']],
+ ['glass','Glass Cannon','R','🧨','All your characters deal {v} more damage but have 10% less HP.',['35%','50%','65%']],
+ ['scope','Sniper Scope','R','🔭','Your ranged characters deal {v} more damage.',['40%','60%','80%']],
+ ['banner','War Banner','R','🚩','Your melee characters deal {v} more damage.',['40%','60%','80%']],
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
 const TRINKET_CAP=5, ITEM_MAX=3;
@@ -767,12 +794,18 @@ const LEGENDS_ALL={
   brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +40% damage; Swarm crowds start with +3 bodies and keep regrowing past full (up to double).'},
   frenzy:{name:'Blood Frenzy',e:'🔥',genre:'orc',d:'Every enemy that falls makes your Orcs attack 15% faster for the rest of the fight.'},
   armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (3 times per fight).'},
-  spinoff:{name:'Spin-off Deal',e:'📺',genre:null,d:'Your Commons and Uncommons can reach ★★★ (two ★★ combine) and get +30% HP and damage.'},
-  wallet:{name:'Haunted Wallet',e:'👻',genre:null,d:'All your characters start every fight with 90% energy, but you earn no interest.'},
+  vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙8 at 🪙80, and Heist characters\' gold damage bonus has no cap.'},
+  quickdraw:{name:'Quick Draw',e:'⏱️',genre:'west',d:'High Noon strikes again every 10s: your Wild West characters\' next shot is instant and deals double damage.'},
+  underdog:{name:'Underdog Story',e:'🥊',genre:null,d:'Your characters get +5% HP and damage for every life you have lost (up to +50%).'},
+  ensemble:{name:'Ensemble Cast',e:'🎭',genre:null,d:'Your characters get +6% HP and damage for every different genre on your board.'},
+  plotarmor:{name:'Plot Armor',e:'📖',genre:null,d:'Each of your characters survives its first knockout each fight with 25% HP and can\'t be targeted for 1.5s.'},
+  dircut:{name:'Director\'s Cut',e:'🎬',genre:null,d:'Rerolls cost 🪙1 and you get 2 free rerolls every round, but interest is capped at 🪙2.'},
+  spinoff:{name:'Spin-off Deal',e:'📺',genre:null,d:'Your Commons and Uncommons can reach ★★★ (two ★★ combine), count as 2 for their genre at ★★★, and get +45% HP and damage.'},
+  wallet:{name:'Haunted Wallet',e:'👻',genre:null,d:'All your characters start every fight with full energy, but your interest is capped at 🪙1.'},
   scout:{name:'Talent Scout',e:'🕵️',genre:null,d:'Your shop can offer ready-made ★★ characters of any rarity (1 card in 5), for 2× the price: 3 copies for the price of 2.'},
-  crossep:{name:'Crossover Episode',e:'🎬',genre:null,d:'Crossovers switch on with just 1 character from each genre, and each one on gives all your characters +5% damage.'},
-  cult:{name:'Cult Classic',e:'📼',genre:null,d:'Your Common and Uncommon characters get +30% HP and damage.'},
-  blockbuster:{name:'Blockbuster',e:'🍿',genre:null,d:'Your rarest character on the board gets +40% HP and damage.'},
+  crossep:{name:'Crossover Episode',e:'🎬',genre:null,d:'Crossovers switch on with just 1 character from each genre, and each one on gives all your characters +3% damage.'},
+  cult:{name:'Cult Classic',e:'📼',genre:null,d:'Your Common and Uncommon characters get +60% HP and damage.'},
+  blockbuster:{name:'Blockbuster',e:'🍿',genre:null,d:'Your rarest character on the board gets +60% HP and damage.'},
 };
 const LEGENDS=Object.fromEntries(Object.entries(LEGENDS_ALL).filter(([,L])=>!L.genre||live(L.genre)));
 
@@ -823,21 +856,21 @@ function buildSchedule(cut){
   for(let a=1;a<=3;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,actMul:[2.513,3.077,2.636],bossF:[1.9,1.6,0.95],lossCost:[2,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.55,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.08,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.4,bug:1.0,undead:1.35,ball:1.45},armyHp:1.12,scoutChance:.2,scoutMult:2,walletEnergy:.9,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.3,ownBias:.08,undeadPer:4,undeadMax:60,bbMult:1.4,cultMult:1.3,dangerEvery:7,dangerMult:3,xepPer:.05,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,actMul:[2.551,3.123,2.676],bossF:[1.9,1.6,0.95],lossCost:[2,2,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:5,lvExtra:.3,lvTwin:1.0,lvCastDrop:1,lvPart2:1.0,lvMerchant:2,lvFoe:0,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:0,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
   recruit:{name:'Free Agent',e:'🤝',d:'Pick 1 of 3 characters, free.'},
   payday:{name:'Payday',e:'💵',d:'+8 gold.'},
-  supply:{name:'Supply Drop',e:'📦',d:'Pick 1 of 3 items.'},
+  supply:{name:'Supply Drop',e:'📦',d:'Pick 1 of 3 items, and +🪙3.'},
   deal:{name:'Risky Deal',e:'🎲',d:'+15 gold, −2 lives.'},
   promotion:{name:'Field Promotion',e:'⭐',d:'Your lowest-level character on the board levels up (not Epic or Mythic).'},
   reinforce:{name:'Reinforcements',e:'❤️',d:'+2 lives (up to 10).'},
   // Plot Twists (Game Level 2+): one of these risky choices replaces a normal one
-  trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +5 gold and pick 1 of 3 items.'},
-  casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, one star lower (★ at least). None? Your best Rare becomes an Epic.'},
+  trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +8 gold and pick 1 of 3 items.'},
+  casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, keeping its stars. None? Your best Rare becomes an Epic.'},
   fanmail:{name:'Fan Mail',e:'💌',d:'The fans love you. Take the cash, or take heart.'},
   craft:{name:'Craft Services',e:'🍩',d:'Free snacks and a favor from the crew.'},
   review:{name:'Bad Review',e:'🍅',d:'A critic tore the last episode apart. It will cost you something.'},
@@ -920,6 +953,22 @@ function lvRecord(){
 // ================= skills =================
 // p = power (tier x level for singles; tier x bodies/3 for crowds). Spells ignore armor.
 const SK={
+ bodyguard:{name:'Bodyguard',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}, +${R(p)} per 🪙 you hold (up to 30).`,cast(u){u.taunt=3;shieldU(u,u,(40+Math.min(30,B.gold||0))*u.p);}},
+ flashlight:{name:'Flashlights',d:p=>`Every lookout shoots a random enemy for 5 and blinds it: its next attack misses (${bodiesFromP(p)} lookouts).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,5*u.tierM);t.blind=(t.blind||0)+1;float(t,'Blinded','miss');}}},
+ smashgrab:{name:'Smash and Grab',d:p=>`${R(40*p)} damage to the weakest back-row enemy. A knockout steals 🪙1 (once a fight).`,cast(u){const t=backWeakest(u);if(!t)return;spell(u,t,40);if(!t.alive&&!u.grabbed&&u.side==='A'){u.grabbed=1;B.goldEarned++;float(u,'+1🪙','heal');}}},
+ cracksafe:{name:'Crack the Safe',d:p=>`${R(35*p)} damage and −10 armor for 6s.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;spell(u,t,35);t.armDown=Math.max(t.armDown||0,10);t.armDownT=6;}},
+ syscrash:{name:'System Crash',d:p=>`Every enemy loses 25 energy and takes ${R(18*p)} damage.`,cast(u){targetFoes(u).forEach(t=>{t.mana=Math.max(0,(t.mana||0)-25);spell(u,t,18,true);});}},
+ cleanup:{name:'Clean-up Crew',d:p=>`Heals your 3 most wounded characters for ${R(35*p)}, ${R(20*p)} and ${R(20*p)}, and shields each for ${R(.5*p)} per 🪙 you hold (up to 30).`,cast(u){const g=Math.min(30,B.gold||0);wounded(u,3).forEach((a,i)=>{heal(u,a,(i?20:35)*u.p);if(g)shieldU(u,a,g*.5*u.p);});}},
+ insidejob:{name:'Inside Job',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}, +${R(p)} per 🪙 you hold (up to 40). Enemies that hit it meanwhile lose 10 energy.`,cast(u){u.taunt=3;u.drainHit=10;shieldU(u,u,(40+Math.min(40,B.gold||0))*u.p);}},
+ theplan:{name:'The Plan',d:p=>`Your other characters' next attack deals +60% damage, and it hits the toughest enemy for ${R(50*p)}, +1% per 🪙 you hold.`,cast(u){allies(u).forEach(a=>{if(a!==u)a.nextMult=Math.max(a.nextMult,1.6);});const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.hp>a.hp?b:a);spell(u,t,50*(1+(B.gold||0)/100));}},
+ holdup:{name:'Hold-up',d:p=>`Every outlaw shoots the lowest-HP enemy for 7 (${bodiesFromP(p)} outlaws).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=lowest(targetFoes(u));if(!t)break;spellFlat(u,t,7*u.tierM);}}},
+ badge:{name:'Badge of Office',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, your Wild West characters attack 25% faster.`,cast(u){u.taunt=3;shieldU(u,u,40*u.p);allies(u).filter(a=>a.genre==='west').forEach(a=>a.hastes.push({m:.25,t:3}));}},
+ whiskey:{name:'Whiskey and Stitches',d:p=>`Heals your most wounded character for ${R(50*p)} and frees it from stuns.`,cast(u){const a=wounded(u,1)[0];if(!a)return;heal(u,a,50*u.p);a.stun=0;}},
+ wanted:{name:'Wanted Poster',d:p=>`${R(45*p)} damage to the toughest enemy, doubled if it is below half HP.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.maxHp>a.maxHp?b:a);spell(u,t,t.hp<t.maxHp/2?90:45);}},
+ dynamite:{name:'Dynamite',d:p=>`${R(30*p)} damage to every enemy in the most crowded row, and they are stunned for 0.5s.`,cast(u){rowMost(u).forEach(x=>{spell(u,x,30,true);stunU(x,.5);});}},
+ fanhammer:{name:'Fan the Hammer',d:p=>`Six shots at random enemies for ${R(12*p)} each. Every shot can crit.`,cast(u){for(let i=0;i<6;i++){const t=randFoe(u);if(!t)break;const c=u.crit&&rand()<u.crit;spell(u,t,c?24:12);if(c)float(t,'CRIT','crit');}}},
+ showdown:{name:'Showdown',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, it shoots back at every attacker for ${R(15*p)}.`,cast(u){u.taunt=3;u.counterUntil=B.t+3;shieldU(u,u,40*u.p);}},
+ deadeye:{name:'Dead Eye',d:p=>`Shoots the 3 lowest-HP enemies for ${R(110*p)} each (a guaranteed crit).`,cast(u){targetFoes(u).sort((a,b)=>a.hp-b.hp).slice(0,3).forEach(t=>{spell(u,t,110);float(t,'CRIT','crit');});}},
  holdline:{name:'Hold the Line',d:p=>`Taunts all enemies for 3s and shields itself for ${R(45*p)}.`,cast(u){shieldU(u,u,45*u.p);u.taunt=3;}},
  frag:{name:'Frag Grenade',d:p=>`${R(30*p)} damage to its target and the enemies beside it.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;[t,...beside(t)].forEach(x=>spell(u,x,30,true));}},
  artillery:{name:'Artillery Strike',d:p=>`${R(40*p)} damage to every enemy in the most crowded row.`,cast(u){rowMost(u).forEach(x=>spell(u,x,40,true));}},
@@ -1093,7 +1142,7 @@ function buy(i){
   S.units=S.units.filter(u=>u.slot!=='gone');
   return true;
 }
-function rerollCost(){return TUNE.reroll;}
+function rerollCost(){return legend('dircut')?1:TUNE.reroll;}
 function reroll(){
   if(S.freeRerolls>0)S.freeRerolls--;
   else{const c=rerollCost();if(S.gold<c){toast('Not enough gold');return false;}S.gold-=c;runStats().spend.reroll+=c;S.rrRound=(S.rrRound||0)+1;}
@@ -1257,14 +1306,14 @@ function startRound(){
   UI.screen=ev.type==='event'?'event':'plan';
 }
 // interest: 🪙1 per TUNE.intPer held when the round ends, up to TUNE.intCap
-function income(){const interest=legend('wallet')?0:Math.min(TUNE.intCap,Math.floor(Math.max(0,S.gold)/TUNE.intPer));
-  // free shop XP every round; the Interest Ledger adds more (paid as gold once the shop is max rank)
-  const led=lvl('ledger')?Math.min(tv('ledger'),Math.floor(Math.max(0,S.gold)/TUNE.intPer)):0,max=S.rank>=RMAX;
-  return {base:5,interest,coin:0,ledger:max?led:0,xp:max?0:RANK.freeXp+led};}
-function intMeter(inc){if(legend('wallet'))return '';const n=inc.interest,nx=n<TUNE.intCap?TUNE.intPer*(n+1)-S.gold:0;
-  return `<span class="intm" title="Interest: 🪙1 per 🪙${TUNE.intPer} you hold when the round ends, up to 🪙${TUNE.intCap} at 🪙${TUNE.intPer*TUNE.intCap}. ${nx>0?`🪙${nx} more for +${n+1}.`:'Maxed.'}" aria-label="Interest +${n} of ${TUNE.intCap}">${Array.from({length:TUNE.intCap},(_,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;}
+// interest cap: 🪙5 (The Vault 8, Director's Cut 2, Haunted Wallet 1), plus the Interest Ledger
+function intCap(){return (legend('wallet')?1:legend('vault')?8:legend('dircut')?2:TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
+function income(){const interest=Math.min(intCap(),Math.floor(Math.max(0,S.gold)/TUNE.intPer)),max=S.rank>=RMAX;
+  return {base:5,interest,coin:0,ledger:0,xp:max?0:RANK.freeXp};}
+function intMeter(inc){const cap=intCap(),n=inc.interest,nx=n<cap?TUNE.intPer*(n+1)-S.gold:0;
+  return `<span class="intm" title="Interest: 🪙1 per 🪙${TUNE.intPer} you hold when the round ends, up to 🪙${cap} at 🪙${TUNE.intPer*cap}. ${nx>0?`🪙${nx} more for +${n+1}.`:'Maxed.'}" aria-label="Interest +${n} of ${cap}">${Array.from({length:cap},(_,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;}
 function streakGold(n){const t=TUNE.streakGold;return t[Math.min(t.length-1,Math.abs(n|0))];}
-function payIncome(extra){S.rrRound=0;const inc=income();S.stats.int=(S.stats.int||0)+inc.interest;const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
+function payIncome(extra){S.rrRound=0;if(legend('dircut'))S.freeRerolls=(S.freeRerolls||0)+2;const inc=income();S.stats.int=(S.stats.int||0)+inc.interest;const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
   const r0=S.rank,b0=boardSize();gainXp(inc.xp,true);
   if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}S.locked=false;
   if(S.rank>r0)toast(rankMsg(b0).replace('⬆️','⬆️ Free XP filled the gauge.'));}
@@ -1277,7 +1326,7 @@ function eventPick(key){
   if(key==='reinforce'){const mx=maxLives();if(S.lives>=mx){S.gold+=5;S.stats.gold+=5;e.msg=`Already at ${mx} lives: +5 gold.`;}else{S.lives=Math.min(mx,S.lives+2);e.msg=`Lives: ${S.lives}.`;}}
   if(key==='trial'){S.trial=1;e.msg='Your next fight is a Trial by Fire. Win it for an item pick.';}
   if(key==='casting'){
-    // your best Common/Uncommon on the board (most stars) becomes a random Rare of its genre, one star lower;
+    // your best Common/Uncommon on the board (most stars) becomes a random Rare of its genre, TUNE.lvCastDrop stars lower;
     // with none on the board, your best Rare becomes an Epic
     const maxed=maxedIds(),f=fielded(),by=(a,b)=>b.level-a.level||HERO[b.id].tier-HERO[a.id].tier;
     const low=f.filter(u=>HERO[u.id].tier<=2).sort(by),cand=low.length?low:f.filter(u=>HERO[u.id].tier===3).sort(by);let done=false;
@@ -1299,7 +1348,7 @@ function eventPick(key){
     const maxed=maxedIds();const rar=Math.min(topTier(S.rank)+1,4);
     e.sub={kind:'recruit',ids:shuffle(HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0])).slice(0,3)};
   }
-  if(key==='supply')e.sub={kind:'trinket',ids:trinketChoices(2,false)};
+  if(key==='supply'){S.gold+=3;S.stats.gold+=3;e.sub={kind:'trinket',ids:trinketChoices(3,false)};}
   if(key==='wheel'){
     // segments: Common..Epic; a rarity you own none of (board + bench) is a Dud
     // plus a thin jackpot sliver ('all': every character you own except Mythics)
@@ -1364,21 +1413,21 @@ function weakestItem(){return S.trinkets.slice().sort((a,b)=>ilv(a)-ilv(b))[0]||
 const CHOICES={
   fanmail:[
     {id:'cash',t:'Cash the checks',d:()=>'+🪙5.',ok:()=>true,run:()=>{S.gold+=5;return '+🪙5.';}},
-    {id:'heart',t:'Read every letter',d:()=>`+1 life (up to ${maxLives()}).`,ok:()=>S.lives<maxLives(),run:()=>{S.lives=Math.min(maxLives(),S.lives+1);return `Lives: ${S.lives}.`;}},
+    {id:'heart',t:'Read every letter',d:()=>`+2 lives (up to ${maxLives()}).`,ok:()=>S.lives<maxLives(),run:()=>{S.lives=Math.min(maxLives(),S.lives+2);return `Lives: ${S.lives}.`;}},
   ],
   craft:[
-    {id:'snack',t:'Grab a snack',d:()=>'+🪙3.',ok:()=>true,run:()=>{S.gold+=3;return '+🪙3.';}},
+    {id:'snack',t:'Grab a snack',d:()=>'+🪙6.',ok:()=>true,run:()=>{S.gold+=6;return '+🪙6.';}},
     {id:'favor',t:'Call in a favor',d:()=>'Your next 3 shop rerolls are free.',ok:()=>true,run:()=>{S.freeRerolls=(S.freeRerolls||0)+3;return '3 free rerolls.';}},
   ],
   review:[
-    {id:'life',t:'Take it on the chin',d:()=>'−1 life.',ok:()=>S.lives>1,run:()=>{S.lives-=1;return `Lives: ${S.lives}.`;}},
+    {id:'life',t:'Take it on the chin',d:()=>'−2 lives.',ok:()=>S.lives>2,run:()=>{S.lives-=2;return `Lives: ${S.lives}.`;}},
     {id:'pr',t:'Hire a PR firm',d:()=>'−🪙5.',ok:()=>S.gold>=5,run:()=>{S.gold-=5;return 'You pay 🪙5 to bury the review.';}},
-    {id:'shrug',t:'Ignore it',d:()=>'Nothing else to give: the review fades.',ok:()=>S.lives<=1&&S.gold<5,run:()=>'Nobody reads reviews anyway.'},
+    {id:'shrug',t:'Ignore it',d:()=>'Nothing else to give: the review fades.',ok:()=>S.lives<=2&&S.gold<5,run:()=>'Nobody reads reviews anyway.'},
   ],
   props:[
-    {id:'pay',t:'Buy replacements',d:()=>'−🪙6.',ok:()=>S.gold>=6,run:()=>{S.gold-=6;return 'You buy everything back for 🪙6.';}},
-    {id:'lose',t:'Let it go',d:()=>{const t=weakestItem();return t?`Lose ${TR[t].name}.`:'You have no items: lose 🪙3 instead.';},ok:()=>true,
-     run:()=>{const t=weakestItem();if(t){S.trinkets=S.trinkets.filter(x=>x!==t);delete S.tlv[t];return `${TR[t].name} is gone.`;}const g=Math.min(3,S.gold);S.gold-=g;return `−🪙${g}.`;}},
+    {id:'pay',t:'Buy replacements',d:()=>'−🪙5.',ok:()=>S.gold>=5,run:()=>{S.gold-=5;return 'You buy everything back for 🪙5.';}},
+    {id:'lose',t:'Let it go',d:()=>S.trinkets.length?'Lose a random item (it could be your best).':'You have no items: lose 🪙3 instead.',ok:()=>true,
+     run:()=>{const t=S.trinkets.length?pick(S.trinkets):null;if(t){S.trinkets=S.trinkets.filter(x=>x!==t);delete S.tlv[t];return `${TR[t].name} is gone.`;}const g=Math.min(3,S.gold);S.gold-=g;return `−🪙${g}.`;}},
   ],
   montage:[
     {id:'rest',t:'Take it easy',d:()=>`+2 lives (up to ${maxLives()}). Already full: +🪙4.`,ok:()=>true,
@@ -1387,18 +1436,18 @@ const CHOICES={
      run:()=>{const u=bestToTrain();levelUp(u);checkMerges();S.lives-=2;return `${HERO[u.id].name} is now ${'★'.repeat(u.level)}. Lives: ${S.lives}.`;}},
   ],
   strike:[
-    {id:'pay',t:'Pay them off',d:()=>'−🪙8.',ok:()=>S.gold>=8,run:()=>{S.gold-=8;return 'You pay the writers 🪙8. Back to work.';}},
-    {id:'wait',t:'Wait it out',d:()=>'−2 lives.',ok:()=>S.lives>2,run:()=>{S.lives-=2;return `The strike drags on. Lives: ${S.lives}.`;}},
+    {id:'pay',t:'Pay them off',d:()=>'−🪙6.',ok:()=>S.gold>=6,run:()=>{S.gold-=6;return 'You pay the writers 🪙6. Back to work.';}},
+    {id:'wait',t:'Wait it out',d:()=>'−3 lives.',ok:()=>S.lives>3,run:()=>{S.lives-=3;return `The strike drags on. Lives: ${S.lives}.`;}},
     {id:'cut1',t:'Let someone go',d:()=>{const u=weakestOnBoard();return u?`${HERO[u.id].name} leaves the show (no refund).`:'Nobody to let go.';},ok:()=>fielded().length>1,
      run:()=>{const u=weakestOnBoard();S.units=S.units.filter(x=>x!==u);return `${HERO[u.id].name} leaves the show.`;}},
     // only when nothing else is possible, so the run can never get stuck here
-    {id:'broke',t:'Nothing left to give',d:()=>'The strike ends on its own.',ok:()=>!(S.gold>=8||S.lives>2||fielded().length>1),run:()=>'With nothing left to take, the writers go back to work.'},
+    {id:'broke',t:'Nothing left to give',d:()=>'The strike ends on its own.',ok:()=>!(S.gold>=6||S.lives>3||fielded().length>1),run:()=>'With nothing left to take, the writers go back to work.'},
   ],
   cameo:[
     {id:'fee',t:'Take the fee',d:()=>'+🪙5.',ok:()=>true,run:()=>{S.gold+=5;return '+🪙5.';}},
-    {id:'cast',t:'Cast the cameo',d:e=>e.sub.data.id?`${HERO[e.sub.data.id].name} (Rare, ${GENRES[HERO[e.sub.data.id].genre].name}) joins for free.`:'Nobody is available.',
+    {id:'cast',t:'Cast the cameo',d:e=>e.sub.data.id?`${HERO[e.sub.data.id].name} (Rare ★★, ${GENRES[HERO[e.sub.data.id].genre].name}) joins for free.`:'Nobody is available.',
      ok:e=>!!e.sub.data.id&&!!freeSlotFor(e.sub.data.id),
-     run:e=>{const id=e.sub.data.id;S.units.push({uid:S.uid++,id,level:1,slot:freeSlotFor(id),cost:0});checkMerges();return `${HERO[id].name} joins the cast.`;}},
+     run:e=>{const id=e.sub.data.id;S.units.push({uid:S.uid++,id,level:2,slot:freeSlotFor(id),cost:0});poolTake(id,3);checkMerges();return `${HERO[id].name} joins the cast at ★★.`;}},
   ],
   cursed:[
     {id:'burn',t:'Burn it',d:()=>'Nothing happens.',ok:()=>true,run:()=>'The script goes up in smoke.'},
@@ -1527,7 +1576,7 @@ function applyMods(){
   B.frontDR.A=T.guardian>=2?.18:T.guardian>=1?.12:0;
   const danger=legend('danger')&&G.army;
   B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?TUNE.artEvery1:0;B.art=danger?4:B.artEvery;B.artMult=G.army>=3?2:1;
-  B.broodEvery=G.bug>=3?1:G.bug>=2?2:G.bug>=1?4:0;
+  B.broodEvery=G.bug?TUNE.bugRegrow[G.bug-1]:0;
   const star=legend('blockbuster')?A.slice().sort((a,b)=>b.tier-a.tier||b.level-a.level||b.maxHp-a.maxHp)[0]:null;
   if(legend('skeleton'))B.skel=Math.min(3,Math.max(0,boardSize()-A.length));
   const finAll=G.fin>=2;
@@ -1535,6 +1584,8 @@ function applyMods(){
   if(legend('corner')){const f=A.filter(u=>u.genre==='fin').sort((a,b)=>b.level-a.level||b.tier-a.tier);corner=f[0]||null;}
   A.forEach(u=>{
     if(legend('cult')&&u.tier<=2){const k=TUNE.cultMult;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
+    if(legend('underdog')){const k=1+Math.min(.5,.05*Math.max(0,maxLives()-S.lives));u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
+    if(legend('ensemble')){const k=1+.06*new Set(A.map(a=>a.genre).filter(Boolean)).size;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(u===star){const k=TUNE.bbMult;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;u.star=true;}
     if(G.orc&&u.genre==='orc')u.orcPer=G.orc>=2?.12:.07;else if(G.orc>=2)u.orcPer=.05;
     if(G.elf&&u.genre==='elf'){u.dodge+=G.elf>=2?.45:.30;u.regen=Math.max(u.regen,.015);}
@@ -1546,7 +1597,12 @@ function applyMods(){
     if(G.grim>=2){if(u.genre!=='grim')u.arm+=5;if(u.genre==='grim')u.lowHpBonus=.2;}
     if(legend('martyr')){u.hp=u.maxHp*.5;u.shield+=u.maxHp*.5;if(u.genre==='grim')u.lowHpBonus=.4;}
     if(G.bug>=2&&u.genre==='bug')u.devour=.10;
-    if(G.ball&&u.genre==='ball'){u.bounces=G.ball>=2?2:1;u.bouncePct=G.ball>=3?.7:TUNE.ballBounce1;}
+    // Heist Crew: gold you hold is damage (Heist only at 2, everyone at 4; cap +30%, +60% at 6)
+    if(G.heist&&(u.genre==='heist'||G.heist>=2))u.goldDmg=(u.goldDmg||0)+TUNE.heistBase+Math.min(legend('vault')&&u.genre==='heist'?9:G.heist>=3?2*TUNE.heistCap:TUNE.heistCap,S.gold*.01);
+    // Wild West: High Noon (first shot instant, double); at 4 +15% crit and crits ricochet
+    if(G.west&&u.genre==='west'){u.timer=Math.min(u.timer,.05);u.nextMult=Math.max(u.nextMult||1,2);u.crit+=TUNE.westCrit1;if(G.west>=2){u.crit+=TUNE.westCrit2;u.ricochet=true;u.critX=TUNE.westCritX;}}
+    if((B.syn.X.fixed&&(u.genre==='ball'||u.genre==='heist'))||(B.syn.X.stampede&&u.crowd))u.crit+=.2;
+    if(G.ball&&u.genre==='ball'){u.bounces=G.ball>=2?2:1;u.bouncePct=G.ball>=3?.9:TUNE.ballBounce1;}
     else if(G.ball>=2){u.bounces=1;u.bouncePct=.2;}
     if(X.bees&&u.crowd&&u.bouncePct<.25){u.bounces=Math.max(u.bounces,1);u.bouncePct=.25;}
     if(T.brawler&&u.trait==='brawler'){u.stackAtk=T.brawler>=2?4:2;u.stackCap=T.brawler>=2?60:30;}
@@ -1653,17 +1709,22 @@ function dealDamage(src,t,amt,type,aoe){
   }
   if(type==='attack'&&src&&src.alive&&src.range==='melee'&&has('spikes')&&t.side==='A'&&t.row==='front')dealDamage(t,src,dealt*tv('spikes')/100,'true');
   if(B.syn.X.sudden&&t.side==='E'&&!t.boss&&t.hp>0&&t.hp<t.maxHp*.15&&src&&(src.genre==='undead'||src.genre==='ball')){t.hp=0;float(t,'Finished!','crit');}
+  if(type==='attack'&&src&&src.alive&&t.taunt>0&&t.drainHit)src.mana=Math.max(0,(src.mana||0)-t.drainHit);
+  if(type==='attack'&&src&&src.alive&&t.alive&&t.counterUntil>B.t)spell(t,src,15);
   if(t.hp<=0)kill(t,src);
   return dealt;
 }
 function kill(t,src){
   if(t.side==='A'&&t.crowd&&B.syn.G.undead>=2&&!t.rose){t.rose=true;t.hp=Math.min(t.maxBodies,3)*t.bodyHp;float(t,'Rises!','heal');return;}
+  if(t.side==='A'&&!t.summon&&B.syn.X.ghosttown&&!B.ghost){B.ghost=true;t.revived=true;t.hp=t.maxHp*.4;float(t,'Ghost Town!','heal');return;}
+  if(t.side==='A'&&!t.summon&&legend('plotarmor')&&!t.plotSaved){t.plotSaved=true;B.plot=true;t.hp=t.maxHp*.25;t.untarget=1.5;float(t,'Plot Armor!','heal');return;}
   if(t.side==='A'&&!t.revived&&B.revive){B.revive=false;t.revived=true;t.hp=t.maxHp*tv('extralife')/100;float(t,'Extra Life!','heal');return;}
   t.hp=0;t.alive=false;t.shield=0;t.taunt=0;
   float(t,'KO','ko');
   if(t.side==='A'&&!B.firstDown)B.firstDown=t;
   if(t.side==='A'&&!t.summon){
     if(B.syn.G.undead>=3&&(B.graves||0)<TUNE.graveCap&&summonSkeletons('A',3,1+.2*B.round,'undead6',TUNE.graveCap))B.graves=(B.graves||0)+1;
+    if(B.syn.X.graverob&&(B.robbed||0)<2){B.robbed=(B.robbed||0)+1;B.goldEarned++;float(t,'+1🪙','heal');}
     if(B.syn.X.comrades&&(B.avenge||0)<3){B.avenge=(B.avenge||0)+1;sideUnits('A').forEach(a=>{a.dmgMult*=1.15;float(a,'+15%','sp');});}
   }
   if(t.side==='E'){
@@ -1671,6 +1732,9 @@ function kill(t,src){
     B.units.filter(u=>u.side==='A'&&u.alive&&u.devour).forEach(u=>heal(null,u,u.maxHp*u.devour));
     if(legend('frenzy'))B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='orc').forEach(u=>u.frenzy=(u.frenzy||0)+.15);
     if(legend('armydead')&&(B.raised||0)<TUNE.adMax&&summonSkeletons('A',3,1+TUNE.adP*B.round,'armydead',TUNE.adMax))B.raised=(B.raised||0)+1;
+    if(src&&src.side==='A'&&src.genre==='heist'&&B.syn.G.heist>=2&&(B.stolen||0)<2){B.stolen=(B.stolen||0)+1;B.goldEarned++;float(src,'+1🪙','heal');}
+    if(B.syn.X.trainjob&&!B.train){B.train=true;B.goldEarned+=2;float(t,'+2🪙','heal');}
+    if(B.syn.G.west>=3)B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='west'&&u.manaMax).forEach(u=>u.mana=Math.min(u.manaMax,u.mana+25));
     if(src&&src.genre==='ball'&&B.syn.X.sponsor&&B.sponsor<3){B.sponsor++;B.goldEarned++;float(src,'+1🪙','heal');}
   }
   // a slot opened. Priority: spawns left behind by the fallen character (Undead 6, above) already took it;
@@ -1688,7 +1752,7 @@ function heal(src,t,amt,silent){
   t.hp+=real;if(healer)healer.healDone=(healer.healDone||0)+real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
 }
 function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;if(src)src.healDone=(src.healDone||0)+amt;float(t,'+'+R(amt),'shd');}
-function stunU(t,d){if(!t.alive||t.ccImmune)return;t.stun=Math.max(t.stun,d);
+function stunU(t,d){if(!t.alive||t.ccImmune)return;if(t.side==='E'&&B.syn.X.rodeo)d+=.5;t.stun=Math.max(t.stun,d);
   // a stunned ball holder fumbles: the pass streak resets
   if(B&&B.ball&&B.ball.holder===t&&B.ball.streak){B.ball.streak=0;float(t,'Fumble!','ko');}}
 function spell(u,t,base,aoe){return dealDamage(u,t,base*u.p*u.spellMult*outMult(u,t),'spell',aoe);}
@@ -1746,12 +1810,15 @@ function summonEnemyCrowd(u,key,n){
 function markOf(u,hit){return B.units.find(x=>x.side!==u.side&&x.markUntil>B.t&&targetable(x)&&!hit.includes(x))||null;}
 function nearestOther(from,exclude){const f=B.units.filter(x=>x.side===from.side&&targetable(x)&&!exclude.includes(x));if(!f.length)return null;return f.reduce((a,b)=>{const da=Math.abs(a.col-from.col)+(a.row!==from.row?1:0),db=Math.abs(b.col-from.col)+(b.row!==from.row?1:0);return db<da?b:a;});}
 function attack(u,t){
+  if(u.blind>0){u.blind--;animAttack(u,t);float(t,'Miss','miss');return;}
   let dmg=((u.crowd?u.bodyAtk*bodies(u):u.atk+u.atkStack)+(u.undeadAtk||0))*outMult(u,t);
-  const crit=u.crit&&rand()<u.crit;if(crit)dmg*=2;
+  const crit=u.crit&&rand()<u.crit;if(crit)dmg*=(u.critX||2);
   if(u.nextMult>1){dmg*=u.nextMult;u.nextMult=1;}
   animAttack(u,t);
   const d=dealDamage(u,t,dmg,'attack');
   if(crit&&d>0)float(t,'CRIT','crit');
+  if(crit&&u.ricochet){const nx=nearestOther(t,[t]);if(nx)dealDamage(u,nx,dmg,'bounce');}
+  if(u.crowd&&u.side==='A'&&B.syn.X.locusts&&t.alive)t.mana=Math.max(0,(t.mana||0)-5);
   if(u.manaMax)u.mana=Math.min(u.manaMax,u.mana+10+(crit?u.critRefund:0));
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
   // bounces: a share of the hit jumps to nearby enemies; they give no energy to anyone
@@ -1800,7 +1867,9 @@ function act(u){
 }
 function step(dt){
   B.t+=dt;
-  if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1);const danger=legend('danger');
+  if(B.syn.X.cavalry&&!B.cav&&B.t>=10){B.cav=true;sideUnits('A').forEach(a=>a.hastes.push({m:.25,t:999}));}
+  if(legend('quickdraw')&&B.syn.G.west&&B.t>=(B.qd||10)){B.qd=(B.qd||10)+10;sideUnits('A').filter(a=>a.genre==='west').forEach(a=>{a.timer=Math.min(a.timer,.05);a.nextMult=Math.max(a.nextMult||1,2);float(a,'Draw!','sp');});}
+  if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1)*TUNE.artDmg*(B.syn.X.armsdeal?1+Math.min(.4,(B.gold||0)*.01):1);const danger=legend('danger');
     const f=danger?B.units.filter(x=>x.side==='E'&&targetable(x)):rowMost({side:'A'});
     B.envSrc='artillery';f.forEach(x=>dealDamage(null,x,amt*(danger?TUNE.dangerMult:1),'spell',true));B.envSrc=null;if(f.length)shake();}}
   if(has('tesla')){B.tesla-=dt;if(B.tesla<=0){B.tesla+=tv('tesla');const f=B.units.filter(x=>x.side==='E'&&targetable(x));if(f.length){B.envSrc='tesla';dealDamage(null,pick(f),8+3*B.round,'true');B.envSrc=null;}}}
@@ -2341,7 +2410,7 @@ function rankDetail(){
     <p>Each rank unlocks the next rarity. Commons and Uncommons max out at ★★. A ★ Mythic is about as strong as a ★★★ Rare. Maxed characters stop appearing.</p>
     <div style="overflow-x:auto"><table class="oddtbl"><tr><th style="text-align:left">Rank</th><th title="Board slots">👥</th>${RARITY.map((n,i)=>`<th class="tier${i+1}" title="${n}">${n[0]}</th>`).join('')}<th title="Shop XP to reach this rank">XP</th></tr>${RANK.odds.map((_,i)=>row(i+1,i+1===cur)).join('')}</table></div>
     <p>⬆️ <b>Train</b>: 🪙${RANK.train} for +${RANK.trainXp} shop XP. The shop also gets +${RANK.freeXp} XP free every round. A full gauge ranks up; extra XP carries over.</p>
-    ${S&&has('ledger')?`<p class="muted" style="font-size:.8rem">📒 Interest Ledger ${'★'.repeat(ilv('ledger'))}: interest also adds shop XP, up to +${tv('ledger')} a round.</p>`:''}
+    
     <p class="muted" style="font-size:.8rem">👥 board slots · XP needed to reach that rank from the one before. Character prices: ${RARITY.map((n,i)=>`<span class="tier${i+1}" style="color:var(--tc)">${n} 🪙${PRICE[i]}</span>`).join(' · ')}</p>`;
 }
 function infoBody(I){
