@@ -884,6 +884,12 @@ const TRINKETS=[
  ['glass','Glass Cannon','R','🧨','All your characters deal {v} more damage but have 10% less HP.',['35%','50%','65%']],
  ['scope','Sniper Scope','R','🔭','Your ranged characters deal {v} more damage.',['40%','60%','80%']],
  ['banner','War Banner','R','🚩','Your melee characters deal {v} more damage.',['40%','60%','80%']],
+ ['stage','Stage Lights','C','💡','Your back-row characters attack {v} faster.',['15%','22%','30%']],
+ ['teamup','Team-Up Poster','C','🤝','All your characters deal {v} more damage for each crossover you have on.',['10%','15%','20%']],
+ ['residuals','Residuals','C','💵','After every fight: +🪙1 for each Rare or rarer character on your board, up to 🪙{v}.',['2','3','4']],
+ ['slowburn','Slow Burn','C','🕯️','After 12s of a fight, all your characters deal {v} more damage.',['30%','45%','60%']],
+ ['extras','Casting Call','C','📣','Your crowds get {v} more bodies.',['+1','+2','+3']],
+ ['understudy','Understudy','R','🎟️','When characters on your board fall, your best bench characters step into their squares, up to {v} per fight.',['1','2','3']],
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
 const TRINKET_CAP=5, ITEM_MAX=3;
@@ -908,6 +914,10 @@ const LEGENDS_ALL={
   scout:{name:'Talent Scout',e:'🕵️',genre:null,d:'Your shop can offer ready-made ★★ characters of any rarity (1 card in 5), for 2× the price: 3 copies for the price of 2.'},
   crossep:{name:'Crossover Episode',e:'🎬',genre:null,d:'Crossovers switch on with just 1 character from each genre, and each one on gives all your characters +3% damage.'},
   cult:{name:'Cult Classic',e:'📼',genre:null,d:'Your Common and Uncommon characters get +60% HP and damage.'},
+  indie:{name:'Indie Darling',e:'🎞️',genre:null,d:'With 4 or fewer characters on your board, they all get +25% HP and damage for every empty board slot (up to +75%). New board slots stay empty.'},
+  hype:{name:'Hype Train',e:'🚂',genre:null,d:'Your characters get +6% HP and damage for every fight you have won in a row (up to +48%). A loss resets it.'},
+  placement:{name:'Product Placement',e:'🥤',genre:null,d:'After every fight, win or lose: +🪙1 for each different genre on your board beyond 2 (up to +🪙4).'},
+  extuniv:{name:'Extended Universe',e:'🌌',genre:null,d:'Up to 3 characters on your bench (leftmost first) also count for genre bonuses and crossovers, not traits. A copy of a board character doesn\'t count again.'},
   blockbuster:{name:'Blockbuster',e:'🍿',genre:null,d:'Your rarest character on the board gets +60% HP and damage.'},
 };
 const LEGENDS=Object.fromEntries(Object.entries(LEGENDS_ALL).filter(([,L])=>!L.genre||live(L.genre)));
@@ -967,9 +977,9 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.551,3.342,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,indiePer:.25,indieMax:.75,hypePer:.06,hypeMax:.48,placeMax:4,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.012,lvFoeFrom:4};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.01,lvFoeFrom:4};
 buildSchedule(false);
 
 const EVENTS={
@@ -1294,7 +1304,7 @@ function trainCost(){return S.rank>=RMAX?null:RANK.train;}
 // add shop XP: each full gauge is a rank (extra XP carries over). quiet: no preview card (the caller rolls a fresh shop)
 function gainXp(n,quiet){
   S.xp=(S.xp||0)+n;let up=0;
-  while(S.rank<RMAX&&S.xp>=xpNeed()){S.xp-=xpNeed();S.rank++;up++;if(!legend('skeleton'))autoFill();}
+  while(S.rank<RMAX&&S.xp>=xpNeed()){S.xp-=xpNeed();S.rank++;up++;if(!legend('skeleton')&&!legend('indie'))autoFill();}
   if(S.rank>=RMAX)S.xp=0;
   return up;
 }
@@ -1349,6 +1359,11 @@ function checkMerges(){
 // offers skip items that can't help right now: Ledger at Rank 5, Scope with no ranged, Banner with no melee on the board
 function itemUseful(t){
   if(t==='scope'||t==='banner'){const f=fielded();const r=t==='scope'?'ranged':'melee';return !f.length||f.some(u=>TBASE[HERO[u.id].trait].range===r);}
+  if(t==='extras')return !S.units.length||S.units.some(u=>HERO[u.id].crowd);
+  if(t==='understudy')return benched().length>0;
+  if(t==='teamup'){const f=fielded();return !f.length||Object.values(activeSyn(f).X).some(Boolean);}
+  if(t==='residuals')return !S.units.length||S.units.some(u=>HERO[u.id].tier>=3);
+  if(t==='stage'){const f=fielded();return !f.length||f.some(u=>u.slot[0]==='b');}
   return true;
 }
 // 3 offers: one levels up an item you hold (if any is below ★★★), the others are new items
@@ -1384,7 +1399,8 @@ function itemMsg(v){const [id,old]=(v||'').split('>');if(!TR[id])return '+3 gold
   return `You take the ${TR[id].name}.`;}
 // sell an item between fights: 🪙2 / 3 / 4 by level, frees a slot
 function sellItem(id){if(!S.trinkets.includes(id))return false;const g=itemSellValue(id);S.gold+=g;runStats().sold+=g;S.trinkets=S.trinkets.filter(t=>t!==id);delete S.tlv[id];return true;}
-function genreCounts(units){const g={};[...new Set(units.map(u=>u.id))].forEach(id=>{const k=HERO[id].genre;g[k]=(g[k]||0)+genreWeight(id,units);});return g;}
+function genreCounts(units){const g={};[...new Set(units.map(u=>u.id))].forEach(id=>{const k=HERO[id].genre;g[k]=(g[k]||0)+genreWeight(id,units);});
+  benchSyn(units).forEach(u=>{const k=HERO[u.id].genre;g[k]=(g[k]||0)+genreWeight(u.id,[u]);});return g;}
 function legendChoices(n){n=n||2;
   const g=genreCounts(fielded());
   const ranked=Object.keys(g).filter(k=>g[k]>=2).sort((a,b)=>g[b]-g[a]);
@@ -1645,10 +1661,14 @@ function finishEvent(){if(S.event&&S.event.pre){runStats().rounds.push({r:S.roun
   runStats().rounds.push({r:S.round,t:'event',k:S.event&&S.event.picked});S.round++;nextRound();}
 
 // ================= synergies =================
+// Extended Universe: up to 3 bench characters (leftmost first, not copies of a counted character) count for genres
+function benchSyn(units){if(!S||!legend('extuniv'))return [];const have=new Set(units.map(u=>u.id)),out=[];
+  for(const sl of benchSlots){const u=unitAt(sl);if(u&&!have.has(u.id)&&!out.some(x=>x.id===u.id)){out.push(u);if(out.length>=TUNE.xuMax)break;}}return out;}
 function synergyCounts(units){
   const ids=[...new Set(units.map(u=>u.id))];
   const g={},t={};
   ids.forEach(id=>{const h=HERO[id];g[h.genre]=(g[h.genre]||0)+genreWeight(id,units);t[h.trait]=(t[h.trait]||0)+1;});
+  benchSyn(units).forEach(u=>{const k=HERO[u.id].genre;g[k]=(g[k]||0)+genreWeight(u.id,[u]);});
   if(has('crest')){const up=k=>GENRES[k]&&tierOf(GENRES[k],g[k]+1)>tierOf(GENRES[k],g[k])?1:0;
     Object.keys(g).sort((a,b)=>up(b)-up(a)||g[b]-g[a]).slice(0,tv('crest')).forEach(k=>g[k]++);}
   return {g,t,ids};
@@ -1708,11 +1728,14 @@ function startBattle(silent){if(!silent)tlFight();
   const syn=activeSyn(fielded());
   B={t:0,acc:0,last:null,speed:UI.speed,paused:false,units:[],done:false,win:null,silent:!!silent,startDelay:silent?0:.6,
      syn,reserve:[],frontDR:{A:0,E:0},art:0,tesla:tv('tesla')||4,takeovers:0,sponsor:0,goldEarned:0,gold:S.gold,revive:has('extralife'),ended:false,round:S.round,
-     summons:0,threat:{},firstDown:null,ball:null,skel:0};
+     summons:0,threat:{},firstDown:null,ball:null,skel:0,burn:has('slowburn')?1+tv('slowburn')/100:0};
   fielded().forEach(h=>B.units.push(heroUnit(h)));
+  // Understudy: the best bench characters wait on the battle bench and step into squares that empty
+  B.under=has('understudy')?benched().slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level).slice(0,tv('understudy')).map(h=>Object.assign(heroUnit(h),{under:true})):null;
   S.enemy.enc.forEach(e=>B.units.push(enemyUnit(e)));
   if(S.enemy.boss&&rule('twin')){const tw=twinUnit();if(tw)B.units.push(tw);}
   applyMods();
+  if(B.under){B.reserve.push(...B.under);B.under=null;}
   ['A','E'].forEach(sd=>[0,1,2].forEach(c=>stepUp(sd,c)));
 }
 function applyMods(){
@@ -1722,15 +1745,18 @@ function applyMods(){
   const danger=legend('danger')&&G.army;
   B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?TUNE.artEvery1:0;B.art=danger?4:B.artEvery;B.artMult=G.army>=3?2:1;
   B.broodEvery=G.bug?TUNE.bugRegrow[G.bug-1]:0;
+  B.indie=legend('indie')&&A.length<=4?1+Math.min(TUNE.indieMax,TUNE.indiePer*Math.max(0,boardSize()-A.length)):0;
   const star=legend('blockbuster')?A.slice().sort((a,b)=>b.tier-a.tier||b.level-a.level||b.maxHp-a.maxHp)[0]:null;
   if(legend('skeleton'))B.skel=Math.min(3,Math.max(0,boardSize()-A.length));
   const finAll=G.fin>=2;
   let corner=null;
   if(legend('corner')){const f=A.filter(u=>u.genre==='fin').sort((a,b)=>b.level-a.level||b.tier-a.tier);corner=f[0]||null;}
-  A.forEach(u=>{
+  A.concat(B.under||[]).forEach(u=>{
     if(legend('cult')&&u.tier<=2){const k=TUNE.cultMult;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(legend('underdog')){const k=1+Math.min(.5,.05*Math.max(0,maxLives()-S.lives));u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(legend('ensemble')){const k=1+.06*new Set(A.map(a=>a.genre).filter(Boolean)).size;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
+    if(B.indie){const k=B.indie;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
+    if(legend('hype')){const k=1+Math.min(TUNE.hypeMax,TUNE.hypePer*Math.max(0,S.streak||0));u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(u===star){const k=TUNE.bbMult;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;u.star=true;}
     if(G.orc&&u.genre==='orc')u.orcPer=G.orc>=2?.12:.07;else if(G.orc>=2)u.orcPer=.05;
     if(G.elf&&u.genre==='elf'){u.dodge+=G.elf>=2?.45:.30;u.regen=Math.max(u.regen,.015);}
@@ -1766,6 +1792,7 @@ function applyMods(){
     if(TUNE.fullCast>1&&u.genre&&G[u.genre]>=3){const f=(TUNE.fcG&&TUNE.fcG[u.genre])||TUNE.fullCast;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
     if(G.undead>=2&&u.crowd){u.maxBodies+=1;u.hp+=u.bodyHp;u.maxHp+=u.bodyHp;}
     if(X.horde&&u.crowd){u.maxBodies+=2;u.hp+=u.bodyHp*2;u.maxHp+=u.bodyHp*2;}
+    if(has('extras')&&u.crowd){const k=tv('extras');u.maxBodies+=k;u.hp+=u.bodyHp*k;u.maxHp+=u.bodyHp*k;}
     if(legend('brood')&&u.genre==='bug')u.dmgMult*=TUNE.broodDmg;
     if(u.skill==='tunnel'&&u.manaMax)u.mana=u.manaMax; // Burrow Lurker tunnels at once
     if(legend('spinoff')&&HERO[u.id]&&HERO[u.id].tier<=2){const f=TUNE.spinoffMult;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
@@ -1781,6 +1808,8 @@ function applyMods(){
     if(has('glass'))u.dmgMult*=1+tv('glass')/100;
     if(has('scope')&&u.range==='ranged')u.dmgMult*=1+tv('scope')/100;
     if(has('banner')&&u.range==='melee')u.dmgMult*=1+tv('banner')/100;
+    if(has('stage')&&u.row==='back')u.aspd+=tv('stage')/100;
+    if(has('teamup'))u.dmgMult*=1+tv('teamup')/100*Object.values(X).filter(Boolean).length;
   });
   // Game Ball: needs 2+ different Sportsball heroes
   if(legend('gameball')){const ids=new Set(A.filter(u=>u.genre==='ball').map(u=>u.id));if(ids.size>=2)B.ball={holder:ballOrder()[0],streak:0};}
@@ -1831,6 +1860,7 @@ function dealDamage(src,t,amt,type,aoe){
   if(aoe&&t.crowd)amt*=2;
   if(t.side==='E'&&t.crowd&&B.syn.X.bughunt)amt*=1.4;
   if(t.vuln>0)amt*=1.25;
+  if(B.burn&&src&&src.side==='A'&&t.side==='E'&&B.t>=TUNE.burnAt)amt*=B.burn; // Slow Burn
   const amt0=amt; // before damage reduction, armor and shields (for 'damage blocked')
   if(t.row==='front'&&B.frontDR[t.side])amt*=1-B.frontDR[t.side];
   // Cover: a back-row character directly behind a living Guardian takes less damage
@@ -2068,6 +2098,8 @@ function settle(){
   const th=Object.entries(B.threat).sort((a,b)=>b[1]-a[1])[0];res.threat=th?{e:foeInfo(th[0]).e,name:foeInfo(th[0]).name,dmg:R(th[1])}:null;
   const {G,X}=B.syn;
   let g=B.goldEarned+(G.fin?(G.fin>=2?4:2):0);
+  if(has('residuals'))g+=Math.min(tv('residuals'),new Set(fielded().filter(u=>HERO[u.id].tier>=3).map(u=>u.id)).size);
+  if(legend('placement'))g+=Math.min(TUNE.placeMax,Math.max(0,new Set(fielded().map(u=>HERO[u.id].genre)).size-2));
   const sk=win?Math.max(0,S.streak||0)+1:Math.min(0,S.streak||0)-1;S.streak=sk;res.streak=sk;res.sgold=streakGold(sk);g+=res.sgold;S.stats.streak=(S.stats.streak||0)+res.sgold;
   if(win){
     S.wins++;S.stats.won++;g+=1+tv('coin');if(X.profit)g+=2;
@@ -2203,7 +2235,7 @@ function drawBattle(){
     if(u._st!==st){u.$st.textContent=st;u._st=st;}
   }
   const ck=$('#clock');if(ck){ck.textContent=B.t.toFixed(1)+'s'+(B.t>30?' · OVERTIME':'');ck.classList.toggle('ot',B.t>30);}
-  {const bn=$('#bbench');if(bn){const n=(B.reserve||[]).length;bn.hidden=!n;bn.textContent='🪑 Bench: '+B.reserve.map(c=>c.rise?'⬆️'+c.e:c.e+'×'+c.maxBodies).join('  ');}}
+  {const bn=$('#bbench');if(bn){const n=(B.reserve||[]).length;bn.hidden=!n;bn.textContent='🪑 Bench: '+B.reserve.map(c=>c.rise?'⬆️'+c.e:c.under?'🎟️'+c.e:c.e+'×'+c.maxBodies).join('  ');}}
   const sk=$('#streak');if(sk&&B.ball){sk.hidden=false;sk.textContent='⚽ ×'+Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak).toFixed(1);}
 }
 function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
@@ -2315,7 +2347,7 @@ function xlistBtn(s){const n=CROSSOVERS.filter(x=>s.X[x.id]).length;return `<but
 function synHTML(units,withList){
   const s=activeSyn(units);const c=s.c;const items=[];
   const on={};for(const k in s.G)if(s.G[k])on['g'+k]=s.G[k];for(const k in s.T)if(s.T[k])on['t'+k]=s.T[k];for(const k in s.X)if(s.X[k])on['x'+k]=1;
-  const prev=withList&&S&&UI._synRid===S.rid?UI._syn:null;if(withList&&S){UI._syn=on;UI._synRid=S.rid;}
+  const prev=withList&&S&&UI._synS===S?UI._syn:null;if(withList&&S){UI._syn=on;UI._synS=S;}
   const pulse=k=>!RM&&prev&&on[k]&&(prev[k]||0)<on[k]?' newon':'';
   for(const k in GENRES){const n=c.g[k]||0;if(!n)continue;const def=GENRES[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'genre',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.G[k]>0,html:`<span class="e">${def.e}</span>`});}
   for(const k in TRAITS){const n=c.t[k]||0;if(!n)continue;const def=TRAITS[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'trait',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.T[k]>0,html:tsvg(k)});}
@@ -2879,7 +2911,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.5',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.6',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
@@ -2938,8 +2970,8 @@ function feel(){try{
     else if(first){const rs=SCHEDULE.map((r,i)=>r.act===ev.act?i+1:0).filter(Boolean);banner('Act '+ev.act,'Episodes '+rs[0]+'–'+rs[rs.length-1],'act');}
     else if(ev.type==='boss')banner(ev.act>=TUNE.acts?'Season finale':'Act '+ev.act+' finale','Boss episode','boss');}}
   if(scr==='battle'&&chg)banner(S.enemy&&S.enemy.boss?'Boss fight!':'Fight!','','fight');
-  if(scr==='plan'){const rk=S.rank;if(UI._rkRid===S.rid&&UI._rk!=null&&rk>UI._rk&&!document.getElementById('banner')){const r0=UI._rk,nt=topTier(rk)>topTier(r0),sl=RANK.board[rk-1]>RANK.board[r0-1];
-    banner('Rank '+rk,[nt?RARITY[topTier(rk)-1]+'s unlocked':'',sl?'+1 board slot':'',!nt&&!sl?'Better odds':''].filter(Boolean).join(' · '),'rank');}UI._rk=rk;UI._rkRid=S.rid;}
+  if(scr==='plan'){const rk=S.rank;if(UI._rkS===S&&UI._rk!=null&&rk>UI._rk&&!document.getElementById('banner')){const r0=UI._rk,nt=topTier(rk)>topTier(r0),sl=RANK.board[rk-1]>RANK.board[r0-1];
+    banner('Rank '+rk,[nt?RARITY[topTier(rk)-1]+'s unlocked':'',sl?'+1 board slot':'',!nt&&!sl?'Better odds':''].filter(Boolean).join(' · '),'rank');}UI._rk=rk;UI._rkS=S;}
 }catch(e){}}
 function banner(t,sub,kind){try{let b=document.getElementById('banner');if(b)b.remove();b=document.createElement('div');b.id='banner';b.className='bn-'+kind;b.setAttribute('aria-hidden','true');
   b.innerHTML=`<b>${esc(t)}</b>${sub?`<span>${esc(sub)}</span>`:''}`;document.body.appendChild(b);setTimeout(()=>{if(b.parentNode)b.remove();},kind==='fight'||kind==='win'||kind==='lose'?950:1700);}catch(e){}}
