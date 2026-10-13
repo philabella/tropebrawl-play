@@ -813,6 +813,16 @@ svg.gi{fill:currentColor!important;stroke:none!important}
 .pt .fe[class*=" fe-gi-"]{--ic:color-mix(in srgb,var(--gc) 45%,#fff)}
 .btn.primary .fe[class][class],.syn.on .fe[class][class],.syn.combo:not(.near) .fe[class][class],.scard .xo .fe[class][class],.xrow .xs .fe[class][class],.strip i.now .fe[class][class],.lvn.on .fe[class][class],.sbdg .fe[class][class],.crowdn .fe[class][class],.slot .tagl.max .fe[class][class],.scard .lv2 .fe[class][class]{--ic:currentColor}
 
+/* start menu: a quiet texture (SVG noise: grain + paper blotches), warm glow behind the title, dark edges */
+#tbg{position:fixed;inset:0;z-index:-1;overflow:hidden;pointer-events:none;background:
+  radial-gradient(ellipse 70% 55% at 18% 12%,rgba(255,204,46,.075),transparent 70%),
+  radial-gradient(ellipse 120% 100% at 50% 40%,transparent 55%,rgba(0,0,0,.55) 100%),
+  var(--bg)}
+#tbg::before,#tbg::after{content:"";position:absolute;inset:0}
+#tbg::before{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.011' numOctaves='4' seed='3' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/600px 600px;opacity:.16;mix-blend-mode:soft-light}
+#tbg::after{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") 0 0/200px 200px;opacity:.11;mix-blend-mode:overlay}
+html.ontitle body{background:transparent}
+
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
 .spr{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;user-select:none;z-index:3;filter:drop-shadow(0 4px 2px rgba(0,0,0,.45))}
@@ -865,6 +875,7 @@ svg.gi{fill:currentColor!important;stroke:none!important}
 .sart.lg svg{right:4px;bottom:4px}
 </style>
 
+<div id="tbg" aria-hidden="true" hidden></div>
 <div id="app"></div>
 <div id="scrim" hidden></div>
 <div id="sheet" hidden></div>
@@ -2666,6 +2677,8 @@ SCR.title=()=>{
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}</span>`).join('')}</div>
   </section>`;
 };
+// the start menu's texture (#tbg, outside #app so re-renders don't touch it)
+function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;document.documentElement.classList.toggle('ontitle',!!on);el.hidden=!on;}catch(e){}}
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
 SCR.plan=()=>{
   const wide=isWide();
@@ -3155,7 +3168,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.9.1',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.9.2',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
@@ -3231,6 +3244,7 @@ function render(){
   if(typeof UI!=='undefined'&&UI.screen!=='plan'&&UI.screen!=='end'&&typeof hoverCard==='function')hoverCard(null);
   if(!S&&UI.screen!=='title'&&UI.screen!=='codex')UI.screen='title';
   $('#app').innerHTML=SCR[UI.screen]();
+  titleBg(UI.screen==='title');
   feel();
   if(UI.screen!=='battle'&&!UI.sheetOpen)showPending();
 }
