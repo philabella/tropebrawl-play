@@ -648,7 +648,7 @@ const R=n=>Math.round(n);
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=RM_SYS||!SET.anim;
 function applyMotion(){RM=RM_SYS||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -1044,7 +1044,7 @@ function lvLoad(){let j={};try{j=JSON.parse(localStorage.getItem(LV_KEY)||'{}')|
 function lvStore(p){if(p.dev){try{const j=JSON.parse(localStorage.getItem(LV_KEY)||'{}')||{};j.pick=p.pick;localStorage.setItem(LV_KEY,JSON.stringify(j));}catch(e){}return;}try{localStorage.setItem(LV_KEY,JSON.stringify(p));}catch(e){}}
 // called once when a run ends (from the result screen): a win unlocks the next level and selects it
 function lvRecord(){
-  if(!S||!S.over||S.recorded)return;S.recorded=true;
+  if(!S||!S.over||S.recorded)return;S.recorded=true;tlEnd(false);
   const p=lvLoad(),n=S.lv|0;
   if(S.result==='win'){if(!p.won.includes(n))p.won.push(n);if(n>=p.open&&n<LV_MAX){p.open=n+1;p.pick=n+1;S.newLv=n+1;UI.lv=n+1;}}
   lvStore(p);
@@ -1235,7 +1235,7 @@ function freeSlotFor(id){
 }
 function buy(i){
   const c=canBuy(i);if(!c.ok){toast(c.why);return false;}
-  const o=S.shop[i];const pr=shopPrice(o);S.gold-=pr;runStats().spend.buy+=pr;S.shop[i]=null;poolTake(o.id,COPIES[o.level-1]);
+  const o=S.shop[i];const pr=shopPrice(o);tlAct('b',o.id+':'+o.level);S.gold-=pr;runStats().spend.buy+=pr;S.shop[i]=null;poolTake(o.id,COPIES[o.level-1]);
   if(o.level===2&&highestOf(o.id)){const h=highestOf(o.id);h.cost=(h.cost||0)+pr;levelUp(h);}
   else{if(o.level===2){S.paid[o.id]=S.paid[o.id]||{};S.paid[o.id][2]=true;}S.units.push({uid:S.uid++,id:o.id,level:o.level,slot:freeSlotFor(o.id)||'tmp',cost:pr});if(typeof UI!=='undefined')UI.pop=S.uid-1;}
   checkMerges();
@@ -1247,7 +1247,7 @@ function rerollCost(){return legend('dircut')?1:TUNE.reroll;}
 function reroll(){
   if(S.freeRerolls>0)S.freeRerolls--;
   else{const c=rerollCost();if(S.gold<c){toast('Not enough gold');return false;}S.gold-=c;runStats().spend.reroll+=c;S.rrRound=(S.rrRound||0)+1;}
-  runStats().rerolls++;rollShop();S.locked=false;return true;
+  tlAct('r');runStats().rerolls++;rollShop();S.locked=false;return true;
 }
 function xpNeed(){return S.rank>=RMAX?null:xpFor(S.rank-1);}
 function trainCost(){return S.rank>=RMAX?null:RANK.train;}
@@ -1258,7 +1258,7 @@ function gainXp(n,quiet){
   if(S.rank>=RMAX)S.xp=0;
   return up;
 }
-function train(){const c=trainCost();if(c==null||S.gold<c)return false;S.gold-=c;runStats().spend.rank+=c;gainXp(RANK.trainXp);return true;}
+function train(){const c=trainCost();if(c==null||S.gold<c)return false;tlAct('t');S.gold-=c;runStats().spend.rank+=c;gainXp(RANK.trainXp);return true;}
 // older names, kept so the headless bots still run: one call is one Train
 const rankCost=trainCost,rankUp=train;
 function rankMsg(b0){const t=topTier(S.rank),nt=t>topTier(S.rank-1);return `⬆️ Rank ${S.rank}${nt?`: ${RARITY[t-1]}s can now appear`+(t===5?` (${RANK.odds[RMAX-1][4]}% per card)`:''):': better odds'}${boardSize()>b0?` · ${boardSize()} board slots`:''}`;}
@@ -1273,7 +1273,7 @@ function rankPreview(){
     S.shop[i]={id,level:1,preview:true};UI.freshSlot=i;}}
 }
 function nextSlotRank(){for(let r=S.rank+1;r<=RMAX;r++)if(RANK.board[r-1]>boardSize())return r;return null;}
-function sell(uid){const u=S.units.find(x=>x.uid===uid);if(!u)return false;poolGive(u.id,COPIES[u.level-1]);runStats().sold+=sellValue(u);S.gold+=sellValue(u);S.units=S.units.filter(x=>x!==u);if(UI.sel===u.slot)UI.sel=null;return true;}
+function sell(uid){const u=S.units.find(x=>x.uid===uid);if(!u)return false;tlAct('s',u.id+':'+u.level);poolGive(u.id,COPIES[u.level-1]);runStats().sold+=sellValue(u);S.gold+=sellValue(u);S.units=S.units.filter(x=>x!==u);if(UI.sel===u.slot)UI.sel=null;return true;}
 function move(from,to){
   const a=unitAt(from),b=unitAt(to);if(!a||from===to)return false;
   const toField=to[0]!=='n',fromField=from[0]!=='n';
@@ -1430,7 +1430,7 @@ function castTarget(){
   return null;}
 function eventPick(key){
   const e=S.event;if(!e||e.picked)return;
-  e.picked=key;
+  e.picked=key;tlAct('e',key);
   if(key==='payday'){S.gold+=8;S.stats.gold+=8;e.msg='+8 gold.';}
   if(key==='deal'){S.gold+=15;S.stats.gold+=15;S.lives=Math.max(1,S.lives-2);e.msg='+15 gold, −2 lives.';}
   if(key==='reinforce'){const mx=maxLives();if(S.lives>=mx){S.gold+=5;S.stats.gold+=5;e.msg=`Already at ${mx} lives: +5 gold.`;}else{S.lives=Math.min(mx,S.lives+2);e.msg=`Lives: ${S.lives}.`;}}
@@ -1577,7 +1577,7 @@ function doCut(g,keep){S.cut=S.cut||[];S.cut.push(g);const lost=ownedIn(g);
   const refund=lost.reduce((t,u)=>t+sellValue(u),0);S.gold+=refund;
   S.units=S.units.filter(u=>HERO[u.id].genre!==g);return `${GENRES[g].name} is cut from the show: ${lost.length} character${lost.length===1?'':'s'} leave${lost.length===1?'s':''} with it (sold for 🪙${refund}), and it won't appear in the shop again.`;}
 function eventSub(id){
-  const e=S.event;if(!e||!e.sub||e.subDone)return;
+  const e=S.event;if(!e||!e.sub||e.subDone)return;tlAct('c',id||'-');
   if(e.sub.kind==='choice'){const cs=CHOICES[e.picked];let c=cs.find(x=>x.id===id);if(!c||!c.ok(e))c=id?null:cs.find(x=>x.ok(e));if(!c)return;e.subDone=true;e.choice=c.id;e.msg=c.run(e);return;}
   if(e.sub.kind==='cut'){
     // bots (and a missing choice) take the free cut of the genre they own least of
@@ -1664,7 +1664,7 @@ function twinUnit(){
   return mkUnit(Object.assign(base,{maxHp:mhp,hp:mhp,atk:b.atk*t*LV[h.level-1]}));
 }
 function foeInfo(k){return EN[k]||(k==='twin'?{e:'😈',name:'Evil Twin'}:{e:'❓',name:k});}
-function startBattle(silent){
+function startBattle(silent){if(!silent)tlFight();
   const syn=activeSyn(fielded());
   B={t:0,acc:0,last:null,speed:UI.speed,paused:false,units:[],done:false,win:null,silent:!!silent,startDelay:silent?0:.6,
      syn,reserve:[],frontDR:{A:0,E:0},art:0,tesla:tv('tesla')||4,takeovers:0,sponsor:0,goldEarned:0,gold:S.gold,revive:has('extralife'),ended:false,round:S.round,
@@ -2013,7 +2013,7 @@ function lossTip(){
   return 'Put your strongest characters on the board and get 4 or 6 of one genre.';
 }
 function settle(){
-  const win=B.win;const ev=curRound();const res={win,boss:ev.type==='boss',act:ev.act,gold:0,lives:0};
+  const win=B.win;if(!B.silent)tlRes(win);const ev=curRound();const res={win,boss:ev.type==='boss',act:ev.act,gold:0,lives:0};
   S.stats.fights++;
   const A=B.units.filter(u=>u.side==='A'&&!u.summon);
   const rs=runStats();const seen=new Set();
@@ -2628,7 +2628,7 @@ function showPending(){
     <div class="row"><button class="btn ghost" data-a="pend" data-v="">Take 🪙3 instead</button>${has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=tv('prop')?'':'disabled'}>🔄 New choices · 🪙${tv('prop')}</button>`:''}</div>`,true);
 }
 function resolvePending(v){
-  const p=S.pending.shift();if(!p)return;UI.swap=null;
+  const p=S.pending.shift();if(!p)return;UI.swap=null;tlAct(p.kind==='legend'?'l':'i',v||'-');
   if(p.kind==='legend'){
     if(!v)S.gold+=3;
     else if(v.startsWith('t:')){toast(itemMsg(v.slice(2)));takeTrinket(v.slice(2));}
@@ -2663,7 +2663,7 @@ function onAction(a,v,el){
     case 'codex':UI.codexBack=UI.screen;UI.screen='codex';UI.codexTab=UI.codexTab||'how';closeSheet();render();window.scrollTo(0,0);break;
     case 'codex-tab':UI.codexTab=v;render();break;
     case 'codex-back':UI.screen=UI.codexBack&&UI.codexBack!=='codex'?UI.codexBack:(S?'plan':'title');render();break;
-    case 'quit':if(!UI.armQuit){UI.armQuit=true;render();setTimeout(()=>{if(UI.armQuit){UI.armQuit=false;if(UI.screen!=='battle')render();}},3000);}else{UI.armQuit=false;clearSave();S=null;UI.screen='title';render();}break;
+    case 'quit':if(!UI.armQuit){UI.armQuit=true;render();setTimeout(()=>{if(UI.armQuit){UI.armQuit=false;if(UI.screen!=='battle')render();}},3000);}else{UI.armQuit=false;if(S&&S.round>1)tlEnd(true);clearSave();S=null;UI.screen='title';render();}break;
     case 'fight':if(!fielded().length)return;UI.screen='battle';UI.sel=null;render();startBattle(false);drawBattle();requestAnimationFrame(battleLoop);break;
     case 'speed':UI.speed=+v;if(B)B.speed=UI.speed;document.querySelectorAll('.speed [data-a="speed"]').forEach(b=>b.classList.toggle('on',+b.dataset.v===UI.speed));break;
     case 'pause':if(B){B.paused=!B.paused;el.textContent=B.paused?'▶':'⏸';}break;
@@ -2678,7 +2678,7 @@ function onAction(a,v,el){
     case 'endhero':if(!isWide()||!canHover)sheet(heroDetail(v,+(el&&el.dataset.l)||1));break;
     case 'enditem':if(!isWide()||!canHover){const b=infoBody({kind:'trinket',id:v});if(b)sheet(b);}break;
     case 'settings':sheet(settingsHTML());break;
-    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;setSave();sheet(settingsHTML());if(UI.screen==='title')render();break;
+    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='share')SET.share=!SET.share;setSave();sheet(settingsHTML());if(UI.screen==='title')render();break;
     case 'endleg':if(!isWide()||!canHover)sheet(legendDetail(v));break;
     case 'event-done':finishEvent();go();window.scrollTo(0,0);break;
     case 'pend':case 'pend-leg':resolvePending(v||null);break;
@@ -2794,11 +2794,33 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
+const TB_VERSION='19.2',TL_KEY='tropebrawl-runlog';let TL=null;
+// globalThis.__tlForce (sims only): record bot runs in the same format, into globalThis.__tlOut, to compare bots with people
+function tlOn(){try{return !!globalThis.__tlForce||(!seeded&&SET.share&&typeof window!=='undefined'&&!!(window.claude&&window.claude.use));}catch(e){return false;}}
+function tlCur(){if(!S||!tlOn())return null;
+  if(!S.rid)S.rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
+  if(!TL){try{const j=JSON.parse(localStorage.getItem(TL_KEY)||'null');if(j&&j.rid===S.rid)TL=j;}catch(e){}}
+  if(!TL||TL.rid!==S.rid)TL={rid:S.rid,v:TB_VERSION,lv:S.lv|0,at:new Date().toISOString(),r:[]};
+  let r=TL.r[TL.r.length-1];const p=S.part||0;
+  if(!r||r.n!==S.round||r.p!==p){r={n:S.round,p,g:S.gold,lf:S.lives,rk:S.rank,a:[]};TL.r.push(r);}
+  return r;}
+function tlAct(k,v){try{const r=tlCur();if(r)r.a.push(v==null?k:k+':'+v);}catch(e){}}
+function tlFight(){try{const r=tlCur();if(!r)return;r.f={b:fielded().map(u=>u.id+':'+u.level+':'+u.slot),n:S.units.filter(u=>u.slot[0]==='n').map(u=>u.id+':'+u.level),g:S.gold,rk:S.rank,it:S.trinkets.map(t=>t+':'+ilv(t)),lg:S.legend||null,en:S.enemy?S.enemy.title:null};}catch(e){}}
+function tlRes(win){try{if(!tlOn())return;const r=tlCur();if(r&&r.f)r.f.w=win?1:0;}catch(e){}}
+function tlSave(){try{if(TL)localStorage.setItem(TL_KEY,JSON.stringify(TL));}catch(e){}}
+async function tlEnd(quit){try{if(!tlOn())return;tlCur();if(!TL)return;
+  const rec=Object.assign({},TL,{res:quit?'quit':S.result,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString()});TL=null;try{localStorage.removeItem(TL_KEY);}catch(e){}
+  if(globalThis.__tlForce){(globalThis.__tlOut=globalThis.__tlOut||[]).push(rec);return;}
+  const db=await window.claude.use('db'),user=await window.claude.use('user');if(!db||!user)return;const id=await user.id();if(!id)return;
+  await db.collection('runs/'+id+'/r').doc(rec.rid).set(rec);
+  await db.doc('runs/'+id).set({last:rec.rid,at:rec.end,v:rec.v,lv:rec.lv,res:rec.res});
+}catch(e){}}
 function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
-    ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}`;}
+    ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
+    ${typeof window!=='undefined'&&window.claude?sw('share',SET.share,'Share my runs','Saves what you buy, sell, pick and fight each run with this game, so the developer can balance it and teach the bots how people play. No personal info.'):''}`;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
 function feel(){try{
   const scr=UI.screen,chg=UI._scr!==scr;UI._scr=scr;UI.pop=UI.merged=null;
@@ -2822,7 +2844,7 @@ function render(){
   feel();
   if(UI.screen!=='battle'&&!UI.sheetOpen)showPending();
 }
-function save(){try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
+function save(){tlSave();try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
 function loadSave(){try{const j=localStorage.getItem(SAVE_KEY)||localStorage.getItem(OLD_SAVE_KEY);return j?JSON.parse(j):null;}catch(e){return null;}}
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem(OLD_SAVE_KEY);}catch(e){}}
 function snapshot(){return S?{v:SAVE_KEY,S,screen:UI.screen==='battle'?'plan':UI.screen,speed:UI.speed}:{};}
