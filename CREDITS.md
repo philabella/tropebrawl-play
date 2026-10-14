@@ -20,5 +20,9 @@ game. License: [CC BY 3.0](https://creativecommons.org/licenses/by/3.0/), except
 Sound effects and jingles by [Kenney](https://kenney.nl): Interface Sounds, Impact Sounds, RPG Audio, Casino Audio,
 Music Jingles. License: CC0 (public domain; credit optional). Picks per game event: `balance/v19/sfx_prep.py`.
 
+## Fonts
+Anton (Vernon Adams) and Barlow (Jeremy Tribby), [SIL Open Font License 1.1](https://openfontlicense.org), embedded in the
+game file (latin subsets from Fontsource). License texts: `balance/v19/fonts/OFL-*.txt`.
+
 ## Characters
 Character art drawn for Tropebrawl.
