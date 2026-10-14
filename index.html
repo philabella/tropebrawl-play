@@ -1629,6 +1629,7 @@ function rollShop(){
     S.shop.push({id,level:(legend('scout')?rand()<TUNE.scoutChance:HERO[id].tier<=2&&rand()<RANK.lv2[S.rank-1])?2:1});
   }
   S.seen=S.seen||{};S.shop.forEach(o=>{if(o&&!S.seen[o.id]){o.nw=1;S.seen[o.id]=1;}});
+  tlAct('o',S.shop.map(o=>o?o.id+(o.level>1?'*'+o.level:''):'-').join(',')); // the run log: what was offered
 }
 function shopPrice(o){const p=PRICE[HERO[o.id].tier-1];return o.level===2?Math.round(p*(legend('scout')?TUNE.scoutMult:3)):p;}
 function canBuy(i){
@@ -3412,7 +3413,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.16',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.17',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
