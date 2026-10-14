@@ -878,6 +878,58 @@ html.dt #app>section.screen:has(.title-word){max-width:1180px;margin-inline:auto
 .btn.primary .kh{color:#1a1408;background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.3)}
 .scard .kh{position:absolute;left:6px;bottom:5px;margin:0;z-index:3}
 
+/* ---- shop cards (v19.12) ---- */
+.shop>[data-hov]{display:flex}
+.shop>[data-hov]>.scard{flex:1 1 auto;align-content:start}
+.scard .sx{display:contents}
+.scard .fl,.scard .gnm{display:none}
+.scard:disabled>.sx{opacity:1}
+.scard:disabled .sx>:not(.why){opacity:.45}
+.shop .scard>.sart{border-radius:3px;background:radial-gradient(ellipse 40% 8% at 50% 94%,rgba(0,0,0,.55),transparent),radial-gradient(ellipse 72% 64% at 50% 62%,color-mix(in srgb,var(--gc) 42%,transparent),transparent 72%)}
+.shop .scard:disabled>.sart{filter:grayscale(.75)}
+.scard .mk{position:absolute;top:3px;left:4px;z-index:2;font-size:.58rem;font-weight:900;line-height:1.45;padding:0 4px;border-radius:3px;background:var(--gold);color:#1a1408;box-shadow:2px 2px 0 var(--inkline);pointer-events:none}
+.scard .mkl{display:none}
+.scard.ready{animation:readyGlow 1.6s ease-in-out infinite alternate}
+@keyframes readyGlow{from{box-shadow:0 0 0 2px var(--gold),0 0 8px color-mix(in srgb,var(--gold) 30%,transparent)}to{box-shadow:0 0 0 2px var(--gold),0 0 22px color-mix(in srgb,var(--gold) 60%,transparent)}}
+html.noanim .scard.ready{animation:none}
+html.noanim .shop .scard:hover:not(:disabled):not(:active){transform:none}
+@media (prefers-reduced-motion:reduce){.scard.ready{animation:none}}
+@media (hover:hover){.shop .scard:not(.sold){transition:transform .12s ease-out}.shop .scard:hover:not(:disabled):not(:active){transform:translateY(-3px)}}
+.fsico{width:1.2em;height:1.2em;vertical-align:-.25em;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
+.fsbtn{min-width:2.4em;align-self:stretch}
+
+/* desktop: landscape cards, art left, details right; the art grows with the screen */
+html.dt .dshop{--aw:81px;--ah:96px;--az:.96}
+@media (min-width:1500px) and (min-height:820px){html.dt .dshop{--aw:97px;--ah:116px;--az:1.16}}
+@media (min-width:1800px) and (min-height:960px){html.dt .dshop{--aw:113px;--ah:134px;--az:1.34}}
+@media (min-width:2300px) and (min-height:1200px){html.dt .dshop{--aw:126px;--ah:150px;--az:1.5}}
+html.dt .dshop .scard{grid-template-columns:var(--aw) minmax(0,1fr) auto;grid-template-rows:auto auto auto 1fr auto;grid-template-areas:". rar rar" ". nm nm" ". tags tags" ". sx sx" ". pr pl";justify-items:start;align-items:center;align-content:stretch;text-align:left;gap:2px 10px;padding:7px 8px 7px 7px;min-height:calc(var(--ah) + 21px)}
+html.dt .dshop .scard>.sart{position:absolute;left:7px;top:0;bottom:0;margin:auto 0;width:84px;height:100px;zoom:var(--az)}
+html.dt .dshop .scard>.sart img{top:-16px;width:118px;height:118px}
+html.dt .dshop .scard>.sart.crowd img{top:-12px;width:104px;height:104px}
+html.dt .dshop .scard>.pt{position:absolute;left:calc(7px + var(--aw)*.1);top:0;bottom:0;margin:auto 0;width:calc(var(--aw)*.8);height:calc(var(--aw)*.8);font-size:calc(var(--aw)*.38)}
+html.dt .dshop .scard .rarl{grid-area:rar;font-size:.62rem;align-self:end;padding-right:3.4em}
+html.dt .dshop .scard .nm{grid-area:nm;font:400 1.14rem/1.04 var(--f-display);letter-spacing:.015em;color:var(--ink);white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:clip;margin:1px 0}
+html.dt .dshop .scard .tags{grid-area:tags;justify-content:flex-start;gap:5px;font-size:.92rem;flex-wrap:wrap;row-gap:0}
+@media (max-width:1499px){html.dt .dshop .scard .gnm,html.dt .dshop .scard .plw{display:none!important}html.dt .dshop .scard .nm{font-size:.98rem}}
+html.dt .dshop .scard .gnm{display:inline;font:700 .74rem/1 var(--f-body);color:var(--muted);margin-left:-2px}
+html.dt .dshop .scard .x2s{margin-left:-3px}
+html.dt .dshop .scard .sx{grid-area:sx;display:flex;flex-direction:column;align-items:flex-start;gap:3px;align-self:center;min-width:0;max-width:100%}
+html.dt .dshop .scard .why{font-size:.7rem}
+html.dt .dshop .scard .xo{position:static;transform:none;width:auto;max-width:100%;text-align:left;font-size:.6rem}
+@media (min-width:1700px) and (min-height:900px){html.dt .dshop .scard .sx>.fl:first-child{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:.7rem;line-height:1.25;font-style:italic;color:var(--muted)}}
+html.dt .dshop .scard .pr{grid-area:pr;white-space:nowrap;font-size:1.2rem;line-height:1;padding:3px 9px 2px 6px;border-radius:999px;background:#141217;border:1.5px solid color-mix(in srgb,var(--gold) 50%,transparent);box-shadow:inset 0 -2px 0 rgba(0,0,0,.4);margin-top:3px}
+html.dt .dshop .scard:disabled .pr{border-color:color-mix(in srgb,var(--red) 55%,transparent)}
+html.dt .dshop .scard .pleft{grid-area:pl;display:block;justify-self:end;align-self:end;margin:0 20px 1px 0;font-size:.62rem}
+html.dt .dshop .scard .own{top:7px;right:8px;font-size:.66rem}
+html.dt .dshop .scard .lv2,html.dt .dshop .scard .mk{top:9px;left:9px}
+html.dt .dshop .scard .mkl{display:inline}
+html.dt .dshop .scard .kh{left:9px;bottom:9px}
+html.dt .dshop .scard.sold{min-height:0}
+html.dt .dshop .shop>[data-hov]>.info{bottom:6px;right:6px}
+html.dt .dshop .scard{padding-bottom:7px}
+@media (max-height:860px){html.dt .dshop .scard .sart{zoom:var(--az)}html.dt .dshop .scard .pleft{display:block}html.dt .dshop .scard{padding-top:7px}}
+
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
 .spr{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;user-select:none;z-index:3;filter:drop-shadow(0 4px 2px rgba(0,0,0,.45))}
@@ -2603,7 +2655,7 @@ function topBar(){
   return `<header class="top">
     <div class="r1">
       <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span>${S.lv?`<button class="lvb" data-a="lv-info" title="Game Level ${S.lv}: tap for its rules" aria-label="Game Level ${S.lv}: see its rules">Lv ${S.lv}</button>`:''}</div>
-      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button><button class="btn sm" data-a="codex" aria-label="Open the Codex">📖 Codex</button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
+      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖 Codex</button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}</div>
     ${items?`<div class="items">${items}</div>`:''}
@@ -2677,10 +2729,11 @@ function shopHTML(){
     if(!o)return `<div class="scard sold" aria-hidden="true"></div>`;
     const d=HERO[o.id];const c=canBuy(i);const owned=S.units.filter(u=>u.id===o.id);
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
+    const mk=o.level===1&&(l1[o.id]||0)>=2; // buying it combines three copies into a ★★
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
     return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
-      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}
-      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span>${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?'<span class="mk" title="You own two: this third copy combines them into a ★★"><span class="mkl">Makes </span>★★</span>':''}
+      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}<span class="gnm">${esc(GENRES[d.genre].name)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -2733,7 +2786,7 @@ SCR.title=()=>{
       <button class="btn" data-a="codex">📖 Codex</button>
       <button class="btn" data-a="settings">⚙️ Settings</button>
       ${typeof window!=='undefined'&&window.tbApp?'<button class="btn" data-a="appquit">Quit game</button>':''}
-      <button class="btn sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>
+      <button class="btn sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('')}
     </div>
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}</span>`).join('')}</div>
   </section>`;
@@ -2750,7 +2803,7 @@ function dtFit(){try{
   const fit=(free,v,per,lo,hi)=>{let t=parseFloat(root.style.getPropertyValue(v))||150;
     for(let k=0;k<3;k++){const nt=Math.max(lo,Math.min(hi,t+free()/per));if(Math.abs(nt-t)<1)break;t=nt;root.style.setProperty(v,t.toFixed(1)+'px');}};
   if(UI.screen==='plan'){const c=document.querySelector('.dcol.c');if(!c||!c.children.length)return;
-    fit(()=>{const k=c.children;return c.clientHeight-(k[k.length-1].getBoundingClientRect().bottom-k[0].getBoundingClientRect().top);},'--t',4.1,70,250);}
+    fit(()=>{const k=c.children;return c.clientHeight-(k[k.length-1].getBoundingClientRect().bottom-k[0].getBoundingClientRect().top);},'--t',4.1,48,250);}
   else if(UI.screen==='battle'){const f=document.getElementById('field');if(!f)return;const sec=f.parentElement;
     fit(()=>innerHeight-26-sec.getBoundingClientRect().height,'--tb',4.6,80,260);}
 }catch(e){}}
@@ -2791,6 +2844,24 @@ function dtSell(slot){const u=slot&&unitAt(slot);if(!u||!S||S.over)return;
       else if(k==='1'||k==='2'||k==='3')hit(`[data-a="speed"][data-v="${[1,2,4][+k-1]}"]`);
     }else if(UI.screen==='codex'&&k==='Escape')hit('[data-a="codex-back"]');
   }catch(err){}});
+}catch(e){}})();
+// ================= fullscreen (v19.12): the Fullscreen API in browsers, window.tbApp in the Windows app =================
+function fsCan(){try{return !!(window.tbApp||document.fullscreenEnabled||document.webkitFullscreenEnabled);}catch(e){return false;}}
+function fsOn(){try{return window.tbApp?!!window.tbApp.isFullscreen():!!(document.fullscreenElement||document.webkitFullscreenElement);}catch(e){return false;}}
+function fsIco(on){return on?'<svg class="fsico" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 4v5H4M15 4v5h5M20 15h-5v5M4 15h5v5"/></svg>':'<svg class="fsico" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M15 4h5v5M20 15v5h-5M9 20H4v-5"/></svg>';}
+function fsBtn(cls){if(!fsCan())return '';const on=fsOn(),t=on?'Leave fullscreen':'Fullscreen';
+  return `<button class="btn ${cls||''} fsbtn" data-a="fs" aria-pressed="${on}" aria-label="${t}" title="${t}${window.tbApp?' (F11)':''}">${fsIco(on)}</button>`;}
+function fsPaint(){try{const on=fsOn(),t=on?'Leave fullscreen':'Fullscreen';
+  document.querySelectorAll('.fsbtn').forEach(b=>{b.innerHTML=fsIco(on);b.setAttribute('aria-pressed',String(on));b.setAttribute('aria-label',t);b.title=t+(window.tbApp?' (F11)':'');});
+  const r=document.querySelector('#sheet [data-a="set"][data-v="fs"]');if(r&&r.getAttribute('aria-checked')!==String(on))sheet(settingsHTML());}catch(e){}}
+function fsToggle(){try{
+  if(window.tbApp)window.tbApp.setFullscreen(!window.tbApp.isFullscreen());
+  else if(fsOn())(document.exitFullscreen||document.webkitExitFullscreen).call(document);
+  else{const el=document.documentElement,p=(el.requestFullscreen||el.webkitRequestFullscreen).call(el);if(p&&p.catch)p.catch(()=>toast('This browser said no to fullscreen. Try F11.'));}
+}catch(e){}setTimeout(fsPaint,350);}
+(function(){try{if(typeof document==='undefined')return;
+  ['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,fsPaint));
+  if(typeof window!=='undefined')window.addEventListener('resize',()=>setTimeout(fsPaint,120)); // the app (F11, Alt+Enter) only shows up as a resize
 }catch(e){}})();
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
 SCR.plan=()=>{
@@ -3169,8 +3240,9 @@ function onAction(a,v,el){
     case 'enditem':if(!isWide()||!canHover){const b=infoBody({kind:'trinket',id:v});if(b)sheet(b);}break;
     case 'settings':sheet(settingsHTML());break;
     case 'mute':sndToggle();break;
+    case 'fs':fsToggle();break;
     case 'appquit':if(window.tbApp)window.tbApp.quit();break;
-    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='fs'&&window.tbApp){window.tbApp.setFullscreen(!window.tbApp.isFullscreen());setTimeout(()=>{if(UI.sheetOpen)sheet(settingsHTML());},300);}if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='share')SET.share=!SET.share;setSave();sheet(settingsHTML());if(UI.screen==='title')render();break;
+    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='fs')fsToggle();if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='share')SET.share=!SET.share;setSave();sheet(settingsHTML());if(UI.screen==='title')render();break;
     case 'endleg':if(!isWide()||!canHover)sheet(legendDetail(v));break;
     case 'event-done':finishEvent();go();window.scrollTo(0,0);break;
     case 'pend':case 'pend-leg':resolvePending(v||null);break;
@@ -3287,7 +3359,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.11',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.12',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
@@ -3340,7 +3412,7 @@ function settingsHTML(){
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
     ${sw('sound',SET.sound,'Sound effects','Clicks, coins, hits and fanfares (Kenney, CC0). Quick mute: the speaker button or the M key.')}
-    ${typeof window!=='undefined'&&window.tbApp?sw('fs',window.tbApp.isFullscreen(),'Fullscreen','Also F11 or Alt+Enter.'):''}
+    ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
 `;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
@@ -3492,5 +3564,3 @@ function start(data){
 window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
-
-</body></html>
