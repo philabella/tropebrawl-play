@@ -983,6 +983,15 @@ html.dt .dshop .scard{padding-bottom:7px}
 
 /* ranged recoil muzzle flash (v19.13) */
 .unit .muzzle{position:absolute;width:clamp(26px,32%,64px);aspect-ratio:1;border-radius:50%;pointer-events:none;z-index:6;background:radial-gradient(circle,#fff 0 18%,color-mix(in srgb,var(--gc) 55%,#fff) 30%,color-mix(in srgb,var(--gc) 70%,transparent) 48%,transparent 70%);mix-blend-mode:screen}
+
+/* coaching tips (v19.14) */
+.coach{display:flex;gap:10px;align-items:flex-start;padding:9px 10px 9px 12px;border-radius:3px;border:2px solid var(--inkline);border-left:5px solid var(--gold);background:color-mix(in srgb,var(--gold) 9%,var(--panel));box-shadow:3px 3px 0 var(--inkline);margin:8px 0}
+.coach .ci{font-size:1.25rem;line-height:1.2;flex:none}
+.coach p{margin:0;flex:1;font-size:.84rem;line-height:1.38}
+.coach p b{color:var(--gold);text-transform:uppercase;letter-spacing:.06em;font-size:.72rem;margin-right:4px}
+.coach .btn{flex:none;align-self:center}
+html.dt .dcol.l .coach{margin:0;flex-direction:column;gap:6px}
+html.dt .dcol.l .coach .btn{align-self:flex-end}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -1019,7 +1028,7 @@ const R=n=>Math.round(n);
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,coach:d.coach!==false};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=RM_SYS||!SET.anim;
 function applyMotion(){RM=RM_SYS||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -2434,6 +2443,7 @@ function step(dt){
 // ---- after a fight ----
 function lossTip(){
   if(fielded().length<boardSize())return 'You had empty board slots. Fill every slot before the fight.';
+  if((S.lv|0)>=5&&fielded().length>=5&&S.gold<TUNE.bankTip){const gs=new Set(fielded().map(u=>HERO[u.id].genre));if(gs.size<=2)return `Your board had only ${gs.size===1?'one genre':'two genres'}. At this level, mixing 3 or more pays: more 🔗 crossovers, and trait bonuses stack across genres.`;}
   if(S.gold>=TUNE.bankTip){const cap=intCap(),top=TUNE.intPer*cap;return `You lost with 🪙${S.gold} unspent. Interest pays at most 🪙${cap} a round${S.gold>top?` and nothing past 🪙${top}`:''}. ⬆️ Train and 🔄 rerolls before a fight make your board stronger.`;}
   if(S.round>=6&&fielded().filter(u=>HERO[u.id].tier<=2).length>=Math.ceil(fielded().length*.6))return 'Commons and Uncommons stop at ★★ and fall behind late. Rank up and buy Rare or better.';
   const lv1=fielded().filter(u=>u.level===1).length;
@@ -2876,11 +2886,23 @@ function fsToggle(){try{
   ['fullscreenchange','webkitfullscreenchange'].forEach(ev=>document.addEventListener(ev,fsPaint));
   if(typeof window!=='undefined')window.addEventListener('resize',()=>setTimeout(fsPaint,120)); // the app (F11, Alt+Enter) only shows up as a resize
 }catch(e){}})();
+// ================= coaching tips (v19.14): from Game Level 5, on the shop screen =================
+function coachTip(){try{
+  if(!SET.coach||!S||S.over||(S.lv|0)<5||UI.screen!=='plan')return null;
+  const ev=curRound();if(!ev)return null;const act=ev.act,off=S.coachOff||{};
+  if(S.round>=5&&S.gold>=TUNE.bankTip&&off.gold!==act){const cap=intCap(),top=TUNE.intPer*cap;
+    return {k:'gold',t:`🪙${S.gold} in the bank. At this level, gold on your board beats gold saved: interest pays at most 🪙${cap} a round${S.gold>top?`, and nothing past 🪙${top}`:''}. Buy copies for ★★, ⬆️ Train or 🔄 reroll before you fight.`};}
+  const f=fielded(),gs=[...new Set(f.map(u=>HERO[u.id].genre))];
+  if(S.round>=8&&f.length>=5&&f.length>=boardSize()&&gs.length<=2&&off.genre!==act)
+    return {k:'genre',t:`Your fighters come from ${gs.length===1?'one genre':'two genres'} (${gs.map(g=>GENRES[g].name).join(' and ')}). At this level, winning boards usually mix 3 or more: each pair of genres can switch on a 🔗 crossover, and trait bonuses stack across genres.`};
+  return null;}catch(e){return null;}}
+function coachHTML(){const c=coachTip();if(!c)return '';
+  return `<div class="coach" role="note" data-k="${c.k}"><span class="ci" aria-hidden="true">💡</span><p><b>Tip</b> ${c.t}</p><button class="btn sm ghost" data-a="coach-x" data-v="${c.k}" title="Hide this tip until the next act">Got it</button></div>`;}
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
 SCR.plan=()=>{
-  if(DESK)return `<div class="dtl"><div class="dcol l">${vsStrip()}${inspHTML()}</div><div class="dcol c">${topBar()}${boardHTML()}${synHTML(fielded(),true)}</div><div class="dcol r">${itemsPanel()}</div><div class="dshop">${shopHTML()}</div></div>`;
+  if(DESK)return `<div class="dtl"><div class="dcol l">${vsStrip()}${coachHTML()}${inspHTML()}</div><div class="dcol c">${topBar()}${boardHTML()}${synHTML(fielded(),true)}</div><div class="dcol r">${itemsPanel()}</div><div class="dshop">${shopHTML()}</div></div>`;
   const wide=isWide();
-  const main=`${topBar()}${vsStrip()}${boardHTML()}${!wide&&UI.insp?inspHTML():''}${synHTML(fielded(),true)}${shopHTML()}`;
+  const main=`${topBar()}${vsStrip()}${boardHTML()}${!wide&&UI.insp?inspHTML():''}${synHTML(fielded(),true)}${coachHTML()}${shopHTML()}`;
   return wide?`<div class="layout">${inspHTML()}<div class="screen">${main}</div>${itemsPanel()}</div>`:`<div class="screen">${main}</div>`;
 };
 SCR.battle=()=>{
@@ -3254,8 +3276,9 @@ function onAction(a,v,el){
     case 'settings':sheet(settingsHTML());break;
     case 'mute':sndToggle();break;
     case 'fs':fsToggle();break;
+    case 'coach-x':{const ev=curRound();S.coachOff=Object.assign({},S.coachOff||{},{[v]:ev?ev.act:0});go();break;}
     case 'appquit':if(window.tbApp)window.tbApp.quit();break;
-    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='fs')fsToggle();if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='share')SET.share=!SET.share;setSave();sheet(settingsHTML());if(UI.screen==='title')render();break;
+    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='fs')fsToggle();if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='share')SET.share=!SET.share;if(v==='coach')SET.coach=!SET.coach;setSave();sheet(settingsHTML());if(UI.screen==='title'||v==='coach'&&UI.screen==='plan')render();break;
     case 'endleg':if(!isWide()||!canHover)sheet(legendDetail(v));break;
     case 'event-done':finishEvent();go();window.scrollTo(0,0);break;
     case 'pend':case 'pend-leg':resolvePending(v||null);break;
@@ -3372,7 +3395,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.13',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.14',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
@@ -3425,6 +3448,7 @@ function settingsHTML(){
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
     ${sw('sound',SET.sound,'Sound effects','Clicks, coins, hits and fanfares (Kenney, CC0). Quick mute: the speaker button or the M key.')}
+    ${sw('coach',SET.coach,'Coaching tips','From Game Level 5: a tip on the shop screen when you hold a lot of gold or field only one or two genres.')}
     ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
 `;}
