@@ -992,6 +992,20 @@ html.dt .dshop .scard{padding-bottom:7px}
 .coach .btn{flex:none;align-self:center}
 html.dt .dcol.l .coach{margin:0;flex-direction:column;gap:6px}
 html.dt .dcol.l .coach .btn{align-self:flex-end}
+
+/* phone shop cards (v19.15): nothing spills out of a card or hides under the i button */
+.shop .scard{grid-template-columns:minmax(0,1fr)}
+.shop .scard>*{max-width:100%}
+.shop .scard .tags{flex-wrap:wrap;row-gap:2px}
+.shop .scard .nm{white-space:normal;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-overflow:clip;overflow-wrap:anywhere;line-height:1.12}
+@media (max-width:480px){
+  .shop .scard{padding-left:2px;padding-right:2px}
+  .shop .scard{padding-bottom:28px}
+  .shop .scard .pleft{position:absolute;left:5px;bottom:7px;margin:0;line-height:20px}
+  .shop .scard .l2t{display:none}
+  .shop .scard:has(.mk) .own{display:none}
+}
+html.dt .dshop .scard .mka{display:none}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -2755,8 +2769,8 @@ function shopHTML(){
     const mk=o.level===1&&(l1[o.id]||0)>=2; // buying it combines three copies into a ★★
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
     return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
-      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★ 3-in-1</span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?'<span class="mk" title="You own two: this third copy combines them into a ★★"><span class="mkl">Makes </span>★★</span>':''}
-      ${heroArt(o.id)}<span class="nm">${esc(d.name)}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}<span class="gnm">${esc(GENRES[d.genre].name)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?'<span class="mk" title="You own two: this third copy combines them into a ★★"><span class="mkl">Makes </span><span class="mka">→</span>★★</span>':''}
+      ${heroArt(o.id)}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}<span class="gnm">${esc(GENRES[d.genre].name)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -2898,6 +2912,9 @@ function coachTip(){try{
   return null;}catch(e){return null;}}
 function coachHTML(){const c=coachTip();if(!c)return '';
   return `<div class="coach" role="note" data-k="${c.k}"><span class="ci" aria-hidden="true">💡</span><p><b>Tip</b> ${c.t}</p><button class="btn sm ghost" data-a="coach-x" data-v="${c.k}" title="Hide this tip until the next act">Got it</button></div>`;}
+// v19.15: soft hyphens in long name words for narrow shop cards (a hyphen only shows when the word must break)
+const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Safe-cracker',Quarterback:'Quarter-back',Starcaller:'Star-caller',Mastermind:'Master-mind',Gunslinger:'Gun-slinger',Chainblade:'Chain-blade',Bonesetter:'Bone-setter',Prospector:'Pros-pector',Cutthroats:'Cut-throats',Shellback:'Shell-back',Priestess:'Priest-ess',Corporate:'Corpo-rate',Dodgeball:'Dodge-ball',Moonwell:'Moon-well',Ironhide:'Iron-hide',Commando:'Com-mando',Skeleton:'Skele-ton',Lookouts:'Look-outs',Sergeant:'Ser-geant',Warchief:'War-chief',Operator:'Oper-ator',Observer:'Ob-server',Scorpion:'Scor-pion',Spitters:'Spit-ters'};
+function shy(t){return String(t).replace(/[A-Za-z]{8,}/g,w=>SHY[w]?SHY[w].replace('-','­'):w);}
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
 SCR.plan=()=>{
   if(DESK)return `<div class="dtl"><div class="dcol l">${vsStrip()}${coachHTML()}${inspHTML()}</div><div class="dcol c">${topBar()}${boardHTML()}${synHTML(fielded(),true)}</div><div class="dcol r">${itemsPanel()}</div><div class="dshop">${shopHTML()}</div></div>`;
@@ -3395,7 +3412,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.14',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.15',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
