@@ -2458,7 +2458,7 @@ function step(dt){
 function lossTip(){
   if(fielded().length<boardSize())return 'You had empty board slots. Fill every slot before the fight.';
   if((S.lv|0)>=5&&fielded().length>=5&&S.gold<TUNE.bankTip){const gs=new Set(fielded().map(u=>HERO[u.id].genre));if(gs.size<=2)return `Your board had only ${gs.size===1?'one genre':'two genres'}. At this level, mixing 3 or more pays: more 🔗 crossovers, and trait bonuses stack across genres.`;}
-  if(S.gold>=TUNE.bankTip){const cap=intCap(),top=TUNE.intPer*cap;return `You lost with 🪙${S.gold} unspent. Interest pays at most 🪙${cap} a round${S.gold>top?` and nothing past 🪙${top}`:''}. ⬆️ Train and 🔄 rerolls before a fight make your board stronger.`;}
+  if(S.gold>=TUNE.bankTip){const cap=intCap(),top=TUNE.intPer*cap;return `You lost with 🪙${S.gold} unspent. Interest pays at most 🪙${cap} a round${S.gold>top?` and nothing past 🪙${top}`:''}. ⬆️ Train first (rarer characters), then buy copies for ★★; save rerolls for hunting a copy you need.`;}
   if(S.round>=6&&fielded().filter(u=>HERO[u.id].tier<=2).length>=Math.ceil(fielded().length*.6))return 'Commons and Uncommons stop at ★★ and fall behind late. Rank up and buy Rare or better.';
   const lv1=fielded().filter(u=>u.level===1).length;
   if(lv1>=Math.ceil(fielded().length*.6))return 'Most of your characters are ★. Buy copies: 3 combine into ★★, 80% stronger.';
@@ -2905,10 +2905,10 @@ function coachTip(){try{
   if(!SET.coach||!S||S.over||(S.lv|0)<5||UI.screen!=='plan')return null;
   const ev=curRound();if(!ev)return null;const act=ev.act,off=S.coachOff||{};
   if(S.round>=5&&S.gold>=TUNE.bankTip&&off.gold!==act){const cap=intCap(),top=TUNE.intPer*cap;
-    return {k:'gold',t:`🪙${S.gold} in the bank. At this level, gold on your board beats gold saved: interest pays at most 🪙${cap} a round${S.gold>top?`, and nothing past 🪙${top}`:''}. Buy copies for ★★, ⬆️ Train or 🔄 reroll before you fight.`};}
+    return {k:'gold',t:`🪙${S.gold} in the bank. At this level, gold on your board beats gold saved: interest pays at most 🪙${cap} a round${S.gold>top?`, and nothing past 🪙${top}`:''}. Spend it on ⬆️ Train first (rarer characters), then on copies for ★★. Reroll to hunt a copy you need, not blindly.`};}
   const f=fielded(),gs=[...new Set(f.map(u=>HERO[u.id].genre))];
   if(S.round>=8&&f.length>=5&&f.length>=boardSize()&&gs.length<=2&&off.genre!==act)
-    return {k:'genre',t:`Your fighters come from ${gs.length===1?'one genre':'two genres'} (${gs.map(g=>GENRES[g].name).join(' and ')}). At this level, winning boards usually mix 3 or more: each pair of genres can switch on a 🔗 crossover, and trait bonuses stack across genres.`};
+    return {k:'genre',t:`Your fighters come from ${gs.length===1?'one genre':'two genres'} (${gs.map(g=>GENRES[g].name).join(' and ')}). At this level, winning boards usually mix 3 or more: each pair of genres can switch on a 🔗 crossover, and trait bonuses stack across genres. Don't bench a stronger character just to keep a set.`};
   return null;}catch(e){return null;}}
 function coachHTML(){const c=coachTip();if(!c)return '';
   return `<div class="coach" role="note" data-k="${c.k}"><span class="ci" aria-hidden="true">💡</span><p><b>Tip</b> ${c.t}</p><button class="btn sm ghost" data-a="coach-x" data-v="${c.k}" title="Hide this tip until the next act">Got it</button></div>`;}
@@ -3412,7 +3412,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.15',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.16',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
