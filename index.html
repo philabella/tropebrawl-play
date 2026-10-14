@@ -980,6 +980,9 @@ html.dt .dshop .scard{padding-bottom:7px}
 .sart.lg{width:96px;height:96px;flex:none;border-radius:6px;background:color-mix(in srgb,var(--panel2,#2d2c32) 60%,transparent)}
 .sart.lg img{top:-14px;width:120px;height:120px}
 .sart.lg svg{right:4px;bottom:4px}
+
+/* ranged recoil muzzle flash (v19.13) */
+.unit .muzzle{position:absolute;width:clamp(26px,32%,64px);aspect-ratio:1;border-radius:50%;pointer-events:none;z-index:6;background:radial-gradient(circle,#fff 0 18%,color-mix(in srgb,var(--gc) 55%,#fff) 30%,color-mix(in srgb,var(--gc) 70%,transparent) 48%,transparent 70%);mix-blend-mode:screen}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -2526,9 +2529,19 @@ function projectile(u,t,cls,glyph,size){
 }
 function ballFx(u,t,from,mult){if(!B||B.silent)return;projectile(from||u,t,'ballp',mult?'⚽':(BALLS[u.id]||'⚾'),mult?14+mult*7:18);}
 // ranged recoil: the shooter kicks back away from its target
+// ranged recoil (v19.13): the shooter jerks back away from its target, tilts and squashes, then settles (art only
+// for characters with art; the square stays); a muzzle flash pops on the side facing the target. The kick scales
+// with the tile and keeps a minimum length at 2x / 4x so it reads.
 function recoil(u,t,px){if(!B||B.silent||RM||!u.el||!t||!t.el)return;const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect();const dx=(rb.left+rb.width/2)-(ra.left+ra.width/2),dy=(rb.top+rb.height/2)-(ra.top+ra.height/2),d=Math.hypot(dx,dy)||1;
   const mv=u.el.querySelector('.spr,.crowdspr')||u.el,pre=mv.classList.contains('spr')?'translateX(-50%) ':'';
-  mv.animate([{transform:pre+'translate(0,0) rotate(0deg)'},{transform:pre+`translate(${-dx/d*px}px,${-dy/d*px}px) rotate(${dx>0?-4:4}deg)`,offset:.2},{transform:pre+'translate(0,0) rotate(0deg)'}],{duration:280/B.speed,easing:'ease-out'});}
+  const k=Math.max(px,Math.min(44,ra.height*.2)),ux=-dx/d,uy=-dy/d,tl=dx>0?-7:7,ms=Math.max(200,380/B.speed),f=n=>n.toFixed(1);
+  mv.animate([{transform:pre+'translate(0,0) rotate(0deg) scale(1)'},
+    {transform:pre+`translate(${f(ux*k)}px,${f(uy*k)}px) rotate(${tl}deg) scale(1.05,.94)`,offset:.13},
+    {transform:pre+`translate(${f(ux*k*.55)}px,${f(uy*k*.55)}px) rotate(${f(tl*.45)}deg) scale(1)`,offset:.32},
+    {transform:pre+`translate(${f(-ux*k*.08)}px,${f(-uy*k*.08)}px) rotate(0deg) scale(1)`,offset:.72},
+    {transform:pre+'translate(0,0) rotate(0deg) scale(1)'}],{duration:ms,easing:'ease-out'});
+  const m=document.createElement('i');m.className='muzzle';m.style.left=f(50-ux*46)+'%';m.style.top=f(50-uy*46)+'%';u.el.appendChild(m);
+  m.animate([{transform:'translate(-50%,-50%) scale(.3)',opacity:1},{transform:'translate(-50%,-50%) scale(1.25)',opacity:.95,offset:.35},{transform:'translate(-50%,-50%) scale(1.6)',opacity:0}],{duration:Math.max(150,230/B.speed),easing:'ease-out'}).onfinish=()=>m.remove();}
 function aimLine(u,t){if(!B||B.silent||RM||!u.el||!t.el)return;const f=$('#field');if(!f)return;const fr=f.getBoundingClientRect(),a=u.el.getBoundingClientRect(),b=t.el.getBoundingClientRect();
   const x1=a.left+a.width/2-fr.left,y1=a.top+a.height/2-fr.top,x2=b.left+b.width/2-fr.left,y2=b.top+b.height/2-fr.top;
   const l=document.createElement('i');l.className='aim '+(u.side==='A'?'mine':'theirs');l.style.left=x1+'px';l.style.top=y1+'px';l.style.width=Math.hypot(x2-x1,y2-y1)+'px';l.style.transform=`rotate(${Math.atan2(y2-y1,x2-x1)}rad)`;
@@ -3359,7 +3372,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.12',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.13',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
