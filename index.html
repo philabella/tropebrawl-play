@@ -8573,10 +8573,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.36',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.37',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.37',items:[['🎞️','Smoother toys in the shop, on the board and on the bench: three times the animation frames, timed to your screen.']]},
   {v:'19.36',items:[['🎯','Every ranged character now fires a real 3D shot: artillery shells, stingers, flaming skulls, data packets, dynamite, bones, cash, whiskey bottles, T-shirts and confetti join the bullets, arrows and balls. Shots fly a touch slower so you can see them.']]},
   {v:'19.35',items:[['🐉','3D arena: people are a bit smaller, so the big ones (Bone Dragon, Grave Golem, Hive Mind, bosses) really tower over them.']]},
   {v:'19.34',items:[['📏','3D arena: everyone to scale. Humans are the same height whether they come alone or in a crowd, big creatures like the Bone Dragon are big, and your back row no longer towers over the enemy.']]},
@@ -8862,22 +8863,28 @@ function tbaFrame(obj,elev,cam){const {THREE}=TBA,th=elev*Math.PI/180,v=new THRE
       for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(m.matrixWorld).project(cam);mx=Math.max(mx,Math.abs(v.x));my=Math.max(my,v.y);}});
     const f=Math.max(1,mx/.94,(my+.76)/1.7);if(f<=1.0005)break;Hf*=f;}}
 const tbaYield=()=>new Promise(r=>setTimeout(r,0));
+// v19.37: frames are kept as image blobs (compact) rather than base64 text; falls back to a data URL
+const tbaBlob=c=>new Promise(res=>{try{c.toBlob(b=>res(b?URL.createObjectURL(b):c.toDataURL('image/webp',.85)),'image/webp',.85);}catch(e){res(c.toDataURL('image/webp',.85));}});
 async function tbaRender(key,anim){const p=tbaParse(key),{THREE,lib,R,E}=TBA;if(!p)return [];const scene=tbaScene(),cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);
   const c=(p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);if(!c)return [];
   const root=new THREE.Group(),fig=c.build({variant:p.v});root.add(fig);scene.add(root);root.rotation.y=p.view==='back'?Math.PI:p.view==='foe'?0:-.38;
   tbaFrame(root,p.view==='back'?16:p.view==='foe'?14:8,cam);const camState={l:cam.left,r:cam.right,t:cam.top,b:cam.bottom,pos:cam.position.clone(),q:cam.quaternion.clone()};
-  const e=lib.EMOTES[anim],N=anim==='idle'?10:e.once?9:12,out=[];
+  const e=lib.EMOTES[anim],N=anim==='idle'?32:e.once?18:24,out=[];
   try{for(let i=0;i<N;i++){if(!TBA.on)break;
     Object.assign(cam,{left:camState.l,right:camState.r,top:camState.t,bottom:camState.b});cam.position.copy(camState.pos);cam.quaternion.copy(camState.q);cam.updateProjectionMatrix();cam.updateMatrixWorld();
     const ps=lib.sampleEmote(e,(e.once?i/(N-1):i/N)*e.dur);fig.position.y=lib.poseFigure(fig,ps,1,e.rel);root.rotation.x=-(ps.fall||0);E.render(scene,cam);
-    out.push(R.domElement.toDataURL('image/webp',.85));await tbaYield();}}
+    out.push(await tbaBlob(R.domElement));await tbaYield();}}
   finally{scene.remove(root);root.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose();}});}
   return out;}
 async function tbaPump(){if(TBA.busy||!TBA.want.size)return;TBA.busy=true;
   try{while(TBA.want.size&&TBA.on&&!RM){let best=null;for(const [k,pr] of TBA.want)if(!best||pr>best[1])best=[k,pr];TBA.want.delete(best[0]);
     if(TBA.cache.has(best[0]))continue;const [key,anim]=best[0].split('|');TBA.cache.set(best[0],null);
-    const fr=await tbaRender(key,anim);TBA.cache.set(best[0],fr);}}
+    const fr=await tbaRender(key,anim);TBA.cache.set(best[0],fr);tbaTrim();}}
   catch(e){TBA.on=false;}finally{TBA.busy=false;}}
+const TBA_MAXF=600;
+function tbaTrim(){let n=0;for(const f of TBA.cache.values())n+=f?f.length:0;if(n<=TBA_MAXF)return;const now=performance.now(),U=TBA.used||new Map();
+  const old=[...TBA.cache.keys()].filter(k=>TBA.cache.get(k)&&now-(U.get(k)||0)>2000).sort((a,b)=>(U.get(a)||0)-(U.get(b)||0));
+  for(const k of old){if(n<=TBA_MAXF*.8)break;const f=TBA.cache.get(k);TBA.cache.delete(k);U.delete(k);n-=f.length;f.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u);});}}
 function tbaAsk(k,anim,pr){const id=k+'|'+anim;if(TBA.cache.has(id))return;TBA.want.set(id,Math.max(pr,TBA.want.get(id)||0));}
 function tbaAtkKind(u){if(u.range==='melee')return 'atkMelee';const tr=u.side==='A'&&HERO[u.id]?HERO[u.id].trait:u.twin&&HERO[u.tid]?HERO[u.tid].trait:'';return tr==='mystic'||tr==='medic'?'atkCast':'atkShoot';}
 const TBA_GCOL={army:'#a3b462',bug:'#c49cff',undead:'#8fd18a',ball:'#4fa3f7',heist:'#e9c352',west:'#e0874f'};
@@ -8912,11 +8919,11 @@ function tbaTick(){
     if(fight&&u){const inF=!!u.closest('#field');tbaAsk(k,tbaPick(k,foe?TBA_FOE:TBA_WIN),inF?2.8:1);if(uu&&inF){tbaAsk(k,uu.atkK||tbaAtkKind(uu),3.6);tbaAsk(k,'death',3.2);}}
     tbaAsk(k,'idle',anim==='idle'?3.4:2);if(anim!=='idle')tbaAsk(k,anim,4);
     let fr=TBA.cache.get(k+'|'+anim);if(!fr||!fr.length){anim='idle';fr=TBA.cache.get(k+'|idle');t0=0;sp=1;}
-    if(!fr||!fr.length)return;const em=TBA.lib.EMOTES[anim],dur=em.dur*1000/sp;
+    if(!fr||!fr.length)return;(TBA.used||(TBA.used=new Map())).set(k+'|'+anim,now);const em=TBA.lib.EMOTES[anim],dur=em.dur*1000/sp;
     const i=em.once?Math.min(fr.length-1,Math.floor((now-t0)/dur*(fr.length-1)+.5)):Math.floor((anim==='idle'?(now/dur+img._tbp):(now-t0)/dur)*fr.length)%fr.length,src=fr[(i+fr.length)%fr.length];
     if(img._cur!==src){img._cur=src;img.src=src;}});
   tbaPump();}
-setInterval(tbaTick,70);
+(function tbaLoop(t){if(!(t-tbaLoop.l<30)){tbaLoop.l=t;try{tbaTick();}catch(e){}}requestAnimationFrame(tbaLoop);})(-99);
 // ===== v19.33: 3D battle arena. Fights play out live in a three.js scene: the board is a tabletop seen from behind
 // your team, the toys stand on its squares, slide when they change places, lunge, shoot, fall and celebrate, and shots
 // fly as 3D models. The battle's own squares (HP bars, stars, status icons, damage numbers) stay exactly as they were
