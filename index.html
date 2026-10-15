@@ -1223,6 +1223,26 @@ html.dt .dshop .scard .rctag{font-size:max(.7rem,12px)}
 .proj3d{position:absolute;left:0;top:0;pointer-events:none;z-index:6;max-width:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.45))}
 html.tba3d .unit.dead{animation:die3d 1.25s ease-out both}
 @keyframes die3d{0%{opacity:1;filter:brightness(1.6)}12%{opacity:1;filter:none}62%{opacity:1;filter:none}100%{opacity:.12;filter:grayscale(1)}}
+
+/* v19.29: rarity at a glance (board, bench, your side in battle) */
+.slot:not(.empty)[class*=" tier"]{border-bottom:3px solid var(--tc);background:linear-gradient(to top,color-mix(in srgb,var(--tc) 18%,var(--panel)),var(--panel) 55%)}
+.slot.hasspr::before,.unit.hasspr[class*=" tier"]::before{content:'';position:absolute;left:50%;transform:translateX(-50%);width:74%;height:30px;border-radius:50%;pointer-events:none;z-index:0;
+  background:radial-gradient(closest-side,color-mix(in srgb,var(--tc) 90%,transparent),color-mix(in srgb,var(--tc) 30%,transparent) 62%,transparent)}
+.slot.hasspr::before{bottom:calc(var(--gh,41px) - 20px + var(--t,150px)*.14)}
+.slot.hasspr[data-v^="n"]::before{bottom:calc(var(--gh,22px) - 13.5px + var(--t,150px)*.096);height:20px}
+.unit.hasspr[class*=" tier"]::before{bottom:14%;height:24px;width:66%}
+.slot.hasspr .spr,.slot.hasspr .crowdspr{z-index:1}
+.slot.tier1::before,.unit.tier1::before{opacity:.5}
+.slot.tier2::before,.unit.tier2::before{opacity:.75}
+.slot.tier4::before,.unit.tier4::before,.slot.tier5::before,.unit.tier5::before{animation:rshine 2.2s ease-in-out infinite alternate}
+.slot.tier5::before,.unit.tier5::before{width:84%;height:34px}
+@keyframes rshine{from{opacity:.7;filter:saturate(1)}to{opacity:1;filter:saturate(1.6) brightness(1.25)}}
+html.noanim .slot::before,html.noanim .unit::before{animation:none}
+.unit.hasspr[class*=" tier"]{border-bottom-color:var(--tc)}
+.rgem{position:absolute;top:4px;right:4px;z-index:3;background:var(--tc);color:#14121a;font:800 .58rem/1 var(--f-body);letter-spacing:.07em;text-transform:uppercase;padding:3px 5px;border-radius:2px;border:1px solid rgba(0,0,0,.55);pointer-events:none}
+.rgem i{font-style:normal;display:none}
+@media (min-width:900px){.rgem b{display:none}.rgem i{display:inline}}
+.slot[data-v^="n"] .rgem{font-size:.52rem;padding:2px 4px}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -7655,7 +7675,7 @@ function animAttack(u,t){
 }
 function mountUnit(u){
   const el=document.createElement('div');el._u=u;
-  el.className='unit '+(u.side==='E'?'foe g-foe':'g-'+(u.genre||'foe'))+(u.subIn||u.summon?' enter':'');
+  el.className='unit '+(u.side==='E'?'foe g-foe':'g-'+(u.genre||'foe'))+(u.subIn||u.summon?' enter':'')+(u.side==='A'&&!u.summon&&HERO[u.id]?' tier'+HERO[u.id].tier:'');
   const art=u.side==='A'?(!u.summon&&SPRITES[u.id]?u.id:null):u.twin?(u.tid&&SPRITES[u.tid+'_f']?u.tid+'_f':null):foeSpr(u.key);u.art=art;
   if(art)el.className+=' hasspr'+(u.twin?' evil':'');
   el.innerHTML=`<div class="sts"></div>${art?(u.crowd?crowdSpr(art,bodies(u)):sprImg(art)):pt({e:u.e,genre:u.genre,trait:u.side==='A'?u.trait:null,foe:u.side==='E'})}
@@ -7809,7 +7829,7 @@ function boardHTML(){
     const u=unitAt(slot);const isSel=sel===slot;
     if(!u)return `<button class="slot empty" data-a="slot" data-v="${slot}" aria-label="Empty slot"></button>`;
     const d=HERO[u.id];
-    return `<button class="slot g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}${!RM&&u.uid===UI.pop?' popin':''}${!RM&&u.uid===UI.merged?' merged':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${!RM&&u.uid===UI.merged?`<i class="mfx" aria-hidden="true">${'★'.repeat(u.level)}</i>`:''}${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${buybackOn(u)?'<span class="sbdg fr" title="Buyback Wheel: sells back for what you paid">FULL REFUND</span>':''}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
+    return `<button class="slot g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}${!RM&&u.uid===UI.pop?' popin':''}${!RM&&u.uid===UI.merged?' merged':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${!RM&&u.uid===UI.merged?`<i class="mfx" aria-hidden="true">${'★'.repeat(u.level)}</i>`:''}${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${buybackOn(u)?'<span class="sbdg fr" title="Buyback Wheel: sells back for what you paid">FULL REFUND</span>':''}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span><span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
   };
   const full=fielded().length>=bs;
   return `<section class="board" aria-label="Your board">
@@ -8515,10 +8535,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.28',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.29',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.29',items:[['💎','See rarity at a glance: a coloured glow under each character on your board, bench and in battle, a coloured edge and a rarity tag.']]},
   {v:'19.28',items:[['🎵','Music! Two original tracks: Backstage plays in the shop, Showdown in fights. Turn it off in Settings.']]},
   {v:'19.27',items:[['🔊','New win and lose sounds: a punchy rising hit when you win a fight, a darker sting when you lose.']]},
   {v:'19.26',items:[['⚔️','Attacks have moves: melee fighters wind up and strike, gunners kick back, mystics and medics thrust out a spell.'],
