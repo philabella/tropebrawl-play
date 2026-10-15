@@ -28,9 +28,14 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{background:var(--bg)}
-html:not(.glass){--bg:#1d1630;--bg2:#271e3d;--panel:#130e22;--panel2:#2e2446;--line:#43385e}
-html:not(.glass) #tbg,html:not(.glass).onplan #tbg{background:radial-gradient(ellipse 120% 95% at 50% 40%,transparent 48%,rgba(4,2,10,.62) 100%),radial-gradient(ellipse 48% 55% at 6% -6%,rgba(255,184,96,.30),transparent 64%),radial-gradient(ellipse 46% 52% at 96% -8%,rgba(96,150,255,.30),transparent 64%),radial-gradient(ellipse 85% 40% at 50% 115%,rgba(240,50,90,.34),transparent 72%),radial-gradient(circle,rgba(255,220,255,.075) 1.1px,transparent 1.8px) 0 0/16px 16px,linear-gradient(180deg,#24193f 0%,#1a1330 55%,#22122c 100%)}
-html:not(.glass) .board,html:not(.glass) .field{background:#170f28}html:not(.glass) .board .rowlbl span,html:not(.glass) .board .rowlbl b{background:rgba(19,14,34,.88)}
+html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass){--bg:#151317;--bg2:#1c191f;--panel:#0f0d11;--panel2:#25212a;--line:#3a3440}html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) .board,html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) .field{background:rgba(14,12,16,.88)}html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) #tbg::before,html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) #tbg::after{display:none}
+html.bd-sun:not(.glass) #tbg{background:radial-gradient(circle,rgba(0,0,0,.34) 1.3px,transparent 1.9px) 0 0/9px 9px,radial-gradient(ellipse 85% 75% at 50% 42%,transparent 30%,rgba(8,4,6,.88) 100%),radial-gradient(circle at 50% 42%,rgba(255,196,64,.30),transparent 38%),repeating-conic-gradient(from 0deg at 50% 42%,#a3202c 0 7.5deg,#741520 7.5deg 15deg)}
+html.bd-swirl:not(.glass) #tbg{background:radial-gradient(ellipse 80% 70% at 30% 40%,#6e1420,transparent 70%),radial-gradient(ellipse 70% 60% at 75% 65%,#0b4a50,transparent 70%),#120c12}#tbg canvas.bdsw{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:none}html.bd-swirl:not(.glass) #tbg canvas.bdsw{display:block}
+html.bd-curt:not(.glass) #tbg{background:radial-gradient(circle,#ffe7a0 0 2.2px,rgba(255,200,90,.55) 3px,transparent 6px) 0 26px/34px 34px repeat-x,linear-gradient(180deg,#5c0c14 0,#8e1620 14px,#d9a63b 14px,#f2cf6a 19px,#8a5a17 24px,transparent 24px),radial-gradient(ellipse 34% 70% at 50% 6%,rgba(255,236,190,.20),transparent 70%),linear-gradient(90deg,transparent 0 9.5%,rgba(0,0,0,.6) 11%,transparent 16% 84%,rgba(0,0,0,.6) 89%,transparent 90.5%),repeating-linear-gradient(90deg,#4a0910 0,#9c1a26 22px,#c42a35 34px,#7a111b 52px,#3e070d 64px) left/11% 100% no-repeat,repeating-linear-gradient(90deg,#4a0910 0,#9c1a26 22px,#c42a35 34px,#7a111b 52px,#3e070d 64px) right/11% 100% no-repeat,linear-gradient(180deg,#120d10 0 78%,#2a1a12 78%,#3b2617 100%)}@media (max-width:700px){html.bd-curt:not(.glass) #tbg{background-size:34px 34px,auto,auto,auto,7% 100%,7% 100%,auto}}
+.lsw.bd-sun{background:repeating-conic-gradient(#a3202c 0 30deg,#741520 30deg 60deg);border:2px solid #f3eee4}.lsw.bd-swirl{border-radius:50%;background:conic-gradient(#9e1724,#0b4a50,#120c12,#9e1724);border:2px solid #f3eee4}.lsw.bd-curt{background:linear-gradient(90deg,#9c1a26 0 30%,#120d10 30% 70%,#9c1a26 70%);border:2px solid #f3eee4;box-shadow:inset 0 3px 0 #d9a63b}.lsw.bd-violet{background:#271e3d;border:2px solid #f3eee4}.setrow.bdrow .seg{flex-wrap:wrap}html.glass .setrow.bdrow{opacity:.55}
+html.bd-violet:not(.glass){--bg:#1d1630;--bg2:#271e3d;--panel:#130e22;--panel2:#2e2446;--line:#43385e}
+html.bd-violet:not(.glass) #tbg,html.bd-violet:not(.glass).onplan #tbg{background:radial-gradient(ellipse 120% 95% at 50% 40%,transparent 48%,rgba(4,2,10,.62) 100%),radial-gradient(ellipse 48% 55% at 6% -6%,rgba(255,184,96,.30),transparent 64%),radial-gradient(ellipse 46% 52% at 96% -8%,rgba(96,150,255,.30),transparent 64%),radial-gradient(ellipse 85% 40% at 50% 115%,rgba(240,50,90,.34),transparent 72%),radial-gradient(circle,rgba(255,220,255,.075) 1.1px,transparent 1.8px) 0 0/16px 16px,linear-gradient(180deg,#24193f 0%,#1a1330 55%,#22122c 100%)}
+html.bd-violet:not(.glass) .board,html.bd-violet:not(.glass) .field{background:#170f28}html.bd-violet:not(.glass) .board .rowlbl span,html.bd-violet:not(.glass) .board .rowlbl b{background:rgba(19,14,34,.88)}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.4;-webkit-tap-highlight-color:transparent}
 #app{max-width:760px;margin:0 auto;padding-inline:16px;padding-block:12px 40px}
 h1,h2,h3{font-family:var(--f-display);font-weight:400;margin:0;line-height:1.05;letter-spacing:.01em;text-wrap:balance}
@@ -6170,13 +6175,17 @@ const R=n=>Math.round(n);
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.look==='glass'?'glass':'comic'};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bd:['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'sun',anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.look==='glass'?'glass':'comic'};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=(RM_SYS&&!SET.animOver)||!SET.anim;
 function applyMotion(){RM=(RM_SYS&&!SET.animOver)||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
 applyMotion();
 // v19.19: Settings -> Look (comic is the default; glass = frosted panels on a colourful backdrop)
-function applyLook(){try{document.documentElement.classList.toggle('glass',SET.look==='glass');}catch(e){}}
+function applyLook(){try{const h=document.documentElement;h.classList.toggle('glass',SET.look==='glass');['sun','swirl','curt','violet'].forEach(k=>h.classList.toggle('bd-'+k,SET.bd===k));bdSwirl();}catch(e){}}
+// Swirl backdrop: own shader, low resolution, runs only while the comic-look backdrop is on screen
+const BDS={c:null,g:null,u:null,raf:0,last:0};
+function bdSwirl(){const h=document.documentElement,host=document.getElementById('tbg');if(SET.bd!=='swirl'||h.classList.contains('glass')||!host){if(BDS.raf){cancelAnimationFrame(BDS.raf);BDS.raf=0;}return;}if(!BDS.c){const c=document.createElement('canvas');c.className='bdsw';c.setAttribute('aria-hidden','true');host.prepend(c);BDS.c=c;try{const g=c.getContext('webgl',{antialias:false,alpha:false});if(!g)return;const vs='attribute vec2 p;void main(){gl_Position=vec4(p,0.,1.);}',fs='precision mediump float;uniform vec2 r;uniform float t;void main(){vec2 uv=(gl_FragCoord.xy-.5*r)/r.y;float d=length(uv),a=atan(uv.y,uv.x)+1.6*d-t*.07;vec2 q=vec2(cos(a),sin(a))*d*3.;for(int i=0;i<5;i++){q+=vec2(sin(q.y*1.3+t*.11),cos(q.x*1.1-t*.09))*.55;}float v=.5+.5*sin(q.x+q.y),w=.5+.5*sin(q.x*.6-q.y*.9+1.7);vec3 col=mix(vec3(.06,.04,.06),vec3(.62,.09,.13),smoothstep(.35,.85,v));col=mix(col,vec3(.04,.30,.33),smoothstep(.55,.95,w)*.8);col*=1.-.55*smoothstep(.35,1.1,d);gl_FragColor=vec4(col,1.);}';const sh=(ty,x)=>{const o=g.createShader(ty);g.shaderSource(o,x);g.compileShader(o);return o;},pr=g.createProgram();g.attachShader(pr,sh(g.VERTEX_SHADER,vs));g.attachShader(pr,sh(g.FRAGMENT_SHADER,fs));g.linkProgram(pr);if(!g.getProgramParameter(pr,g.LINK_STATUS))return;g.useProgram(pr);g.bindBuffer(g.ARRAY_BUFFER,g.createBuffer());g.bufferData(g.ARRAY_BUFFER,new Float32Array([-1,-1,3,-1,-1,3]),g.STATIC_DRAW);const l=g.getAttribLocation(pr,'p');g.enableVertexAttribArray(l);g.vertexAttribPointer(l,2,g.FLOAT,false,0,0);BDS.g=g;BDS.u=[g.getUniformLocation(pr,'r'),g.getUniformLocation(pr,'t')];}catch(e){return;}}if(BDS.g&&!BDS.raf)BDS.raf=requestAnimationFrame(bdFrame);}
+function bdFrame(ts){BDS.raf=requestAnimationFrame(bdFrame);const host=document.getElementById('tbg');if(document.hidden||!host||host.hidden||ts-BDS.last<66)return;const still=document.documentElement.classList.contains('noanim');if(still&&BDS.last)return;BDS.last=ts;const c=BDS.c,g=BDS.g,W=Math.max(8,Math.ceil(innerWidth/6)),H=Math.max(8,Math.ceil(innerHeight/6));if(c.width!==W||c.height!==H){c.width=W;c.height=H;g.viewport(0,0,W,H);}g.uniform2f(BDS.u[0],W,H);g.uniform1f(BDS.u[1],still?12:ts/1000);g.drawArrays(g.TRIANGLES,0,3);}
 applyLook();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
@@ -8040,7 +8049,7 @@ SCR.title=()=>{
   </section>`;
 };
 // the start menu's texture (#tbg, outside #app so re-renders don't touch it)
-function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;const pl=!on&&typeof UI!=='undefined'&&UI.screen==='plan';document.documentElement.classList.toggle('ontitle',!!on);document.documentElement.classList.toggle('onplan',pl);el.hidden=!(on||pl);}catch(e){}}
+function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;const pl=!on&&typeof UI!=='undefined'&&UI.screen==='plan';document.documentElement.classList.toggle('ontitle',!!on);document.documentElement.classList.toggle('onplan',pl);el.hidden=!(on||pl);if(!el.hidden)bdSwirl();}catch(e){}}
 // ================= desktop (v19.11): big screens with a mouse, and the Windows app =================
 let DESK=false;
 function dtWant(){try{return !!window.tbApp||matchMedia('(min-width:1200px) and (min-height:700px) and (hover:hover) and (pointer:fine)').matches;}catch(e){return false;}}
@@ -8535,6 +8544,7 @@ function onAction0(a,v,el){
     case 'xlist':sheet(crossListHTML());break;
     case 'enemy':showInfo({kind:'enemy',i:+v});break;
     case 'look':SET.look=v==='glass'?'glass':'comic';setSave();applyLook();sheet(settingsHTML());break;
+    case 'bd':if(['sun','swirl','curt','violet'].includes(v)){SET.bd=v;BDS.last=0;setSave();applyLook();sheet(settingsHTML());}break;
     case 'news':newsSeen();sheet(newsHTML());if(UI.screen==='title')render();break;
     case 'news-x':newsSeen();render();break;
     case 'foeteam':if(v!=null&&v!=='')sheet(foeDetailHTML(+v));else{if(!UI.sheetOpen)tlAct('v');sheet(foeTeamHTML());}break;
@@ -8637,10 +8647,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.45',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.46',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.46',items:[['🎬','Settings → Backdrop: pick Sunburst (new default), a living Swirl, backstage Curtains, or the Violet stage. Panels go back to dark ink.']]},
   {v:'19.45',items:[['🎨','A stage backdrop behind the whole game instead of flat grey: ink-violet panels, spotlights, a red stage glow and comic halftone dots.'],['🏷️','Fixed: a shop card that adds to a genre on your board showed only the count (1→2) and hid the genre name.']]},
   {v:'19.44',items:[['🪑','Your whole bench is shown under the board during fights, like in the shop.'],['🎬','A lit studio floor and backdrop around the battle board.'],['🐛','Fixed: a tunnelled Burrow Lurker dragged by Snatch and Grab could land on top of another character.']]},
   {v:'19.43',items:[['🧬','Swarm now gets its Full Cast bonus like every other genre (6 Swarm: +35% HP and damage). Feeding Frenzy, Pheromone Trail, The Vault, Six-Shooter and Quick Draw are stronger.']]},
@@ -8750,6 +8761,7 @@ function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎭</span><span><b>Look</b><small>Comic is the original style. Glass: frosted panels on a colourful backdrop (new).</small></span><span class="seg" role="radiogroup" aria-label="Look">${[['comic','Comic'],['glass','Glass']].map(([k,t])=>`<button class="btn sm${SET.look===k?' on':''}" data-a="look" data-v="${k}" role="radio" aria-checked="${SET.look===k}"><i class="lsw ${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
+    <div class="setrow lookrow bdrow"><span class="lkic" aria-hidden="true">🎬</span><span><b>Backdrop</b><small>Behind the shop and title (Comic look).</small></span><span class="seg" role="radiogroup" aria-label="Backdrop">${[['sun','Sunburst'],['swirl','Swirl'],['curt','Curtains'],['violet','Violet']].map(([k,t])=>`<button class="btn sm${SET.bd===k?' on':''}" data-a="bd" data-v="${k}" role="radio" aria-checked="${SET.bd===k}"><i class="lsw bd-${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
     ${sw('anim',!RM,'Animations','Moving toys, attacks, projectiles, screen transitions, act banners, shop and merge effects, shakes.'+(RM_SYS?(SET.animOver?' Your device asks for reduced motion; they play anyway because you switched them on.':' Your device asks for reduced motion, so they are off. Switch on to play them anyway.'):''))}
     <p class="muted" style="margin:-4px 0 6px;font-size:.8rem" id="tbastat">${tbaStatus()}</p>
     ${sw('live',SET.live!==false,'Live 3D toys','Toys in the shop, on the board and bench are drawn live, as smooth as in fights. Switch off for pre-drawn animation (lighter on older phones). '+tlStatus())}
