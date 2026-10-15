@@ -6175,7 +6175,7 @@ const R=n=>Math.round(n);
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bd:['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'sun',anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.look==='glass'?'glass':'comic'};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.look==='glass'?'glass':'comic'};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=(RM_SYS&&!SET.animOver)||!SET.anim;
 function applyMotion(){RM=(RM_SYS&&!SET.animOver)||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -8544,7 +8544,7 @@ function onAction0(a,v,el){
     case 'xlist':sheet(crossListHTML());break;
     case 'enemy':showInfo({kind:'enemy',i:+v});break;
     case 'look':SET.look=v==='glass'?'glass':'comic';setSave();applyLook();sheet(settingsHTML());break;
-    case 'bd':if(['sun','swirl','curt','violet'].includes(v)){SET.bd=v;BDS.last=0;setSave();applyLook();sheet(settingsHTML());}break;
+    case 'bd':if(['sun','swirl','curt','violet'].includes(v)){SET.bd=v;SET.bdPick=true;BDS.last=0;setSave();applyLook();sheet(settingsHTML());}break;
     case 'news':newsSeen();sheet(newsHTML());if(UI.screen==='title')render();break;
     case 'news-x':newsSeen();render();break;
     case 'foeteam':if(v!=null&&v!=='')sheet(foeDetailHTML(+v));else{if(!UI.sheetOpen)tlAct('v');sheet(foeTeamHTML());}break;
@@ -8647,10 +8647,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.46',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.47',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.47',items:[['🌀','The living Swirl is now the default backdrop (Settings → Backdrop to change it).']]},
   {v:'19.46',items:[['🎬','Settings → Backdrop: pick Sunburst (new default), a living Swirl, backstage Curtains, or the Violet stage. Panels go back to dark ink.']]},
   {v:'19.45',items:[['🎨','A stage backdrop behind the whole game instead of flat grey: ink-violet panels, spotlights, a red stage glow and comic halftone dots.'],['🏷️','Fixed: a shop card that adds to a genre on your board showed only the count (1→2) and hid the genre name.']]},
   {v:'19.44',items:[['🪑','Your whole bench is shown under the board during fights, like in the shop.'],['🎬','A lit studio floor and backdrop around the battle board.'],['🐛','Fixed: a tunnelled Burrow Lurker dragged by Snatch and Grab could land on top of another character.']]},
