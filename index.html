@@ -1243,6 +1243,9 @@ html.noanim .slot::before,html.noanim .unit::before{animation:none}
 .rgem i{font-style:normal;display:none}
 @media (min-width:900px){.rgem b{display:none}.rgem i{display:inline}}
 .slot[data-v^="n"] .rgem{font-size:.52rem;padding:2px 4px}
+
+/* v19.30: icons in headings are text-sized (the trait details heading drew its icon full-panel) */
+h2 svg.gi,h3 svg.gi,h4 svg.gi{width:1.15em;height:1.15em;vertical-align:-.18em;display:inline-block;flex:none}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -6102,10 +6105,10 @@ const R=n=>Math.round(n);
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,coach:d.coach!==false,look:d.look==='glass'?'glass':'comic'};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,look:d.look==='glass'?'glass':'comic'};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
-let RM=RM_SYS||!SET.anim;
-function applyMotion(){RM=RM_SYS||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
+let RM=(RM_SYS&&!SET.animOver)||!SET.anim;
+function applyMotion(){RM=(RM_SYS&&!SET.animOver)||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
 applyMotion();
 // v19.19: Settings -> Look (comic is the default; glass = frosted panels on a colourful backdrop)
 function applyLook(){try{document.documentElement.classList.toggle('glass',SET.look==='glass');}catch(e){}}
@@ -8414,7 +8417,7 @@ function onAction(a,v,el){
     case 'fs':fsToggle();break;
     case 'coach-x':{const ev=curRound();S.coachOff=Object.assign({},S.coachOff||{},{[v]:ev?ev.act:0});go();break;}
     case 'appquit':if(window.tbApp)window.tbApp.quit();break;
-    case 'set':if(v==='anim'&&!RM_SYS){SET.anim=!SET.anim;applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='fs')fsToggle();if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='music'){SET.music=!SET.music;}if(v==='share')SET.share=!SET.share;if(v==='coach')SET.coach=!SET.coach;setSave();sheet(settingsHTML());if(UI.screen==='title'||v==='coach'&&UI.screen==='plan')render();break;
+    case 'set':if(v==='anim'){if(RM){SET.anim=true;if(RM_SYS)SET.animOver=true;}else{SET.anim=false;SET.animOver=false;}applyMotion();}if(v==='allLv')SET.allLv=!SET.allLv;if(v==='fs')fsToggle();if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='music'){SET.music=!SET.music;}if(v==='share')SET.share=!SET.share;if(v==='coach')SET.coach=!SET.coach;setSave();sheet(settingsHTML());if(UI.screen==='title'||v==='coach'&&UI.screen==='plan')render();break;
     case 'endleg':if(!isWide()||!canHover)sheet(legendDetail(v));break;
     case 'event-done':finishEvent();go();window.scrollTo(0,0);break;
     case 'pend':case 'pend-leg':resolvePending(v||null);break;
@@ -8535,10 +8538,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.29',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.30',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.30',items:[['🛠️','Fixed the giant icon on trait details.'],['🎬','Animations play even if your device asks for reduced motion, once you switch them on in Settings; Settings shows whether the 3D toys are moving.']]},
   {v:'19.29',items:[['💎','See rarity at a glance: a coloured glow under each character on your board, bench and in battle, a coloured edge and a rarity tag.']]},
   {v:'19.28',items:[['🎵','Music! Two original tracks: Backstage plays in the shop, Showdown in fights. Turn it off in Settings.']]},
   {v:'19.27',items:[['🔊','New win and lose sounds: a punchy rising hit when you win a fight, a darker sting when you lose.']]},
@@ -8632,7 +8636,8 @@ function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎭</span><span><b>Look</b><small>Comic is the original style. Glass: frosted panels on a colourful backdrop (new).</small></span><span class="seg" role="radiogroup" aria-label="Look">${[['comic','Comic'],['glass','Glass']].map(([k,t])=>`<button class="btn sm${SET.look===k?' on':''}" data-a="look" data-v="${k}" role="radio" aria-checked="${SET.look===k}"><i class="lsw ${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
-    ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
+    ${sw('anim',!RM,'Animations','Moving toys, attacks, projectiles, screen transitions, act banners, shop and merge effects, shakes.'+(RM_SYS?(SET.animOver?' Your device asks for reduced motion; they play anyway because you switched them on.':' Your device asks for reduced motion, so they are off. Switch on to play them anyway.'):''))}
+    <p class="muted" style="margin:-4px 0 6px;font-size:.8rem" id="tbastat">${tbaStatus()}</p>
     ${sw('music',SET.music,'Music','Original Tropebrawl music: Backstage in the shop, Showdown in fights.')}
     ${sw('sound',SET.sound,'Sound effects','Clicks, coins, hits and fanfares (Kenney, CC0). Quick mute: the speaker button or the M key.')}
     ${sw('coach',SET.coach,'Coaching tips','From Game Level 5: a tip on the shop screen when you hold a lot of gold or field only one or two genres.')}
@@ -8794,14 +8799,16 @@ const TBA_WIN=['cheer','dance','floss','flex','wave'],TBA_FOE=['cheer','taunt','
 function tbaParse(k){if(/_(atk|up)$/.test(k))return null;let m=/^e_([a-z0-9]+)(?:_(\d))?$/.exec(k);if(m)return {foe:1,id:m[1],view:'foe',v:m[2]?+m[2]-1:0};
   m=/^([a-z0-9]+)_f(\d)?$/.exec(k);if(m&&HERO[m[1]])return {id:m[1],view:'front',v:m[2]?+m[2]-1:0};
   m=/^([a-z0-9]+)(?:_(\d))?$/.exec(k);if(m&&HERO[m[1]])return {id:m[1],view:'back',v:m[2]?+m[2]-1:0};return null;}
+function tbaStatus(){if(RM)return '3D toys: still (animations are off).';if(TBA.on)return '3D toys: moving.';if(!TBA.tried)return '3D toys: starting…';return '3D toys: still ('+(TBA.why||'3D could not start')+').';}
 function tbaInit(){if(TBA.tried)return TBA.on;TBA.tried=true;
-  try{if(typeof TB3LIB==='undefined'||typeof TB3D!=='function')return false;const {THREE,OutlineEffect,RoundedBoxGeometry}=TB3LIB;
+  try{if(typeof TB3LIB==='undefined'||typeof TB3D!=='function'){TBA.why='3D code missing';return false;}
+    {const c=document.createElement('canvas');if(!(c.getContext('webgl2')||c.getContext('webgl'))){TBA.why='this browser has no WebGL';return false;}}const {THREE,OutlineEffect,RoundedBoxGeometry}=TB3LIB;
     const lib=TB3D(THREE,RoundedBoxGeometry);lib.setStyle('toy');
     const R=new THREE.WebGLRenderer({antialias:true,alpha:true,preserveDrawingBuffer:true});R.setPixelRatio(1);R.setSize(TBA.SZ,TBA.SZ);R.setClearColor(0,0);
     const E=new OutlineEffect(R,{defaultThickness:.0125,defaultColor:[.02,.02,.03],defaultAlpha:1});
     R.domElement.addEventListener('webglcontextlost',()=>{TBA.on=false;});
     Object.assign(TBA,{on:true,THREE,lib,R,E,rev:new Map(Object.entries(SPRITES).map(([a,b])=>[b,a]))});
-  }catch(e){TBA.on=false;}return TBA.on;}
+  }catch(e){TBA.on=false;TBA.why='3D failed: '+String(e&&e.message||e).slice(0,80);}return TBA.on;}
 // every render gets its own scene and camera (renders overlap in time while frames encode)
 function tbaScene(){const {THREE}=TBA,scene=new THREE.Scene();scene.add(new THREE.HemisphereLight('#cfd6ff','#2a2030',1.25));
   const k=new THREE.DirectionalLight('#fff1dd',2.4);k.position.set(4,9,7);scene.add(k);const rim=new THREE.DirectionalLight('#8fb4ff',1.1);rim.position.set(-6,5,-7);scene.add(rim);return scene;}
@@ -8821,7 +8828,7 @@ async function tbaRender(key,anim){const p=tbaParse(key),{THREE,lib,R,E}=TBA;if(
   try{for(let i=0;i<N;i++){if(!TBA.on)break;
     Object.assign(cam,{left:camState.l,right:camState.r,top:camState.t,bottom:camState.b});cam.position.copy(camState.pos);cam.quaternion.copy(camState.q);cam.updateProjectionMatrix();cam.updateMatrixWorld();
     const ps=lib.sampleEmote(e,(e.once?i/(N-1):i/N)*e.dur);fig.position.y=lib.poseFigure(fig,ps,1,e.rel);root.rotation.x=-(ps.fall||0);E.render(scene,cam);
-    const b=await new Promise(res=>R.domElement.toBlob(res,'image/webp',.85));if(b)out.push(URL.createObjectURL(b));await tbaYield();}}
+    out.push(R.domElement.toDataURL('image/webp',.85));await tbaYield();}}
   finally{scene.remove(root);root.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material){if(o.material.map)o.material.map.dispose();o.material.dispose();}});}
   return out;}
 async function tbaPump(){if(TBA.busy||!TBA.want.size)return;TBA.busy=true;
