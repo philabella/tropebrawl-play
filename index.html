@@ -1039,6 +1039,132 @@ html.dt .dshop .scard .rarl{padding-right:0}
 html.dt .dshop .scard .own{top:9px;right:auto;left:calc(7px + var(--aw) - 3px);transform:translateX(-100%);z-index:3;text-shadow:0 1px 2px #000,0 0 5px #000}
 html.dt .dshop .scard:has(.lv2) .own{top:32px}
 html.dt .dshop .scard:has(.mk) .own{display:none}
+
+/* v19.19: Settings -> Look, What's new, See their team */
+.lookrow{cursor:default;align-items:center}
+.lookrow>span:nth-child(2){flex:1;min-width:0}
+.lookrow .lkic{flex:none;width:40px;text-align:center;font-size:1.25rem}
+.seg{display:inline-flex;gap:4px;flex:none}
+.lsw{display:inline-block;width:12px;height:12px;margin-right:6px;vertical-align:-1px;border-radius:2px}
+.lsw.comic{background:#1e1d21;border:2px solid #f3eee4;box-shadow:2px 2px 0 #000}
+.lsw.glass{border-radius:50%;background:radial-gradient(circle at 30% 30%,#a08bff,#2ab7d0 60%,#ff8c32);border:1px solid rgba(255,255,255,.7)}
+.setver{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;padding:4px 4px 0}
+.news{max-width:620px;margin-top:16px;padding:12px 14px;background:var(--panel);border:2px solid var(--inkline);box-shadow:4px 4px 0 var(--inkline);border-radius:3px}
+.news .nwh{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.news .nwh b{color:var(--gold);font-size:1rem}
+.nwl{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:6px}
+.nwl li{display:flex;gap:8px;align-items:flex-start;font-size:.88rem;line-height:1.4}
+.nwl .emo{flex:none;width:1.5em;text-align:center}
+.nwl b{color:var(--ink)}
+.nwv{font-size:.75rem;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-top:10px}
+.verl{margin-top:12px;color:var(--muted);font-size:.78rem}
+.lnk{background:none;border:0;padding:0;color:var(--gold);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
+.ovbtns{display:flex;flex-direction:row-reverse;gap:8px;flex-wrap:wrap;justify-content:center} /* Continue first: on top when they wrap */
+.ov:has(.ovbtns){max-width:400px}
+.ftc .pt.ftp{width:52px;height:52px;font-size:1.6rem}
+.ftsub{font-size:.82rem;margin:0}
+.ftgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ftrl{grid-column:1/-1;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-top:2px}
+.ftc{position:relative;display:grid;justify-items:center;align-content:start;gap:3px;padding:18px 6px 8px;min-height:128px;background:var(--bg2);border:2px solid var(--inkline);border-radius:3px;color:var(--ink);font:inherit;cursor:pointer;text-align:center}
+.ftc:hover{border-color:var(--muted)}
+.ftc.empty{background:transparent;border:2px dashed var(--line);cursor:default}
+.ftc.top{border-color:var(--red);box-shadow:0 0 0 1px var(--red)}
+.ftc.ko>.pt{filter:grayscale(.8) brightness(.8)}
+.ftc .ftn{font-size:.82rem;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ftc .fts,.ftc .ftd{font-size:.75rem;color:var(--muted);line-height:1.2}
+.ftc .ftd{color:var(--ink);font-weight:700}
+.ftbar{width:100%;height:5px;background:rgba(0,0,0,.4);border-radius:3px;overflow:hidden}
+.ftbar i{display:block;height:100%;background:var(--red)}
+.ftst{position:absolute;top:3px;left:0;right:0;font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.ftc.ko .ftst{color:var(--red)}
+.ftyou{text-align:center;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;border-top:2px dashed var(--line);padding-top:6px}
+.ftline{font-size:.88rem;margin:0}
+
+/* ================= Glass look (Settings -> Look -> Glass; html.glass) =================
+   Frosted, tinted panels (darker behind text, Apple's "Tinted" lesson), a specular top edge, pill buttons, a colourful
+   backdrop (glass takes its colour from what is behind it). Real refraction is left out (Chromium-only, pixelated). */
+html.glass{--dim:#a9adc6;--muted:#d0d3e4;--line:rgba(255,255,255,.14);--tint:rgba(13,15,30,.5);--edge:rgba(255,255,255,.16);--hi:rgba(255,255,255,.3);
+  --wall:radial-gradient(42% 52% at 12% 18%,rgba(124,92,255,.55),transparent 70%),radial-gradient(36% 46% at 88% 12%,rgba(0,190,210,.38),transparent 70%),
+    radial-gradient(48% 52% at 72% 92%,rgba(255,140,50,.34),transparent 70%),radial-gradient(40% 42% at 24% 88%,rgba(255,70,150,.26),transparent 70%),
+    radial-gradient(60% 60% at 50% 45%,rgba(40,60,140,.35),transparent 75%),#0b0d18}
+html.glass body{background:var(--wall) fixed}
+html.glass #tbg,html.glass.onplan #tbg{background:var(--wall)}
+html.glass #tbg::before{opacity:.06}
+html.glass #tbg::after{opacity:.07}
+/* panels: frosted, tinted glass */
+html.glass :is(.top,.vs,.insp,.endcard,.shopwrap,.lvpick,.kpi,.ccard,.steps>div,#sheet .sh,.board,.field,.coach,.evstage,.evcard,.evopt,.ov,.news){
+  border-radius:24px;border:1px solid var(--edge);
+  background:radial-gradient(120% 70% at 18% 0%,rgba(255,255,255,.12),transparent 55%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),var(--tint);
+  -webkit-backdrop-filter:blur(26px) saturate(170%);backdrop-filter:blur(26px) saturate(170%);
+  box-shadow:inset 0 1px 0 var(--hi),inset 0 -1px 0 rgba(255,255,255,.05),0 20px 50px -18px rgba(0,0,0,.65)}
+html.glass #sheet .sh{--tint:rgba(13,15,30,.72)}
+html.glass .overlay{border-radius:24px;background:rgba(8,10,22,.45)}
+html.glass .vs.feat{background:radial-gradient(120% 90% at 85% 50%,color-mix(in srgb,var(--red) 30%,transparent),transparent 65%),radial-gradient(120% 70% at 18% 0%,rgba(255,255,255,.12),transparent 55%),linear-gradient(180deg,rgba(255,255,255,.08),rgba(255,255,255,.02)),var(--tint)}
+html.glass .coach{border-left:1px solid var(--edge);box-shadow:inset 3px 0 0 var(--gold),inset 0 1px 0 var(--hi),0 20px 50px -18px rgba(0,0,0,.65)}
+/* controls: glass pills, sentence case, a gentle press */
+html.glass .btn{border-radius:999px;border:1px solid rgba(255,255,255,.2);text-transform:none;letter-spacing:.01em;font-weight:700;
+  background:linear-gradient(180deg,rgba(255,255,255,.17),rgba(255,255,255,.06));
+  -webkit-backdrop-filter:blur(16px) saturate(170%);backdrop-filter:blur(16px) saturate(170%);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.38),0 8px 20px -10px rgba(0,0,0,.6);transition:transform .12s ease,background .15s,box-shadow .15s}
+html.glass .btn:hover:not(:disabled){background:linear-gradient(180deg,rgba(255,255,255,.24),rgba(255,255,255,.09));border-color:rgba(255,255,255,.3)}
+html.glass .btn:active:not(:disabled){transform:scale(.97);box-shadow:inset 0 1px 0 rgba(255,255,255,.3),0 4px 12px -8px rgba(0,0,0,.6)}
+html.glass .btn.on{background:linear-gradient(180deg,color-mix(in srgb,var(--gold) 45%,transparent),color-mix(in srgb,var(--gold) 18%,transparent));border-color:color-mix(in srgb,var(--gold) 70%,#fff)}
+html.glass .btn.ghost{border-color:rgba(255,255,255,.16);background:rgba(255,255,255,.07)}
+html.glass .btn.primary{color:#1b1306;border-color:rgba(255,240,190,.75);
+  background:radial-gradient(120% 80% at 30% 0%,rgba(255,255,255,.55),transparent 50%),linear-gradient(180deg,#ffe37a,#ffb627);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -2px 6px rgba(160,90,0,.25),0 14px 34px -10px rgba(255,180,40,.65)}
+html.glass .btn.primary:hover:not(:disabled){background:radial-gradient(120% 80% at 30% 0%,rgba(255,255,255,.65),transparent 50%),linear-gradient(180deg,#ffe98f,#ffc23d)}
+html.glass .btn.big{text-transform:uppercase}
+html.glass .lvn{border-radius:12px;border:1px solid var(--edge);background:rgba(255,255,255,.075)}
+html.glass .lvn.on{background:linear-gradient(180deg,#ffe37a,#ffb627);color:#1b1306}
+html.glass .title-word{text-shadow:0 2px 0 rgba(0,0,0,.25),0 0 40px rgba(255,190,60,.45)}
+html.glass .eyebrow{letter-spacing:.14em}
+html.glass .setrow{border-bottom-color:var(--line)}
+html.glass .lnk{color:#ffd45e}
+/* board tiles: lighter glass, genre colour as a glowing top edge */
+html.glass :is(.slot,.unit){border-radius:18px;border:1px solid rgba(255,255,255,.13);background:rgba(255,255,255,.06);
+  box-shadow:inset 0 2px 0 color-mix(in srgb,var(--gc) 90%,#fff),inset 0 1px 12px -6px color-mix(in srgb,var(--gc) 70%,transparent),0 10px 24px -14px rgba(0,0,0,.7)}
+html.glass .slot:not(.empty){border-top:1px solid rgba(255,255,255,.13)}
+html.glass .slot:is(.tier3,.tier4,.tier5){box-shadow:inset 0 2px 0 color-mix(in srgb,var(--tc) 90%,#fff),inset 0 1px 14px -6px color-mix(in srgb,var(--tc) 70%,transparent),0 10px 24px -14px rgba(0,0,0,.7)}
+html.glass .board .slot:not(.empty){background:linear-gradient(to top,rgba(0,0,0,.38) 0 var(--gh,36px),rgba(255,255,255,.14) var(--gh,36px) calc(var(--gh,36px) + 1px),rgba(255,255,255,.05) calc(var(--gh,36px) + 1px))}
+html.glass .slot.empty{background:rgba(255,255,255,.025);border:1px dashed rgba(255,255,255,.18);box-shadow:none}
+html.glass .slot.empty[data-v^="f"]::after,html.glass .board .slot.empty[data-v^="b"]::after{color:rgba(255,255,255,.38)}
+html.glass .slot.sel{box-shadow:0 0 0 2px var(--gold),0 0 22px color-mix(in srgb,var(--gold) 45%,transparent)}
+html.glass .slot:active:not(.empty){transform:scale(.98)}
+html.glass .unit{border-top:1px solid rgba(255,255,255,.13);background:linear-gradient(to top,rgba(0,0,0,.38) 0 26px,rgba(255,255,255,.14) 26px 27px,rgba(255,255,255,.05) 27px)}
+html.glass .unit.foe{box-shadow:inset 0 2px 0 color-mix(in srgb,var(--red) 90%,#fff),inset 0 1px 14px -6px color-mix(in srgb,var(--red) 60%,transparent),0 10px 24px -14px rgba(0,0,0,.7);
+  background:linear-gradient(to top,rgba(0,0,0,.38) 0 26px,rgba(255,255,255,.14) 26px 27px,color-mix(in srgb,var(--red) 10%,rgba(255,255,255,.04)) 27px)}
+html.glass .bslot{border:1px dashed rgba(255,255,255,.08);border-radius:18px}
+html.glass .hpb{border:1px solid rgba(0,0,0,.4);border-radius:999px;overflow:hidden;background:rgba(0,0,0,.35)}
+html.glass :is(.slot,.unit) .pt{border:1px solid rgba(255,255,255,.35);box-shadow:0 0 0 2px color-mix(in srgb,var(--gc) 70%,transparent),0 6px 16px -6px rgba(0,0,0,.6)}
+html.glass .syn{border-radius:999px;border:1px solid var(--edge);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+html.glass .strip i{border-radius:6px}
+html.glass .board .rowlbl span,html.glass .board .rowlbl b{color:var(--muted);background:rgba(13,15,30,.55);border:1px solid rgba(255,255,255,.14);border-radius:999px;padding:2px 10px;
+  -webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:inset 0 1px 0 rgba(255,255,255,.2)}
+/* shop cards: tinted glass with a rarity glow, art in a rounded window, price in a glass pill */
+html.glass .scard{border-radius:22px;border:1px solid rgba(255,255,255,.15);
+  background:radial-gradient(130% 70% at 25% 0%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03)),rgba(13,15,30,.4);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.3),inset 0 2px 0 color-mix(in srgb,var(--tc) 70%,transparent),0 14px 30px -14px rgba(0,0,0,.7)}
+html.glass .shop .scard:not(.sold){border-top:1px solid color-mix(in srgb,var(--tc) 60%,#fff);
+  background:radial-gradient(130% 70% at 25% 0%,color-mix(in srgb,var(--tc) 30%,transparent),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03)),rgba(13,15,30,.4)}
+html.glass .scard.sold{border:1px dashed rgba(255,255,255,.14);background:rgba(255,255,255,.02);box-shadow:none;opacity:.6}
+html.glass .scard:active{transform:scale(.98)}
+html.glass .shop .scard>.sart{border-radius:16px}
+html.glass .dshop .scard .pr{background:rgba(0,0,0,.28);border:1px solid rgba(255,214,90,.45);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+html.glass .info{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.22)}
+html.glass .kh{border-radius:6px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2)}
+html.glass .btn.primary .kh{background:rgba(0,0,0,.08);border-color:rgba(0,0,0,.2)}
+html.glass .scard .gch.up{box-shadow:0 0 0 1px color-mix(in srgb,var(--gc) 85%,#fff),0 0 12px -2px color-mix(in srgb,var(--gc) 70%,transparent)}
+html.glass .scard .gch.tierup{box-shadow:0 0 0 1.5px var(--gold),0 0 14px -2px color-mix(in srgb,var(--gold) 70%,transparent)}
+html.glass .shopwrap.locked .shop{outline-offset:5px;border-radius:24px}
+html.glass .gauge{filter:drop-shadow(0 0 6px rgba(120,160,255,.35))}
+html.glass .oddsrow,html.glass .oddsgo{border-radius:999px}
+html.glass .goldpill{text-shadow:0 0 14px rgba(255,200,60,.5)}
+/* their team, What's new: glass tiles */
+html.glass .ftc{border-radius:16px;border:1px solid rgba(255,255,255,.14);background:rgba(255,255,255,.06);box-shadow:inset 0 1px 0 rgba(255,255,255,.18)}
+html.glass .ftc.empty{border:1px dashed rgba(255,255,255,.16);background:transparent;box-shadow:none}
+html.glass .ftc.top{border-color:color-mix(in srgb,var(--red) 80%,#fff);box-shadow:inset 0 1px 0 rgba(255,255,255,.18),0 0 16px -4px var(--red)}
+html.glass .ftyou{border-top:1px dashed rgba(255,255,255,.2)}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -1075,11 +1201,14 @@ const R=n=>Math.round(n);
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,coach:d.coach!==false};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,coach:d.coach!==false,look:d.look==='glass'?'glass':'comic'};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=RM_SYS||!SET.anim;
 function applyMotion(){RM=RM_SYS||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
 applyMotion();
+// v19.19: Settings -> Look (comic is the default; glass = frosted panels on a colourful backdrop)
+function applyLook(){try{document.documentElement.classList.toggle('glass',SET.look==='glass');}catch(e){}}
+applyLook();
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 
 // ================= data =================
@@ -2685,8 +2814,34 @@ function battleLoop(ts){
   requestAnimationFrame(battleLoop);
 }
 function skipBattle(){if(!B||B.done)return;B.silent=true;B.startDelay=0;let g=0;while(!B.done&&g++<20000)step(DT);B.silent=false;drawBattle();}
+// v19.19: the team you just fought, read from the finished battle (UI only): start position, HP / ATK, damage dealt to
+// your team, still standing or not. Enemy units are built in S.enemy.enc order, then the Evil Twin; summons are left out.
+function foeSnap(res){try{if(!S.enemy||!B||!B.units)return null;const en=S.enemy,eu=B.units.filter(u=>u.side==='E'&&!u.summon);
+  const list=eu.map((u,i)=>{const c=!u.twin&&en.enc[i];return {key:u.key,twin:!!u.twin,e:u.e,name:u.name,row:c?c.row:u.row,col:c?c.col:u.col,
+    hp:u.maxHp,atk:u.crowd?u.bodyAtk:u.atk,crowd:u.crowd?u.maxBodies:0,p:u.p,dmg:u.dmgDone||0,alive:!!u.alive,level:u.level||0};});
+  const extra=B.units.filter(u=>u.side==='E'&&u.summon).reduce((a,u)=>a+(u.dmgDone||0),0);
+  return {title:en.title,round:S.round,win:!!res.win,list,extra};}catch(e){return null;}}
+function foeTeamHTML(){const T=UI.foeTeam;if(!T)return '<p class="muted">No fight to show.</p>';
+  const mx=Math.max(1,...T.list.map(u=>u.dmg)),top=T.list.reduce((a,u)=>u.dmg>(a?a.dmg:0)?u:a,null),used=new Set();
+  const card=k=>{const u=T.list[k];used.add(k);
+    return `<button class="ftc${u.alive?'':' ko'}${u===top?' top':''}" data-a="foeteam" data-v="${k}" aria-label="${esc(u.name)}: ${R(u.dmg)} damage to your team, ${u.alive?'still standing':'knocked out'}">
+      <span class="ftst">${u.alive?'Standing':'💀 KO'}</span>${pt({e:u.e,foe:true},'ftp')}<b class="ftn">${esc(u.name)}${u.level?' '+stars(u.level):''}</b>
+      <small class="fts">❤️ ${R(u.hp)}${u.crowd?' ×'+u.crowd:''} · ⚔️ ${R(u.atk)}${u.crowd?' each':''}</small>
+      <span class="ftbar" aria-hidden="true"><i style="width:${Math.round(100*u.dmg/mx)}%"></i></span>
+      <small class="ftd">💥 ${R(u.dmg)}${u===top?' · most':''}</small></button>`;};
+  const cell=(row,col)=>{const k=T.list.findIndex((u,i)=>!used.has(i)&&u.row===row&&u.col===col);return k<0?'<div class="ftc empty" aria-hidden="true"></div>':card(k);};
+  const back=[0,1,2].map(c=>cell('back',c)).join(''),front=[0,1,2].map(c=>cell('front',c)).join('');
+  const rest=T.list.map((u,k)=>used.has(k)?'':card(k)).join('');
+  return `<div class="eyebrow">Round ${T.round} · ${T.win?'You won':'You lost'}</div><h3 style="color:var(--gold)">🔭 Their team: ${esc(T.title)}</h3>
+    <p class="muted ftsub">Where each one stood when the fight began, and the damage (💥) each did to your team. Tap one for its skill.</p>
+    <div class="ftgrid"><div class="ftrl">Their back row</div>${back}<div class="ftrl">Their front row</div>${front}${rest}</div>
+    <div class="ftyou">▼ your front row</div>${T.extra?`<p class="muted ftsub">Their summoned helpers: 💥 ${R(T.extra)}</p>`:''}`;}
+function foeDetailHTML(k){const T=UI.foeTeam,u=T&&T.list[k];if(!u)return foeTeamHTML();
+  const body=u.twin?`<div class="hs-head">${pt({e:u.e,foe:true},'lg')}<div><div class="eyebrow">Evil twin</div><div class="hs-name">${esc(u.name)} ${stars(u.level||1)}</div></div></div><p class="targ">😈 A copy of your strongest character with extra HP and damage, but no skill.</p>`
+    :enemyDetail(u.key,{hp:u.hp,atk:u.atk,crowd:u.crowd,p:u.p});
+  return body+`<p class="ftline">This fight: 💥 ${R(u.dmg)} damage to your team, ${u.alive?'still standing at the end':'knocked out'}.</p><div class="row"><button class="btn sm" data-a="foeteam">← Their team</button></div>`;}
 function showResult(){
-  const res=settle();UI.lastRes=res;
+  const res=settle();UI.lastRes=res;UI.foeTeam=foeSnap(res);
   if(S.over){clearSave();lvRecord();}else{S.toAdvance=res;save();}
   const f=$('#field');if(!f)return;
   let body;
@@ -2701,8 +2856,8 @@ function showResult(){
       ${finalBoss?'<p class="muted" style="font-size:.85rem">Rehearsal round: +4 gold and 2 free rerolls. The boss returns 10% weaker.</p>':(res.boss&&!S.over?'<p class="muted" style="font-size:.85rem">The show goes on: on to the next act.</p>':'')}`;
   }
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
-  f.insertAdjacentHTML('beforeend',`<div class="overlay"><div class="ov${res.win?'':' lose'}">${body}<button class="btn primary" data-a="after-fight">${btn}</button></div></div>`);
-  const b=f.querySelector('.overlay .btn');if(b)b.focus();
+  f.insertAdjacentHTML('beforeend',`<div class="overlay"><div class="ov${res.win?'':' lose'}">${body}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}</div></div></div>`);
+  const b=f.querySelector('.overlay [data-a="after-fight"]');if(b)b.focus();
 }
 
 // ================= screens =================
@@ -2859,7 +3014,9 @@ SCR.title=()=>{
       ${typeof window!=='undefined'&&window.tbApp?'<button class="btn" data-a="appquit">Quit game</button>':''}
       <button class="btn sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('')}
     </div>
+    ${newsCard()}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}</span>`).join('')}</div>
+    <p class="verl">v${TB_VERSION} · <button class="lnk" data-a="news">What's new</button></p>
   </section>`;
 };
 // the start menu's texture (#tbg, outside #app so re-renders don't touch it)
@@ -2912,6 +3069,7 @@ function dtSell(slot){const u=slot&&unitAt(slot);if(!u||!S||S.over)return;
       if(k===' '){if(!hit('.overlay [data-a="after-fight"]'))hit('[data-a="pause"]');}
       else if(k==='Enter')hit('.overlay [data-a="after-fight"]');
       else if(k==='s')hit('[data-a="skip"]');
+      else if(k==='v')hit('.overlay [data-a="foeteam"]');
       else if(k==='1'||k==='2'||k==='3')hit(`[data-a="speed"][data-v="${[1,2,4][+k-1]}"]`);
     }else if(UI.screen==='codex'&&k==='Escape')hit('[data-a="codex-back"]');
   }catch(err){}});
@@ -3352,6 +3510,10 @@ function onAction(a,v,el){
     case 'combo':showInfo({kind:'combo',id:v});break;
     case 'xlist':sheet(crossListHTML());break;
     case 'enemy':showInfo({kind:'enemy',i:+v});break;
+    case 'look':SET.look=v==='glass'?'glass':'comic';setSave();applyLook();sheet(settingsHTML());break;
+    case 'news':newsSeen();sheet(newsHTML());if(UI.screen==='title')render();break;
+    case 'news-x':newsSeen();render();break;
+    case 'foeteam':if(v!=null&&v!=='')sheet(foeDetailHTML(+v));else{if(!UI.sheetOpen)tlAct('v');sheet(foeTeamHTML());}break;
     case 'sheet-close':closeSheet();break;
   }
 }
@@ -3451,7 +3613,31 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.18',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.19',TL_KEY='tropebrawl-runlog';let TL=null;
+// v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
+// player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
+const WHATS_NEW=[
+  {v:'19.19',items:[['🔭','After every fight, <b>See their team</b> shows who you faced, where each one stood and the damage each did.'],
+    ['🎭','A new look to try: <b>Settings → Look → Glass</b>. Comic stays the default.'],
+    ['📜','The version number is on the start menu and in Settings, with this list.']]},
+  {v:'19.18',items:[['🛒','A shop card lights up when it adds to a genre on your board (Army 2→3, gold when that switches on a bonus).'],
+    ['📣','Bigger shop text, and the buttons say what they do: Reroll, Lock, Train.'],
+    ['🔒','A locked shop shows a gold outline: those cards stay for next round.']]},
+  {v:'19.14',items:[['💡','Coaching tips from Game Level 5 (unspent gold, too few genres). Turn them off in Settings.'],
+    ['🏹','Ranged attackers kick back when they shoot, so you can see who is attacking.'],
+    ['📺','A fullscreen button on the start menu and in Settings.']]}];
+const NEWS_KEY='tropebrawl-news';
+function verN(v){const p=String(v||'0').split('.');return (+p[0]||0)*1000+(+p[1]||0);}
+function newsSeen(){try{localStorage.setItem(NEWS_KEY,TB_VERSION);}catch(e){}}
+function newsFresh(){let seen='';try{seen=localStorage.getItem(NEWS_KEY)||'';}catch(e){return [];}
+  if(verN(seen)>=verN(TB_VERSION))return [];
+  let back=!!seen;if(!back)try{back=[LV_KEY,SET_KEY,TL_KEY,SAVE_KEY].some(k=>localStorage.getItem(k)!=null);}catch(e){}
+  if(!back){newsSeen();return [];} // a first visit: nothing is new
+  return WHATS_NEW.filter(n=>verN(n.v)>verN(seen)).slice(0,2);}
+function newsList(ns,heads){return ns.map((n,i)=>`${heads||i?`<div class="nwv">v${esc(n.v)}</div>`:''}<ul class="nwl">${n.items.map(([e,t])=>`<li><span class="emo" aria-hidden="true">${e}</span><span>${t}</span></li>`).join('')}</ul>`).join('');}
+function newsCard(){const ns=newsFresh();if(!ns.length)return '';
+  return `<section class="news" aria-label="What's new"><div class="nwh"><b>📜 New in v${esc(ns[0].v)}</b><button class="btn sm ghost" data-a="news-x">Got it</button></div>${newsList(ns)}</section>`;}
+function newsHTML(){return `<div class="eyebrow">Tropebrawl v${TB_VERSION}</div><h3 style="color:var(--gold)">📜 What's new</h3>${newsList(WHATS_NEW,true)}`;}
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
@@ -3502,11 +3688,13 @@ if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener(
 function settingsHTML(){
   const sw=(k,on,t,d,dis)=>`<button class="setrow" data-a="set" data-v="${k}" role="switch" aria-checked="${on}" ${dis?'disabled':''}><span class="sw${on?' on':''}"><i></i></span><span><b>${t}</b><small>${d}</small></span></button>`;
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
+    <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎭</span><span><b>Look</b><small>Comic is the original style. Glass: frosted panels on a colourful backdrop (new).</small></span><span class="seg" role="radiogroup" aria-label="Look">${[['comic','Comic'],['glass','Glass']].map(([k,t])=>`<button class="btn sm${SET.look===k?' on':''}" data-a="look" data-v="${k}" role="radio" aria-checked="${SET.look===k}"><i class="lsw ${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
     ${sw('anim',SET.anim&&!RM_SYS,'Animations','Screen transitions, act banners, shop and merge effects, and battle effects (attacks, projectiles, shakes).'+(RM_SYS?' Your device asks for reduced motion, so they stay off.':''),RM_SYS)}
     ${sw('sound',SET.sound,'Sound effects','Clicks, coins, hits and fanfares (Kenney, CC0). Quick mute: the speaker button or the M key.')}
     ${sw('coach',SET.coach,'Coaching tips','From Game Level 5: a tip on the shop screen when you hold a lot of gold or field only one or two genres.')}
     ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from 0 to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
+    <div class="setver"><span>Tropebrawl v${TB_VERSION}</span><button class="btn sm ghost" data-a="news">📜 What's new</button></div>
 `;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
 function feel(){try{
