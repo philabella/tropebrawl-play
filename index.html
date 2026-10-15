@@ -1006,6 +1006,39 @@ html.dt .dcol.l .coach .btn{align-self:flex-end}
   .shop .scard:has(.mk) .own{display:none}
 }
 html.dt .dshop .scard .mka{display:none}
+
+/* shop UX (v19.18) */
+.scard .gch{display:inline-flex;align-items:center;gap:2px;border-radius:999px;line-height:1.2}
+.scard .gch.up{padding:0 4px;background:color-mix(in srgb,var(--gc) 26%,transparent);box-shadow:0 0 0 1.5px color-mix(in srgb,var(--gc) 85%,#fff)}
+.scard .gch.tierup{background:color-mix(in srgb,var(--gold) 22%,transparent);box-shadow:0 0 0 2px var(--gold)}
+.scard .gct{display:none;font:800 .75rem/1 var(--f-body);color:var(--ink);margin-left:3px;white-space:nowrap}
+.scard .gch.tierup .gct{color:var(--gold)}
+.scard.poor .pr{color:var(--red)}
+.blbl{display:none}
+.shopwrap.locked .shop{outline:2px dashed color-mix(in srgb,var(--gold) 75%,transparent);outline-offset:3px;border-radius:3px}
+html.dt .dshop .scard .gct{display:inline}
+html.dt .dshop .scard .gch.up .gnm{color:var(--ink)}
+html.dt .dshop .blbl{display:inline;margin:0 .3em 0 .35em;font-weight:800}
+html.dt .dshop .actions .btn{white-space:nowrap}
+html.dt .dshop .actions .rankbtn{gap:.3em}
+/* shop screen background: the start menu's texture, quieter */
+html.onplan body{background:transparent}
+html.onplan #tbg{background:radial-gradient(ellipse 120% 100% at 50% 40%,transparent 50%,rgba(0,0,0,.5) 100%),var(--bg)}
+html.onplan #tbg::before{opacity:.12}
+html.onplan #tbg::after{opacity:.08}
+.shopwrap{background:linear-gradient(180deg,color-mix(in srgb,var(--panel2) 75%,var(--bg2)) 0,var(--bg2) 45%,color-mix(in srgb,var(--bg2) 80%,#000) 100%)}
+/* Steam Deck legibility: nothing in the desktop shop under 12 px */
+html.dt .dshop .scard .rarl,html.dt .dshop .scard .pleft,html.dt .dshop .scard .x2s,html.dt .dshop .kh,html.dt .dshop .scard .mk,
+html.dt .dshop .scard .lv2,html.dt .dshop .scard .own,html.dt .dshop .oddsrow,html.dt .dshop .oddsrow span,html.dt .dshop .scard .why,
+html.dt .dshop .info,html.dt .top .res small{font-size:max(.75rem,12px)}
+html.dt .dshop .scard .rarl{letter-spacing:.08em}
+html.dt .dshop .scard .lv2,html.dt .dshop .scard .mk{line-height:1.35;padding:0 5px}
+/* owned copies: on the art's top-right corner (the bigger rarity label needs the row); "Makes ★★" already says it */
+html.dt .dshop .scard .rarl{padding-right:0}
+.scard .lv2,.scard .mk{z-index:3} /* above the art (a crowd's heads drew over the chip) */
+html.dt .dshop .scard .own{top:9px;right:auto;left:calc(7px + var(--aw) - 3px);transform:translateX(-100%);z-index:3;text-shadow:0 1px 2px #000,0 0 5px #000}
+html.dt .dshop .scard:has(.lv2) .own{top:32px}
+html.dt .dshop .scard:has(.mk) .own{display:none}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -2762,16 +2795,16 @@ function synHTML(units,withList){
 function shopHTML(){
   const deal=UI.deal&&!RM;UI.deal=0;
   const l1={};S.units.forEach(u=>{if(u.level===1)l1[u.id]=(l1[u.id]||0)+1;});
-  const fieldNow=fielded(),xNow=activeSyn(fieldNow).X;
+  const fieldNow=fielded(),synNow=activeSyn(fieldNow),xNow=synNow.X;
   const cards=S.shop.map((o,i)=>{
     if(!o)return `<div class="scard sold" aria-hidden="true"></div>`;
     const d=HERO[o.id];const c=canBuy(i);const owned=S.units.filter(u=>u.id===o.id);
     const ready=o.level===1&&(l1[o.id]||0)>=2||o.level===2&&owned.length;
     const mk=o.level===1&&(l1[o.id]||0)>=2; // buying it combines three copies into a ★★
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
-    return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
+    return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?'<span class="mk" title="You own two: this third copy combines them into a ★★"><span class="mkl">Makes </span><span class="mka">→</span>★★</span>':''}
-      ${heroArt(o.id)}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${GENRES[d.genre].e}<span class="gnm">${esc(GENRES[d.genre].name)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${heroArt(o.id)}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${AIM[aimRule(o.id)].name}">${AIM[aimRule(o.id)].e}</i>${(()=>{const sy=shopSyn(o,fieldNow,synNow),gn=GENRES[d.genre].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:''}>${GENRES[d.genre].e}<span class="gnm">${esc(gn)}</span>${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span>`;})()}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'👥':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -2782,7 +2815,7 @@ function shopHTML(){
   // the gauge: solid = XP you have, faint = what one Train adds, ticks = one Train each
   const pct=need?Math.min(100,100*xp/need):100,nxt=need?Math.min(100,100*(xp+RANK.trainXp)/need):100;
   const gauge=`<span class="gauge ${nx?'tier'+nxT:'max'}${UI.gaugePop?' pop':''}" style="--p:${pct.toFixed(1)};--q:${nxt.toFixed(1)};--seg:${need?(360*RANK.trainXp/need).toFixed(1):360}deg" aria-hidden="true"><b>⬆️</b></span>`;UI.gaugePop=false;
-  return `<section class="shopwrap" aria-label="Shop">
+  return `<section class="shopwrap${S.locked?' locked':''}" aria-label="Shop${S.locked?' (locked)':''}">
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank}: see every rank, its odds and board slots" title="See every shop rank: odds, board slots and unlocks">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: ${nxNew?`<span class="tier${nxT}" style="color:var(--tc)">${RARITY[nxT-1]}</span>`:`Rank ${nx}`}${RANK.board[nx-1]>boardSize()?' +1 slot':''} · ${xp}/${need} XP</span>`:'<span>Max</span>'}<span class="oddsgo">All ranks ›</span></button>
     <div class="shop${deal?' deal':''}">${cards}</div>
     ${S.units.some(buybackOn)?`<p class="evnote">🎡 ${S.units.filter(buybackOn).length} of your characters sell back at full price (Buyback Wheel).</p>`:''}
@@ -2790,9 +2823,9 @@ function shopHTML(){
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
-      <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Reroll the shop: 🪙${TUNE.reroll}">🔄 ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
-      <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop">${S.locked?'🔒':'🔓'}</button>
-      <button class="btn sm rankbtn" data-a="rank" ${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
+      <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Reroll the shop: 🪙${TUNE.reroll}">🔄<span class="blbl">Reroll</span> ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
+      <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop" title="${S.locked?'Locked: these cards stay for next round. Click to unlock.':'Lock: keep these cards for next round.'}">${S.locked?'🔒':'🔓'}<span class="blbl">${S.locked?'Locked':'Lock'}</span></button>
+      <button class="btn sm rankbtn" data-a="rank" ${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}${rc==null?'':'<span class="blbl">Train</span>'}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
       <span class="grow"></span>
       <button class="btn primary big" data-a="fight" ${fielded().length?'':'disabled'}>Fight!</button>
@@ -2830,7 +2863,7 @@ SCR.title=()=>{
   </section>`;
 };
 // the start menu's texture (#tbg, outside #app so re-renders don't touch it)
-function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;document.documentElement.classList.toggle('ontitle',!!on);el.hidden=!on;}catch(e){}}
+function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;const pl=!on&&typeof UI!=='undefined'&&UI.screen==='plan';document.documentElement.classList.toggle('ontitle',!!on);document.documentElement.classList.toggle('onplan',pl);el.hidden=!(on||pl);}catch(e){}}
 // ================= desktop (v19.11): big screens with a mouse, and the Windows app =================
 let DESK=false;
 function dtWant(){try{return !!window.tbApp||matchMedia('(min-width:1200px) and (min-height:700px) and (hover:hover) and (pointer:fine)').matches;}catch(e){return false;}}
@@ -2916,6 +2949,11 @@ function coachHTML(){const c=coachTip();if(!c)return '';
 // v19.15: soft hyphens in long name words for narrow shop cards (a hyphen only shows when the word must break)
 const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Safe-cracker',Quarterback:'Quarter-back',Starcaller:'Star-caller',Mastermind:'Master-mind',Gunslinger:'Gun-slinger',Chainblade:'Chain-blade',Bonesetter:'Bone-setter',Prospector:'Pros-pector',Cutthroats:'Cut-throats',Shellback:'Shell-back',Priestess:'Priest-ess',Corporate:'Corpo-rate',Dodgeball:'Dodge-ball',Moonwell:'Moon-well',Ironhide:'Iron-hide',Commando:'Com-mando',Skeleton:'Skele-ton',Lookouts:'Look-outs',Sergeant:'Ser-geant',Warchief:'War-chief',Operator:'Oper-ator',Observer:'Ob-server',Scorpion:'Scor-pion',Spitters:'Spit-ters'};
 function shy(t){return String(t).replace(/[A-Za-z]{8,}/g,w=>SHY[w]?SHY[w].replace('-','­'):w);}
+// v19.18: shop synergy preview. A card whose genre is already on the board (count >= 1): the count it brings it to,
+// and whether that switches on the next genre bonus. Same counting as the board (activeSyn), the card added as fielded.
+function shopSyn(o,fieldNow,synNow){try{const g=HERO[o.id].genre,c0=synNow.c.g[g]||0;if(!c0)return null;
+  const after=activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]),c1=after.c.g[g]||0;if(c1<=c0)return null;
+  return {c0,c1,up:(after.G[g]||0)>(synNow.G[g]||0)};}catch(e){return null;}}
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
 SCR.plan=()=>{
   if(DESK)return `<div class="dtl"><div class="dcol l">${vsStrip()}${coachHTML()}${inspHTML()}</div><div class="dcol c">${topBar()}${boardHTML()}${synHTML(fielded(),true)}</div><div class="dcol r">${itemsPanel()}</div><div class="dshop">${shopHTML()}</div></div>`;
@@ -3413,7 +3451,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.17',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.18',TL_KEY='tropebrawl-runlog';let TL=null;
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 const TL_SINK='https://ntfy.sh/tropebrawl-runs-kiwp0utvtch4hz';
