@@ -6209,7 +6209,7 @@ const GENRES_ALL={
   elf:{name:'Elves',e:'🍃',tiers:[2,4],d:['Elves dodge 30% of attacks and regenerate 1.5% HP per second.','Elves dodge 45%, and every hero dodges 15%.']},
   fin:{name:'Finance',e:'💰',tiers:[2,4],d:['+2 gold after every fight. Finance heroes deal +1% damage per gold you hold (max +25%).','+4 gold after every fight, and every hero gets the gold damage bonus.']},
   grim:{name:'Crusaders',e:'✝️',tiers:[2,4],d:['Crusaders can\'t be stunned and gain +5 armor.','Every hero gains +5 armor. Crusaders deal +20% damage below half HP.']},
-  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 5s.','Swarm crowds regrow every 2.5s, and Swarm characters heal 10% when an enemy falls.','Swarm crowds regrow every second.']},
+  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 5s.','Swarm crowds regrow every 2.5s, and Swarm characters heal 10% when an enemy falls.','Swarm crowds regrow every second. Full Cast: Swarm characters get +35% HP and damage.']},
   undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +4 attack (max +60).','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight). Full Cast: Undead characters get +35% HP and damage.']},
   heist:{name:'Heist Crew',e:'💼',tiers:[2,4,6],d:['Heist characters deal +45% damage, plus 1% per 🪙 you hold (max +40%).','Knockouts by Heist characters steal 🪙1 (max 2 a fight), and all your characters get the gold damage bonus.','The Big Score: the gold damage bonus goes up to +80%. Full Cast: Heist characters get +50% HP and damage.']},
   west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +20% crit chance.','Wild West characters get another +20% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 25 energy. Full Cast: Wild West characters get +50% HP and damage.']},
@@ -6389,20 +6389,20 @@ const LEGENDS_ALL={
   brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +40% damage; Swarm crowds start with +3 bodies and keep regrowing past full (up to double).'},
   frenzy:{name:'Blood Frenzy',e:'🔥',genre:'orc',d:'Every enemy that falls makes your Orcs attack 15% faster for the rest of the fight.'},
   shock:{name:'Shock and Awe',e:'🎆',genre:'army',d:'For the first 8s, your artillery fires every 0.5s at its usual power. After that it stops.'},
-  pheromone:{name:'Pheromone Trail',e:'🐜',genre:'bug',d:'Every Swarm hit marks its target for 3s: marked enemies take 40% more damage from everything.'},
+  pheromone:{name:'Pheromone Trail',e:'🐜',genre:'bug',d:'Every Swarm hit marks its target for 3s: marked enemies take 55% more damage from everything.'},
   graveyard:{name:'Graveyard Shift',e:'🌙',genre:'undead',d:'Undead characters deal +11% damage for every character that has fallen this fight, on either side (up to +100%).'},
   insidejob:{name:'Inside Job',e:'🗝️',genre:'heist',d:'The toughest enemy starts every fight at 55% HP, and Heist characters deal 50% more damage to it.'},
-  sixgun:{name:'Six-Shooter',e:'🔫',genre:'west',d:'Every 4th shot by a Wild West character fans the hammer: it also hits every other enemy for 80%.'},
+  sixgun:{name:'Six-Shooter',e:'🔫',genre:'west',d:'Every 3rd shot by a Wild West character fans the hammer: it also hits every other enemy for 100%.'},
   halftime:{name:'Halftime Show',e:'📯',genre:'ball',d:'Once a fight, when your team drops below half its total HP (or at 10s if sooner), everyone heals 40% of their max HP and Sportsball characters attack 50% faster for the rest of the fight.'},
   fieldhosp:{name:'Field Hospital',e:'🏥',genre:'army',d:'Every artillery shell also heals your most wounded character for 40% of the shell\'s damage.'},
-  feeding:{name:'Feeding Frenzy',e:'🦗',genre:'bug',d:'Each enemy that falls makes your Swarm characters attack 12% faster for the rest of the fight (up to 6 times) and regrows 2 bodies on every Swarm crowd.'},
+  feeding:{name:'Feeding Frenzy',e:'🦗',genre:'bug',d:'Your Swarm characters deal +25% damage, and each enemy that falls gives them +10% more damage for the rest of the fight (up to 6 times) and regrows 3 bodies on every Swarm crowd.'},
   bloodline:{name:'Bloodline',e:'🧛',genre:'undead',d:'Undead characters heal for 30% of the damage they deal, and healing past full HP becomes a shield (up to 50% of their max HP).'},
   getaway:{name:'Clean Getaway',e:'🏃',genre:'heist',d:'Once a fight, each Heist character that drops below 35% HP vanishes for 2s and heals 35% of its max HP.'},
   wanted:{name:'Wanted Posters',e:'📜',genre:'west',d:'Every enemy knocked out by a Wild West character pays 🪙1 (up to 🪙3 a fight).'},
   press:{name:'Full-Court Press',e:'🏀',genre:'ball',d:'Sportsball hits and bounces drain 5 energy from enemies, holding back their skills.'},
   armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (3 times per fight).'},
-  vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙8 at 🪙80, and Heist characters\' gold damage bonus goes up to +80% (at 🪙80).'},
-  quickdraw:{name:'Quick Draw',e:'⏱️',genre:'west',d:'High Noon strikes again every 10s: your Wild West characters\' next shot is instant and deals double damage.'},
+  vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙10 at 🪙100, and Heist characters\' gold damage bonus counts your gold double and goes up to +100% (at 🪙50).'},
+  quickdraw:{name:'Quick Draw',e:'⏱️',genre:'west',d:'High Noon strikes again every 7s: your Wild West characters\' next shot is instant and deals double damage.'},
   underdog:{name:'Underdog Story',e:'🥊',genre:null,d:'Your characters get +3% HP and damage for every life you have lost (up to +24%).'},
   ensemble:{name:'Ensemble Cast',e:'🎭',genre:null,d:'Your characters get +6% HP and damage for every different genre on your board.'},
   plotarmor:{name:'Main Character Energy',e:'🌟',genre:null,d:'Each of your characters survives its first knockout each fight with 20% HP and can\'t be targeted for 1s.'},
@@ -6475,7 +6475,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,bankTip:25,fhHeal:.4,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.35,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:.4,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.55,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -6966,8 +6966,8 @@ function startRound(){
   UI.screen=ev.type==='event'?'event':'plan';
 }
 // interest: 🪙1 per TUNE.intPer held when the round ends, up to TUNE.intCap
-// interest cap: 🪙5 (The Vault 8, Director's Cut 2, Haunted Wallet 1), plus the Interest Ledger
-function intCap(){return (legend('wallet')?1:legend('vault')?8:legend('dircut')?4:TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
+// interest cap: 🪙5 (The Vault 10, Director's Cut 4, Haunted Wallet 1), plus the Interest Ledger
+function intCap(){return (legend('wallet')?1:legend('vault')?10:legend('dircut')?4:TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
 function income(){const interest=Math.min(intCap(),Math.floor(Math.max(0,S.gold)/TUNE.intPer)),max=S.rank>=RMAX;
   return {base:5,interest,coin:0,ledger:0,xp:max?0:RANK.freeXp};}
 function intMeter(inc){const cap=intCap(),n=inc.interest,nx=n<cap?TUNE.intPer*(n+1)-S.gold:0;
@@ -7284,7 +7284,7 @@ function applyMods(){
     if(legend('martyr')){u.hp=u.maxHp*.5;u.shield+=u.maxHp*.5;if(u.genre==='grim')u.lowHpBonus=.4;}
     if(G.bug>=2&&u.genre==='bug')u.devour=.10;
     // Heist Crew: gold you hold is damage (Heist only at 2, everyone at 4; cap +30%, +60% at 6)
-    if(G.heist&&(u.genre==='heist'||G.heist>=2))u.goldDmg=(u.goldDmg||0)+TUNE.heistBase+Math.min(legend('vault')&&u.genre==='heist'?Math.max(TUNE.vaultCap,G.heist>=3?2*TUNE.heistCap:TUNE.heistCap):G.heist>=3?2*TUNE.heistCap:TUNE.heistCap,S.gold*.01);
+    if(G.heist&&(u.genre==='heist'||G.heist>=2))u.goldDmg=(u.goldDmg||0)+TUNE.heistBase+Math.min(legend('vault')&&u.genre==='heist'?Math.max(TUNE.vaultCap,G.heist>=3?2*TUNE.heistCap:TUNE.heistCap):G.heist>=3?2*TUNE.heistCap:TUNE.heistCap,S.gold*(legend('vault')&&u.genre==='heist'?.02:.01));
     // Wild West: High Noon (first shot instant, double); at 4 +15% crit and crits ricochet
     if(G.west&&u.genre==='west'){u.timer=Math.min(u.timer,.05);u.nextMult=Math.max(u.nextMult||1,2);u.crit+=TUNE.westCrit1;if(G.west>=2){u.crit+=TUNE.westCrit2;u.ricochet=true;u.critX=TUNE.westCritX;}}
     if((B.syn.X.fixed&&(u.genre==='ball'||u.genre==='heist'))||(B.syn.X.stampede&&u.crowd))u.crit+=.2;
@@ -7309,6 +7309,7 @@ function applyMods(){
     if(X.horde&&u.crowd){u.maxBodies+=2;u.hp+=u.bodyHp*2;u.maxHp+=u.bodyHp*2;}
     if(has('extras')&&u.crowd){const k=tv('extras');u.maxBodies+=k;u.hp+=u.bodyHp*k;u.maxHp+=u.bodyHp*k;}
     if(legend('brood')&&u.genre==='bug')u.dmgMult*=TUNE.broodDmg;
+    if(legend('feeding')&&u.genre==='bug')u.dmgMult*=TUNE.feedStart;
     if(legend('bloodline')&&u.genre==='undead'){u.ls+=TUNE.blLs;u.overShield=TUNE.blCap;}
     if(u.skill==='tunnel'&&u.manaMax)u.mana=u.manaMax; // Burrow Lurker tunnels at once
     if(legend('spinoff')&&HERO[u.id]&&HERO[u.id].tier<=2){const f=TUNE.spinoffMult;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
@@ -7426,7 +7427,7 @@ function kill(t,src){
   }
   if(t.side==='E'){
     if(B.syn.X.ants)sideUnits('A').filter(a=>a.crowd).forEach(a=>regrow(a,1));
-    if(legend('feeding')){const bugs=sideUnits('A').filter(a=>a.genre==='bug');if((B.feed||0)<TUNE.feedMax){B.feed=(B.feed||0)+1;bugs.forEach(a=>a.hastes.push({m:TUNE.feedHaste,t:999}));}bugs.filter(a=>a.crowd).forEach(a=>regrow(a,TUNE.feedRegrow));}
+    if(legend('feeding')){const bugs=sideUnits('A').filter(a=>a.genre==='bug');if((B.feed||0)<TUNE.feedMax){B.feed=(B.feed||0)+1;bugs.forEach(a=>{a.dmgMult*=1+TUNE.feedDmg;});}bugs.filter(a=>a.crowd).forEach(a=>regrow(a,TUNE.feedRegrow));}
     if(legend('wanted')&&src&&src.side==='A'&&src.genre==='west'&&(B.bounty||0)<TUNE.bountyMax){B.bounty=(B.bounty||0)+1;B.goldEarned++;float(src,'+1🪙','heal');}
     B.units.filter(u=>u.side==='A'&&u.alive&&u.devour).forEach(u=>heal(null,u,u.maxHp*u.devour));
     if(legend('frenzy'))B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='orc').forEach(u=>u.frenzy=(u.frenzy||0)+.15);
@@ -7577,7 +7578,7 @@ function act(u){
 function step(dt){
   B.t+=dt;
   if(B.syn.X.cavalry&&!B.cav&&B.t>=10){B.cav=true;sideUnits('A').forEach(a=>a.hastes.push({m:.25,t:999}));}
-  if(legend('quickdraw')&&B.syn.G.west&&B.t>=(B.qd||10)){B.qd=(B.qd||10)+10;sideUnits('A').filter(a=>a.genre==='west').forEach(a=>{a.timer=Math.min(a.timer,.05);a.nextMult=Math.max(a.nextMult||1,2);float(a,'Draw!','sp');});}
+  if(legend('quickdraw')&&B.syn.G.west&&B.t>=(B.qd||7)){B.qd=(B.qd||7)+7;sideUnits('A').filter(a=>a.genre==='west').forEach(a=>{a.timer=Math.min(a.timer,.05);a.nextMult=Math.max(a.nextMult||1,2);float(a,'Draw!','sp');});}
   if(legend('halftime')&&!B.half&&(B.t>=TUNE.halfAt||(()=>{const a=B.units.filter(x=>x.side==='A'&&!x.summon);return a.reduce((n,x)=>n+Math.max(0,x.alive?x.hp:0),0)<.5*a.reduce((n,x)=>n+x.maxHp,0);})())){B.half=true;sideUnits('A').forEach(a=>{heal(null,a,a.maxHp*TUNE.halfHeal,true);if(a.genre==='ball')a.hastes.push({m:TUNE.halfHaste,t:999});float(a,'Halftime!','sp');});}
   if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=legend('shock')?(B.t<TUNE.shockFor?TUNE.shockEvery:1e9):B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1)*TUNE.artDmg*(B.syn.X.armsdeal?1+Math.min(.4,(B.gold||0)*.01):1);const danger=legend('danger');
     const f=danger?B.units.filter(x=>x.side==='E'&&targetable(x)):rowMost({side:'A'});
@@ -8626,10 +8627,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.42',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.43',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.43',items:[['🧬','Swarm now gets its Full Cast bonus like every other genre (6 Swarm: +35% HP and damage). Feeding Frenzy, Pheromone Trail, The Vault, Six-Shooter and Quick Draw are stronger.']]},
   {v:'19.42',items:[['🪑','The battle bench is now shown as bench cards under the board: who steps in (Understudy), who rises and which crowd bodies are waiting.'],['💰','Crossover Cameo fee: 🪙12.']]},
   {v:'19.41',items:[['💸','Events that cost money now bite: Bad Review, Writers\' Strike, Stolen Props, Stunt Insurance, The Cut and the Traveling Merchant cost more each act, and the lives you can pay instead grow in Acts 3 and 4.'],['⚖️','Choices that were never worth taking now are: Writers\' Strike writes out your star (you get its sell value), Craft Services\' favor gives 5 free rerolls, the Cameo fee is 🪙9, Reboot can land on any genre and keeping your cast pays 🪙4, Lucky Coin gives +1/+2/+3, and the Casting Call item is now Background Extras.']]},
   {v:'19.40',items:[['💀','Summoned Risen Skeletons and Hatchlings now climb onto the 3D board as real toys instead of flat tiles.']]},
