@@ -8549,10 +8549,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.34',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.35',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.35',items:[['🐉','3D arena: people are a bit smaller, so the big ones (Bone Dragon, Grave Golem, Hive Mind, bosses) really tower over them.']]},
   {v:'19.34',items:[['📏','3D arena: everyone to scale. Humans are the same height whether they come alone or in a crowd, big creatures like the Bone Dragon are big, and your back row no longer towers over the enemy.']]},
   {v:'19.33',items:[['🎲','Fights now play out live in 3D: a tabletop arena where the toys walk, lunge, shoot, fall and celebrate, with 3D shots flying between them. Settings → 3D battle arena switches back to the flat board.']]},
   {v:'19.32',items:[['🔒','Reloading mid-fight replays the same fight (no more undoing a loss), and every shop action is saved straight away.'],['⭐','Shellback Beetles and Dodgeball Team skills now grow with stars, like everyone else\'s.']]},
@@ -8896,7 +8897,9 @@ setInterval(tbaTick,70);
 // (summons) keep their flat tile. Settings -> 3D battle arena switches back to the flat board; animations off = flat.
 const AR={f:null,cv:null,R:null,E:null,scene:null,cam:null,B:null,toys:[],proj:[],raf:0,W:0,H0:0,top:0,last:0,dt:0,dead:false,q:0,ema:0,nf:0,keep:false};
 // size by what the character is, not just its box: big creatures read bigger, a mascot costume a bit smaller
-const AR_SIZE={bonedragon:1.5,gravegolem:1.3,hivemind:1.3,queen:1.15,lurker:1.1,wraith:1.08,mascot:.9,vampbat:.95,shared:1.1,deus:1.05};
+// people (and anything not listed) stand at AR_BASE, all the same height; big creatures and bosses are sized against
+// them, so a Bone Dragon or a boss towers over a person instead of matching one
+const AR_BASE=.78,AR_BOSS=1.18,AR_SIZE={bonedragon:1.5,gravegolem:1.3,hivemind:1.25,scorpion:1.05,queen:1.08,lurker:.92,wraith:.88,mascot:.72,vampbat:.82,shared:1.25,deus:1.2};
 const AR_X=3.3,AR_Z={Eb:-5.5,Ef:-2.1,Af:2.1,Ab:5.5},AR_TOP=.16;
 function arWorld(k){return {x:(+k[2]-1)*AR_X,z:AR_Z[k[0]+k[1]]};}
 function arKey(u){return Z(u)+u.row[0]+u.col;}
@@ -8944,7 +8947,7 @@ function arToy(u){if(u._ar!==undefined)return u._ar;u._ar=null;const p=u.art&&tb
     const bx=new THREE.Box3().setFromObject(figs[0].h),ht=bx.max.y-bx.min.y,wd=Math.max(bx.max.x-bx.min.x,bx.max.z-bx.min.z);
     // one scale for everyone: the models share a human height (2.3-2.6), so a human in a crowd is as tall as a human on
     // their own. Only creatures get a size of their own (AR_SIZE), and only oversized models shrink to fit their square.
-    const big=AR_SIZE[p.id]||1;body.scale.setScalar(big*Math.min(1,3.6/Math.max(.1,ht*big),3.6/Math.max(.1,wd*big)));
+    const big=AR_SIZE[p.id]||(c.boss?AR_BOSS:AR_BASE);body.scale.setScalar(big*Math.min(1,3.6/Math.max(.1,ht*big),3.6/Math.max(.1,wd*big)));
     const sh=new THREE.Mesh(new THREE.CircleGeometry(1.0,28),new THREE.MeshBasicMaterial({color:'#000',transparent:true,opacity:.34,depthWrite:false}));sh.rotation.x=-Math.PI/2;sh.position.y=.065;sh.userData.outlineParameters={visible:false};root.add(sh);
     if(u.side==='A'&&!u.summon&&HERO[u.id]){const col=getComputedStyle(document.documentElement).getPropertyValue('--r'+HERO[u.id].tier).trim()||'#b4adbf';
       const ring=new THREE.Mesh(new THREE.RingGeometry(.92,1.04,40),new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.8,depthWrite:false}));ring.rotation.x=-Math.PI/2;ring.position.y=.07;ring.userData.outlineParameters={visible:false};root.add(ring);}
