@@ -6311,7 +6311,7 @@ const TRINKETS=[
  ['residuals','Residuals','C','💵','After every fight: +🪙1 for each Rare or rarer character on your board, up to 🪙{v}.',['2','3','4']],
  ['slowburn','Slow Burn','C','🕯️','After 12s of a fight, all your characters deal {v} more damage.',['30%','45%','60%']],
  ['extras','Casting Call','C','📣','Your crowds get {v} more bodies.',['+1','+2','+3']],
- ['understudy','Understudy','R','🎟️','When characters on your board fall, your best bench characters step into their squares, up to {v} per fight.',['1','2','3']],
+ ['understudy','Understudy','R','🎟️','When characters on your board fall, your best bench character of the same or lower rarity steps into their square, up to {v} per fight.',['1','2','3']],
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
 const TRINKET_CAP=5, ITEM_MAX=3;
@@ -6321,36 +6321,36 @@ const LEGENDS_ALL={
   corner:{name:'Corner Office',e:'🏢',genre:'fin',d:'Your highest-level Finance hero also gets +3% damage per gold you hold, with no cap.'},
   mirror:{name:'Mirror Step',e:'🦋',genre:'elf',d:'Elves dodge half as often, but every dodged attack is thrown back at the attacker.'},
   martyr:{name:'Martyr\'s Vow',e:'🩸',genre:'grim',d:'Heroes start fights at half HP with an equal shield. Crusaders deal +40% damage below half HP.'},
-  danger:{name:'Danger Close',e:'💣',genre:'army',d:'Artillery fires every 7s, at a pace nothing can speed up, but hits every enemy for triple damage.'},
+  danger:{name:'Danger Close',e:'💣',genre:'army',d:'Artillery fires every 6s, at a pace nothing can speed up, but hits every enemy for 3.5× damage.'},
   brood:{name:'Endless Brood',e:'🧫',genre:'bug',d:'Swarm characters deal +40% damage; Swarm crowds start with +3 bodies and keep regrowing past full (up to double).'},
   frenzy:{name:'Blood Frenzy',e:'🔥',genre:'orc',d:'Every enemy that falls makes your Orcs attack 15% faster for the rest of the fight.'},
   shock:{name:'Shock and Awe',e:'🎆',genre:'army',d:'For the first 8s, your artillery fires every 0.5s at its usual power. After that it stops.'},
   pheromone:{name:'Pheromone Trail',e:'🐜',genre:'bug',d:'Every Swarm hit marks its target for 3s: marked enemies take 40% more damage from everything.'},
-  graveyard:{name:'Graveyard Shift',e:'🌙',genre:'undead',d:'Undead characters deal +8% damage for every character that has fallen this fight, on either side (up to +80%).'},
+  graveyard:{name:'Graveyard Shift',e:'🌙',genre:'undead',d:'Undead characters deal +11% damage for every character that has fallen this fight, on either side (up to +100%).'},
   insidejob:{name:'Inside Job',e:'🗝️',genre:'heist',d:'The toughest enemy starts every fight at 55% HP, and Heist characters deal 50% more damage to it.'},
   sixgun:{name:'Six-Shooter',e:'🔫',genre:'west',d:'Every 4th shot by a Wild West character fans the hammer: it also hits every other enemy for 80%.'},
   halftime:{name:'Halftime Show',e:'📯',genre:'ball',d:'Once a fight, when your team drops below half its total HP (or at 10s if sooner), everyone heals 40% of their max HP and Sportsball characters attack 50% faster for the rest of the fight.'},
-  fieldhosp:{name:'Field Hospital',e:'🏥',genre:'army',d:'Every artillery shell also heals your most wounded character for the shell\'s full damage.'},
+  fieldhosp:{name:'Field Hospital',e:'🏥',genre:'army',d:'Every artillery shell also heals your most wounded character for 40% of the shell\'s damage.'},
   feeding:{name:'Feeding Frenzy',e:'🦗',genre:'bug',d:'Each enemy that falls makes your Swarm characters attack 12% faster for the rest of the fight (up to 6 times) and regrows 2 bodies on every Swarm crowd.'},
   bloodline:{name:'Bloodline',e:'🧛',genre:'undead',d:'Undead characters heal for 30% of the damage they deal, and healing past full HP becomes a shield (up to 50% of their max HP).'},
   getaway:{name:'Clean Getaway',e:'🏃',genre:'heist',d:'Once a fight, each Heist character that drops below 35% HP vanishes for 2s and heals 35% of its max HP.'},
   wanted:{name:'Wanted Posters',e:'📜',genre:'west',d:'Every enemy knocked out by a Wild West character pays 🪙1 (up to 🪙3 a fight).'},
-  press:{name:'Full-Court Press',e:'🏀',genre:'ball',d:'Sportsball hits and bounces drain 12 energy from enemies, holding back their skills.'},
+  press:{name:'Full-Court Press',e:'🏀',genre:'ball',d:'Sportsball hits and bounces drain 5 energy from enemies, holding back their skills.'},
   armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (3 times per fight).'},
   vault:{name:'The Vault',e:'🏦',genre:'heist',d:'Interest goes up to 🪙8 at 🪙80, and Heist characters\' gold damage bonus goes up to +80% (at 🪙80).'},
   quickdraw:{name:'Quick Draw',e:'⏱️',genre:'west',d:'High Noon strikes again every 10s: your Wild West characters\' next shot is instant and deals double damage.'},
-  underdog:{name:'Underdog Story',e:'🥊',genre:null,d:'Your characters get +5% HP and damage for every life you have lost (up to +50%).'},
+  underdog:{name:'Underdog Story',e:'🥊',genre:null,d:'Your characters get +3% HP and damage for every life you have lost (up to +24%).'},
   ensemble:{name:'Ensemble Cast',e:'🎭',genre:null,d:'Your characters get +6% HP and damage for every different genre on your board.'},
-  plotarmor:{name:'Main Character Energy',e:'🌟',genre:null,d:'Each of your characters survives its first knockout each fight with 25% HP and can\'t be targeted for 1.5s.'},
-  dircut:{name:'Director\'s Cut',e:'🎬',genre:null,d:'Rerolls cost 🪙1 and you get 2 free rerolls every round, but interest is capped at 🪙2.'},
-  spinoff:{name:'Spin-off Deal',e:'📺',genre:null,d:'Your Commons and Uncommons can reach ★★★ (two ★★ combine), count as 2 for their genre at ★★★, and get +45% HP and damage.'},
+  plotarmor:{name:'Main Character Energy',e:'🌟',genre:null,d:'Each of your characters survives its first knockout each fight with 20% HP and can\'t be targeted for 1s.'},
+  dircut:{name:'Director\'s Cut',e:'🎬',genre:null,d:'Rerolls cost 🪙1 and you get 3 free rerolls every round, but interest is capped at 🪙4.'},
+  spinoff:{name:'Spin-off Deal',e:'📺',genre:null,d:'Your Commons and Uncommons can reach ★★★ (two ★★ combine), count as 2 for their genre at ★★★, and get +20% HP and damage.'},
   wallet:{name:'Haunted Wallet',e:'👻',genre:null,d:'All your characters start every fight with full energy, but your interest is capped at 🪙1.'},
   scout:{name:'Talent Scout',e:'🕵️',genre:null,d:'Your shop can offer ready-made ★★ characters of any rarity (1 card in 5), for 2× the price: 3 copies for the price of 2.'},
   crossep:{name:'Crossover Episode',e:'🎬',genre:null,d:'Crossovers switch on with just 1 character from each genre, and each one on gives all your characters +3% damage.'},
   cult:{name:'Cult Classic',e:'📼',genre:null,d:'Your Common and Uncommon characters get +60% HP and damage.'},
-  indie:{name:'Indie Darling',e:'🎞️',genre:null,d:'With 4 or fewer characters on your board, they all get +25% HP and damage for every empty board slot (up to +75%). New characters you buy wait on the bench once 4 are on your board.'},
-  hype:{name:'Hype Train',e:'🚂',genre:null,d:'Your characters get +6% HP and damage for every fight you have won in a row (up to +48%). A loss resets it.'},
-  placement:{name:'Product Placement',e:'🥤',genre:null,d:'After every fight, win or lose: +🪙1 for each different genre on your board beyond 2 (up to +🪙4).'},
+  indie:{name:'Indie Darling',e:'🎞️',genre:null,d:'With 4 or fewer characters on your board, they all get +30% HP and damage for every empty board slot (up to +90%). New characters you buy wait on the bench once 4 are on your board.'},
+  hype:{name:'Hype Train',e:'🚂',genre:null,d:'Your characters get +5% HP and damage for every fight you have won in a row (up to +35%). A loss resets it.'},
+  placement:{name:'Product Placement',e:'🥤',genre:null,d:'After every fight, win or lose: +🪙1 for each different genre on your board (up to +🪙5).'},
   extuniv:{name:'Extended Universe',e:'🌌',genre:null,d:'Up to 3 characters on your bench (leftmost first) also count for genre bonuses and crossovers, not traits. A copy of a board character doesn\'t count again.'},
   blockbuster:{name:'Blockbuster',e:'🍿',genre:null,d:'Your rarest character on the board gets +60% HP and damage.'},
 };
@@ -6411,7 +6411,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,bankTip:25,fhHeal:1,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:12,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.08,graveMax:.8,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.25,indieMax:.75,hypePer:.06,hypeMax:.48,placeMax:4,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.45,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:7,dangerMult:3,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,bankTip:25,fhHeal:.4,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -6581,7 +6581,7 @@ const SK={
    if(w&&Z(u)===u.side){[u.row,w.row]=[w.row,u.row];[u.col,w.col]=[w.col,u.col];float(u,'Hop!','sp');}
    const t=w||wounded(u,1)[0];if(t){heal(u,t,50*u.p);shieldU(u,t,30*u.p);}}},
  tunnel:{name:'Tunnel',d:p=>`Burrows into the enemy back row and fights from there, hitting the weakest back-row enemy for ${R(90*p)}. It starts every fight with full energy. A Swarm hatchling fills the hole it left.`,cast(u){const fs=u.side==='A'?'E':'A';
-   if(Z(u)===u.side){const sl=emptySlots(fs).filter(x=>x[0]==='back');if(sl.length){const or=u.row,oc=u.col;u.zone=fs;u.row='back';u.col=sl[0][1];float(u,'Tunnel!','sp');if(u.side==='A'&&typeof summonHatch==='function')summonHatch(u);if(u.side==='A')fillFromBench(or,oc);}}
+   if(Z(u)===u.side){const sl=emptySlots(fs).filter(x=>x[0]==='back');if(sl.length){const or=u.row,oc=u.col;u.zone=fs;u.row='back';u.col=sl[0][1];float(u,'Tunnel!','sp');if(u.side==='A'&&typeof summonHatch==='function')summonHatch(u);if(u.side==='A'){B.fallen=u;fillFromBench(or,oc);}}}
    const t=backWeakest(u);if(t)spell(u,t,90);}},
  ambush:{name:'Ambush',d:p=>`Hits the weakest back-row enemy for ${R(60*p)}, then vanishes for 1.5s.`,cast(u){const t=backWeakest(u);if(t)spell(u,t,60);u.untarget=1.5;}},
  spawn:{name:'Spawn Brood',d:p=>`All your crowds regrow 2 bodies, and a crowd of ${p>=3?7:p>=1.8?5:3} hatchlings joins your board. With no empty slot, they wait on the battle bench and step in when one opens (bench full: ${R(25*p)} damage to every enemy instead).`,cast(u){allies(u).filter(a=>a.crowd).forEach(a=>regrow(a,2));if(!summonHatch(u))targetFoes(u).forEach(x=>spell(u,x,25,true));}},
@@ -6903,13 +6903,13 @@ function startRound(){
 }
 // interest: 🪙1 per TUNE.intPer held when the round ends, up to TUNE.intCap
 // interest cap: 🪙5 (The Vault 8, Director's Cut 2, Haunted Wallet 1), plus the Interest Ledger
-function intCap(){return (legend('wallet')?1:legend('vault')?8:legend('dircut')?2:TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
+function intCap(){return (legend('wallet')?1:legend('vault')?8:legend('dircut')?4:TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
 function income(){const interest=Math.min(intCap(),Math.floor(Math.max(0,S.gold)/TUNE.intPer)),max=S.rank>=RMAX;
   return {base:5,interest,coin:0,ledger:0,xp:max?0:RANK.freeXp};}
 function intMeter(inc){const cap=intCap(),n=inc.interest,nx=n<cap?TUNE.intPer*(n+1)-S.gold:0;
   return `<span class="intm" title="Interest: 🪙1 per 🪙${TUNE.intPer} you hold when the round ends, up to 🪙${cap} at 🪙${TUNE.intPer*cap}. ${nx>0?`🪙${nx} more for +${n+1}.`:'Maxed.'}" aria-label="Interest +${n} of ${cap}">${Array.from({length:cap},(_,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;}
 function streakGold(n){const t=TUNE.streakGold;return t[Math.min(t.length-1,Math.abs(n|0))];}
-function payIncome(extra){S.rrRound=0;if(legend('dircut'))S.freeRerolls=(S.freeRerolls||0)+2;const inc=income();S.stats.int=(S.stats.int||0)+inc.interest;const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
+function payIncome(extra){S.rrRound=0;if(legend('dircut'))S.freeRerolls=(S.freeRerolls||0)+3;const inc=income();S.stats.int=(S.stats.int||0)+inc.interest;const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
   const r0=S.rank,b0=boardSize();gainXp(inc.xp,true);
   if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}S.locked=false;
   if(S.rank>r0)toast(rankMsg(b0).replace('⬆️','⬆️ Free XP filled the gauge.'));}
@@ -7176,7 +7176,7 @@ function startBattle(silent){if(!silent)tlFight();
      summons:0,threat:{},firstDown:null,ball:null,skel:0,burn:has('slowburn')?1+tv('slowburn')/100:0};
   fielded().forEach(h=>B.units.push(heroUnit(h)));
   // Understudy: the best bench characters wait on the battle bench and step into squares that empty
-  B.under=has('understudy')?benched().slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level).slice(0,tv('understudy')).map(h=>Object.assign(heroUnit(h),{under:true})):null;
+  B.under=has('understudy')?benched().slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level).map(h=>Object.assign(heroUnit(h),{under:true})):null;B.underLeft=has('understudy')?tv('understudy'):0;B.fallen=null;
   S.enemy.enc.forEach(e=>B.units.push(enemyUnit(e)));
   if(S.enemy.boss&&rule('twin')){const tw=twinUnit();if(tw)B.units.push(tw);}
   if(legend('insidejob')){const e=B.units.filter(x=>x.side==='E').sort((a,b)=>b.maxHp-a.maxHp)[0];if(e){e.hp*=TUNE.ijHp;e.insideJob=true;}}
@@ -7199,7 +7199,7 @@ function applyMods(){
   if(legend('corner')){const f=A.filter(u=>u.genre==='fin').sort((a,b)=>b.level-a.level||b.tier-a.tier);corner=f[0]||null;}
   A.concat(B.under||[]).forEach(u=>{
     if(legend('cult')&&u.tier<=2){const k=TUNE.cultMult;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
-    if(legend('underdog')){const k=1+Math.min(.5,.05*Math.max(0,maxLives()-S.lives));u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
+    if(legend('underdog')){const k=1+Math.min(.24,.03*Math.max(0,maxLives()-S.lives));u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(legend('ensemble')){const k=1+.06*new Set(A.map(a=>a.genre).filter(Boolean)).size;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(B.indie){const k=B.indie;u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
     if(legend('hype')){const k=1+Math.min(TUNE.hypeMax,TUNE.hypePer*Math.max(0,S.streak||0));u.maxHp*=k;u.hp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;}
@@ -7345,7 +7345,7 @@ function dealDamage(src,t,amt,type,aoe){
 function kill(t,src){
   if(t.side==='A'&&t.crowd&&B.syn.G.undead>=2&&!t.rose){t.rose=true;t.hp=Math.min(t.maxBodies,3)*t.bodyHp;float(t,'Rises!','heal');return;}
   if(t.side==='A'&&!t.summon&&B.syn.X.ghosttown&&!B.ghost){B.ghost=true;t.revived=true;t.hp=t.maxHp*.4;float(t,'Ghost Town!','heal');return;}
-  if(t.side==='A'&&!t.summon&&legend('plotarmor')&&!t.plotSaved){t.plotSaved=true;B.plot=true;t.hp=t.maxHp*.25;t.untarget=1.5;float(t,'Plot Armor!','heal');return;}
+  if(t.side==='A'&&!t.summon&&legend('plotarmor')&&!t.plotSaved){t.plotSaved=true;B.plot=true;t.hp=t.maxHp*.2;t.untarget=1;float(t,'Plot Armor!','heal');return;}
   if(t.side==='A'&&!t.revived&&B.revive){B.revive=false;t.revived=true;t.hp=t.maxHp*tv('extralife')/100;float(t,'Extra Life!','heal');return;}
   t.hp=0;t.alive=false;t.shield=0;t.taunt=0;
   float(t,'KO','ko');
@@ -7369,6 +7369,7 @@ function kill(t,src){
   }
   // a slot opened. Priority: spawns left behind by the fallen character (Undead 6, above) already took it;
   // otherwise the next summon waiting on your battle bench steps in (first come, first served)
+  B.fallen=t;
   if(Z(t)===t.side&&t.row==='front'&&stepUp(t.side,t.col)){if(t.side==='A')fillFromBench('back',t.col);}
   else if(t.side==='A'&&Z(t)===t.side)fillFromBench(t.row,t.col);
   if(B.ball&&B.ball.holder===t){const nx=nextBallHolder(t);B.ball.holder=nx;if(nx)nx.timer=Math.min(nx.timer,.4);if(B.ball.streak)float(nx||t,'Fumble!','ko');B.ball.streak=0;}
@@ -7397,7 +7398,10 @@ function bodyLost(t,n){if(t.side!=='A')return;B.lost=(B.lost||0)+n;if(!B.syn.G.u
 function spawnCap(u){return Infinity;}
 function spawnsOut(owner){return B.units.filter(x=>x.owner===owner&&x.alive).length+(B.reserve||[]).filter(x=>x.owner===owner).length;}
 function fillFromBench(row,col){if(!B.reserve||!B.reserve.length)return;if(B.units.some(u=>u.alive&&Z(u)==='A'&&u.row===row&&u.col===col))return;
-  const o=B.reserve.shift();if(o.rise){o.rise.row=row;o.rise.col=col;riseUnit(o.rise,o.f);return;}
+  const ft=B.fallen&&B.fallen.side==='A'&&B.fallen.tier?B.fallen.tier:9;let i=0;
+  while(i<B.reserve.length&&B.reserve[i].under&&(!(B.underLeft>0)||(B.reserve[i].tier||1)>ft))i++;if(i>=B.reserve.length)return;
+  const o=B.reserve.splice(i,1)[0];if(o.under){B.underLeft--;if(B.underLeft<=0)B.reserve=B.reserve.filter(x=>!x.under);}
+  if(o.rise){o.rise.row=row;o.rise.col=col;riseUnit(o.rise,o.f);return;}
   o.row=row;o.col=col;const nu=mkUnit(o);nu.subIn=true;B.units.push(nu);}
 function deploy(o,owner,cap){if(owner!=null){if(spawnsOut(owner)>=cap)return false;o.owner=owner;}
   const sl=emptySlots(o.side);
@@ -7561,7 +7565,7 @@ function settle(){
   const {G,X}=B.syn;
   let g=B.goldEarned+(G.fin?(G.fin>=2?4:2):0);
   if(has('residuals'))g+=Math.min(tv('residuals'),new Set(fielded().filter(u=>HERO[u.id].tier>=3).map(u=>u.id)).size);
-  if(legend('placement'))g+=Math.min(TUNE.placeMax,Math.max(0,new Set(fielded().map(u=>HERO[u.id].genre)).size-2));
+  if(legend('placement'))g+=Math.min(TUNE.placeMax,Math.max(0,new Set(fielded().map(u=>HERO[u.id].genre)).size));
   const sk=win?Math.max(0,S.streak||0)+1:Math.min(0,S.streak||0)-1;S.streak=sk;res.streak=sk;res.sgold=streakGold(sk);g+=res.sgold;S.stats.streak=(S.stats.streak||0)+res.sgold;
   if(win){
     S.wins++;S.stats.won++;g+=1+tv('coin');if(X.profit)g+=2;
@@ -8538,10 +8542,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.30',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.31',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.31',items:[['⚖️','Legendary rebalance: Understudy (the step-in can\'t be rarer than who fell), Underdog Story, Spin-off Deal, Field Hospital, Main Character Energy, Hype Train and Full-Court Press toned down; Product Placement, Director\'s Cut, Danger Close, Graveyard Shift and Indie Darling buffed.']]},
   {v:'19.30',items:[['🛠️','Fixed the giant icon on trait details.'],['🎬','Animations play even if your device asks for reduced motion, once you switch them on in Settings; Settings shows whether the 3D toys are moving.']]},
   {v:'19.29',items:[['💎','See rarity at a glance: a coloured glow under each character on your board, bench and in battle, a coloured edge and a rarity tag.']]},
   {v:'19.28',items:[['🎵','Music! Two original tracks: Backstage plays in the shop, Showdown in fights. Turn it off in Settings.']]},
