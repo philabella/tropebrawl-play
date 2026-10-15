@@ -299,6 +299,13 @@ strong.lvon{color:var(--gold);font-weight:800}
 .unit.enter{animation:enter .45s ease-out}
 @keyframes enter{0%{transform:scale(.3);opacity:0}70%{transform:scale(1.1);opacity:1}100%{transform:scale(1)}}
 #bbench{font-size:.8rem;color:var(--muted);text-align:center;margin:4px 0 0}
+.bbq{margin-top:8px}.bbq .board.bqboard .frow.bench.bqrow{margin-top:calc(var(--t,150px)*.36);border-top:0;padding-top:0}
+#field.arena{height:max(360px,calc(100vh - 300px));grid-template-rows:1fr 1fr auto 1fr 1fr}
+#field.arena .bslot{min-height:0}.bbq .slot.bq{cursor:default}
+.bqlbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 2px}
+.bqtag{position:absolute;top:4px;left:50%;transform:translateX(-50%);font:700 .62rem/1 var(--f-body);letter-spacing:.06em;padding:3px 6px;border-radius:999px;white-space:nowrap;z-index:3;background:#151316;border:1px solid var(--line)}
+.bqtag.under{color:var(--gold)}.bqtag.rise{color:#a6ff7a}.bqtag.join{color:#9fd0ff}.slot.bq.more{font:700 1.1rem var(--f-display);color:var(--muted)}
+.bqtag i{font-style:normal}@media (max-width:560px){.bqtag i{display:none}}
 @keyframes atk{40%{filter:brightness(1.45) drop-shadow(0 0 8px var(--gold))}}
 /* hold to view, drag to buy or move */
 .scard,.slot:not(.empty){-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}
@@ -7105,7 +7112,7 @@ const CHOICES={
     {id:'broke',t:'Nothing left to give',d:()=>'The strike ends on its own.',ok:()=>!(S.gold>=EVC.strike()||S.lives>EVC.stLives()||fielded().length>1),run:()=>'With nothing left to take, the writers go back to work.'},
   ],
   cameo:[
-    {id:'fee',t:'Take the fee',d:()=>'+🪙9.',ok:()=>true,run:()=>{S.gold+=9;return '+🪙9.';}},
+    {id:'fee',t:'Take the fee',d:()=>'+🪙12.',ok:()=>true,run:()=>{S.gold+=12;return '+🪙12.';}},
     {id:'cast',t:'Cast the cameo',d:e=>e.sub.data.id?`${HERO[e.sub.data.id].name} (Rare ★★, ${GENRES[HERO[e.sub.data.id].genre].name}) joins for free.`:'Nobody is available.',
      ok:e=>!!e.sub.data.id&&!!freeSlotFor(e.sub.data.id),
      run:e=>{const id=e.sub.data.id;S.units.push({uid:S.uid++,id,level:2,slot:freeSlotFor(id),cost:0});poolTake(id,3);checkMerges();return `${HERO[id].name} joins the cast at ★★.`;}},
@@ -7785,9 +7792,19 @@ function drawBattle(){
     if(u._st!==st){u.$st.textContent=st;u._st=st;}
   }
   const ck=$('#clock');if(ck){ck.textContent=B.t.toFixed(1)+'s'+(B.t>30?' · OVERTIME':'');ck.classList.toggle('ot',B.t>30);}
-  {const bn=$('#bbench');if(bn){const n=(B.reserve||[]).length;bn.hidden=!n;bn.textContent='🪑 Bench: '+B.reserve.map(c=>c.rise?'⬆️'+c.e:c.under?'🎟️'+c.e:c.e+'×'+c.maxBodies).join('  ');}}
+  {const bn=$('#bbench');if(bn)bn.hidden=true;bbqDraw();}
   const sk=$('#streak');if(sk&&B.ball){sk.hidden=false;sk.textContent='⚽ ×'+Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak).toFixed(1);}
 }
+// v19.42: battle bench cards (redrawn only when the queue changes)
+function bbqArt(c){const u=c.rise||c;let k=null;if(u.side==='E')k=u.twin?(u.tid&&SPRITES[u.tid+'_f']?u.tid+'_f':null):foeSpr(u.key);else if(!u.summon&&SPRITES[u.id])k=u.id;
+  return k?(u.crowd?crowdSpr(k,Math.min(3,c.rise?1:c.maxBodies||1)):sprImg(k)):`<span class="pt" aria-hidden="true">${c.e||u.e||'❔'}</span>`;}
+function bbqCard(c,i){const u=c.rise||c,d=!u.summon&&u.side!=='E'&&HERO[u.id],tier=d?d.tier:0,g=u.side==='E'?'foe':(u.genre||'foe');
+  const tag=c.under?'<span class="bqtag under" title="Steps in when a character falls">🎟️<i> STEPS IN</i></span>':c.rise?'<span class="bqtag rise" title="Rises when a character falls">⬆️<i> RISES</i></span>':`<span class="bqtag join" title="Bodies waiting to join the crowd">+${c.maxBodies}<i> JOIN</i></span>`;
+  return `<div data-v="n${i}" class="slot bq g-${g}${tier?' tier'+tier:''}${u.side==='E'?' foe':''} hasspr" title="${esc(u.name||'')}">${tag}${bbqArt(c)}${tier?`<span class="rgem" title="${RARITY[tier-1]}"><b>${RARITY[tier-1][0]}</b><i>${RARITY[tier-1]}</i></span>`:''}<span class="nm">${esc(u.name||'')}</span><span class="row" style="gap:4px;justify-content:center">${u.level?stars(u.level):''}</span></div>`;}
+function bbqDraw(){const el=$('#bbq');if(!el||!B)return;const q=B.reserve||[];
+  const sig=q.map(c=>c.rise?'r'+(c.rise.uid||c.rise.name):c.under?'u'+c.id+c.level:'c'+(c.id||c.key)+c.maxBodies).join('|')+'#'+(B.underLeft||0);if(el._sig===sig)return;el._sig=sig;el.hidden=!q.length;if(!q.length){el.innerHTML='';return;}
+  const nu=q.filter(c=>c.under).length;
+  el.innerHTML=`<section class="board bqboard"><div class="rowlbl bqlbl">Battle bench${nu?` · Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left`:''}</div><div class="frow bench bqrow">${q.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}${q.length>5?`<div class="slot bq more">+${q.length-5}</div>`:''}</div></section>`;}
 function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
   B.units.filter(u=>u.alive&&u.el&&u.side===(win?'A':'E')).forEach((u,i)=>{u.el.style.setProperty('--cd',(i*70)+'ms');u.el.classList.add('cheer');});return true;}catch(e){return false;}}
 function battleLoop(ts){
@@ -8121,6 +8138,7 @@ SCR.battle=()=>{
       ${[1,2,4].map(s=>`<button class="btn sm${UI.speed===s?' on':''}" data-a="speed" data-v="${s}">${s}×</button>`).join('')}
       <button class="btn sm" data-a="skip" aria-label="Skip to the result">⏭</button></div></div></div>
     <div class="field" id="field">${row('E','back')}${row('E','front')}<div class="clashline"></div>${row('A','front')}${row('A','back')}</div>
+    <div class="bbq" id="bbq" hidden></div>
     <div style="margin-top:10px">${synHTML(fielded())}</div>
   </section>`;
 };
@@ -8608,10 +8626,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.41',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.42',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.42',items:[['🪑','The battle bench is now shown as bench cards under the board: who steps in (Understudy), who rises and which crowd bodies are waiting.'],['💰','Crossover Cameo fee: 🪙12.']]},
   {v:'19.41',items:[['💸','Events that cost money now bite: Bad Review, Writers\' Strike, Stolen Props, Stunt Insurance, The Cut and the Traveling Merchant cost more each act, and the lives you can pay instead grow in Acts 3 and 4.'],['⚖️','Choices that were never worth taking now are: Writers\' Strike writes out your star (you get its sell value), Craft Services\' favor gives 5 free rerolls, the Cameo fee is 🪙9, Reboot can land on any genre and keeping your cast pays 🪙4, Lucky Coin gives +1/+2/+3, and the Casting Call item is now Background Extras.']]},
   {v:'19.40',items:[['💀','Summoned Risen Skeletons and Hatchlings now climb onto the 3D board as real toys instead of flat tiles.']]},
   {v:'19.39',items:[['🎬','Fights now happen on a film set: plank floor, taped marks, a velvet curtain, studio lamps and a clapperboard.']]},
