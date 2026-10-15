@@ -6097,7 +6097,9 @@ function feParse(root){if(!root)return;if(root.nodeType===3){feNode(root);return
 // ================= utilities =================
 const $=s=>document.querySelector(s);
 let rngState=0, seeded=false;
-function rand(){ if(!seeded) return Math.random(); rngState|=0; rngState=rngState+0x6D2B79F5|0; let t=Math.imul(rngState^rngState>>>15,1|rngState); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
+// v19.32: a live fight draws from its own stream (FR), seeded and saved when the fight starts, so a reload replays it
+let FR=null;
+function rand(){ if(!seeded&&FR===null) return Math.random(); let st=(seeded?rngState:FR)|0; st=st+0x6D2B79F5|0; if(seeded)rngState=st;else FR=st; let t=Math.imul(st^st>>>15,1|st); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
 const rnd=(a,b)=>a+rand()*(b-a);
 const pick=a=>a[Math.floor(rand()*a.length)];
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -6589,7 +6591,7 @@ const SK={
  infect:{name:'Infect',d:p=>`Each zombie bites its target for 5. A knockout regrows a zombie (${bodiesFromP(p)} zombies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;spellFlat(u,t,5*bodies(u)*u.tierM);if(!t.alive)regrow(u,1);}},
  siphon:{name:'Soul Siphon',d:p=>`Hits the weakest back-row enemy for ${R(55*p)} and heals itself for half.`,cast(u){const t=backWeakest(u);if(t){const d=spell(u,t,55);heal(null,u,d*.5);}}},
  darkpact:{name:'Dark Pact',d:p=>`Each of your crowds gives up to 2 bodies; every body given becomes a bolt that hits a random enemy for ${R(22*p)}. If no crowd can spare a body, it raises 5 skeletons instead (with no empty slot they wait on the battle bench; bench full: 3 bolts).`,cast(u){let n=0;allies(u).filter(a=>a.crowd&&a!==u&&bodies(a)>=2).forEach(a=>{const k=Math.min(2,bodies(a)-1);a.hp-=k*a.bodyHp;n+=k;float(a,'−'+k,'miss');bodyLost(a,k);});if(!n){if(summonSkeletons(u.side,5,u.p,'u'+u.uid,spawnCap(u)))return;n=3;}for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spell(u,t,22);}}},
- catchit:{name:'Catch!',d:()=>`Taunts for 3s and catches the next 2 attacks aimed at it (no damage); each catch brings one fallen player back.`,cast(u){u.taunt=3;u.catches=2;}},
+ catchit:{name:'Catch!',d:p=>`Taunts for 3s and catches the next ${(bodiesFromP(p)+1)/2} attacks aimed at it (no damage); each catch brings one fallen player back.`,cast(u){u.taunt=3;u.catches=Math.min(3,u.level||1)+1;}},
  strikes:{name:'Three Strikes',d:p=>`Three fastballs at its target for ${R(15*p)} each; the third stuns for 1s.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;for(let i=0;i<3&&t.alive;i++){spell(u,t,15);ballFx(u,t);}if(t.alive)stunU(t,1);}},
  waterbreak:{name:'Water Break',d:p=>`Heals your 3 most wounded characters for ${R(40*p)}, ${R(20*p)} and ${R(20*p)}.`,cast(u){wounded(u,3).forEach((a,i)=>heal(u,a,(i?20:40)*u.p));}},
  hailmary:{name:'Hail Mary',d:p=>`Throws at the weakest back-row enemy for ${R(50*p)} damage, +15% for each other Sportsball character on your team. If the throw knocks it out, it throws again (up to 3 throws).`,cast(u){const n=allies(u).filter(a=>a!==u&&a.genre==='ball').length;for(let i=0;i<3;i++){const t=backWeakest(u);if(!t)return;ballFx(u,t);spell(u,t,50*(1+.15*n));if(t.alive)return;}}},
@@ -6598,7 +6600,7 @@ const SK={
  moreshells:{name:'More Shells!',d:p=>`Hits its target for ${R(40*p)}. Your artillery deals +${R(6*p)} for the rest of the fight.`,cast(u){const t=pickTarget(u)||randFoe(u);if(t)spell(u,t,40);B.artBonus=(B.artBonus||0)+6*u.p;}},
  onmypos:{name:'Fire on My Position',d:p=>`Taunts all enemies for 3s and shields itself for ${R(40*p)}. Artillery fires twice as fast meanwhile.`,cast(u){u.taunt=3;u.observer=true;shieldU(u,u,40*u.p);}},
  openfire:{name:'Open Fire!',d:p=>`All your characters attack ${R(20*p)}% faster for 5s, and artillery fires now.`,cast(u){allies(u).forEach(a=>a.hastes.push({m:.2*u.p,t:5}));if(B.artEvery)B.art=0;}},
- swell:{name:'Swell the Ranks',d:()=>`Adds 2 bodies to itself, even past full (up to 4 extra).`,cast(u){const g=Math.max(0,Math.min(2,4-(u.grown||0)));if(g){u.grown=(u.grown||0)+g;u.maxBodies+=g;u.maxHp+=g*u.bodyHp;if(u.capBodies)u.capBodies+=g;}regrow(u,2);}},
+ swell:{name:'Swell the Ranks',d:p=>{const k=(bodiesFromP(p)+1)/2;return `Adds ${k} bodies to itself, even past full (up to ${2*k} extra).`;},cast(u){const k=Math.min(3,u.level||1)+1,g=Math.max(0,Math.min(k,2*k-(u.grown||0)));if(g){u.grown=(u.grown||0)+g;u.maxBodies+=g;u.maxHp+=g*u.bodyHp;if(u.capBodies)u.capBodies+=g;}regrow(u,k);}},
  wastenot:{name:'Waste Not',d:p=>`Heals your most wounded character and the characters beside it for ${R(40*p)}, plus ${R(p)} more for every body your crowds have lost this fight (up to +${R(30*p)}).`,cast(u){const a=wounded(u,1)[0];if(!a)return;const amt=(40+Math.min(30,B.lost||0))*u.p;[a,...B.units.filter(x=>x!==a&&x.side===a.side&&x.alive&&x.row===a.row&&Math.abs(x.col-a.col)===1)].forEach(x=>heal(u,x,amt));}},
  numbers:{name:'Strength in Numbers',d:p=>`Stings its target for ${R(30*p)}, +${R(2*p)} per body in your crowds (max 20 bodies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;const n=allies(u).reduce((s,a)=>s+(a.crowd?bodies(a):0),0);spell(u,t,30+2*Math.min(20,n));}},
  asone:{name:'Strike as One',d:p=>`Right now, each of your crowds attacks ${Math.min(8,R(p))} extra time${Math.min(8,R(p))===1?'':'s'} and your other characters attack ${Math.max(1,R(p/2))===1?'once':Math.max(1,R(p/2))+' times'}.`,cast(u){const k=Math.min(8,R(u.p));allies(u).forEach(a=>{if(a===u||a.stun>0||blocked(a)||(B.ball&&a.genre==='ball'))return;const n=a.crowd?k:Math.max(1,R(u.p/2));for(let i=0;i<n&&a.alive;i++){const t=pickTarget(a);if(!t)break;attack(a,t);}});}},
@@ -7169,7 +7171,8 @@ function twinUnit(){
   return mkUnit(Object.assign(base,{maxHp:mhp,hp:mhp,atk:b.atk*t*LV[h.level-1]}));
 }
 function foeInfo(k){return EN[k]||(k==='twin'?{e:'😈',name:'Evil Twin'}:{e:'❓',name:k});}
-function startBattle(silent){if(!silent)tlFight();
+function startBattle(silent,seed){if(!silent)tlFight();
+  if(!silent&&!seeded&&S){if(!S.inFight)S.inFight={seed:seed!=null?seed:(Math.random()*2147483647)|0};FR=S.inFight.seed;save();}
   const syn=activeSyn(fielded());
   B={t:0,acc:0,last:null,speed:UI.speed,paused:false,units:[],done:false,win:null,silent:!!silent,startDelay:silent?0:.6,
      syn,reserve:[],frontDR:{A:0,E:0},art:0,tesla:tv('tesla')||4,takeovers:0,sponsor:0,goldEarned:0,gold:S.gold,revive:has('extralife'),ended:false,round:S.round,
@@ -7618,7 +7621,7 @@ function foePt(k,cls,tid){const src=tid?(SPRITES[tid+'_f']||SPRITES[tid]):(foeSp
 function stars(n){return `<span class="stars">${'★'.repeat(n)}</span>`;}
 function float(u,txt,cls){
   if(!B||B.silent||!u.el||(RM&&cls!=='sp'&&cls!=='ko'))return;
-  const s=document.createElement('span');s.className='flt '+cls;s.textContent=txt;s.style.left=(30+rand()*40)+'%';
+  const s=document.createElement('span');s.className='flt '+cls;s.textContent=txt;s.style.left=(30+Math.random()*40)+'%';
   u.el.appendChild(s);setTimeout(()=>s.remove(),900);
 }
 let shakeT=0;
@@ -7740,6 +7743,8 @@ function battleLoop(ts){
   if(B.done){if(!B.ended){B.ended=true;sfx(B.win?'win':'lose');musDuck();const fx=battleEndFx();const live=TBA.on&&!RM&&!B.silent;if(live){const t=performance.now();TBA.end={win:!!B.win,t0:t,until:t+3200};}setTimeout(showResult,fx?(live?1600:950):500);}return;}
   requestAnimationFrame(battleLoop);
 }
+// a fight that was under way when the page reloaded: the same fight again (same board, same seed)
+function resumeFight(){if(!S||!S.inFight||!fielded().length){if(S)delete S.inFight;go();return;}UI.screen='battle';UI.sel=null;render();startBattle(false,S.inFight.seed);drawBattle();requestAnimationFrame(battleLoop);}
 function skipBattle(){if(!B||B.done)return;B.silent=true;B.startDelay=0;let g=0;while(!B.done&&g++<20000)step(DT);B.silent=false;drawBattle();}
 // v19.19: the team you just fought, read from the finished battle (UI only): start position, HP / ATK, damage dealt to
 // your team, still standing or not. Enemy units are built in S.enemy.enc order, then the Evil Twin; summons are left out.
@@ -7768,6 +7773,7 @@ function foeDetailHTML(k){const T=UI.foeTeam,u=T&&T.list[k];if(!u)return foeTeam
     :enemyDetail(u.key,{hp:u.hp,atk:u.atk,crowd:u.crowd,p:u.p});
   return body+`<p class="ftline">This fight: 💥 ${R(u.dmg)} damage to your team, ${u.alive?'still standing at the end':'knocked out'}.</p><div class="row"><button class="btn sm" data-a="foeteam">← Their team</button></div>`;}
 function showResult(){
+  FR=null;if(S)delete S.inFight;
   const res=settle();UI.lastRes=res;UI.foeTeam=foeSnap(res);
   if(S.over){clearSave();lvRecord();}else{S.toAdvance=res;save();}
   const f=$('#field');if(!f)return;
@@ -8382,13 +8388,14 @@ function closeSheet(){$('#sheet').hidden=true;$('#scrim').hidden=true;UI.sheetOp
 let toastT;
 function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1800);}
 // ================= input =================
-function onAction(a,v,el){
+function onAction(a,v,el){const r_=onAction0(a,v,el);try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
+function onAction0(a,v,el){
   if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back')return;
   if((a==='pend'||a==='pend-leg'||a==='event-sub'||(a==='sell-item'&&UI.armItem===v))&&fresh())return;
   if(a!=='sell-item')UI.armItem=null; // an armed Sell disarms on any other tap
   switch(a){
     case 'new':clearSave();UI.insp=null;UI.sel=null;UI.swap=null;newRun(false);go();break;
-    case 'continue':{const sv=loadSave();if(sv){restore(sv);go();}break;}
+    case 'continue':{const sv=loadSave();if(sv){restore(sv);if(S.inFight)resumeFight();else go();}break;}
     case 'pick':{hoverCard(null);if(!canHover&&S.shop[+v]){sheet(shopPreview(+v));break;}if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
     case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
     case 'reroll':if(reroll())go();break;
@@ -8542,10 +8549,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.31',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.32',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.32',items:[['🔒','Reloading mid-fight replays the same fight (no more undoing a loss), and every shop action is saved straight away.'],['⭐','Shellback Beetles and Dodgeball Team skills now grow with stars, like everyone else\'s.']]},
   {v:'19.31',items:[['⚖️','Legendary rebalance: Understudy (the step-in can\'t be rarer than who fell), Underdog Story, Spin-off Deal, Field Hospital, Main Character Energy, Hype Train and Full-Court Press toned down; Product Placement, Director\'s Cut, Danger Close, Graveyard Shift and Indie Darling buffed.']]},
   {v:'19.30',items:[['🛠️','Fixed the giant icon on trait details.'],['🎬','Animations play even if your device asks for reduced motion, once you switch them on in Settings; Settings shows whether the 3D toys are moving.']]},
   {v:'19.29',items:[['💎','See rarity at a glance: a coloured glow under each character on your board, bench and in battle, a coloured edge and a rarity tag.']]},
@@ -8794,7 +8802,7 @@ function start(data){
   UI.lv=lvLoad().pick;
   if(data&&(data.v===SAVE_KEY||data.v===OLD_SAVE_KEY)&&data.S&&!data.S.over)restore(data);
   else UI.screen='title';
-  render();devPaint();
+  render();devPaint();if(S&&S.inFight&&UI.screen!=='title')resumeFight();
 }
 
 // ===== v19.25: living toys. Renders animation loops of the toys on screen (three.js, background, one at a time) and
@@ -8898,6 +8906,7 @@ function musTick(){try{
 }catch(e){}}
 function musDuck(){MUS.duck=.35;setTimeout(()=>{MUS.duck=1;},1400);}
 if(typeof window!=='undefined'&&(window.AudioContext||window.webkitAudioContext))setInterval(musTick,250);
+if(typeof window!=='undefined'){window.addEventListener('pagehide',()=>{try{if(S&&!S.over)save();}catch(e){}});document.addEventListener('visibilitychange',()=>{try{if(document.hidden&&S&&!S.over)save();}catch(e){}});}
 window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
