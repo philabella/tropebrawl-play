@@ -6049,11 +6049,42 @@ const FOES = [
   h.armL.rotation.set(-.8, 0, .5);
   return g; } },
 ];
+// ---------- spawns (v19.40): characters that skills summon mid-fight ----------
+const SPAWNS = [
+{ id: 'risen', name: 'Risen Skeletons', genre: 'undead', crowd: true, build({ variant: v = 0 } = {}) {
+  const g = G(), dirt = ['#4a3a2c', '#3e3226', '#54402e'][v];
+  for (const [x, z, r] of [[-.22, .12, .2], [.24, .05, .17], [0, -.18, .19], [.05, .22, .12]]) g.add(P(sphere(r), dirt, { p: [x, .03, z], s: [1, .4, 1] }));
+  for (const s of [-1, 1]) { bone(g, [s * .14, .62, 0], [s * .15, .14, .02], .05); g.add(P(box(.16, .07, .26, .03), BONE, { p: [s * .15, .05, .06] })); }
+  g.add(P(torus(.2, .05), BONE, { p: [0, .66, 0], s: [1.2, 1, .7], r: [PI / 2, 0, 0] }));
+  limb(g, [0, .66, -.05], [0, 1.35, -.08], .045, BONE);
+  for (let i = 0; i < 4; i++) g.add(P(torus(.24 - i * .025, .028), BONE, { p: [0, 1.0 + i * .1, .0], s: [1, 1, .75], r: [PI / 2, 0, 0] }));
+  g.add(P(capsule(.035, .5), BONE, { p: [0, 1.38, 0], r: [0, 0, PI / 2] }));
+  const head = at(g, [0, 1.72, .02]); head.userData.joint = 'neck'; skull(head, { size: .32, glow: '#a6ff7a' });
+  if (v === 1) head.add(P(cone(.2, .18), '#6a5a48', { p: [0, .3, -.02], r: [-.2, 0, .15] }));
+  for (const s of [-1, 1]) { const a = at(g, [s * .3, 1.38, 0], s > 0 ? [-.2, 0, .45] : [-.9, 0, -.25]); a.userData.joint = s < 0 ? 'shoulderR' : 'shoulderL';
+    bone(a, [0, 0, 0], [0, -.48, 0], .035); a.add(P(sphere(.065), BONE, { p: [0, -.54, 0] }));
+    if (s < 0) { const sw = at(a, [0, -.56, .02], [PI / 2 - .2, 0, 0]); sw.add(P(box(.07, .62, .02, .01), '#8a6f52', { p: [0, .36, 0] })); sw.add(P(box(.24, .04, .05, .01), '#4b3a2a', { p: [0, .04, 0] }));
+      sw.add(P(cyl(.025, .025, .14), '#3a2a1e', { p: [0, -.04, 0] })); for (const y of [.25, .48]) sw.add(P(box(.075, .05, .021), '#5a3f22', { p: [.005, y, 0] })); } }
+  return g; } },
+{ id: 'hatch', name: 'Hatchlings', genre: 'bug', crowd: true, build({ variant: v = 0 } = {}) {
+  const g = G(), sk = [BUG.mid, BUG.light, '#9a6ad8'][v];
+  for (const [z, r, y] of [[-.42, .2, .24], [-.18, .26, .3], [.08, .3, .36]]) g.add(P(sphere(r), sk, { p: [0, y, z], s: [1, .85, 1] }));
+  for (const z of [-.3, -.05]) g.add(P(torus(.25, .025), BUG.shell, { p: [0, .32, z], s: [1, .9, 1] }));
+  bugLegs(g, 3, .22, BUG.leg, { bx: .2, kx: .42, kh: .12, fx: .52, z0: .14, dz: .2, r: .03 });
+  const head = at(g, [0, .62, .28]); head.userData.joint = 'neck';
+  head.add(P(sphere(.34), sk, { s: [1, .95, .95] })); head.add(P(sphere(.22), BUG.belly, { p: [0, -.1, .16], s: [1, .6, .7] }));
+  eyes(head, { r: .34, white: true, sizes: v === 2 ? [1.15, .95] : [1.25, 1.25], y: .06, dx: .13 });
+  for (const s of [-1, 1]) head.add(P(cone(.035, .16), BUG.leg, { p: [s * .1, -.16, .28], r: [1.2, 0, s * .3] }));
+  for (const s of [-1, 1]) { const ant = at(head, [s * .12, .28, .05], [-.4, 0, s * .45]); ant.add(P(cyl(.018, .018, .28), BUG.leg, { p: [0, .14, 0] })); ant.add(P(sphere(.045), BUG.acid, { glow: 1, p: [0, .3, 0] })); }
+  const shell = at(head, [0, .2, -.04], [v === 1 ? .3 : -.15, 0, v === 2 ? -.3 : .2]); shell.add(P(dome(.27, .45), '#f3eee4', { double: 1 }));
+  for (let i = 0; i < 6; i++) shell.add(P(cone(.05, .1), '#f3eee4', { p: [Math.cos(i * 1.05) * .24, -.02, Math.sin(i * 1.05) * .24], r: [PI, 0, 0] }));
+  return g; } },
+];
 // genre colours (the game's)
 const GC = { army: '#a3b462', bug: '#ab80ea', undead: '#8fd18a', ball: '#4fa3f7', heist: '#e9c352', west: '#e0874f' };
 const GN = { army: 'Army', bug: 'Swarm', undead: 'Undead', ball: 'Sportsball', heist: 'Heist Crew', west: 'Wild West' };
 CAST.forEach(c => { c.gc = GC[c.genre]; c.genreName = GN[c.genre]; });
-for (const c of CAST.concat(FOES)) { const b = c.build; c.build = o => rigFinish(b(o)); }
+for (const c of CAST.concat(FOES, SPAWNS)) { const b = c.build; c.build = o => rigFinish(b(o)); }
 // ---------- projectiles (v19.26): small models flying along +x, rendered from the side ----------
 function makeProj(kind, color) {
   const g = G(), c = color || '#ff4d3d';
@@ -6097,7 +6128,7 @@ function makeProj(kind, color) {
   else ball(g, kind, { size: .18 });
   return g;
 }
-return { CAST, FOES, setStyle, STYLES, EMOTES, sampleEmote, poseFigure, makeProj };
+return { CAST, FOES, SPAWNS, setStyle, STYLES, EMOTES, sampleEmote, poseFigure, makeProj };
 }
 if (typeof window !== 'undefined') window.TB3D = TB3D;
 
@@ -8573,10 +8604,12 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.38',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.40',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.40',items:[['💀','Summoned Risen Skeletons and Hatchlings now climb onto the 3D board as real toys instead of flat tiles.']]},
+  {v:'19.39',items:[['🎬','Fights now happen on a film set: plank floor, taped marks, a velvet curtain, studio lamps and a clapperboard.']]},
   {v:'19.38',items:[['✨','Toys in the shop, on the board and bench are now drawn live in 3D, as smooth as in fights, and wave when you hover them. Settings → Live 3D toys switches back to the lighter pre-drawn animation.']]},
   {v:'19.37',items:[['🎞️','Smoother toys in the shop, on the board and on the bench: three times the animation frames, timed to your screen.']]},
   {v:'19.36',items:[['🎯','Every ranged character now fires a real 3D shot: artillery shells, stingers, flaming skulls, data packets, dynamite, bones, cash, whiskey bottles, T-shirts and confetti join the bullets, arrows and balls. Shots fly a touch slower so you can see them.']]},
@@ -8935,7 +8968,7 @@ const AR={f:null,cv:null,R:null,E:null,scene:null,cam:null,B:null,toys:[],proj:[
 // size by what the character is, not just its box: big creatures read bigger, a mascot costume a bit smaller
 // people (and anything not listed) stand at AR_BASE, all the same height; big creatures and bosses are sized against
 // them, so a Bone Dragon or a boss towers over a person instead of matching one
-const AR_BASE=.78,AR_BOSS=1.18,AR_SIZE={bonedragon:1.5,gravegolem:1.3,hivemind:1.25,scorpion:1.05,queen:1.08,lurker:.92,wraith:.88,mascot:.72,vampbat:.82,shared:1.25,deus:1.2};
+const AR_BASE=.78,AR_BOSS=1.18,AR_SIZE={hatch:.7,risen:.78,bonedragon:1.5,gravegolem:1.3,hivemind:1.25,scorpion:1.05,queen:1.08,lurker:.92,wraith:.88,mascot:.72,vampbat:.82,shared:1.25,deus:1.2};
 const AR_X=3.3,AR_Z={Eb:-5.5,Ef:-2.1,Af:2.1,Ab:5.5},AR_TOP=.16;
 function arWorld(k){return {x:(+k[2]-1)*AR_X,z:AR_Z[k[0]+k[1]]};}
 function arKey(u){return Z(u)+u.row[0]+u.col;}
@@ -8950,11 +8983,59 @@ function arInit(){if(AR.R)return !AR.dead;if(AR.dead||!TBA.on)return false;
     Object.assign(AR,{cv,R,E,scene,cam:new THREE.PerspectiveCamera(13,1,1,900)});scene.add(arBoard());return true;}
   catch(e){AR.dead=true;AR.why=String(e&&e.message||e).slice(0,80);return false;}}
 function arMat(c,o){return new TBA.THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85,metalness:0},o||{}));}
-function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group();
-  const table=new THREE.Mesh(new RB(AR_X*3+1.3,.6,AR_Z.Ab*2+4.4,3,.25),arMat('#25232b'));table.position.y=-.3;table.userData.outlineParameters={visible:false};g.add(table);
-  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<3;c++){const w=arWorld(k+c),t=new THREE.Mesh(new RB(AR_X-.3,.1,3.0,2,.05),arMat(k[0]==='A'?'#323849':'#43303a'));
-    t.position.set(w.x,0,w.z);t.userData.outlineParameters={visible:false};g.add(t);}
-  const line=new THREE.Mesh(new THREE.BoxGeometry(AR_X*3,.04,.12),arMat('#ff4d5e',{emissive:'#ff2d40',emissiveIntensity:.9}));line.position.y=.04;line.userData.outlineParameters={visible:false};g.add(line);
+// v19.39: the board is a film-set soundstage: plank floor with hazard-tape edges, taped floor mats (blue: yours, red:
+// theirs), red-and-white tape at the clash line, a velvet curtain behind the enemy, two studio lamps lighting the
+// board, a clapperboard, sandbags, cables and tape marks
+function arTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new TBA.THREE.CanvasTexture(c);t.colorSpace=TBA.THREE.SRGBColorSpace;t.anisotropy=4;return t;}
+const arNo=m=>{m.userData.outlineParameters={visible:false};return m;},arAt=(m,x,y,z)=>{m.position.set(x,y,z);return m;};
+function arFlat(geo,mat,x,y,z){const m=arNo(new TBA.THREE.Mesh(geo,mat));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);return m;}
+function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group(),TW=AR_X*3+1.3,TD=AR_Z.Ab*2+4.4,FL=-.62;
+  const M=(c,o)=>arMat(c,o),add=(m,x,y,z)=>{m.position.set(x,y,z);g.add(m);return m;},mesh=(geo,mat)=>new THREE.Mesh(geo,mat);
+  // studio floor, table, plank top
+  g.add(arFlat(new THREE.PlaneGeometry(80,80),M('#16151a',{roughness:1}),0,FL,0));
+  add(arNo(mesh(new RB(TW+.5,.62,TD+.5,3,.2),M('#1d1b21'))),0,-.31,0);
+  const planks=arTex(512,1024,(x,w,h)=>{const n=8,pw=w/n;for(let i=0;i<n;i++)for(let j=0,y=-((i*97)%180);y<h;j++){const l=200+((i*37+j*91)%5)*55,v=((i*13+j*7)%9)/9;
+      x.fillStyle=`hsl(${24+v*6},${30+v*12}%,${15+v*8}%)`;x.fillRect(i*pw,y,pw,l);x.fillStyle='rgba(0,0,0,.5)';x.fillRect(i*pw,y,pw,3);x.fillRect(i*pw,y,2,l);
+      x.strokeStyle='rgba(255,220,180,.05)';x.lineWidth=2;for(let k=0;k<4;k++){x.beginPath();x.moveTo(i*pw+9+k*14,y);x.bezierCurveTo(i*pw+4+k*14,y+l*.4,i*pw+16+k*14,y+l*.6,i*pw+10+k*14,y+l);x.stroke();}y+=l;}});
+  g.add(arFlat(new THREE.PlaneGeometry(TW,TD),M('#ffffff',{map:planks,roughness:.8}),0,.004,0));
+  // hazard tape round the edge
+  const haz=(len)=>{const t=arTex(256,32,(x,w,h)=>{x.fillStyle='#f2c230';x.fillRect(0,0,w,h);x.fillStyle='#17151a';for(let i=-2;i<10;i++){x.beginPath();x.moveTo(i*32,h);x.lineTo(i*32+16,h);x.lineTo(i*32+32,0);x.lineTo(i*32+16,0);x.fill();}});
+    t.wrapS=THREE.RepeatWrapping;t.repeat.set(len/2,1);return M('#ffffff',{map:t,roughness:.6});};
+  for(const s of [-1,1]){g.add(arFlat(new THREE.PlaneGeometry(TW,.32),haz(TW),0,.008,s*(TD/2-.16)));const side=arFlat(new THREE.PlaneGeometry(TD,.32),haz(TD),s*(TW/2-.16),.008,0);side.rotation.z=Math.PI/2;g.add(side);}
+  // floor mats with spike-tape corners
+  const mat=(fill,tape)=>M('#ffffff',{transparent:true,depthWrite:false,roughness:.9,map:arTex(256,256,(x,w,h)=>{x.fillStyle=fill;x.fillRect(10,10,w-20,h-20);x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=3;x.strokeRect(22,22,w-44,h-44);
+    x.fillStyle=tape;for(const [cx,cy,sx,sy] of [[10,10,1,1],[w-10,10,-1,1],[10,h-10,1,-1],[w-10,h-10,-1,-1]]){x.fillRect(cx,cy,sx*62,sy*14);x.fillRect(cx,cy,sx*14,sy*62);}})});
+  const mA=mat('rgba(44,58,92,.62)','#5aa9ff'),mE=mat('rgba(92,36,52,.62)','#ff4d5e');
+  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<3;c++){const w=arWorld(k+c);g.add(arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z));}
+  // clash line: red-and-white tape
+  const ct=arTex(512,32,(x,w,h)=>{for(let i=0;i<16;i++){x.fillStyle=i%2?'#f3eee4':'#e8303f';x.fillRect(i*32,0,32,h);}});
+  g.add(arFlat(new THREE.PlaneGeometry(AR_X*3+.8,.3),M('#ffffff',{map:ct,emissive:'#ff2d40',emissiveIntensity:.25}),0,.016,0));
+  // velvet curtain behind the enemy, with a gold-trimmed valance
+  const cg=new THREE.PlaneGeometry(34,9,96,1),cp=cg.attributes.position;for(let i=0;i<cp.count;i++)cp.setZ(i,Math.sin(cp.getX(i)*2.3)*.28+Math.sin(cp.getX(i)*.7)*.15);cg.computeVertexNormals();
+  add(arNo(mesh(cg,M('#6a1222',{roughness:.95,side:2}))),0,FL+4.5,-TD/2-2.4);
+  add(arNo(mesh(new THREE.BoxGeometry(34,.9,.3),M('#7a1628',{roughness:.9}))),0,FL+8.6,-TD/2-2.2);add(arNo(mesh(new THREE.BoxGeometry(34,.12,.34),M('#d9a63a',{metalness:.4,roughness:.4}))),0,FL+8.12,-TD/2-2.2);
+  // studio lamps on stands, with a soft beam onto the board
+  const lamp=(x,z)=>{const L=new THREE.Group();L.position.set(x,FL,z);g.add(L);const dk=M('#2a2a30',{metalness:.5,roughness:.5});
+    for(let i=0;i<3;i++){const a=i*2.094,leg=mesh(new THREE.CylinderGeometry(.04,.04,1.5,6),dk);leg.position.set(Math.cos(a)*.45,.6,Math.sin(a)*.45);leg.rotation.set(Math.sin(a)*.55,0,-Math.cos(a)*.55);L.add(leg);}
+    const pole=mesh(new THREE.CylinderGeometry(.05,.05,2.9,8),dk);pole.position.y=1.9;L.add(pole);
+    const head=new THREE.Group();head.position.y=3.4;L.add(head);head.lookAt(new THREE.Vector3(x*.12,0,-1.5));
+    const can=mesh(new THREE.CylinderGeometry(.42,.34,.75,16),M('#1f1f24',{metalness:.4,roughness:.5}));can.rotation.x=Math.PI/2;head.add(can);
+    for(const s of [-1,1]){const door=mesh(new THREE.BoxGeometry(.04,.62,.36),dk);door.position.set(s*.46,0,.48);door.rotation.y=s*.5;head.add(door);}
+    head.add(arNo(arAt(mesh(new THREE.CircleGeometry(.36,20),new THREE.MeshBasicMaterial({color:'#fff4c8'})),0,0,.38)));
+    const beam=arNo(mesh(new THREE.CylinderGeometry(.36,2.6,9,24,1,true),new THREE.MeshBasicMaterial({color:'#fff0c0',transparent:true,opacity:.035,depthWrite:false,blending:2,side:2})));beam.rotation.x=-Math.PI/2;beam.position.z=4.9;head.add(beam);};
+  lamp(-7.6,-6.2);lamp(7.6,-6.2);
+  // clapperboard leaning on sandbags, a cable coil, tape X marks
+  {const K=new THREE.Group();K.position.set(7.0,FL,-1.2);K.rotation.y=-1.2;g.add(K);
+    const sb=M('#8a7a5a',{roughness:1});for(const [x,z] of [[0,0],[.75,.1],[.38,.05]]){const b=mesh(new THREE.SphereGeometry(.42,12,8),sb);b.scale.set(1,.42,.62);b.position.set(x,.18+(x===.38?.3:0),z);K.add(b);}
+    const slate=new THREE.Group();slate.position.set(.3,.75,.25);slate.rotation.x=-.5;K.add(slate);
+    slate.add(mesh(new THREE.BoxGeometry(1.1,.8,.05),M('#1a191d')));
+    const stripes=M('#ffffff',{map:arTex(256,32,(x,w,h)=>{for(let i=0;i<8;i++){x.fillStyle=i%2?'#f3eee4':'#1a191d';x.beginPath();x.moveTo(i*32,h);x.lineTo(i*32+32,h);x.lineTo(i*32+48,0);x.lineTo(i*32+16,0);x.fill();}})});
+    const bar=mesh(new THREE.BoxGeometry(1.12,.16,.06),stripes);bar.position.set(0,.5,0);slate.add(bar);const top=mesh(new THREE.BoxGeometry(1.12,.16,.06),stripes);top.position.set(-.08,.68,0);top.rotation.z=.32;slate.add(top);
+    slate.add(arNo(arAt(mesh(new THREE.PlaneGeometry(1,.6),M('#ffffff',{map:arTex(256,160,(x,w,h)=>{x.fillStyle='#1a191d';x.fillRect(0,0,w,h);x.strokeStyle='#cfc8bb';x.lineWidth=3;x.strokeRect(6,6,w-12,h-12);x.beginPath();x.moveTo(6,h/2);x.lineTo(w-6,h/2);x.moveTo(w/2,h/2);x.lineTo(w/2,h-6);x.stroke();
+      x.fillStyle='#f3eee4';x.font='bold 30px Anton, Impact, sans-serif';x.fillText('TROPEBRAWL',16,48);x.font='20px sans-serif';x.fillText('SCENE',16,h/2+30);x.fillText('TAKE',w/2+10,h/2+30);})})),0,-.05,.03)));}
+  {const cable=new THREE.CatmullRomCurve3([[-7.6,-6.2],[-6.9,-4],[-7.6,-1],[-6.9,1.6],[-7.4,4.5]].map(([x,z])=>new THREE.Vector3(x,FL+.05,z)));g.add(arNo(mesh(new THREE.TubeGeometry(cable,60,.05,6),M('#111114'))));
+    const c2=new THREE.CatmullRomCurve3([[7.6,-6.2],[7.0,-4.2],[7.7,-2.2]].map(([x,z])=>new THREE.Vector3(x,FL+.05,z)));g.add(arNo(mesh(new THREE.TubeGeometry(c2,30,.05,6),M('#111114'))));}
+  const xm=M('#f2c230',{roughness:.7});for(const [x,z] of [[-7.2,-3.8],[7.1,3.2],[-7,1.2]])for(const r of [.78,-.78]){const t=arFlat(new THREE.PlaneGeometry(.7,.13),xm,x,FL+.01,z);t.rotation.z=r;g.add(t);}
   return g;}
 // the camera frames the whole board and every toy's head; each square of the battle is then moved onto its toy
 function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelectorAll('.bslot')];slots.forEach(s=>{s.style.transform='';});
@@ -8975,8 +9056,10 @@ function arClear(){AR.toys.forEach(T=>arDispose(T.root));AR.toys=[];AR.proj.forE
 function arOff(){if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}if(!AR.f)return;const f=AR.f;AR.f=null;
   try{f.classList.remove('arena');f.querySelectorAll('.bslot').forEach(s=>{s.style.transform='';});f.querySelectorAll('.unit.t3d').forEach(e=>e.classList.remove('t3d'));if(AR.cv&&AR.cv.parentNode)AR.cv.remove();}catch(e){}
   if(typeof B!=='undefined'&&B&&B.units)B.units.forEach(u=>{delete u._ar;});arClear();AR.B=null;}
-function arToy(u){if(u._ar!==undefined)return u._ar;u._ar=null;const p=u.art&&tbaParse(u.art);if(!p)return null;
-  const {THREE,lib}=TBA,c=(p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);if(!c)return null;
+// v19.40: summoned units (no art of their own) get a spawn model
+const AR_SPAWN={'Risen Skeletons':'risen','Hatchlings':'hatch'};
+function arToy(u){if(u._ar!==undefined)return u._ar;u._ar=null;const sp=!u.art&&AR_SPAWN[u.name],p=sp?{spawn:1,id:sp,v:0}:u.art&&tbaParse(u.art);if(!p)return null;
+  const {THREE,lib}=TBA,c=(p.spawn?lib.SPAWNS||[]:p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);if(!c)return null;
   try{const root=new THREE.Group(),body=new THREE.Group(),n=u.crowd?3:1,figs=[];root.add(body);
     const spots=n>1?[[0,.62],[-1.02,-.5],[1.02,-.5]]:[[0,0]];
     for(let i=0;i<n;i++){const fig=c.build({variant:u.crowd?i%3:p.v}),h=new THREE.Group();h.add(fig);h.position.set(spots[i][0],0,spots[i][1]);body.add(h);figs.push({fig,h});}
@@ -8998,7 +9081,7 @@ function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.un
     const w=arWorld(arKey(u));T.home.x+=(w.x-T.home.x)*a;T.home.z+=(w.z-T.home.z)*a;
     let anim='idle',t0=0,s=1;
     if(!u.alive){if(!T.dt)T.dt=now;anim='death';t0=T.dt;s=Math.min(2,sp);}
-    else{T.dt=0;if(end&&end.win===(u.side==='A')){anim=tbaPick(u.art,u.side==='A'?TBA_WIN:TBA_FOE);t0=end.t0;}
+    else{T.dt=0;if(end&&end.win===(u.side==='A')){anim=tbaPick(u.art||u.name,u.side==='A'?TBA_WIN:TBA_FOE);t0=end.t0;}
       else if(u.atkT&&u.atkK&&now-u.atkT<lib.EMOTES[u.atkK].dur*1000/sp){anim=u.atkK;t0=u.atkT;s=sp;}}
     const e=lib.EMOTES[anim],t=anim==='idle'?now/1000+T.ph*e.dur:(now-t0)/1000*s,n=Math.max(1,Math.min(3,u.crowd?bodies(u):1));
     T.figs.forEach((F,i)=>{F.h.visible=i<n;if(!F.h.visible)return;const ps=lib.sampleEmote(e,t+(e.once?0:i*.17));F.fig.position.y=lib.poseFigure(F.fig,ps,1,e.rel);F.h.rotation.x=-(ps.fall||0);});
@@ -9037,9 +9120,10 @@ function arFrame(){AR.raf=0;const f=document.getElementById('field');
 #field .arena3d{position:absolute;left:0;pointer-events:none;z-index:0}
 #field.arena .frow,#field.arena .clashline{position:relative;z-index:1}
 #field.arena .clashline{opacity:0}
+.bhead{position:relative;z-index:2}
 #field.arena .bslot{border-color:transparent!important;background:none!important}
 #field.arena .unit.t3d{background:none!important;border-color:transparent!important;box-shadow:none!important}
-#field.arena .unit.t3d .spr,#field.arena .unit.t3d .crowdspr{visibility:hidden}
+#field.arena .unit.t3d .spr,#field.arena .unit.t3d .crowdspr,#field.arena .unit.t3d .pt{visibility:hidden}
 #field.arena .unit.t3d::before,#field.arena .unit.t3d::after{display:none}
 </style>`);
   const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
