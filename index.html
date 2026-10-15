@@ -6347,7 +6347,7 @@ const TRINKETS=[
 // {v} is the item's number at ★ / ★★ / ★★★ (taking a copy of an item you hold levels it up)
  ['kevlar','Kevlar Vest','C','🦺','All your characters have {v} more max HP.',['15%','22%','30%']],
  ['energy','Energy Drink','C','⚡','All your characters attack {v} faster.',['10%','15%','20%']],
- ['coin','Lucky Coin','C','🪙','{v} gold after every win.',['+1','+1','+2']],
+ ['coin','Lucky Coin','C','🪙','{v} gold after every win.',['+1','+2','+3']],
  ['battery','Battery Pack','C','🔋','All your characters start fights with {v} energy.',['30%','45%','60%']],
  ['fangs','Vampire Fangs','C','🦷','All your characters heal for {v} of damage dealt.',['12%','18%','24%']],
  ['smoke','Smoke Grenade','C','💨','For the first 10s of a fight, your characters dodge {v} of attacks.',['20%','30%','40%']],
@@ -6367,7 +6367,7 @@ const TRINKETS=[
  ['teamup','Team-Up Poster','C','🤝','All your characters deal {v} more damage for each crossover you have on.',['10%','15%','20%']],
  ['residuals','Residuals','C','💵','After every fight: +🪙1 for each Rare or rarer character on your board, up to 🪙{v}.',['2','3','4']],
  ['slowburn','Slow Burn','C','🕯️','After 12s of a fight, all your characters deal {v} more damage.',['30%','45%','60%']],
- ['extras','Casting Call','C','📣','Your crowds get {v} more bodies.',['+1','+2','+3']],
+ ['extras','Background Extras','C','📣','Your crowds get {v} more bodies.',['+1','+2','+3']],
  ['understudy','Understudy','R','🎟️','When characters on your board fall, your best bench character of the same or lower rarity steps into their square, up to {v} per fight.',['1','2','3']],
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
@@ -6468,7 +6468,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:5,cutPer:2,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,bankTip:25,fhHeal:.4,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.0,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:.8,bankTip:25,fhHeal:.4,feedHaste:.12,feedMax:6,feedRegrow:2,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:4,sixPct:.8,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -6495,7 +6495,7 @@ const EVENTS={
   reboot:{name:'Reboot',e:'🔁',d:'Your lowest-rarity character is recast as a random character one rarity higher.'},
   cut:{name:'The Cut',e:'✂️',d:'The studio is over budget and goes after your biggest genre: it leaves the shop for the rest of the run. Pay to keep the cast, let them go, or fight it with lives.'},
   wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin the wheel. If it lands on a rarity you own, those characters sell back at full price for the rest of the run. Rarities you don\'t own are Duds; a thin ALL sliver covers everyone.'},
-  merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙2. It comes one level higher (★★ when new). Or pass.'},
+  merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙3-6 (more each act). It comes one level higher (★★ when new). Or pass.'},
 };
 const PLOT=['trial','casting','merchant'];
 const SPECIAL_KEYS=['cut','wheel','montage','strike','cameo','cursed','insurance','reboot','fanmail','craft','review','props'];
@@ -6517,7 +6517,7 @@ function evMarks(e){const m={},add=(u,txt,tip)=>{if(u&&u.slot)(m[u.slot]=m[u.slo
   if(e.cut&&!e.subDone)(e.sub.ids||[]).forEach(g=>ownedIn(g).forEach(u=>add(u,'✂️ CUT','The Cut: this genre is on the table')));
   else if(e.sub&&e.sub.kind==='choice'&&!e.subDone){const k=e.picked,dt=e.sub.data||{};
     if(k==='montage')add(bestToTrain(),'🏋️ +★','Train hard: this one gains a star');
-    if(k==='strike')add(weakestOnBoard(),'🪧 LEAVES','Let someone go: this one leaves the show');
+    if(k==='strike')add(bestOnBoard(),'🪧 WRITTEN OUT','Write out your star: this one leaves the show (you get its sell value)');
     if(k==='reboot')add(unitByUid(dt.uid),'🔁 REBOOT','Reboot them: this one is recast one rarity higher');
     if(k==='cameo'&&dt.id)S.units.filter(u=>u.id===dt.id).forEach(u=>add(u,'🌟 COPY','The cameo is another copy of this one'));}
   else if(!e.picked)(e.opts||[]).forEach(k=>{
@@ -6538,7 +6538,7 @@ function evDesc(k){
   if(k==='recruit')return `Pick 1 of 3 ${RARITY[Math.min(topTier(S.rank)+1,4)-1]} characters, free.`;
   if(k==='reinforce')return `+2 lives (up to ${maxLives()}).`;
   if(k==='trial')return `Your next fight is tougher: enemies get +${Math.round(100*(TUNE.lvTrial-1))}% HP and damage. Win it: +${TUNE.lvTrialGold} gold and pick 1 of 3 items.`;
-  if(k==='merchant')return `Buy 1 of 3 items for 🪙${TUNE.lvMerchant}. It comes one level higher (★★ when new). Or pass.`;
+  if(k==='merchant')return `Buy 1 of 3 items for 🪙${EVC.merchant()}. It comes one level higher (★★ when new). Or pass.`;
   if(S&&k==='promotion'){const u=promoTarget();return u?`Your lowest-level character on the board levels up: <b>${esc(HERO[u.id].name)}</b> ${'★'.repeat(u.level)} → ${'★'.repeat(u.level+1)}.`:'Nobody on the board can level up (Epics and Mythics can\'t): +🪙5 instead.';}
   if(S&&k==='casting'){const c=castTarget();return c?`<b>${esc(HERO[c.u.id].name)}</b> (${RARITY[HERO[c.u.id].tier-1]} ${'★'.repeat(c.u.level)}) is recast as a random ${GENRES[HERO[c.u.id].genre].name} ${RARITY[c.to-1]}, keeping its stars.`:'Nobody on the board to recast: +🪙5 instead.';}
   if(S&&k==='wheel'){const own=WHEEL.filter(t=>S.units.some(u=>HERO[u.id].tier===t)).map(t=>`${RARITY[t-1]} ×${S.units.filter(u=>HERO[u.id].tier===t).length}`);return EVENTS[k].d+(own.length?` You own: ${own.join(' · ')}.`:'');}
@@ -6994,7 +6994,7 @@ function eventPick(key){
     if(c){const u=c.u,d=HERO[u.id],to=c.to,nid=pick(c.pool);u.id=nid;u.level=Math.max(1,Math.min(u.level-TUNE.lvCastDrop,maxLv(nid)));e.msg=`${d.name} is recast as ${HERO[nid].name} (${RARITY[to-1]} ${'★'.repeat(u.level)}).`;checkMerges();}
     else{S.gold+=5;S.stats.gold+=5;e.msg='Nobody to recast: +5 gold.';}
   }
-  if(key==='merchant'){const c=TUNE.lvMerchant;if(S.gold>=c)e.sub={kind:'trinket',ids:trinketChoices(3,false),price:c};else e.msg=`You need 🪙${c}. The merchant moves on.`;}
+  if(key==='merchant'){const c=EVC.merchant();if(S.gold>=c)e.sub={kind:'trinket',ids:trinketChoices(3,false),price:c};else e.msg=`You need 🪙${c}. The merchant moves on.`;}
   if(key==='promotion'){
     const pu=promoTarget();
     if(pu){levelUp(pu);e.msg=`${HERO[pu.id].name} is now ${'★'.repeat(pu.level)}.`;checkMerges();}
@@ -7050,6 +7050,7 @@ function specialAt(n){return S&&S.specials?S.specials[n]||null:null;}
 function drawRandomEvent(kind){const used=S.usedEvents||[];let pool=SPECIAL_KEYS.filter(k=>EV_KIND[k]===kind&&!used.includes(k)&&SPECIALS[k].ok());
   if(!pool.length)pool=SPECIAL_KEYS.filter(k=>!used.includes(k)&&SPECIALS[k].ok());if(!pool.length)return null;const k=pick(pool);S.usedEvents=[...used,k];return k;}
 function bestToTrain(){return fielded().filter(u=>u.level<maxLv(u.id)).sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0]||null;}
+function bestOnBoard(){return fielded().slice().sort((a,b)=>sellValue(b)-sellValue(a)||HERO[b.id].tier-HERO[a.id].tier)[0]||null;}
 function weakestOnBoard(){return fielded().slice().sort((a,b)=>HERO[a.id].tier-HERO[b.id].tier||a.level-b.level)[0]||null;}
 function startSpecial(k){
   if(k==='cut'){S.event={opts:['cut'],picked:'cut',sub:{kind:'cut',ids:cutChoices()},cut:true,special:true};return;}
@@ -7060,13 +7061,16 @@ function startSpecial(k){
     if(!pool.length)pool=HEROES.filter(h=>h[4]===3&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);data.id=pool.length?pick(pool):null;}
   if(k==='cursed'){const pool=TRINKETS.map(t=>t[0]).filter(t=>!S.trinkets.includes(t));data.item=pool.length?pick(pool):null;}
   if(k==='reboot'){const t=fielded().filter(u=>HERO[u.id].tier<=3).sort((a,b)=>HERO[a.id].tier-HERO[b.id].tier||a.level-b.level)[0];
-    if(t){const d=HERO[t.id],maxed=maxedIds(),pool=HEROES.filter(h=>h[2]===d.genre&&h[4]===d.tier+1&&!maxed.has(h[0])).map(h=>h[0]);data.uid=t.uid;data.to=pool.length?pick(pool):null;}}
+    if(t){const d=HERO[t.id],maxed=maxedIds(),pool=HEROES.filter(h=>h[4]===d.tier+1&&!maxed.has(h[0])).map(h=>h[0]);data.uid=t.uid;data.to=pool.length?pick(pool):null;}}
   S.event={opts:[k],picked:k,sub:{kind:'choice',ids:CHOICES[k].map(c=>c.id),data},special:true};
 }
 const unitByUid=uid=>S.units.find(u=>u.uid===uid);
 function weakestItem(){return S.trinkets.slice().sort((a,b)=>ilv(a)-ilv(b))[0]||null;}
 // each choice: t = title, d = what happens, ok = can you take it, run = do it (returns the result line). The first one
 // that is ok is the cautious default (what a bot or a missing click takes).
+// v19.41: money events scale with the act (1-4), so they bite all run
+const evAct=()=>Math.max(1,Math.min(4,((typeof curRound==='function'&&curRound())||{}).act||1));
+const EVC={review:()=>4+2*evAct(),strike:()=>6+2*evAct(),props:()=>Math.max(6,2*S.trinkets.reduce((t,x)=>t+(ilv(x)||1),0)),insure:()=>5+evAct(),merchant:()=>2+evAct(),rvLives:()=>evAct()>=3?3:2,stLives:()=>evAct()>=3?4:3};
 const CHOICES={
   fanmail:[
     {id:'cash',t:'Cash the checks',d:()=>'+🪙5.',ok:()=>true,run:()=>{S.gold+=5;return '+🪙5.';}},
@@ -7074,15 +7078,15 @@ const CHOICES={
   ],
   craft:[
     {id:'snack',t:'Grab a snack',d:()=>'+🪙6.',ok:()=>true,run:()=>{S.gold+=6;return '+🪙6.';}},
-    {id:'favor',t:'Call in a favor',d:()=>'Your next 3 shop rerolls are free.',ok:()=>true,run:()=>{S.freeRerolls=(S.freeRerolls||0)+3;return '3 free rerolls.';}},
+    {id:'favor',t:'Call in a favor',d:()=>'Your next 5 shop rerolls are free (worth 🪙10 if you use them).',ok:()=>true,run:()=>{S.freeRerolls=(S.freeRerolls||0)+5;return '5 free rerolls.';}},
   ],
   review:[
-    {id:'life',t:'Take it on the chin',d:()=>'−2 lives.',ok:()=>S.lives>2,run:()=>{S.lives-=2;return `Lives: ${S.lives}.`;}},
-    {id:'pr',t:'Hire a PR firm',d:()=>'−🪙5.',ok:()=>S.gold>=5,run:()=>{S.gold-=5;return 'You pay 🪙5 to bury the review.';}},
-    {id:'shrug',t:'Ignore it',d:()=>'Nothing else to give: the review fades.',ok:()=>S.lives<=2&&S.gold<5,run:()=>'Nobody reads reviews anyway.'},
+    {id:'life',t:'Take it on the chin',d:()=>`−${EVC.rvLives()} lives.`,ok:()=>S.lives>EVC.rvLives(),run:()=>{S.lives-=EVC.rvLives();return `Lives: ${S.lives}.`;}},
+    {id:'pr',t:'Hire a PR firm',d:()=>`−🪙${EVC.review()}.`,ok:()=>S.gold>=EVC.review(),run:()=>{const c=EVC.review();S.gold-=c;return `You pay 🪙${c} to bury the review.`;}},
+    {id:'shrug',t:'Ignore it',d:()=>'Nothing else to give: the review fades.',ok:()=>S.lives<=EVC.rvLives()&&S.gold<EVC.review(),run:()=>'Nobody reads reviews anyway.'},
   ],
   props:[
-    {id:'pay',t:'Buy replacements',d:()=>'−🪙5, keep all your items.',ok:()=>S.gold>=5,run:()=>{S.gold-=5;return 'You buy everything back for 🪙5.';}},
+    {id:'pay',t:'Buy replacements',d:()=>`−🪙${EVC.props()} (🪙2 per item star), keep all your items.`,ok:()=>S.gold>=EVC.props(),run:()=>{const c=EVC.props();S.gold-=c;return `You buy everything back for 🪙${c}.`;}},
     {id:'lose',t:'Let it go',d:()=>S.trinkets.length?'Lose a random item (it could be your best).':'You have no items: lose 🪙3 instead.',ok:()=>true,
      run:()=>{const t=S.trinkets.length?pick(S.trinkets):null;if(t){S.trinkets=S.trinkets.filter(x=>x!==t);delete S.tlv[t];return `${TR[t].name} is gone.`;}const g=Math.min(3,S.gold);S.gold-=g;return `−🪙${g}.`;}},
   ],
@@ -7093,15 +7097,15 @@ const CHOICES={
      run:()=>{const u=bestToTrain();levelUp(u);checkMerges();S.lives-=2;return `${HERO[u.id].name} is now ${'★'.repeat(u.level)}. Lives: ${S.lives}.`;}},
   ],
   strike:[
-    {id:'pay',t:'Pay them off',d:()=>'−🪙6.',ok:()=>S.gold>=6,run:()=>{S.gold-=6;return 'You pay the writers 🪙6. Back to work.';}},
-    {id:'wait',t:'Wait it out',d:()=>'−3 lives.',ok:()=>S.lives>3,run:()=>{S.lives-=3;return `The strike drags on. Lives: ${S.lives}.`;}},
-    {id:'cut1',t:'Let someone go',d:()=>{const u=weakestOnBoard();return u?`${HERO[u.id].name} leaves the show (no refund).`:'Nobody to let go.';},ok:()=>fielded().length>1,
-     run:()=>{const u=weakestOnBoard();S.units=S.units.filter(x=>x!==u);return `${HERO[u.id].name} leaves the show.`;}},
+    {id:'pay',t:'Pay them off',d:()=>`−🪙${EVC.strike()}.`,ok:()=>S.gold>=EVC.strike(),run:()=>{const c=EVC.strike();S.gold-=c;return `You pay the writers 🪙${c}. Back to work.`;}},
+    {id:'wait',t:'Wait it out',d:()=>`−${EVC.stLives()} lives.`,ok:()=>S.lives>EVC.stLives(),run:()=>{S.lives-=EVC.stLives();return `The strike drags on. Lives: ${S.lives}.`;}},
+    {id:'cut1',t:'Write out your star',d:()=>{const u=bestOnBoard();return u?`${HERO[u.id].name} leaves the show; you get its sell value (🪙${sellValue(u)}).`:'Nobody to write out.';},ok:()=>fielded().length>1,
+     run:()=>{const u=bestOnBoard(),v=sellValue(u);S.gold+=v;poolGive(u.id,COPIES[u.level-1]);S.units=S.units.filter(x=>x!==u);return `${HERO[u.id].name} is written out of the show (+🪙${v}).`;}},
     // only when nothing else is possible, so the run can never get stuck here
-    {id:'broke',t:'Nothing left to give',d:()=>'The strike ends on its own.',ok:()=>!(S.gold>=6||S.lives>3||fielded().length>1),run:()=>'With nothing left to take, the writers go back to work.'},
+    {id:'broke',t:'Nothing left to give',d:()=>'The strike ends on its own.',ok:()=>!(S.gold>=EVC.strike()||S.lives>EVC.stLives()||fielded().length>1),run:()=>'With nothing left to take, the writers go back to work.'},
   ],
   cameo:[
-    {id:'fee',t:'Take the fee',d:()=>'+🪙5.',ok:()=>true,run:()=>{S.gold+=5;return '+🪙5.';}},
+    {id:'fee',t:'Take the fee',d:()=>'+🪙9.',ok:()=>true,run:()=>{S.gold+=9;return '+🪙9.';}},
     {id:'cast',t:'Cast the cameo',d:e=>e.sub.data.id?`${HERO[e.sub.data.id].name} (Rare ★★, ${GENRES[HERO[e.sub.data.id].genre].name}) joins for free.`:'Nobody is available.',
      ok:e=>!!e.sub.data.id&&!!freeSlotFor(e.sub.data.id),
      run:e=>{const id=e.sub.data.id;S.units.push({uid:S.uid++,id,level:2,slot:freeSlotFor(id),cost:0});poolTake(id,3);checkMerges();return `${HERO[id].name} joins the cast at ★★.`;}},
@@ -7114,10 +7118,10 @@ const CHOICES={
   ],
   insurance:[
     {id:'pass',t:'No thanks',d:()=>'Nothing happens.',ok:()=>true,run:()=>'The man in the cheap suit shrugs and leaves.'},
-    {id:'buy',t:'Buy insurance · 🪙6',d:()=>'Your next lost fight costs no lives.',ok:()=>S.gold>=6&&!S.insured,run:()=>{S.gold-=6;S.insured=1;return 'Insured: your next lost fight costs no lives.';}},
+    {id:'buy',get t(){return `Buy insurance · 🪙${EVC.insure()}`;},d:()=>'Your next lost fight costs no lives.',ok:()=>S.gold>=EVC.insure()&&!S.insured,run:()=>{S.gold-=EVC.insure();S.insured=1;return 'Insured: your next lost fight costs no lives.';}},
   ],
   reboot:[
-    {id:'keep',t:'Keep the cast',d:()=>'Nothing happens.',ok:()=>true,run:()=>'The fans are relieved.'},
+    {id:'keep',t:'Keep the cast',d:()=>'+🪙4: the fans buy the merch.',ok:()=>true,run:()=>{S.gold+=4;return 'The fans are relieved and buy the merch: +🪙4.';}},
     {id:'recast',t:'Reboot them',d:e=>{const u=unitByUid(e.sub.data.uid);return u&&e.sub.data.to?`${HERO[u.id].name} becomes ${HERO[e.sub.data.to].name} (${RARITY[HERO[e.sub.data.to].tier-1]}, ★).`:'Nobody to reboot.';},
      ok:e=>!!unitByUid(e.sub.data.uid)&&!!e.sub.data.to,
      run:e=>{const u=unitByUid(e.sub.data.uid),was=HERO[u.id].name;u.id=e.sub.data.to;u.level=1;checkMerges();return `${was} is rebooted as ${HERO[e.sub.data.to].name}.`;}},
@@ -8604,10 +8608,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.40',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.41',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.41',items:[['💸','Events that cost money now bite: Bad Review, Writers\' Strike, Stolen Props, Stunt Insurance, The Cut and the Traveling Merchant cost more each act, and the lives you can pay instead grow in Acts 3 and 4.'],['⚖️','Choices that were never worth taking now are: Writers\' Strike writes out your star (you get its sell value), Craft Services\' favor gives 5 free rerolls, the Cameo fee is 🪙9, Reboot can land on any genre and keeping your cast pays 🪙4, Lucky Coin gives +1/+2/+3, and the Casting Call item is now Background Extras.']]},
   {v:'19.40',items:[['💀','Summoned Risen Skeletons and Hatchlings now climb onto the 3D board as real toys instead of flat tiles.']]},
   {v:'19.39',items:[['🎬','Fights now happen on a film set: plank floor, taped marks, a velvet curtain, studio lamps and a clapperboard.']]},
   {v:'19.38',items:[['✨','Toys in the shop, on the board and bench are now drawn live in 3D, as smooth as in fights, and wave when you hover them. Settings → Live 3D toys switches back to the lighter pre-drawn animation.']]},
