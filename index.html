@@ -6070,6 +6070,30 @@ function makeProj(kind, color) {
   else if (kind === 'drop') { g.add(P(sphere(.16), '#5ab8ff', { s: [1, 1, 1] })); g.add(P(cone(.15, .3), '#5ab8ff', { p: [-.2, 0, 0], r: [0, 0, PI / 2] })); g.add(P(sphere(.04), '#ffffff', { glow: 1, p: [.05, .07, .14] })); }
   else if (kind === 'clipboard') { g.add(P(box(.36, .46, .03, .02), '#a8743a', { r: [0, .3, .2] })); g.add(P(box(.28, .34, .01), '#f3eee4', { p: [0, -.02, .02], r: [0, .3, .2] })); g.add(P(box(.12, .05, .03, .01), '#9aa0aa', { p: [0, .22, .02], r: [0, .3, .2] })); }
   else if (kind === 'soccer') { g.add(P(sphere(.18), '#fafafa')); for (const [x, y, z] of [[0, 0, 1], [.7, .5, .5], [-.7, .5, .5], [.6, -.6, .5], [-.6, -.6, .5], [0, .9, -.4]]) { const v = new THREE.Vector3(x, y, z).normalize().multiplyScalar(.17); g.add(P(sphere(.06), '#1a1a1e', { p: [v.x, v.y, v.z], s: [1, 1, .4], noOutline: 1 })); } }
+  // v19.36: the rest of the ranged cast gets a real shot
+  else if (kind === 'shell') { g.add(P(capsule(.11, .26), '#6f7d3c', { r: [0, 0, PI / 2] })); g.add(P(cone(.11, .18), '#c9a24a', { p: [.27, 0, 0], r: [0, 0, -PI / 2] }));
+    for (let i = 0; i < 4; i++) { const a = i * PI / 2; g.add(P(box(.16, .02, .1, .005), '#4c5530', { p: [-.24, Math.cos(a) * .1, Math.sin(a) * .1], r: [a, 0, 0] })); }
+    g.add(P(cone(.12, .55), '#ffd27a', { glow: 1, p: [-.55, 0, 0], r: [0, 0, PI / 2], alpha: .45 })); }
+  else if (kind === 'stinger') { g.add(P(cone(.07, .5), '#3f2569', { r: [0, 0, -PI / 2] })); g.add(P(sphere(.09), '#ab80ea', { glow: 1, p: [-.22, 0, 0], s: [1.4, 1, 1] }));
+    g.add(P(cone(.08, .5), '#c49cff', { glow: 1, p: [-.5, 0, 0], r: [0, 0, PI / 2], alpha: .4 })); }
+  else if (kind === 'psy') { g.add(P(sphere(.12), '#f0e2ff', { glow: 1 })); for (const [x, r] of [[0, .2], [-.18, .27], [-.36, .33]]) g.add(P(torus(r, .025), '#b98cff', { glow: 1, p: [x, 0, 0], r: [0, PI / 2, 0], alpha: .75 - x * -.8 })); }
+  else if (kind === 'skull') { skull(g, { size: .17, glow: '#a6ff7a', r: [0, PI / 2, 0] }); g.add(P(sphere(.24), '#8fd18a', { glow: 1, alpha: .3 }));
+    g.add(P(cone(.18, .7), '#a6ff7a', { glow: 1, p: [-.42, 0, 0], r: [0, 0, PI / 2], alpha: .35 })); }
+  else if (kind === 'packet') { g.add(P(box(.2, .2, .2, .02), '#0f2a14')); g.add(P(box(.23, .23, .23), '#57ff7a', { glow: 1, alpha: .35 }));
+    for (const [y, z] of [[.06, .101], [-.04, .101], [.02, -.101]]) g.add(P(box(.12, .025, .005), '#7dff8a', { glow: 1, p: [0, y, z] }));
+    for (let i = 1; i <= 3; i++) g.add(P(box(.08, .08, .08), '#57ff7a', { glow: 1, p: [-.18 * i - .05, 0, 0], alpha: .6 - i * .15 })); }
+  else if (kind === 'dynamite') { g.add(P(cyl(.06, .06, .36), '#c8352b', { r: [0, 0, PI / 2] })); g.add(P(cyl(.062, .062, .05), '#f3eee4', { r: [0, 0, PI / 2] }));
+    tube(g, [[-.18, 0, 0], [-.24, .04, 0], [-.28, .1, 0]], .012, '#3a2a1a'); g.add(P(sphere(.05), '#ffd34d', { glow: 1, p: [-.29, .12, 0] })); g.add(P(sphere(.09), '#ff8a3d', { glow: 1, p: [-.29, .12, 0], alpha: .4 })); }
+  else if (kind === 'bone') { g.add(P(cyl(.035, .035, .4), '#ece5d2', { r: [0, 0, PI / 2] })); for (const x of [-.2, .2]) for (const z of [-.04, .04]) g.add(P(sphere(.055), '#ece5d2', { p: [x, 0, z] })); }
+  else if (kind === 'cash') { for (let i = 0; i < 3; i++) g.add(P(box(.36, .015, .17, .005), i === 1 ? '#7fbf6a' : '#5f9e4c', { p: [0, i * .02 - .02, 0], r: [0, (i - 1) * .12, 0] }));
+    g.add(P(box(.07, .05, .18), '#e9c352', { p: [0, 0, 0] })); }
+  else if (kind === 'bottle') { g.add(P(cyl(.07, .07, .2), '#6b3e1e', { r: [0, 0, PI / 2], alpha: .9 })); g.add(P(cyl(.025, .06, .08), '#6b3e1e', { p: [.14, 0, 0], r: [0, 0, PI / 2], alpha: .9 }));
+    g.add(P(cyl(.025, .025, .06), '#d9c8a0', { p: [.21, 0, 0], r: [0, 0, PI / 2] })); g.add(P(box(.1, .09, .145), '#efe4c8', { p: [-.01, 0, 0] })); }
+  else if (kind === 'shirt') { const s = new THREE.Shape(); s.moveTo(-.12, -.18); s.lineTo(.12, -.18); s.lineTo(.12, .06); s.lineTo(.22, .02); s.lineTo(.26, .12); s.lineTo(.12, .2);
+    s.lineTo(.05, .2); s.quadraticCurveTo(0, .15, -.05, .2); s.lineTo(-.12, .2); s.lineTo(-.26, .12); s.lineTo(-.22, .02); s.lineTo(-.12, .06); s.lineTo(-.12, -.18);
+    const m = P(new THREE.ExtrudeGeometry(s, { depth: .03, bevelEnabled: false }), c === '#ff4d3d' ? '#4fa3f7' : c, { p: [0, 0, -.015] }); g.add(m); g.add(P(new THREE.CircleGeometry(.06, 16), '#ffffff', { p: [0, .02, .017] })); }
+  else if (kind === 'confetti') { g.add(P(sphere(.14), '#4fa3f7', { s: [1, 1, 1] })); const cols = ['#ff5a7a', '#ffd34d', '#7dff8a', '#5ab8ff', '#ffffff'];
+    for (let i = 0; i < 12; i++) { const a = i * 2.4, y = Math.cos(i * 1.3) * .2, z = Math.sin(a) * .22; g.add(P(box(.05, .05, .01), cols[i % 5], { glow: 1, p: [-.1 - (i % 4) * .09, y, z], r: [a, a * .7, 0] })); } }
   else ball(g, kind, { size: .18 });
   return g;
 }
@@ -8549,10 +8573,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.35',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.36',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.36',items:[['🎯','Every ranged character now fires a real 3D shot: artillery shells, stingers, flaming skulls, data packets, dynamite, bones, cash, whiskey bottles, T-shirts and confetti join the bullets, arrows and balls. Shots fly a touch slower so you can see them.']]},
   {v:'19.35',items:[['🐉','3D arena: people are a bit smaller, so the big ones (Bone Dragon, Grave Golem, Hive Mind, bosses) really tower over them.']]},
   {v:'19.34',items:[['📏','3D arena: everyone to scale. Humans are the same height whether they come alone or in a crowd, big creatures like the Bone Dragon are big, and your back row no longer towers over the enemy.']]},
   {v:'19.33',items:[['🎲','Fights now play out live in 3D: a tabletop arena where the toys walk, lunge, shoot, fall and celebrate, with 3D shots flying between them. Settings → 3D battle arena switches back to the flat board.']]},
@@ -8856,19 +8881,21 @@ async function tbaPump(){if(TBA.busy||!TBA.want.size)return;TBA.busy=true;
 function tbaAsk(k,anim,pr){const id=k+'|'+anim;if(TBA.cache.has(id))return;TBA.want.set(id,Math.max(pr,TBA.want.get(id)||0));}
 function tbaAtkKind(u){if(u.range==='melee')return 'atkMelee';const tr=u.side==='A'&&HERO[u.id]?HERO[u.id].trait:u.twin&&HERO[u.tid]?HERO[u.tid].trait:'';return tr==='mystic'||tr==='medic'?'atkCast':'atkShoot';}
 const TBA_GCOL={army:'#a3b462',bug:'#c49cff',undead:'#8fd18a',ball:'#4fa3f7',heist:'#e9c352',west:'#e0874f'};
-const TBA_GLYPH={'⚾':'base','🔴':'dodge','🏀':'basket','🏈':'foot','⚽':'soccer','💧':'drop','📋':'clipboard'};
+const TBA_GLYPH={'⚾':'base','🔴':'dodge','🏀':'basket','🏈':'foot','⚽':'soccer','💧':'drop','📋':'clipboard','👕':'shirt','🎊':'confetti'};
+const TBA_PID={radio:['shell'],observer:['shell'],queen:['stinger'],hivemind:['psy'],necro:['skull'],hacker:['packet'],prospector:['dynamite'],bonesetter:['bone'],fixer:['cash'],doc:['bottle']};
+const TBA_SPIN=new Set(['clipboard','dynamite','bone','cash','bottle','shirt','confetti','skull']);
 function tbaProjFor(u,glyph){if(glyph)return TBA_GLYPH[glyph]?[TBA_GLYPH[glyph]]:null;
   if(u.side==='E'&&!u.twin)return ['sniper','cgi','mooks','figures','double'].includes(u.key)?['bullet']:['orb','#ff5a4a'];
-  const id=u.twin?u.tid:u.id,tr=HERO[id]?HERO[id].trait:'';if(id==='skelarch')return ['arrow','#c8352b'];if(id==='spitters')return ['acid'];
+  const id=u.twin?u.tid:u.id,tr=HERO[id]?HERO[id].trait:'';if(TBA_PID[id])return TBA_PID[id];if(id==='skelarch')return ['arrow','#c8352b'];if(id==='spitters')return ['acid'];
   if(tr==='gunner')return ['bullet'];if(tr==='medic')return ['syringe'];return ['orb',TBA_GCOL[u.genre]||'#ffcc2e'];}
-const TBA_PSZ={bullet:30,arrow:46,acid:32,orb:30,syringe:34,drop:26,clipboard:28};
+const TBA_PSZ={bullet:30,arrow:46,acid:32,orb:30,syringe:34,drop:26,clipboard:28,shell:40,stinger:36,psy:34,skull:32,packet:28,dynamite:32,bone:30,cash:30,bottle:30,shirt:34,confetti:32};
 function tbaProjImg(pk){if(!TBA.on||RM)return null;const id=pk.join('|');if(TBA.proj&&TBA.proj.has(id))return TBA.proj.get(id);TBA.proj=TBA.proj||new Map();
   try{const {THREE,lib,R,E}=TBA,scene=tbaScene(),o=lib.makeProj(pk[0],pk[1]),root=new THREE.Group();root.add(o);scene.add(root);root.updateMatrixWorld(true);
     const bx=new THREE.Box3().setFromObject(root),c=bx.getCenter(new THREE.Vector3()),h=Math.max(bx.max.x-bx.min.x,bx.max.y-bx.min.y)*.6+.05;
     const cam=new THREE.OrthographicCamera(c.x-h,c.x+h,c.y+h,c.y-h,.1,100);cam.position.set(c.x,c.y+2,c.z+12);cam.lookAt(c);
     R.setSize(128,128);E.render(scene,cam);const url=R.domElement.toDataURL('image/png');R.setSize(TBA.SZ,TBA.SZ);
     scene.remove(root);root.traverse(x=>{if(x.geometry)x.geometry.dispose();if(x.material){if(x.material.map)x.material.map.dispose();x.material.dispose();}});
-    const v={url,spin:!TBA_PSZ[pk[0]]||pk[0]==='clipboard',sz:TBA_PSZ[pk[0]]||26};TBA.proj.set(id,v);return v;}catch(e){TBA.proj.set(id,null);return null;}}
+    const v={url,spin:!TBA_PSZ[pk[0]]||TBA_SPIN.has(pk[0]),sz:TBA_PSZ[pk[0]]||26};TBA.proj.set(id,v);return v;}catch(e){TBA.proj.set(id,null);return null;}}
 function tbaPick(k,list){const p=tbaParse(k),id=p?p.id:k;let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;return list[h%list.length];}
 function tbaTick(){
   if(RM||!TBA.on){if(TBA.shown){TBA.shown=false;document.documentElement.classList.remove('tba3d');document.querySelectorAll('img').forEach(img=>{if(img._tbk&&img._cur){img.src=SPRITES[img._tbk];img._cur=null;}});}
@@ -8978,7 +9005,7 @@ function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.un
     const gone=anim==='death'?Math.max(0,(now-t0)/1000*s-e.dur-.35):0;T.body.position.y=-gone*1.6;T.root.visible=gone<1.2;}}
 function arShot(u,t,glyph,size,ms){const pk=tbaProjFor(u,glyph),A=u._ar,Bt=t._ar;if(!pk||!A||!Bt)return false;
   try{const {THREE,lib}=TBA,g=new THREE.Group(),o=lib.makeProj(pk[0],pk[1]);g.add(o);g.scale.setScalar(2.1*(glyph&&size?Math.min(1.8,size/18):1));AR.scene.add(g);
-    AR.proj.push({g,o,from:A.home.clone().setY(1.5),T:Bt,t0:performance.now(),ms:Math.max(140,ms),spin:!TBA_PSZ[pk[0]]||pk[0]==='clipboard',arc:glyph?1.4:pk[0]==='acid'?.9:.25});return true;}catch(e){return false;}}
+    AR.proj.push({g,o,from:A.home.clone().setY(1.5),T:Bt,t0:performance.now(),ms:Math.max(260,ms*1.4),spin:!TBA_PSZ[pk[0]]||TBA_SPIN.has(pk[0]),arc:glyph||TBA_SPIN.has(pk[0])?1.3:pk[0]==='acid'||pk[0]==='shell'?1.1:.25});return true;}catch(e){return false;}}
 function arProj(now){if(!AR.proj.length)return;const {THREE}=TBA,X=new THREE.Vector3(1,0,0),p=new THREE.Vector3(),q=new THREE.Vector3(),d=new THREE.Vector3();
   AR.proj=AR.proj.filter(P=>{const k=(now-P.t0)/P.ms;if(k>=1){arDispose(P.g);return false;}const to=P.T.home,e=k*k*.35+k*.65;
     const at=(z,out)=>out.set(P.from.x+(to.x-P.from.x)*z,P.from.y+(1.4-P.from.y)*z+Math.sin(Math.PI*z)*P.arc,P.from.z+(to.z-P.from.z)*z);
