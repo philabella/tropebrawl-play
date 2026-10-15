@@ -305,7 +305,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .bqlbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 2px}
 .bqtag{position:absolute;top:4px;left:50%;transform:translateX(-50%);font:700 .62rem/1 var(--f-body);letter-spacing:.06em;padding:3px 6px;border-radius:999px;white-space:nowrap;z-index:3;background:#151316;border:1px solid var(--line)}
 .bqtag.under{color:var(--gold)}.bqtag.rise{color:#a6ff7a}.bqtag.join{color:#9fd0ff}.slot.bq.more{font:700 1.1rem var(--f-display);color:var(--muted)}
-.bqtag i{font-style:normal}@media (max-width:560px){.bqtag i{display:none}}
+.bqtag i{font-style:normal}.slot.bq.bqgone>img,.slot.bq.bqgone>canvas,.slot.bq.bqgone>.crowdspr{opacity:.35}@media (max-width:560px){.bqtag i{display:none}}
 @keyframes atk{40%{filter:brightness(1.45) drop-shadow(0 0 8px var(--gold))}}
 /* hold to view, drag to buy or move */
 .scard,.slot:not(.empty){-webkit-touch-callout:none;user-select:none;-webkit-user-select:none;touch-action:none}
@@ -7488,7 +7488,7 @@ function summonSkeletons(side,n,p,owner,cap){
     arm:2,interval:1.1,range:'melee',manaMax:0,skill:null,p:1,summon:true,timer:.5},owner,cap);
 }
 // Commando: drag a back-row enemy into its front row when there is room
-function pullFront(t){if(!t.alive||t.row!=='back')return;const sl=emptySlots(t.side).find(x=>x[0]==='front');if(!sl)return;t.row='front';t.col=sl[1];float(t,'Pulled!','miss');}
+function pullFront(t){if(!t.alive||t.row!=='back')return;const sl=emptySlots(Z(t)).find(x=>x[0]==='front');if(!sl)return;t.row='front';t.col=sl[1];float(t,'Pulled!','miss');}
 // Bone Dragon: every fallen (non-summoned) ally stands back up once per fight
 function riseUnit(x,f){x.zone=null;x.alive=true;x.hp=Math.max(1,x.maxHp*f);x.stun=0;x.vuln=0;x.armDownT=0;x.mana=0;x.timer=.5;float(x,'Rises!','heal');}
 // a fallen character rises in its slot, or in any free slot; with none free it goes to the FRONT of the battle bench
@@ -7806,6 +7806,15 @@ function bbqDraw(){const el=$('#bbq');if(!el||!B)return;const q=B.reserve||[];
   const sig=q.map(c=>c.rise?'r'+(c.rise.uid||c.rise.name):c.under?'u'+c.id+c.level:'c'+(c.id||c.key)+c.maxBodies).join('|')+'#'+(B.underLeft||0);if(el._sig===sig)return;el._sig=sig;el.hidden=!q.length;if(!q.length){el.innerHTML='';return;}
   const nu=q.filter(c=>c.under).length;
   el.innerHTML=`<section class="board bqboard"><div class="rowlbl bqlbl">Battle bench${nu?` · Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left`:''}</div><div class="frow bench bqrow">${q.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}${q.length>5?`<div class="slot bq more">+${q.length-5}</div>`:''}</div></section>`;}
+// v19.44: the whole bench, always (overrides the v19.42 queue-only version above)
+function bbqDraw(){const el=$('#bbq');if(!el||!B||!S)return;const q=B.reserve||[],bench=benched();
+  const waiting=new Set(q.filter(c=>c.under).map(c=>c.ref)),fought=new Set(B.units.filter(u=>u.side==='A'&&u.under).map(u=>u.ref)),extra=q.filter(c=>!c.under);
+  const sig=bench.map(u=>u.uid+':'+u.slot+(waiting.has(u.uid)?'w':fought.has(u.uid)?'f':'')).join(',')+'|'+extra.map(c=>c.rise?'r'+(c.rise.uid||c.rise.name):'c'+(c.id||c.key)+c.maxBodies).join(',')+'#'+(B.underLeft||0);
+  if(el._sig===sig)return;el._sig=sig;el.hidden=false;const und=has('understudy');
+  const card=s=>{const u=bench.find(x=>x.slot===s);if(!u)return `<div data-v="${s}" class="slot empty bq" aria-hidden="true"></div>`;const d=HERO[u.id],w=waiting.has(u.uid),f=fought.has(u.uid);
+    const tag=w?'<span class="bqtag under" title="Steps in when a character falls">🎟️<i> STEPS IN</i></span>':f?'<span class="bqtag join" title="Stepped in and is fighting">⚔️<i> IN THE FIGHT</i></span>':'';
+    return `<div data-v="${s}" class="slot bq g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${f?' bqgone':''}" title="${esc(d.name)}">${tag}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span><span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}</span></div>`;};
+  el.innerHTML=`<section class="board bqboard"><div class="rowlbl bqlbl">Bench · ${und?`Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left`:'doesn\'t fight'}</div><div class="frow bench bqrow">${benchSlots.map(card).join('')}</div>${extra.length?`<div class="rowlbl bqlbl">Waiting to join</div><div class="frow bench bqrow">${extra.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}</div>`:''}</section>`;}
 function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
   B.units.filter(u=>u.alive&&u.el&&u.side===(win?'A':'E')).forEach((u,i)=>{u.el.style.setProperty('--cd',(i*70)+'ms');u.el.classList.add('cheer');});return true;}catch(e){return false;}}
 function battleLoop(ts){
@@ -8627,10 +8636,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.43',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.44',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.44',items:[['🪑','Your whole bench is shown under the board during fights, like in the shop.'],['🎬','A lit studio floor and backdrop around the battle board.'],['🐛','Fixed: a tunnelled Burrow Lurker dragged by Snatch and Grab could land on top of another character.']]},
   {v:'19.43',items:[['🧬','Swarm now gets its Full Cast bonus like every other genre (6 Swarm: +35% HP and damage). Feeding Frenzy, Pheromone Trail, The Vault, Six-Shooter and Quick Draw are stronger.']]},
   {v:'19.42',items:[['🪑','The battle bench is now shown as bench cards under the board: who steps in (Understudy), who rises and which crowd bodies are waiting.'],['💰','Crossover Cameo fee: 🪙12.']]},
   {v:'19.41',items:[['💸','Events that cost money now bite: Bad Review, Writers\' Strike, Stolen Props, Stunt Insurance, The Cut and the Traveling Merchant cost more each act, and the lives you can pay instead grow in Acts 3 and 4.'],['⚖️','Choices that were never worth taking now are: Writers\' Strike writes out your star (you get its sell value), Craft Services\' favor gives 5 free rerolls, the Cameo fee is 🪙9, Reboot can land on any genre and keeping your cast pays 🪙4, Lucky Coin gives +1/+2/+3, and the Casting Call item is now Background Extras.']]},
@@ -9018,7 +9028,12 @@ function arFlat(geo,mat,x,y,z){const m=arNo(new TBA.THREE.Mesh(geo,mat));m.rotat
 function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group(),TW=AR_X*3+1.3,TD=AR_Z.Ab*2+4.4,FL=-.62;
   const M=(c,o)=>arMat(c,o),add=(m,x,y,z)=>{m.position.set(x,y,z);g.add(m);return m;},mesh=(geo,mat)=>new THREE.Mesh(geo,mat);
   // studio floor, table, plank top
-  g.add(arFlat(new THREE.PlaneGeometry(80,80),M('#16151a',{roughness:1}),0,FL,0));
+  // v19.44: a lit studio floor instead of flat dark grey: warm pool under the board, lamp pools, concrete slabs
+  const flt=arTex(1024,1024,(x,w,h)=>{const g0=x.createRadialGradient(w/2,h*.5,30,w/2,h*.5,w*.6);g0.addColorStop(0,'#3d3150');g0.addColorStop(.42,'#231d36');g0.addColorStop(1,'#0a0a13');x.fillStyle=g0;x.fillRect(0,0,w,h);
+    x.strokeStyle='rgba(255,255,255,.04)';x.lineWidth=2;for(let i=0;i<=10;i++){x.beginPath();x.moveTo(i*w/10,0);x.lineTo(i*w/10,h);x.stroke();x.beginPath();x.moveTo(0,i*h/10);x.lineTo(w,i*h/10);x.stroke();}
+    for(const [cx,cy,c,rr] of [[.373,.4,'rgba(255,232,180,.22)',.13],[.627,.4,'rgba(255,232,180,.22)',.13],[.5,.53,'rgba(255,214,150,.10)',.2],[.5,.85,'rgba(110,140,255,.12)',.25]]){const r0=x.createRadialGradient(cx*w,cy*h,8,cx*w,cy*h,rr*w);r0.addColorStop(0,c);r0.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=r0;x.fillRect(0,0,w,h);}
+    let sd=7;const rn=()=>(sd=(sd*16807)%2147483647)/2147483647;for(let i=0;i<5000;i++){x.fillStyle=`rgba(255,255,255,${rn()*.035})`;x.fillRect(rn()*w,rn()*h,2,2);}});
+  g.add(arFlat(new THREE.PlaneGeometry(60,60),M('#ffffff',{map:flt,roughness:1}),0,FL,0));
   add(arNo(mesh(new RB(TW+.5,.62,TD+.5,3,.2),M('#1d1b21'))),0,-.31,0);
   const planks=arTex(512,1024,(x,w,h)=>{const n=8,pw=w/n;for(let i=0;i<n;i++)for(let j=0,y=-((i*97)%180);y<h;j++){const l=200+((i*37+j*91)%5)*55,v=((i*13+j*7)%9)/9;
       x.fillStyle=`hsl(${24+v*6},${30+v*12}%,${15+v*8}%)`;x.fillRect(i*pw,y,pw,l);x.fillStyle='rgba(0,0,0,.5)';x.fillRect(i*pw,y,pw,3);x.fillRect(i*pw,y,2,l);
@@ -9142,7 +9157,7 @@ function arFrame(){AR.raf=0;const f=document.getElementById('field');
   catch(e){AR.dead=true;AR.why=String(e&&e.message||e).slice(0,80);arOff();return;}
   AR.raf=requestAnimationFrame(arFrame);}
 (()=>{try{document.head.insertAdjacentHTML('beforeend',`<style>
-#field.arena{overflow:visible}
+#field.arena{overflow:visible;background:radial-gradient(ellipse at 50% 38%,#2b2342 0%,#14111f 58%,#09080e 100%)}
 #field .arena3d{position:absolute;left:0;pointer-events:none;z-index:0}
 #field.arena .frow,#field.arena .clashline{position:relative;z-index:1}
 #field.arena .clashline{opacity:0}
