@@ -1,0 +1,47 @@
+name: runlog
+# Collects playtest runs into this repo's `runlog` branch every 6 hours (runs/<player id>/<run id>.json). The game on
+# this site posts each finished run (anonymous: a random player id, the moves, no personal data) to an ntfy.sh relay
+# topic and to the developer's Google Form; the relay keeps messages ~12 h, so a pull every 6 h never misses one.
+# It lives in this public repo because Actions minutes are free here (moved from the private tropebrawl repo, 2026-10-15).
+on:
+  schedule:
+    - cron: '23 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      selftest:
+        description: 'Post a test run to the relay first'
+        type: boolean
+        default: false
+permissions:
+  contents: write
+concurrency:
+  group: runlog
+  cancel-in-progress: false
+env:
+  TOPIC: tropebrawl-runs-kiwp0utvtch4hz
+  FORM_URL: https://docs.google.com/forms/d/e/1FAIpQLSf_eZB3usb1EU_m4smb5nb7aK3B7G5xwk8IYqp9CVZbTmSEyw/formResponse
+  FORM_FIELD: entry.59978046
+jobs:
+  collect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: src
+      - uses: actions/checkout@v4
+        with:
+          ref: runlog
+          path: data
+      - name: Self-test (post a test run)
+        if: ${{ inputs.selftest }}
+        run: node src/runlog/selftest.mjs
+      - name: Collect
+        run: cd data && node ../src/runlog/collect.mjs
+      - name: Commit
+        run: |
+          cd data
+          git config user.name "runlog collector"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then echo "nothing new"; else git commit -q -m "runlog: $(date -u +%Y-%m-%dT%H:%MZ)" && git push -q origin HEAD:runlog; fi
