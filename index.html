@@ -28,6 +28,7 @@
 *{box-sizing:border-box}
 [hidden]{display:none!important}
 html{background:var(--bg)}
+.rvstrip{display:flex;flex-wrap:wrap;gap:4px;align-items:center;margin:6px 0 0}.rvstrip small{font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-right:2px}.rvc{font-size:.72rem;line-height:1.5;padding:1px 6px;border:1px solid var(--line);border-radius:3px;background:var(--panel2);white-space:nowrap}.rvc.out{opacity:.45;text-decoration:line-through}.rvep .rvtell{font-size:.74rem;color:var(--muted);margin:4px 0 0;position:relative;z-index:1;max-width:68%}
 html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass){--bg:#151317;--bg2:#1c191f;--panel:#0f0d11;--panel2:#25212a;--line:#3a3440}html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) .board,html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) .field{background:rgba(14,12,16,.88)}html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) #tbg::before,html:is(.bd-sun,.bd-swirl,.bd-curt):not(.glass) #tbg::after{display:none}
 html.bd-sun:not(.glass) #tbg{background:radial-gradient(circle,rgba(0,0,0,.34) 1.3px,transparent 1.9px) 0 0/9px 9px,radial-gradient(ellipse 85% 75% at 50% 42%,transparent 30%,rgba(8,4,6,.88) 100%),radial-gradient(circle at 50% 42%,rgba(255,196,64,.30),transparent 38%),repeating-conic-gradient(from 0deg at 50% 42%,#a3202c 0 7.5deg,#741520 7.5deg 15deg)}
 html.bd-swirl:not(.glass) #tbg{background:radial-gradient(ellipse 80% 70% at 30% 40%,#6e1420,transparent 70%),radial-gradient(ellipse 70% 60% at 75% 65%,#0b4a50,transparent 70%),#120c12}#tbg canvas.bdsw{position:absolute;inset:0;width:100%;height:100%;image-rendering:pixelated;display:none}html.bd-swirl:not(.glass) #tbg canvas.bdsw{display:block}
@@ -6485,7 +6486,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*4/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.35,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:.4,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.55,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
+const TUNE={growth:1.09,acts:4,actMul:[2.628,3.442,2.863,2.226],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.35,undead:1.35,ball:1.7,heist:1.5,west:1.5},heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:.4,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:8,shockEvery:.5,pheroFor:3,pheroAmp:.55,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.2,westCrit2:.2,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.4,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.03,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:3,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -6577,6 +6578,13 @@ const LEVELS=[
   {id:'xp2',e:'🐌',name:'Slower Promotions',d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0]+TUNE.lvXp[1])} more XP in total.`},
   {id:'life2',e:'💔',name:'Shorter Season',d:()=>'You start with 8 lives.'},
   {id:'finale2',e:'🎞️',name:'Two-Part Finale',d:()=>'After Deus Ex Machina, the first two bosses return together.'},
+  {id:'rv1',e:'🎭',name:'Rival Studio',d:()=>'A rival studio joins your season: it shops from your character pool and plays the same episodes behind the scenes. From Ep 3, any normal episode can turn out to be a fight against its cast. See Codex → Rivals.'},
+  {id:'rv2',e:'🎭',name:'Second Studio',d:()=>'2 rival studios share your pool and your episodes.'},
+  {id:'rv3',e:'🎭',name:'Bidding War',d:()=>'3 rival studios share your pool and your episodes.'},
+  {id:'rv4',e:'🎭',name:'Crowded Lot',d:()=>'4 rival studios share your pool and your episodes.'},
+  {id:'rv5',e:'🎭',name:'Network Wars',d:()=>'5 rival studios share your pool and your episodes.'},
+  {id:'rv6',e:'🎭',name:'Packed Lobby',d:()=>'6 rival studios share your pool and your episodes.'},
+  {id:'rv7',e:'🎭',name:'Full House',d:()=>'7 rival studios share your pool and your episodes.'},
 ];
 const LV_MAX=LEVELS.length,LV_KEY='tropebrawl-levels';
 function rulesFor(n){return LEVELS.slice(0,Math.max(0,Math.min(LV_MAX,n|0))).map(r=>r.id);}
@@ -6742,16 +6750,17 @@ function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=null;UI._bk=null;}
   rollSpecials();
   rollShop();
   startRound();
+  if(lobbyWanted())lobbyInit();
 }
 // ---- shop ----
 function shopOdds(){return RANK.odds[S.rank-1];}
 function rollTier(){const o=shopOdds();let r=rand()*100;for(let i=0;i<o.length;i++){if(r<o[i])return i+1;r-=o[i];}return 1;}
 // character pools: a fixed number of copies per character (by rarity); buying takes copies out, selling puts them back
-function poolMax(id){return TUNE.poolSize[HERO[id].tier-1]-(rule('limited')?TUNE.poolCut:0);}
+function poolMax(id){const t=HERO[id].tier-1;return TUNE.poolSize[t]+Math.round((TUNE.poolPer||[0,0,0,0,0])[t]*lobbyN())-(rule('limited')?TUNE.poolCut:0);}
 function poolLeft(id){return S.pool&&S.pool[id]!=null?S.pool[id]:poolMax(id);}
 function poolTake(id,n){S.pool=S.pool||{};S.pool[id]=Math.max(0,poolLeft(id)-n);}
 function poolGive(id,n){S.pool=S.pool||{};S.pool[id]=Math.min(poolMax(id),poolLeft(id)+n);}
-function poolOpen(id){const shown=(S.shop||[]).filter(o=>o&&o.id===id).reduce((t,o)=>t+COPIES[o.level-1],0);return poolLeft(id)-shown>0;}
+function poolOpen(id){const sh=LOBBY.busy?(S.shop||[]).concat(LOBBY.hold||[]):(S.shop||[]);const shown=sh.filter(o=>o&&o.id===id).reduce((t,o)=>t+COPIES[o.level-1],0);return poolLeft(id)-shown>0;}
 function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);return pool.length?pick(pool):null;}
 function rollShop(){
   if(typeof UI!=='undefined'){UI.pick=null;UI.deal=1;} // a new shop: no card stays half-selected
@@ -6957,6 +6966,7 @@ function prepareFight(){
   // Crowd Scenes: from Act 2, normal fights add a crowd of Nameless Mooks in a free slot
   if(rule('extras')&&ev.type==='fight'&&ev.act>=2){const sl=freeSlotsE(enc)[0];if(sl)enc.push({key:'mooks',row:sl[0],col:sl[1],k:TUNE.lvExtra,extra:true});}
   S.enemy={tpl,enc,norm:norm*(elite?TUNE.lvElite:1)*(trial?TUNE.lvTrial:1)*(p2?TUNE.lvPart2:1),title:p2?'The Reunion':lead.name,boss:ev.type==='boss',elite,trial,part:p2?2:0};
+  rvMaybeEpisode(ev);
 }
 function enemyStats(e){
   const d=EN[e.key];const m=roundMult()*(S.enemy?S.enemy.norm:1)*(e.k||1)*(1+(S.curse||0));
@@ -7246,7 +7256,7 @@ function twinUnit(){
   const mhp=b.hp*t*LV[h.level-1];
   return mkUnit(Object.assign(base,{maxHp:mhp,hp:mhp,atk:b.atk*t*LV[h.level-1]}));
 }
-function foeInfo(k){return EN[k]||(k==='twin'?{e:'😈',name:'Evil Twin'}:{e:'❓',name:k});}
+function foeInfo(k){const m=/^rv:(\w+):(\w+)$/.exec(k||'');if(m&&RIVAL[m[1]]&&HERO[m[2]])return {e:HERO[m[2]].e,name:RIVAL[m[1]].name+"'s "+HERO[m[2]].name};return EN[k]||(k==='twin'?{e:'😈',name:'Evil Twin'}:{e:'❓',name:k});}
 function startBattle(silent,seed){if(!silent)tlFight();
   if(!silent&&!seeded&&S){if(!S.inFight)S.inFight={seed:seed!=null?seed:(Math.random()*2147483647)|0};FR=S.inFight.seed;save();}
   const syn=activeSyn(fielded());
@@ -7257,6 +7267,7 @@ function startBattle(silent,seed){if(!silent)tlFight();
   // Understudy: the best bench characters wait on the battle bench and step into squares that empty
   B.under=has('understudy')?benched().slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level).map(h=>Object.assign(heroUnit(h),{under:true})):null;B.underLeft=has('understudy')?tv('understudy'):0;B.fallen=null;
   S.enemy.enc.forEach(e=>B.units.push(enemyUnit(e)));
+  if(S.enemy.rival)rvFoes(S.enemy.rival).forEach(u=>B.units.push(u));
   if(S.enemy.boss&&rule('twin')){const tw=twinUnit();if(tw)B.units.push(tw);}
   if(legend('insidejob')){const e=B.units.filter(x=>x.side==='E').sort((a,b)=>b.maxHp-a.maxHp)[0];if(e){e.hp*=TUNE.ijHp;e.insideJob=true;}}
   applyMods();
@@ -7675,8 +7686,132 @@ function settle(){
   if(last&&rule('finale2')&&S.part!==2)res.part2=true;
   if(S.lives<=0){S.over=true;S.result='lose';}
   else if(last&&!res.part2){S.over=true;S.result='win';}
+  if(!LOBBY.busy&&lobbyN())rivalsTurn();
   return res;
 }
+
+// ================= rivals (the lobby) =================
+// Each rival is a whole run state like S (S.lobby.rv[i].st) plus its own random stream. See rivalsTurn.
+const RIVALS=[
+  {id:'penny',style:'Banker',d:"Saves up to 50 gold and barely spends, then cashes out from Act 3 for a big late board.",tell:"Quiet early, dangerous late.",name:'Penny',e:'💰',pol:{ev:['payday','supply','recruit','promotion','reinforce','deal'],target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:2,ownW:8,econ:r=>r>=15?0:50}},
+  {id:'rex',style:'Roller',d:"Rerolls hard early for ★★ Commons and Uncommons, then moves up to rarer characters.",tell:"Your cheap characters' pool counts drop fast.",name:'Rex',e:'🎰',pol:{target:r=>r>=16?7:r>=14?6:r>=12?5:r>=10?4:r>=3?3:r>=2?2:1,keep:0,tierW:1,lateTierW:5,ownW:14,econ:0,rollUntil:10,rollTier:2}},
+  {id:'ivy',style:'Wide',d:"Runs three or four genres at once and lives on crossovers.",tell:"Her board is never the same twice.",name:'Ivy',e:'🌈',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:2,ownW:6,econ:20,div:6}},
+  {id:'duke',style:'Streaker',d:"Spends every coin to win early and stack streak gold.",tell:"Strongest in Acts 1 and 2, then runs dry.",name:'Duke',e:'🔥',pol:{target:r=>r>=15?7:r>=12?6:r>=9?5:r>=6?4:r>=3?3:r>=2?2:1,keep:0,tierW:2,ownW:8,econ:0}},
+  {id:'goldie',style:'Collector',d:"Skips Commons and hunts Rare, Epic and Mythic characters.",tell:"The top of the pool thins out.",name:'Goldie',e:'💎',pol:{target:r=>r>=14?7:r>=11?6:r>=8?5:r>=5?4:r>=3?3:r>=2?2:1,keep:0,tierW:6,ownW:6,econ:0,minTier:3}},
+  {id:'sal',style:'Cheapskate',d:"Maxes Commons and Uncommons to ★★ and floods the board with cheap bodies.",tell:"Strong early, fades late.",name:'Sal',e:'🧢',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:1,ownW:14,econ:20,maxTier:2}},
+  {id:'hugo',style:'Hoarder',d:"Keeps a full bench of spares and backups.",tell:"Hard to starve: he always has a body to field.",name:'Hugo',e:'📦',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:2,tierW:2,ownW:10,econ:10,bench:true}},
+  {id:'ace',style:'All-rounder',d:"Adapts to whatever the shop gives.",tell:"No fixed tell. The steadiest of the lot.",name:'Ace',e:'🃏',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:2,ownW:8,econ:20}},
+];
+const RIVAL=Object.fromEntries(RIVALS.map(x=>[x.id,x]));
+const LOBBY={busy:false,hold:null};
+function lobbyN(){return S&&S.lobby?S.lobby.rv.length:0;}
+function lobbyWanted(){return TUNE.rivals!=null?TUNE.rivals|0:(S.rules||[]).filter(x=>/^rv\d$/.test(x)).length;}
+// set up the lobby for a new run: the rivals are drawn from the roster with the run's own seed
+function lobbyInit(){const n=Math.min(RIVALS.length,lobbyWanted());if(!n){S.lobby=null;return;}
+  S.pool=S.pool||{};const ids=shuffle(RIVALS.map(x=>x.id)).slice(0,n);
+  const base=JSON.parse(JSON.stringify(S));delete base.pool;delete base.lobby;
+  S.lobby={rv:ids.map((id,i)=>{const st=JSON.parse(JSON.stringify(base));st.units=[];st.trinkets=[];st.tlv={};st.legend=null;st.shop=[];st.event=null;st.enemy=null;st.seen={};
+    return {id,st,rng:(Math.floor(rand()*2147483647)^(i*0x9E3779B1))|0,out:false,place:0};})};
+  // each rival's first shop comes from the shared pool
+  S.lobby.rv.forEach(R=>rvSwap(R,()=>rollShop()));}
+// run f as rival R: S, the random stream and the on-screen state are swapped out and restored afterwards
+const RV_MUTE=['toast','sfx','tlAct','save','render','rankPreview','noteLevel'];
+function rvSwap(R,f){
+  const pS=S,pB=B,pFR=FR,pSeed=seeded,pRng=rngState,pUI=Object.assign({},UI),muted={};
+  RV_MUTE.forEach(k=>{if(typeof window[k]==='function'){muted[k]=window[k];window[k]=()=>{};}});
+  LOBBY.busy=true;LOBBY.hold=pS.shop;
+  try{S=R.st;S.pool=pS.pool;S.lv=pS.lv;S.rules=pS.rules;seeded=false;FR=R.rng;f();}
+  catch(e){R.err=String(e&&e.message||e).slice(0,120);}
+  finally{R.rng=FR;delete R.st.pool;S=pS;B=pB;FR=pFR;seeded=pSeed;rngState=pRng;
+    Object.keys(UI).forEach(k=>{if(!(k in pUI))delete UI[k];});Object.assign(UI,pUI);
+    Object.entries(muted).forEach(([k,fn])=>{window[k]=fn;});LOBBY.busy=false;LOBBY.hold=null;}}
+// after the player's fight: every rival still in the show plays the same round against the same enemy
+function rivalsTurn(){if(!S.lobby)return;const en=JSON.stringify(S.enemy&&S.enemy.base||S.enemy),round=S.round,part=S.part;
+  S.lobby.rv.forEach(R=>{if(R.out||R.done)return;
+    rvSwap(R,()=>{
+      // the event rounds since this rival's last fight (no fight on those): it takes its pick, then is paid as usual
+      for(let k=(S.round|0)+1;k<round;k++){const ev=SCHEDULE[k-1];if(!ev||ev.type!=='event')continue;S.round=k;S.preDone=S.preDone||{};S.preDone[k]=1;startRound();if(S.event)rvEvent(RIVAL[R.id].pol);S.event=null;payIncome();}
+      S.round=round;S.part=part;S.event=null;S.enemy=JSON.parse(en);
+      rvShop(RIVAL[R.id].pol);
+      if(!fielded().length&&S.units[0])S.units[0].slot='f1';
+      startBattle(true);let g=0;while(!B.done&&g++<30000)step(DT);
+      const rr0=runStats().rerolls|0;
+      const res=settle();R.last={round,win:res.win,lives:S.lives};
+      // sim-only log of how each rival plays (TUNE.rvLog): gold kept, rerolls, genres, rarity mix, bench, result
+      if(TUNE.rvLog){const f=fielded();R.log=R.log||[];R.log.push({r:round,g:S.gold,rr:(runStats().rerolls|0)-(R.rr0|0),gen:new Set(f.map(u=>HERO[u.id].genre)).size,
+        hi:f.filter(u=>HERO[u.id].tier>=3).length,lo:f.filter(u=>HERO[u.id].tier<=2).length,n:f.length,bench:benched().length,w:res.win?1:0,st:S.streak|0,lv:f.reduce((t,u)=>t+u.level,0)});R.rr0=runStats().rerolls|0;}
+      if(S.over){if(S.result==='win')R.done=true;else{R.out=true;S.units.forEach(u=>poolGive(u.id,COPIES[u.level-1]));S.units=[];}}
+      else payIncome();});
+    if(R.out&&!R.place)R.place=S.lobby.rv.filter(x=>!x.out).length+2;});}
+// ---- rival play: the greedy shop of the sim bots (sim/bots.js), with each rival's own habits ----
+function rvScore(id,P){const h=HERO[id],f=fielded().map(u=>HERO[u.id]);
+  let s=h.tier*(P.lateTierW&&S.round>=P.rollUntil?P.lateTierW:P.tierW)+f.filter(x=>x.genre===h.genre).length*(P.div?.5:2.5)+f.filter(x=>x.trait===h.trait).length*2;
+  if(P.div&&!f.some(x=>x.genre===h.genre))s+=P.div;
+  if(P.maxTier&&h.tier>P.maxTier)s-=99;
+  if(P.minTier&&S.round>=6&&h.tier<P.minTier)s-=8;
+  return s;}
+function rvEvent(P){const e=S.event,pref=P.ev||['recruit','promotion','supply','payday','reinforce','deal'],k=pref.find(x=>e.opts.includes(x))||e.opts[0];
+  eventPick(k);const sub=S.event&&S.event.sub;
+  if(sub&&!S.event.subDone){if(sub.kind==='choice'||sub.kind==='cut')eventSub(null);
+    else if(sub.kind==='trinket'){const up=sub.ids.find(t=>ilv(t)&&ilv(t)<ITEM_MAX),nw=sub.ids.find(t=>!ilv(t));eventSub(sub.price?null:(up||(nw&&S.trinkets.length<TRINKET_CAP?nw:null)));}
+    else eventSub(sub.ids.slice().sort((a,b)=>rvScore(b,P)-rvScore(a,P))[0]);}
+  rvPend();}
+function rvTrain(target,bank){const c=trainCost(),g=S.gold-(bank||0);if(S.rank>=target||c==null||g<c)return false;return Math.floor(g/c)*RANK.trainXp>=xpNeed()-(S.xp||0);}
+function rvPend(){let g=0;while(S.pending.length&&g++<10){const p=S.pending.shift();
+  if(p.kind==='legend'){const ch=legendChoices();if(ch.length)S.legend=pick(ch);continue;}
+  const ch=trinketChoices(p.level,false);const up=ch.find(t=>ilv(t)&&ilv(t)<ITEM_MAX),nw=ch.find(t=>!ilv(t));
+  takeTrinket(up||(nw&&S.trinkets.length<TRINKET_CAP?nw:null));}}
+function rvArrange(P){const us=u=>u.level*10+HERO[u.id].tier*3+rvScore(u.id,P)*.5;
+  const all=S.units.slice().sort((a,b)=>us(b)-us(a)),n=boardSize(),chosen=all.slice(0,n),rest=all.slice(n);
+  const melee=chosen.filter(u=>TBASE[HERO[u.id].trait].range==='melee'),ranged=chosen.filter(u=>TBASE[HERO[u.id].trait].range!=='melee');
+  const front=melee.sort((a,b)=>(HERO[b.id].trait==='guardian')-(HERO[a.id].trait==='guardian')),back=ranged;
+  while(front.length>3)back.push(front.pop());while(back.length>3)front.push(back.pop());
+  S.units.forEach(u=>u.slot='x');front.forEach((u,i)=>u.slot=['f1','f0','f2'][i]);back.forEach((u,i)=>u.slot=['b1','b0','b2'][i]);
+  rest.forEach((u,i)=>u.slot=benchSlots[i]||'gone');
+  if(!P.bench){const junk=rest.filter(u=>u.level===1&&S.units.filter(x=>x.id===u.id).length===1).sort((a,b)=>rvScore(a.id,P)-rvScore(b.id,P));
+    junk.slice(0,Math.max(0,rest.length-2)).forEach(u=>u.slot='gone');}
+  S.units.filter(u=>u.slot==='gone').forEach(u=>{S.gold+=sellValue(u);poolGive(u.id,COPIES[u.level-1]);});S.units=S.units.filter(u=>u.slot!=='gone');}
+function rvShop(P){const r=S.round,tg=P.target(r),cr=curRound()||{};
+  const bank=r>=3&&cr.type!=='boss'&&S.lives>4?((typeof P.econ==='function'?P.econ(r):P.econ)||0):0;
+  const own=id=>S.units.filter(u=>u.id===id).reduce((t,u)=>t+COPIES[u.level-1],0);let guard=0;
+  while(guard++<60){rvPend();
+    if(rvTrain(tg,P.rollUntil&&r<P.rollUntil?0:bank)){train();continue;}
+    // reroll plan (Rex): commit to the two cheap characters with the most copies short of ★★ and roll for them
+    const rollT=P.rollUntil&&r<P.rollUntil?[...new Set(S.units.map(u=>u.id))].filter(id=>HERO[id].tier<=P.rollTier&&own(id)<3).sort((a,b)=>own(b)-own(a)).slice(0,2):null;
+    let best=-1,bs=-1;const sells={};
+    S.shop.forEach((o,i)=>{if(!o)return;const cb=canBuy(i);if(!cb.ok&&cb.why!=='Bench full')return;const n=S.units.filter(u=>u.id===o.id).length;
+      let v=rvScore(o.id,P)+n*P.ownW+(o.level===2&&n?15:0);
+      if(rollT){if(rollT.includes(o.id)||(rollT.length<2&&HERO[o.id].tier<=P.rollTier&&own(o.id)<3))v+=20;else if(fielded().length>=boardSize())v=-1;}
+      // bench full: sell the weakest lone ★ on the bench if this card is clearly better (as the sim bots do)
+      if(!cb.ok){const lone=benched().filter(u=>u.level===1&&S.units.filter(x=>x.id===u.id).length===1).sort((a,b)=>rvScore(a.id,P)-rvScore(b.id,P))[0];
+        if(lone&&v>rvScore(lone.id,P)+(P.bench?10:4)&&S.gold+sellValue(lone)>=shopPrice(o))sells[i]=lone;else v=-1;}
+      if(v>bs){bs=v;best=i;}});
+    const bo=best>=0?S.shop[best]:null,need=fielded().length<boardSize(),merge=bo&&S.units.filter(u=>u.id===bo.id&&u.level===1).length>=2,
+      cash=S.gold+(bo&&sells[best]?sellValue(sells[best]):0);
+    if(bo&&(bs>=(rollT?20:6)||need)&&cash>=shopPrice(bo)&&(need||merge||rollT||cash-shopPrice(bo)>=bank)){if(sells[best])sell(sells[best].uid);buy(best);continue;}
+    const rolling=P.rollUntil&&r<P.rollUntil;
+    if((S.freeRerolls>0||S.gold>=rerollCost()+(rolling?0:Math.max(bank,r>=3?P.keep:0)))&&!(S.rank<tg&&trainCost()!=null&&!rolling)){reroll();continue;}
+    break;}
+  rvPend();rvArrange(P);}
+function rvMaybeEpisode(ev){
+  if(!S.lobby||LOBBY.busy||ev.type!=='fight'||S.round<3||S.enemy.elite||S.enemy.trial||S.part===2)return;
+  const live=S.lobby.rv.filter(R=>!R.out&&!R.done&&R.st.units.some(u=>u.slot[0]!=='n'));if(!live.length)return;
+  if(rand()>=(TUNE.rvEp!=null?TUNE.rvEp:.3))return;
+  const R=pick(live);S.enemy.base=JSON.parse(JSON.stringify(S.enemy));
+  Object.assign(S.enemy,{rival:R.id,tpl:'rival:'+R.id,title:RIVAL[R.id].name+"'s cast",enc:[]});}
+// a rival's board as enemy units: built in the rival's run state (items, Legendary, genre bonuses), then sent across
+function rvFoes(id){const R=S.lobby&&S.lobby.rv.find(x=>x.id===id);if(!R)return [];let out=[];
+  rvSwap(R,()=>{S.enemy={enc:[]};startBattle(true);out=B.units.filter(u=>u.side==='A'&&!u.summon);});
+  out.forEach(u=>{u.side='E';u.foe=true;u.twin=true;u.tid=u.id;u.key='rv:'+id+':'+u.id;u.rival=id;delete u.ref;u.el=null;});return out;}
+function rvChip(R){const x=RIVAL[R.id];return `<span class="rvc${R.out?' out':''}" title="${esc(x.name)}, ${esc(x.style)}: ${esc(x.d)}${R.out?' Out of the season.':''}">${x.e} ${esc(x.name)} <b>${R.out?'out':'❤️'+Math.max(0,R.st.lives)}</b></span>`;}
+function rvStrip(){if(!S||!S.lobby)return '';return `<div class="rvstrip" aria-label="Rival studios"><small>Rivals</small>${S.lobby.rv.map(rvChip).join('')}</div>`;}
+function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL[e.rival],f=R?R.st.units.filter(u=>u.slot[0]!=='n'):[];
+  const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1;
+  const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
+  const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
+  return `<section class="vs feat boss rvep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${x.e}</span>`}
+    <div class="fhd"><small>Rival episode · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s cast</b></div>
+    <div class="foes">${foes}</div><p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p></section>`;}
 function advanceAfterFight(res){
   if(S.over)return;
   if(res.part2){S.part=2;S.bossTries=0;prepareFight();UI.screen='plan';return;} // straight on: no income, no new shop
@@ -7916,9 +8051,10 @@ function topBar(){
     ${items?`<div class="items">${items}</div>`:''}
   </header>`;
 }
-function vsStrip(){
+function vsStrip(){return vsStrip0()+rvStrip();}
+function vsStrip0(){
   if(!S.enemy)return '';
-  const e=S.enemy;
+  const e=S.enemy;if(e.rival)return rvEpHTML(e);
   const foes=e.enc.map((x,i)=>{const d=EN[x.key];const st=enemyStats(x);const ab=(d.skill&&ABIL[d.skill]||'')+(d.x.dive?'🏃':'');
     return `<button class="foe" data-a="enemy" data-v="${i}" aria-label="${esc(d.name)}">${foePt(x.key,'sm')||pt({e:d.e,foe:true},'sm')}<small>${st.crowd?'×'+st.crowd:R(st.hp)}</small>${ab?`<span class="ab">${ab}</span>`:''}</button>`;}).join('');
   const tw=e.boss&&rule('twin')?twinOf():null;
@@ -8402,7 +8538,7 @@ function showInfo(I){
   if(body)sheet(body);
 }
 // ================= codex =================
-const CODEX_TABS=[['how','How it works'],['heroes','Characters'],['syn','Genres & traits'],['cross','Crossovers'],['trinkets','Items'],['legends','Legendaries'],['enemies','Enemies'],['credits','Credits']];
+const CODEX_TABS=[['how','How it works'],['heroes','Characters'],['syn','Genres & traits'],['cross','Crossovers'],['trinkets','Items'],['legends','Legendaries'],['enemies','Enemies'],['rivals','Rivals'],['credits','Credits']];
 SCR.codex=()=>{
   const tab=UI.codexTab||'how';
   let body='';
@@ -8443,6 +8579,7 @@ SCR.codex=()=>{
     <p><b>Characters</b>: 3D toy figures modelled in code for Tropebrawl, rendered with <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> (MIT).</p>
 </div>`;
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p></div>`;}).join('')}</div>`;
+  if(tab==='rivals')body=`<p>From Game Level 11, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Each Game Level from 11 to 17 adds one more rival.</p><div class="cgrid">${RIVALS.map(x=>`<div class="ccard"><h3>${x.e} ${esc(x.name)} <small>${esc(x.style)}</small></h3><p>${esc(x.d)}</p><p><b>Tell:</b> ${esc(x.tell)}</p></div>`).join('')}</div>`;
   if(tab==='enemies')body=Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...ENC[a].normal,...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
   return `<section class="screen codex"><div class="row" style="justify-content:space-between"><h2>📖 Codex</h2><button class="btn" data-a="codex-back">Back</button></div>
     <div class="tabs" role="tablist">${CODEX_TABS.map(([k,n])=>`<button class="btn sm${tab===k?' on':''}" role="tab" aria-selected="${tab===k}" data-a="codex-tab" data-v="${k}">${n}</button>`).join('')}</div>${body}</section>`;
@@ -8648,10 +8785,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.48',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.49',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.49',items:[['🎭','Rival studios! Game Levels 11-17 each add a rival (Penny, Rex, Ivy, Duke, Goldie, Sal, Hugo, Ace) who buys from your character pool and plays the same episodes behind the scenes.'],['⚔️','From Ep 3, a normal episode can turn out to be a fight against a rival\'s cast: check the Next Episode panel. Codex → Rivals lists each one\'s style and tell.']]},
   {v:'19.48',items:[['🎵','Three new shop tracks with more pep: Showtime (new default), Heist and Arcade. Settings → Shop music; Backstage is still there if you want it calm.']]},
   {v:'19.47',items:[['🌀','The living Swirl is now the default backdrop (Settings → Backdrop to change it).']]},
   {v:'19.46',items:[['🎬','Settings → Backdrop: pick Sunburst (new default), a living Swirl, backstage Curtains, or the Violet stage. Panels go back to dark ink.']]},
