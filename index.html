@@ -7140,7 +7140,7 @@ function sellValue(u){const half=Math.floor(PRICE[HERO[u.id].tier-1]*COPIES[u.le
   if(!buybackOn(u))return half;const full=S.fullSell[u.uid]|0;
   return Math.max(half,full+Math.floor(Math.max(0,(u.cost|0)-full)/2));}
 function buybackOn(u){return !!(S.fullSell&&S.fullSell[u.uid]!=null);}
-function curRound(){return SCHEDULE[S.round-1];}
+function curRound(){return S?SCHEDULE[S.round-1]:undefined;}
 
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
 function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=null;UI._bk=null;}
