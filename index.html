@@ -114,7 +114,6 @@ button{font:inherit;color:inherit}
 .slot.fullsell{border-color:transparent;background:linear-gradient(var(--panel),var(--panel)) padding-box,conic-gradient(from var(--fsa),var(--gold),#fff6d6,var(--gold-dk),var(--gold),#fff6d6,var(--gold-dk),var(--gold)) border-box;border:3px solid transparent;box-shadow:0 0 14px color-mix(in srgb,var(--gold) 45%,transparent),inset 0 0 10px color-mix(in srgb,var(--gold) 18%,transparent);animation:fsspin 3s linear infinite}
 .slot.fullsell::after{content:'🎡';position:absolute;top:3px;left:4px;font-size:.62rem;font-family:var(--f-emoji)}
 @keyframes fsspin{to{--fsa:360deg}}
-@media (prefers-reduced-motion:reduce){.slot.fullsell{animation:none}}
 .slot{appearance:none;cursor:pointer;position:relative;min-height:88px;min-width:0;border-radius:12px;border:1px solid var(--line);background:var(--panel);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:10px 3px 6px;text-align:center}
 .slot.empty{border-style:dashed;background:transparent;color:var(--dim);font-size:1rem}
 .slot:not(.empty){border-color:color-mix(in srgb,var(--gc) 50%,var(--line))}
@@ -222,7 +221,6 @@ strong.lvon{color:var(--gold);font-weight:800}
 .scard.tier5{box-shadow:0 0 14px color-mix(in srgb,var(--r5) 45%,transparent)}
 .scard.fresh{animation:fresh 1.2s ease-out 2}
 @keyframes fresh{50%{box-shadow:0 0 0 2px var(--tc),0 0 20px var(--tc)}}
-@media (prefers-reduced-motion:reduce){.scard.fresh{animation:none}}
 .scard:disabled{cursor:not-allowed}
 .scard:disabled>*:not(.why){opacity:.45}
 .scard .why{font-size:.6rem;font-weight:800;color:var(--red);line-height:1.1}
@@ -434,7 +432,6 @@ strong.lvon{color:var(--gold);font-weight:800}
   .scard .pr{justify-self:start;margin-left:5px}
   .scard .pt{width:36px;height:36px;font-size:1.15rem}
 }
-@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 
 /* test panel */
 #dev{position:fixed;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));z-index:60;font-size:.85rem}
@@ -911,7 +908,6 @@ html.dt #app>section.screen:has(.title-word){max-width:1180px;margin-inline:auto
 @keyframes readyGlow{from{box-shadow:0 0 0 2px var(--gold),0 0 8px color-mix(in srgb,var(--gold) 30%,transparent)}to{box-shadow:0 0 0 2px var(--gold),0 0 22px color-mix(in srgb,var(--gold) 60%,transparent)}}
 html.noanim .scard.ready{animation:none}
 html.noanim .shop .scard:hover:not(:disabled):not(:active){transform:none}
-@media (prefers-reduced-motion:reduce){.scard.ready{animation:none}}
 @media (hover:hover){.shop .scard:not(.sold){transition:transform .12s ease-out}.shop .scard:hover:not(:disabled):not(:active){transform:translateY(-3px)}}
 .fsico{width:1.2em;height:1.2em;vertical-align:-.25em;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round}
 .fsbtn{min-width:2.4em;align-self:stretch}
@@ -6485,8 +6481,8 @@ const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion
 const SET_KEY='tropebrawl-settings';
 const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:!!d.allLv,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.look==='glass'?'glass':'comic'};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
-let RM=(RM_SYS&&!SET.animOver)||!SET.anim;
-function applyMotion(){RM=(RM_SYS&&!SET.animOver)||!SET.anim;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
+let RM=false; // v19.62: animations are always on
+function applyMotion(){RM=false;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
 applyMotion();
 // v19.19: Settings -> Look (comic is the default; glass = frosted panels on a colourful backdrop)
 function applyLook(){try{const h=document.documentElement;h.classList.toggle('glass',SET.look==='glass');['sun','swirl','curt','violet'].forEach(k=>h.classList.toggle('bd-'+k,SET.bd===k));bdSwirl();}catch(e){}}
@@ -6522,17 +6518,17 @@ function genreWeight(id,units){const rare=HERO[id].tier>=3;if(!rare&&!legend('sp
 const PARKED=new Set(['orc','elf','fin','grim']);
 const live=k=>!PARKED.has(k);
 const GENRES_ALL={
-  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +35% HP and damage.']},
+  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +5% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +35% HP and damage.']},
   orc:{name:'Orcs',e:'👹',tiers:[2,4],d:['Orcs deal +7% damage for each living ally.','Orcs get +12% per living ally, and every other hero gets +5%.']},
   elf:{name:'Elves',e:'🍃',tiers:[2,4],d:['Elves dodge 30% of attacks and regenerate 1.5% HP per second.','Elves dodge 45%, and every hero dodges 15%.']},
   fin:{name:'Finance',e:'💰',tiers:[2,4],d:['+2 gold after every fight. Finance heroes deal +1% damage per gold you hold (max +25%).','+4 gold after every fight, and every hero gets the gold damage bonus.']},
   grim:{name:'Crusaders',e:'✝️',tiers:[2,4],d:['Crusaders can\'t be stunned and gain +5 armor.','Every hero gains +5 armor. Crusaders deal +20% damage below half HP.']},
-  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 3s.','Swarm crowds regrow every 2s, and Swarm characters heal 15% when an enemy falls.','Swarm crowds regrow every second. Full Cast: Swarm characters get +10% HP and damage.']},
+  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 2s.','Swarm crowds regrow every 1.25s, and Swarm characters heal 20% when an enemy falls.','Swarm crowds regrow every second. Full Cast: Swarm characters get +10% HP and damage.']},
   undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +5 attack (max +75).','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight).']},
   heist:{name:'Heist Crew',e:'💼',tiers:[2,4,6],d:['Heist characters deal +45% damage, plus 1% per 🪙 you hold (max +40%).','Knockouts by Heist characters steal 🪙1 (max 2 a fight), and all your characters get the gold part of the bonus (+1% per 🪙).','The Big Score: the gold damage bonus goes up to +80%. Full Cast: Heist characters get +40% HP and damage.']},
   west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +30% crit chance.','Wild West characters get another +25% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 10 energy.']},
-  horror:{name:'Slasher',e:'🩸',tiers:[2,4,6],d:['Jump Scare: each Slasher character\'s first hit on an enemy terrifies it: it deals 40% less damage for 4s.','Picked Off: Slasher characters deal +50% damage to enemies with nobody beside, in front of or behind them. Terrify lasts 6s.','It\'s Behind You: the first time each Slasher character falls, it vanishes and comes back 2s later behind the enemy\'s back row at 70% HP. Full Cast: Slasher characters get +100% HP and damage.']},
-  space:{name:'Space Opera',e:'🚀',tiers:[2,4,6],d:['Deflector Shields: Space Opera characters start each fight with a shield worth 22% of their max HP.','Piercing Lasers: Space Opera characters\' attacks also hit the enemy directly behind (or in front of) the target for 50%.','Hyperdrive: Space Opera characters attack 50% faster and cast their skill as the fight starts. Full Cast: Space Opera characters get +95% HP and damage.']},
+  horror:{name:'Slasher',e:'🩸',tiers:[2,4,6],d:['Jump Scare: each Slasher character\'s first hit on an enemy terrifies it: it deals 28% less damage for 4s. Typecast: with only Slasher characters on your board (3+), they get +12% HP and damage.','Picked Off: Slasher characters deal +50% damage to enemies with nobody beside, in front of or behind them. Terrify lasts 6s.','It\'s Behind You: the first time each Slasher character falls, it vanishes and comes back 2s later behind the enemy\'s back row at 70% HP. Full Cast: Slasher characters get +100% HP and damage.']},
+  space:{name:'Space Opera',e:'🚀',tiers:[2,4,6],d:['Deflector Shields: Space Opera characters start each fight with a shield worth 15% of their max HP. Typecast: with only Space Opera characters on your board (3+), they get +12% HP and damage.','Piercing Lasers: Space Opera characters\' attacks also hit the enemy directly behind (or in front of) the target for 50%.','Hyperdrive: Space Opera characters attack 50% faster and cast their skill as the fight starts. Full Cast: Space Opera characters get +95% HP and damage.']},
   kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +35% HP, and their attacks also hit the enemies beside the target for 50%.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','King of the Monsters: as the fight starts, a roar stuns every enemy for 1.5s and your Kaiju characters deal +45% damage. Full Cast: Kaiju characters get +110% HP and damage.']},
   ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +15% HP and damage.']},
 };
@@ -6677,32 +6673,32 @@ const CROSSOVERS_ALL=[
  {id:'bughunt',name:'Bug Hunt',a:'army',b:'bug',d:'Enemy crowds take 40% more damage.'},
  {id:'comrades',name:'Fallen Comrades',a:'army',b:'undead',d:'When one of your characters falls, the rest get +15% damage (up to 3 times).'},
  {id:'draft',name:'Draft Day',a:'army',b:'ball',d:'Get a free reroll after every fight.'},
- {id:'ants',name:'Zombie Ants',a:'bug',b:'undead',d:'Each enemy knockout regrows 2 bodies in all your crowds.'},
- {id:'bees',name:'Killer Bees',a:'bug',b:'ball',d:'Your crowds\' attacks bounce to a second enemy for 40%.'},
- {id:'armsdeal',name:'Arms Deal',a:'army',b:'heist',d:'Artillery deals +1% damage per 🪙 you hold (max +40%).'},
- {id:'locusts',name:'Plague of Locusts',a:'bug',b:'heist',d:'Your crowds\' attacks drain 5 energy from their target.'},
- {id:'graverob',name:'Grave Robbers',a:'undead',b:'heist',d:'When one of your characters falls, gain 🪙1 (max 2 a fight).'},
+ {id:'ants',name:'Zombie Ants',a:'bug',b:'undead',d:'Each enemy knockout regrows 3 bodies in all your crowds. Swarm and Undead characters get +10% HP and damage.'},
+ {id:'bees',name:'Killer Bees',a:'bug',b:'ball',d:'Your crowds\' attacks bounce to a second enemy for 100%. Swarm and Sportsball characters get +10% HP and damage.'},
+ {id:'armsdeal',name:'Arms Deal',a:'army',b:'heist',d:'Artillery deals +2% damage per 🪙 you hold (max +60%). Army and Heist Crew characters get +10% HP and damage.'},
+ {id:'locusts',name:'Plague of Locusts',a:'bug',b:'heist',d:'Your crowds\' attacks drain 15 energy from their target.'},
+ {id:'graverob',name:'Grave Robbers',a:'undead',b:'heist',d:'When one of your characters falls, gain 🪙1 (max 2 a fight). Undead and Heist Crew characters get +15% HP and damage.'},
  {id:'fixed',name:'Fixed Match',a:'ball',b:'heist',d:'Sportsball and Heist characters get +20% crit chance.'},
  {id:'cavalry',name:'The Cavalry',a:'army',b:'west',d:'After 10s, all your characters attack 25% faster.'},
- {id:'stampede',name:'Stampede',a:'bug',b:'west',d:'Your crowds get +20% crit chance.'},
+ {id:'stampede',name:'Stampede',a:'bug',b:'west',d:'Your crowds get +45% crit chance.'},
  {id:'ghosttown',name:'Ghost Town',a:'undead',b:'west',d:'The first of your characters to fall each fight rises at 40% HP.'},
- {id:'rodeo',name:'Rodeo',a:'ball',b:'west',d:'Your stuns last 0.5s longer.'},
+ {id:'rodeo',name:'Rodeo',a:'ball',b:'west',d:'Your stuns last 1s longer.'},
  {id:'trainjob',name:'The Great Train Robbery',a:'heist',b:'west',d:'The first enemy to fall each fight pays 🪙2.'},
- {id:'nightpatrol',name:'Night Patrol',a:'army',b:'horror',d:'Your characters deal +20% damage to terrified enemies.'},
+ {id:'nightpatrol',name:'Night Patrol',a:'army',b:'horror',d:'Your characters deal +5% damage to terrified enemies.'},
  {id:'vents',name:'It Came From the Vents',a:'bug',b:'horror',d:'Your crowds\' attacks terrify for 2s.'},
  {id:'livingdead',name:'Night of the Living Dead',a:'undead',b:'horror',d:'Undead and Slasher characters regenerate 1.5% HP per second.'},
  {id:'jock',name:'The Jock Dies First',a:'ball',b:'horror',d:'When your first character falls, the rest attack 20% faster for 5s.'},
- {id:'ransom',name:'Ransom Note',a:'heist',b:'horror',d:'Knocking out a terrified enemy pays 🪙1 (max 2 a fight).'},
+ {id:'ransom',name:'Ransom Note',a:'heist',b:'horror',d:'Knocking out a terrified enemy pays 🪙1 (max 1 a fight).'},
  {id:'ghostriders',name:'Ghost Riders',a:'west',b:'horror',d:'Wild West and Slasher characters\' crits terrify for 3s.'},
- {id:'orbital',name:'Orbital Strike',a:'army',b:'space',d:'Artillery deals +50% damage.'},
- {id:'hive',name:'The Hive Ship',a:'bug',b:'space',d:'Swarm and Space Opera characters attack 15% faster.'},
- {id:'ghostship',name:'Ghost Ship',a:'undead',b:'space',d:'Undead and Space Opera characters get +5 armor.'},
+ {id:'orbital',name:'Orbital Strike',a:'army',b:'space',d:'Artillery deals +5% damage.'},
+ {id:'hive',name:'The Hive Ship',a:'bug',b:'space',d:'Swarm and Space Opera characters attack 5% faster.'},
+ {id:'ghostship',name:'Ghost Ship',a:'undead',b:'space',d:'Undead and Space Opera characters get +2 armor.'},
  {id:'zerog',name:'Zero-G League',a:'ball',b:'space',d:'Sportsball and Space Opera characters start fights with 30 energy.'},
  {id:'smuggle',name:"Smuggler's Run",a:'heist',b:'space',d:'+🪙1 after every fight you win.'},
  {id:'cowboys',name:'Space Cowboys',a:'west',b:'space',d:'Wild West and Space Opera characters get +15% crit chance.'},
  {id:'noscream',name:'No One Can Hear You Scream',a:'horror',b:'space',d:'Your characters deal +35% damage to back-row enemies.'},
  {id:'defense',name:'Defense Force',a:'army',b:'kaiju',d:'Army and Kaiju characters get +10% HP.'},
- {id:'monsterisland',name:'Monster Island',a:'bug',b:'kaiju',d:'Swarm and Kaiju characters regenerate 1% HP per second.'},
+ {id:'monsterisland',name:'Monster Island',a:'bug',b:'kaiju',d:'Swarm and Kaiju characters regenerate 0.3% HP per second.'},
  {id:'atomzomb',name:'Atomic Zombies',a:'undead',b:'kaiju',d:'Undead and Kaiju characters deal +10% damage.'},
  {id:'monsterbowl',name:'Monster Bowl',a:'ball',b:'kaiju',d:'Sportsball and Kaiju characters get +5 armor.'},
  {id:'insurance2',name:'Disaster Insurance',a:'heist',b:'kaiju',d:'+🪙1 after every fight you lose.'},
@@ -6854,7 +6850,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={tcSlots:1,tcRoll:0,antsN:2,devourPct:0.15,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.628,3.79,3.2,2.45],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.35,"bug":1.1,"undead":1.0,"ball":1.15,"heist":1.4,"west":1.0,"horror":2.0,"space":1.95,"kaiju":2.1},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.35,spaceShield:0.22,spacePierce:.5,spaceHaste:0.5,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.4,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[3,2,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
+const TUNE={xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"horror":0.12,"space":0.12},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.1,"ants":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.628,3.79,3.2,2.45],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.35,"bug":1.1,"undead":1.0,"ball":1.15,"heist":1.4,"west":1.0,"horror":2.0,"space":1.95,"kaiju":2.1},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.35,spaceShield:0.15,spacePierce:.5,spaceHaste:0.5,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.05,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -7709,12 +7705,12 @@ function startBattle(silent,seed){if(!silent)tlFight();
   if(B.syn.G.kaiju>=3){sideUnits('E').forEach(x=>stunU(x,TUNE.kRoarStun));sideUnits('A').filter(x=>x.genre==='kaiju').forEach(x=>{x.dmgMult*=TUNE.kRoar;});}
   if(B.syn.X.invasion)sideUnits('A').filter(x=>x.genre==='space'||x.genre==='kaiju').forEach(x=>{x.shield+=x.maxHp*.1;});
   if(B.syn.G.space)B.units.filter(u=>u.side==='A'&&u.genre==='space').forEach(u=>{u.shield+=u.maxHp*TUNE.spaceShield;if(B.syn.G.space>=3&&u.manaMax)u.mana=u.manaMax;});
-  if(B.syn.X.orbital)B.artMult=(B.artMult||1)*1.5;
+  if(B.syn.X.orbital)B.artMult=(B.artMult||1)*TUNE.xOrbital;
   if(B.under){B.reserve.push(...B.under);B.under=null;}
   ['A','E'].forEach(sd=>[0,1,2,3].forEach(c=>stepUp(sd,c)));
 }
 function applyMods(){
-  const {G,T,X}=B.syn;
+  const {G,T,X}=B.syn,tcg=typecast();
   const A=B.units.filter(u=>u.side==='A');
   B.frontDR.A=T.guardian>=2?.18:T.guardian>=1?.12:0;
   const danger=legend('danger')&&G.army;
@@ -7751,26 +7747,26 @@ function applyMods(){
     if(G.kaiju>=2&&u.genre==='kaiju')u.rage=1;
     if(u.wide&&legend('tokyo')){u.maxHp*=1.3;u.hp*=1.3;u.dmgMult*=1.3;}
     if(B.syn.X.defense&&(u.genre==='army'||u.genre==='kaiju')){u.maxHp*=1.1;u.hp*=1.1;if(u.crowd)u.bodyHp*=1.1;}
-    if(B.syn.X.monsterisland&&(u.genre==='bug'||u.genre==='kaiju'))u.regen=Math.max(u.regen,.01);
+    if(B.syn.X.monsterisland&&(u.genre==='bug'||u.genre==='kaiju'))u.regen=Math.max(u.regen,TUNE.xMonster);
     if(B.syn.X.atomzomb&&(u.genre==='undead'||u.genre==='kaiju'))u.dmgMult*=1.1;
     if(B.syn.X.monsterbowl&&(u.genre==='ball'||u.genre==='kaiju'))u.arm+=5;
     if(B.syn.X.roundup&&(u.genre==='west'||u.genre==='kaiju'))u.hastes.push({m:.1,t:999});
     if(B.syn.X.creature&&u.genre==='kaiju')u.kscare=1;
     if(G.space&&u.genre==='space'){if(G.space>=2)u.pierce=TUNE.spacePierce;if(G.space>=3)u.hastes.push({m:TUNE.spaceHaste,t:999});}
     if(u.genre==='space'&&legend('warp'))u.hastes.push({m:TUNE.warpHaste,t:TUNE.warpFor});
-    if(B.syn.X.hive&&(u.genre==='bug'||u.genre==='space'))u.hastes.push({m:.15,t:999});
-    if(B.syn.X.ghostship&&(u.genre==='undead'||u.genre==='space'))u.arm+=5;
-    if(B.syn.X.zerog&&(u.genre==='ball'||u.genre==='space')&&u.manaMax)u.mana=Math.max(u.mana,30);
+    if(B.syn.X.hive&&(u.genre==='bug'||u.genre==='space'))u.hastes.push({m:TUNE.xHive,t:999});
+    if(B.syn.X.ghostship&&(u.genre==='undead'||u.genre==='space'))u.arm+=TUNE.xGShip;
+    if(B.syn.X.zerog&&(u.genre==='ball'||u.genre==='space')&&u.manaMax)u.mana=Math.max(u.mana,TUNE.xZeroG);
     if(B.syn.X.cowboys&&(u.genre==='west'||u.genre==='space'))u.crit+=.15;
     if(G.horror&&u.genre==='horror'){u.scare=G.horror>=2?6:4;if(G.horror>=2)u.pickOff=TUNE.horrorPick;}
     if(u.genre==='horror'&&(G.horror>=3||legend('sequel')))u.behind=G.horror>=3&&legend('sequel')?2:1;
     if(B.syn.X.livingdead&&(u.genre==='undead'||u.genre==='horror'))u.regen=Math.max(u.regen,.015);
     if(B.syn.X.ghostriders&&(u.genre==='west'||u.genre==='horror'))u.critScare=1;
     if(G.west&&u.genre==='west'){u.timer=Math.min(u.timer,.05);u.nextMult=Math.max(u.nextMult||1,2);u.crit+=TUNE.westCrit1;if(G.west>=2){u.crit+=TUNE.westCrit2;u.ricochet=true;u.critX=TUNE.westCritX;}}
-    if((B.syn.X.fixed&&(u.genre==='ball'||u.genre==='heist'))||(B.syn.X.stampede&&u.crowd))u.crit+=.2;
+    u.crit+=Math.max(B.syn.X.fixed&&(u.genre==='ball'||u.genre==='heist')?.2:0,B.syn.X.stampede&&u.crowd?TUNE.xStamp:0);
     if(G.ball&&u.genre==='ball'){u.bounces=G.ball>=2?2:1;u.bouncePct=G.ball>=3?.9:TUNE.ballBounce1;}
     else if(G.ball>=2){u.bounces=1;u.bouncePct=.2;}
-    if(X.bees&&u.crowd&&u.bouncePct<.4){u.bounces=Math.max(u.bounces,1);u.bouncePct=.4;}
+    if(X.bees&&u.crowd&&u.bouncePct<TUNE.xBees){u.bounces=Math.max(u.bounces,1);u.bouncePct=TUNE.xBees;}
     if(T.brawler&&u.trait==='brawler'){u.stackAtk=T.brawler>=2?4:2;u.stackCap=T.brawler>=2?60:30;}
     if(T.stalker&&u.trait==='stalker'){u.crit+=T.stalker>=2?.55:.3;if(T.stalker>=2)u.critRefund=15;}
     if(T.gunner&&u.trait==='gunner')u.dbl=T.gunner>=2?.6:.3;
@@ -7785,6 +7781,8 @@ function applyMods(){
     // Army at 6: drilled troops, +20% HP on top of Full Cast
     if(G.army>=2&&u.genre==='army'){const a=TUNE.armyHp;u.hp*=a;u.maxHp*=a;if(u.crowd)u.bodyHp*=a;}
     if(TUNE.fullCast>1&&u.genre&&G[u.genre]>=3){const f=(TUNE.fcG&&TUNE.fcG[u.genre])||TUNE.fullCast;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
+    if(tcg&&u.genre===tcg&&TUNE.tcG[tcg]){const f=1+TUNE.tcG[tcg];u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
+    for(const xo of CROSSOVERS)if(TUNE.xMul[xo.id]&&X[xo.id]&&(u.genre===xo.a||u.genre===xo.b)){const f=TUNE.xMul[xo.id];u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
     if(G.undead>=2&&u.crowd){u.maxBodies+=1;u.hp+=u.bodyHp;u.maxHp+=u.bodyHp;}
     if(X.horde&&u.crowd){u.maxBodies+=2;u.hp+=u.bodyHp*2;u.maxHp+=u.bodyHp*2;}
     if(has('extras')&&u.crowd){const k=tv('extras');u.maxBodies+=k;u.hp+=u.bodyHp*k;u.maxHp+=u.bodyHp*k;}
@@ -7855,10 +7853,10 @@ function dealDamage(src,t,amt,type,aoe){
     return 0;
   }
   if(aoe&&t.crowd)amt*=2;
-  if(t.side==='E'&&t.crowd&&B.syn.X.bughunt)amt*=1.4;
+  if(t.side==='E'&&t.crowd&&B.syn.X.bughunt)amt*=TUNE.xBugHunt;
   if(t.vuln>0)amt*=1.25;
   if(src&&src.fearT>B.t)amt*=1-TUNE.fear; // Terrified
-  if(t.fearT>B.t&&t.side==='E'&&src&&src.side==='A'){if(legend('scream'))amt*=1+TUNE.screamAmp;if(B.syn.X.nightpatrol)amt*=1.2;}
+  if(t.fearT>B.t&&t.side==='E'&&src&&src.side==='A'){if(legend('scream'))amt*=1+TUNE.screamAmp;if(B.syn.X.nightpatrol)amt*=TUNE.xNight;}
   if(t.scareBack>B.t&&src&&src.alive&&type==='attack')terrify(src,3);
   if(t.rage&&type==='attack')t.rageN=Math.min(TUNE.kRageMax,(t.rageN||0)+1);
   if(t.reflectT>B.t&&src&&src.alive&&type==='attack')dealDamage(t,src,amt*.5,'reflect');
@@ -7901,7 +7899,7 @@ function dealDamage(src,t,amt,type,aoe){
 function kill(t,src){
   if(t.side==='A'&&t.behind>0&&!t.summon&&Z(t)==='A'){t.behind--;t.hp=0;t.alive=false;t.shield=0;t.taunt=0;t.lurking=B.t+2;float(t,'Vanished…','miss');return;}
   if(t.side==='A'&&t.crowd&&B.syn.G.undead>=2&&!t.rose){t.rose=true;t.hp=Math.min(t.maxBodies,3)*t.bodyHp;float(t,'Rises!','heal');return;}
-  if(t.side==='A'&&!t.summon&&B.syn.X.ghosttown&&!B.ghost){B.ghost=true;t.revived=true;t.hp=t.maxHp*.4;float(t,'Ghost Town!','heal');return;}
+  if(t.side==='A'&&!t.summon&&B.syn.X.ghosttown&&!B.ghost){B.ghost=true;t.revived=true;t.hp=t.maxHp*TUNE.xGhostHp;float(t,'Ghost Town!','heal');return;}
   if(t.side==='A'&&!t.summon&&legend('plotarmor')&&!t.plotSaved){t.plotSaved=true;B.plot=true;t.hp=t.maxHp*.2;t.untarget=1;float(t,'Plot Armor!','heal');return;}
   if(t.side==='A'&&!t.summon&&!t.revived&&B.revive){B.revive=false;t.revived=true;t.hp=t.maxHp*tv('extralife')/100;float(t,'Extra Life!','heal');return;}
   t.hp=0;t.alive=false;t.shield=0;t.taunt=0;
@@ -7910,7 +7908,7 @@ function kill(t,src){
   if(t.side==='A'&&!B.firstDown){B.firstDown=t;if(B.syn.X.jock)sideUnits('A').forEach(a=>a.hastes.push({m:.2,t:5}));}
   if(t.side==='A'&&!t.summon){
     if(B.syn.G.undead>=3&&(B.graves||0)<TUNE.graveCap&&summonSkeletons('A',3,1+.2*B.round,'undead6',TUNE.graveCap))B.graves=(B.graves||0)+1;
-    if(B.syn.X.graverob&&(B.robbed||0)<2){B.robbed=(B.robbed||0)+1;B.goldEarned++;float(t,'+1🪙','heal');}
+    if(B.syn.X.graverob&&(B.robbed||0)<TUNE.xGraveN){B.robbed=(B.robbed||0)+1;B.goldEarned++;float(t,'+1🪙','heal');}
     if(B.syn.X.comrades&&(B.avenge||0)<3){B.avenge=(B.avenge||0)+1;sideUnits('A').forEach(a=>{a.dmgMult*=1.15;float(a,'+15%','sp');});}
   }
   if(t.side==='E'){
@@ -7921,8 +7919,8 @@ function kill(t,src){
     if(legend('frenzy'))B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='orc').forEach(u=>u.frenzy=(u.frenzy||0)+.15);
     if(legend('armydead')&&(B.raised||0)<TUNE.adMax&&summonSkeletons('A',3,1+TUNE.adP*B.round,'armydead',TUNE.adMax))B.raised=(B.raised||0)+1;
     if(src&&src.side==='A'&&src.genre==='heist'&&B.syn.G.heist>=2&&(B.stolen||0)<2){B.stolen=(B.stolen||0)+1;B.goldEarned++;float(src,'+1🪙','heal');}
-    if(B.syn.X.ransom&&t.fearT>B.t&&(B.ransom||0)<2){B.ransom=(B.ransom||0)+1;B.goldEarned++;float(t,'+1🪙','heal');}
-    if(B.syn.X.trainjob&&!B.train){B.train=true;B.goldEarned+=2;float(t,'+2🪙','heal');}
+    if(B.syn.X.ransom&&t.fearT>B.t&&(B.ransom||0)<TUNE.xRansomN){B.ransom=(B.ransom||0)+1;B.goldEarned++;float(t,'+1🪙','heal');}
+    if(B.syn.X.trainjob&&!B.train){B.train=true;B.goldEarned+=TUNE.xTrain;float(t,'+'+TUNE.xTrain+'🪙','heal');}
     if(B.syn.G.west>=3)B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='west'&&u.manaMax).forEach(u=>u.mana=Math.min(u.manaMax,u.mana+TUNE.westKoMana));
     if(src&&src.genre==='ball'&&B.syn.X.sponsor&&B.sponsor<3){B.sponsor++;B.goldEarned++;float(src,'+1🪙','heal');}
   }
@@ -7944,7 +7942,7 @@ function heal(src,t,amt,silent){
   t.hp+=real;if(healer)healer.healDone=(healer.healDone||0)+real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
 }
 function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;if(src)src.healDone=(src.healDone||0)+amt;float(t,'+'+R(amt),'shd');}
-function stunU(t,d){if(!t.alive||t.ccImmune)return;if(t.side==='E'&&B.syn.X.rodeo)d+=.5;t.stun=Math.max(t.stun,d);
+function stunU(t,d){if(!t.alive||t.ccImmune)return;if(t.side==='E'&&B.syn.X.rodeo)d+=TUNE.xRodeo;t.stun=Math.max(t.stun,d);
   // a stunned ball holder fumbles: the pass streak resets
   if(B&&B.ball&&B.ball.holder===t&&B.ball.streak){B.ball.streak=0;float(t,'Fumble!','ko');}}
 function spell(u,t,base,aoe){return dealDamage(u,t,base*u.p*u.spellMult*outMult(u,t),'spell',aoe);}
@@ -8029,7 +8027,7 @@ function attack(u,t){
   if(u.genre==='bug'&&u.side==='A'&&t.alive&&legend('pheromone'))t.pheroT=B.t+TUNE.pheroFor;
   if(u.genre==='west'&&u.side==='A'&&legend('sixgun')){u.shots=(u.shots||0)+1;if(u.shots%TUNE.sixEvery===0){sideUnits('E').filter(x=>x!==t&&targetable(x)).forEach(x=>dealDamage(u,x,dmg*TUNE.sixPct,'bounce'));float(u,'Fan the hammer!','sp');}}
   if(crit&&u.ricochet){const nx=nearestOther(t,[t]);if(nx)dealDamage(u,nx,dmg,'bounce');}
-  if(u.crowd&&u.side==='A'&&B.syn.X.locusts&&t.alive)t.mana=Math.max(0,(t.mana||0)-5);
+  if(u.crowd&&u.side==='A'&&B.syn.X.locusts&&t.alive)t.mana=Math.max(0,(t.mana||0)-TUNE.xLocust);
   if(u.manaMax)u.mana=Math.min(u.manaMax,u.mana+10+(crit?u.critRefund:0));
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
   // bounces: a share of the hit jumps to nearby enemies; they give no energy to anyone
@@ -8094,7 +8092,7 @@ function step(dt){
   if(B.syn.X.cavalry&&!B.cav&&B.t>=10){B.cav=true;sideUnits('A').forEach(a=>a.hastes.push({m:.25,t:999}));}
   if(legend('quickdraw')&&B.syn.G.west&&B.t>=(B.qd||7)){B.qd=(B.qd||7)+7;sideUnits('A').filter(a=>a.genre==='west').forEach(a=>{a.timer=Math.min(a.timer,.05);a.nextMult=Math.max(a.nextMult||1,2);float(a,'Draw!','sp');});}
   if(legend('halftime')&&!B.half&&(B.t>=TUNE.halfAt||(()=>{const a=B.units.filter(x=>x.side==='A'&&!x.summon);return a.reduce((n,x)=>n+Math.max(0,x.alive?x.hp:0),0)<.5*a.reduce((n,x)=>n+x.maxHp,0);})())){B.half=true;sideUnits('A').forEach(a=>{heal(null,a,a.maxHp*TUNE.halfHeal,true);if(a.genre==='ball')a.hastes.push({m:TUNE.halfHaste,t:999});float(a,'Halftime!','sp');});}
-  if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=legend('shock')?(B.t<TUNE.shockFor?TUNE.shockEvery:1e9):B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1)*TUNE.artDmg*(B.syn.X.armsdeal?1+Math.min(.4,(B.gold||0)*.01):1);const danger=legend('danger');
+  if(B.artEvery){B.art-=dt*(!legend('danger')&&B.units.some(x=>x.observer&&x.alive&&x.taunt>0)?2:1);if(B.art<=0){B.art+=legend('shock')?(B.t<TUNE.shockFor?TUNE.shockEvery:1e9):B.artEvery;const amt=(15+4*B.round+(B.artBonus||0))*(B.artMult||1)*TUNE.artDmg*(B.syn.X.armsdeal?1+Math.min(TUNE.xArmsMax,(B.gold||0)*TUNE.xArmsPer):1);const danger=legend('danger');
     const f=danger?B.units.filter(x=>x.side==='E'&&targetable(x)):rowMost({side:'A'});
     B.envSrc='artillery';f.forEach(x=>dealDamage(null,x,amt*(danger?TUNE.dangerMult:1),'spell',true));B.envSrc=null;
     if(f.length&&legend('fieldhosp')){const w=sideUnits('A').filter(a=>a.hp<a.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];if(w)heal(null,w,amt*TUNE.fhHeal);}if(f.length)shake();}}
@@ -9353,10 +9351,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.61',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.62',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.62',items:[["⚖️", "Rebalanced the two-genre pairs that won much more or less often than the rest. Swarm crowds regrow faster (every 2s with 2 Swarm, 1.25s with 4) and heal 20% on a knockout. Stronger: Killer Bees, Stampede, Plague of Locusts, Zombie Ants, Arms Deal, Grave Robbers, Rodeo. Weaker: Orbital Strike, Night Patrol, Ghost Ship, Hive Ship, Monster Island, Ransom Note."], ["🎬", "Typecast boost: a board of only Slasher or only Space Opera characters (3+) gets +12% HP and damage. Slasher terrify and Space Opera shields are a bit weaker, and Army's 4-character HP bonus is +5%."], ["🎞️", "Animations are always on, even when your device asks for reduced motion. The Animations switch is gone from Settings (the 3D toys and 3D battle arena switches stay)."], ["📖", "Fix: the Codex Events tab was empty when opened from the start menu."]]},
   {v:'19.61',items:[['🎬','Typecast: when everyone on your board is from the same genre, the shop at the start of every round always includes 1 card from that genre, so one-genre teams can find their cast.'],['🔥','Acts 3 and 4 are harder: the normal fights hit back (the bosses are unchanged).'],['⚖️','Rebalanced so every genre alone and every two-genre pair wins about as often as the others: Slasher, Space Opera and Kaiju get a much bigger 6-character bonus, Swarm and Undead get stronger 2-character bonuses, Wild West, Undead, Sportsball and Army need less from their 6-character bonus.']]},
   {v:'19.60',items:[['⚖️','Rebalance from the expert bot testing every two-genre combo and every Legendary: Heist Crew\'s 4-bonus now shares only the gold part of its damage bonus with the rest of your team (it gave everyone the full +45%); Wild West crits more; Kaiju (+30% HP) and Space Opera (25% shields, 30% faster) are stronger.'],['🏆','Legendaries: Endless Brood and Pheromone Trail weaker; Shock and Awe (12s), Field Hospital (100%) and The Mothership (8s, 22%) stronger; Crossover Episode +2% per crossover; Army of the Dead twice a fight.'],['🔗','Crossovers: No One Can Hear You Scream +35% to the back row, Killer Bees bounce 40%.']]},
   {v:'19.59',items:[['👾','More enemy lineups: 10 per act (was 4), using all four columns and mixing in the last act\'s enemies, three minion lineups for every boss, and lineups that can come mirrored. A lineup doesn\'t repeat until you\'ve seen the act\'s others.']]},
@@ -9483,7 +9482,6 @@ function settingsHTML(){
   return `<div class="eyebrow">Options</div><h3 style="color:var(--gold)">⚙️ Settings</h3>
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎭</span><span><b>Look</b><small>Comic is the original style. Glass: frosted panels on a colourful backdrop (new).</small></span><span class="seg" role="radiogroup" aria-label="Look">${[['comic','Comic'],['glass','Glass']].map(([k,t])=>`<button class="btn sm${SET.look===k?' on':''}" data-a="look" data-v="${k}" role="radio" aria-checked="${SET.look===k}"><i class="lsw ${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
     <div class="setrow lookrow bdrow"><span class="lkic" aria-hidden="true">🎬</span><span><b>Backdrop</b><small>Behind the shop and title (Comic look).</small></span><span class="seg" role="radiogroup" aria-label="Backdrop">${[['sun','Sunburst'],['swirl','Swirl'],['curt','Curtains'],['violet','Violet']].map(([k,t])=>`<button class="btn sm${SET.bd===k?' on':''}" data-a="bd" data-v="${k}" role="radio" aria-checked="${SET.bd===k}"><i class="lsw bd-${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
-    ${sw('anim',!RM,'Animations','Moving toys, attacks, projectiles, screen transitions, act banners, shop and merge effects, shakes.'+(RM_SYS?(SET.animOver?' Your device asks for reduced motion; they play anyway because you switched them on.':' Your device asks for reduced motion, so they are off. Switch on to play them anyway.'):''))}
     <p class="muted" style="margin:-4px 0 6px;font-size:.8rem" id="tbastat">${tbaStatus()}</p>
     ${sw('live',SET.live!==false,'Live 3D toys','Toys in the shop, on the board and bench are drawn live, as smooth as in fights. Switch off for pre-drawn animation (lighter on older phones). '+tlStatus())}
     ${sw('arena',SET.arena!==false,'3D battle arena','Fights play out live on a 3D tabletop. Switch off for the flat board (lighter on older phones). '+arStatus())}
