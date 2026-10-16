@@ -6518,19 +6518,19 @@ function genreWeight(id,units){const rare=HERO[id].tier>=3;if(!rare&&!legend('sp
 const PARKED=new Set(['orc','elf','fin','grim']);
 const live=k=>!PARKED.has(k);
 const GENRES_ALL={
-  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +5% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +35% HP and damage.']},
+  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +10% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +35% HP and damage.']},
   orc:{name:'Orcs',e:'👹',tiers:[2,4],d:['Orcs deal +7% damage for each living ally.','Orcs get +12% per living ally, and every other hero gets +5%.']},
   elf:{name:'Elves',e:'🍃',tiers:[2,4],d:['Elves dodge 30% of attacks and regenerate 1.5% HP per second.','Elves dodge 45%, and every hero dodges 15%.']},
   fin:{name:'Finance',e:'💰',tiers:[2,4],d:['+2 gold after every fight. Finance heroes deal +1% damage per gold you hold (max +25%).','+4 gold after every fight, and every hero gets the gold damage bonus.']},
   grim:{name:'Crusaders',e:'✝️',tiers:[2,4],d:['Crusaders can\'t be stunned and gain +5 armor.','Every hero gains +5 armor. Crusaders deal +20% damage below half HP.']},
   bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 2s.','Swarm crowds regrow every 1.25s, and Swarm characters heal 20% when an enemy falls.','Swarm crowds regrow every second. Full Cast: Swarm characters get +10% HP and damage.']},
-  undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +5 attack (max +75). Typecast: with only Undead characters on your board (3+), they get +15% HP and damage.','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight).']},
+  undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +5 attack (max +75). Typecast: with only Undead characters on your board (3+), they get +8% HP and damage.','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight).']},
   heist:{name:'Heist Crew',e:'💼',tiers:[2,4,6],d:['Heist characters deal +45% damage, plus 1% per 🪙 you hold (max +40%). Typecast: with only Heist Crew characters on your board (3+), they get +10% HP and damage.','Knockouts by Heist characters steal 🪙1 (max 2 a fight), and all your characters get the gold part of the bonus (+1% per 🪙).','The Big Score: the gold damage bonus goes up to +80%. Full Cast: Heist characters get +40% HP and damage.']},
   west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +30% crit chance. Typecast: with only Wild West characters on your board (3+), they get +10% HP and damage.','Wild West characters get another +25% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 10 energy.']},
   horror:{name:'Slasher',e:'🩸',tiers:[2,4,6],d:['Jump Scare: each Slasher character\'s first hit on an enemy terrifies it: it deals 28% less damage for 4s. Typecast: with only Slasher characters on your board (3+), they get +12% HP and damage.','Picked Off: Slasher characters deal +50% damage to enemies with nobody beside, in front of or behind them. Terrify lasts 6s.','It\'s Behind You: the first time each Slasher character falls, it vanishes and comes back 2s later behind the enemy\'s back row at 70% HP. Full Cast: Slasher characters get +100% HP and damage.']},
   space:{name:'Space Opera',e:'🚀',tiers:[2,4,6],d:['Deflector Shields: Space Opera characters start each fight with a shield worth 15% of their max HP. Typecast: with only Space Opera characters on your board (3+), they get +12% HP and damage.','Piercing Lasers: Space Opera characters\' attacks also hit the enemy directly behind (or in front of) the target for 50%.','Hyperdrive: Space Opera characters attack 50% faster and cast their skill as the fight starts. Full Cast: Space Opera characters get +95% HP and damage.']},
-  kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +35% HP, and their attacks also hit the enemies beside the target for 50%. Typecast: with only Kaiju characters on your board (3+), they get +15% HP and damage.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','King of the Monsters: as the fight starts, a roar stuns every enemy for 1.5s and your Kaiju characters deal +45% damage. Full Cast: Kaiju characters get +110% HP and damage.']},
-  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +15% HP and damage.']},
+  kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +28% HP, and their attacks also hit the enemies beside the target for 50%. Typecast: with only Kaiju characters on your board (3+), they get +12% HP and damage.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','King of the Monsters: as the fight starts, a roar stuns every enemy for 1.5s and your Kaiju characters deal +45% damage. Full Cast: Kaiju characters get +110% HP and damage.']},
+  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%. Typecast: with only Sportsball characters on your board (3+), they get +8% HP and damage.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +15% HP and damage.']},
 };
 const GENRES=Object.fromEntries(Object.entries(GENRES_ALL).filter(([k])=>live(k)));
 const TRAITS={
@@ -6670,15 +6670,15 @@ function boardArt(id,n){if(!SPRITES[id+'_f'])return n?crowdSpr(id,n):sprImg(id);
 function crowdSpr(id,n){n=Math.min(3,n);return `<div class="crowdspr" data-n="${n}">${crowdImgs(id,n)}</div>`;}
 const BALLS={dodgeball:'🔴',pitcher:'⚾',cheersquad:'🎊',waterboy:'💧',pointguard:'🏀',headcoach:'📋',mascot:'👕',qb:'🏈'};
 const CROSSOVERS_ALL=[
- {id:'bughunt',name:'Bug Hunt',a:'army',b:'bug',d:'Enemy crowds take 40% more damage.'},
+ {id:'bughunt',name:'Bug Hunt',a:'army',b:'bug',d:'Enemy crowds take 40% more damage. Army and Swarm characters get +12% HP and damage.'},
  {id:'comrades',name:'Fallen Comrades',a:'army',b:'undead',d:'When one of your characters falls, the rest get +15% damage (up to 3 times).'},
  {id:'draft',name:'Draft Day',a:'army',b:'ball',d:'Get a free reroll after every fight.'},
  {id:'ants',name:'Zombie Ants',a:'bug',b:'undead',d:'Each enemy knockout regrows 3 bodies in all your crowds. Swarm and Undead characters get +10% HP and damage.'},
- {id:'bees',name:'Killer Bees',a:'bug',b:'ball',d:'Your crowds\' attacks bounce to a second enemy for 100%. Swarm and Sportsball characters get +10% HP and damage.'},
+ {id:'bees',name:'Killer Bees',a:'bug',b:'ball',d:'Your crowds\' attacks bounce to a second enemy for 100%. Swarm and Sportsball characters get +12% HP and damage.'},
  {id:'armsdeal',name:'Arms Deal',a:'army',b:'heist',d:'Artillery deals +2% damage per 🪙 you hold (max +60%). Army and Heist Crew characters get +10% HP and damage.'},
  {id:'locusts',name:'Plague of Locusts',a:'bug',b:'heist',d:'Your crowds\' attacks drain 15 energy from their target.'},
  {id:'graverob',name:'Grave Robbers',a:'undead',b:'heist',d:'When one of your characters falls, gain 🪙1 (max 2 a fight). Undead and Heist Crew characters get +15% HP and damage.'},
- {id:'fixed',name:'Fixed Match',a:'ball',b:'heist',d:'Sportsball and Heist characters get +20% crit chance.'},
+ {id:'fixed',name:'Fixed Match',a:'ball',b:'heist',d:'Sportsball and Heist characters get +20% crit chance. Sportsball and Heist Crew characters get +10% HP and damage.'},
  {id:'cavalry',name:'The Cavalry',a:'army',b:'west',d:'After 10s, all your characters attack 25% faster.'},
  {id:'stampede',name:'Stampede',a:'bug',b:'west',d:'Your crowds get +45% crit chance.'},
  {id:'ghosttown',name:'Ghost Town',a:'undead',b:'west',d:'The first of your characters to fall each fight rises at 40% HP.'},
@@ -6850,7 +6850,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={xMBowl:2,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"horror":0.12,"space":0.12,"undead":0.15,"kaiju":0.15,"west":0.1,"heist":0.1},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.1,"ants":1.1,"sudden":1.12},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.746,3.961,3.344,2.56],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.35,"bug":1.1,"undead":1.0,"ball":1.15,"heist":1.4,"west":1.0,"horror":2.0,"space":1.95,"kaiju":2.1},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.35,spaceShield:0.15,spacePierce:.5,spaceHaste:0.5,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.05,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
+const TUNE={genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:2,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"horror":0.12,"space":0.12,"undead":0.08,"kaiju":0.12,"west":0.1,"heist":0.1,"ball":0.08},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.12,"fixed":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.746,3.961,3.344,2.56],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.35,"bug":1.1,"undead":1.0,"ball":1.15,"heist":1.4,"west":1.0,"horror":2.0,"space":1.95,"kaiju":2.1},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.28,spaceShield:0.15,spacePierce:.5,spaceHaste:0.5,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -7349,7 +7349,14 @@ function roundMult(){
   return m;
 }
 function encParse(str){return str.split(' ').map(t=>{const [pos,key]=t.split(':');return {key,row:pos[0]==='f'?'front':'back',col:+pos[1]};});}
-function enemyBase(e){const d=EN[e.key];if(d.x.crowd)return {hp:d.x.crowd*d.x.bodyHp,dps:d.x.crowd*d.x.bodyAtk/d.spd*(d.x.dive?1.3:1),arm:d.arm};return {hp:d.hp,dps:d.atk/d.spd+(d.mana?30/d.mana*12/d.spd:0),arm:d.arm};}
+// v19.65 elite traits on generated enemies
+const AFF={armored:{n:'Armored',e:'🛡️',d:'+8 armor',f:u=>{u.arm+=8;}},swift:{n:'Swift',e:'⚡',d:'attacks 35% faster',f:u=>{u.aspd+=.35;}},
+  shielded:{n:'Shielded',e:'🔰',d:'starts with a shield worth 30% of its HP',f:u=>{u.shield+=u.maxHp*.3;}},vampiric:{n:'Vampiric',e:'🧛',d:'heals 25% of the damage it deals',f:u=>{u.ls+=.25;}},
+  regen:{n:'Regenerating',e:'💚',d:'heals 1.5% of its HP every second',f:u=>{u.regen=Math.max(u.regen,.015);}}};
+const AFF_KEYS=Object.keys(AFF);
+function affBase(b,a){if(!a)return b;b=Object.assign({},b);if(a==='armored')b.arm+=8;else if(a==='swift')b.dps*=1.35;else if(a==='shielded')b.hp*=1.3;else if(a==='vampiric'){b.hp*=1.12;b.dps*=1.05;}else if(a==='regen')b.hp*=1.15;return b;}
+function enemyBase(e){return affBase(enemyBase0(e),e.aff);}
+function enemyBase0(e){const d=EN[e.key];if(d.x.crowd)return {hp:d.x.crowd*d.x.bodyHp,dps:d.x.crowd*d.x.bodyAtk/d.spd*(d.x.dive?1.3:1),arm:d.arm};return {hp:d.hp,dps:d.atk/d.spd+(d.mana?30/d.mana*12/d.spd:0),arm:d.arm};}
 function tplStrength(enc){let E=0,D=0;enc.forEach(e=>{const b=enemyBase(e);E+=b.hp*(20+b.arm)/20;D+=b.dps;});return E*D;}
 const ACT_REF={};
 for(let a=1;a<=TUNE.acts;a++){const s=ENC[a].normal.map(t=>tplStrength(encParse(t))).sort((x,y)=>x-y);ACT_REF[a]=s[Math.floor(s.length/2)];}
@@ -7359,6 +7366,18 @@ ENC[1].normal.push('f0:rats f3:rats b1:actor b2:mic','f1:mooks f2:double b0:mic 
 ENC[2].normal.push('f0:ninjas f3:ninjas b1:sniper b2:sniper','f1:mech f2:mech b1:auditor','f0:figures f1:figures f2:figures b2:auditor','f1:mech b0:actor b1:sniper b3:auditor','f0:ninjas f2:double b1:auditor b3:mic','f1:figures f2:mech b0:sniper b3:sniper');ENC[2].bosses=[ENC[2].boss,'f0:ninjas f3:ninjas b1:shared b2:sniper','f1:mech f2:mech b1:shared'];
 ENC[3].normal.push('f0:spoiler f3:spoiler b1:breaker b2:breaker','f1:plotarmor f2:continuity b0:sniper b3:sniper','f0:retcons f1:retcons f2:retcons b1:breaker','f1:continuity f2:continuity b1:auditor','f0:ninjas f3:spoiler b1:breaker b2:auditor','f1:plotarmor f2:mech b1:breaker b2:breaker');ENC[3].bosses=[ENC[3].boss,'f0:retcons f2:retcons b1:exec b3:breaker','f1:plotarmor b0:breaker b2:exec'];
 ENC[4].normal.push('f0:cliff f3:cliff b1:twist b2:monologue','f1:captain f2:captain b1:twist','f0:cgi f1:cgi f2:cgi b2:monologue','f1:captain f2:plotarmor b0:twist b3:breaker','f0:spoiler f2:cliff b1:monologue b2:monologue','f1:continuity f2:cgi b0:twist b3:twist');ENC[4].bosses=[ENC[4].boss,'f0:cgi f3:cgi b1:deus b2:twist','f1:captain f2:continuity b1:deus'];
+// v19.65 generated monster fights: each act's monsters (from its lineups) plus a few from the act before
+const GEN_POOL={};for(let a=1;a<=TUNE.acts;a++){const own=new Set(),prev=new Set();ENC[a].normal.forEach(t=>encParse(t).forEach(e=>own.add(e.key)));
+  if(a>1)ENC[a-1].normal.forEach(t=>encParse(t).forEach(e=>{if(!own.has(e.key))prev.add(e.key);}));GEN_POOL[a]={own:[...own],prev:[...prev]};}
+function fightStep(){const ev=curRound();let k=0;for(let i=0;i<S.round-1;i++){const x=SCHEDULE[i];if(x.act===ev.act&&x.type==='fight')k++;}return k;}
+function genLineup(act,step){const P=GEN_POOL[act],n=Math.max(2,Math.min(8,Math.round(TUNE.genN[act-1]+step*TUNE.genGrow+rand()*1.2-.6))),enc=[];
+  const pickKey=()=>P.prev.length&&rand()<TUNE.genPrev?pick(P.prev):pick(P.own),pack=rand()<TUNE.genPack?pickKey():null;
+  for(let i=0;i<n;i++){const key=pack&&rand()<.7?pack:pickKey(),melee=EN[key].range==='melee';
+    let sl=freeSlotsE(enc).filter(x=>x[0]===(melee?'front':'back'));if(!sl.length)sl=freeSlotsE(enc);if(!sl.length)break;const x=pick(sl);enc.push({key,row:x[0],col:x[1]});}
+  if(!enc.some(e=>e.row==='front')){const f=freeSlotsE(enc).find(x=>x[0]==='front');if(f){enc[0].row=f[0];enc[0].col=f[1];}}
+  if(rand()<TUNE.affP[act-1]){const k=Math.min(enc.length,rand()<TUNE.aff2?2:1);shuffle(enc.slice()).slice(0,k).forEach(e=>{e.aff=pick(AFF_KEYS);});}
+  return enc;}
+function encStr(enc){return enc.map(e=>e.row[0]+e.col+':'+e.key).join(' ');}
 // a shuffle bag per act: a lineup comes back only after the act's other lineups have been seen
 function encBag(k,list){S.bag=S.bag||{};let b=S.bag[k];if(!b||!b.length)b=S.bag[k]=shuffle(list.map((_,i)=>i));return list[b.pop()]||pick(list);}
 // Two-Part Finale: after Deus Ex Machina, the first two bosses return together
@@ -7367,15 +7386,17 @@ function freeSlotsE(enc){return [['front',1],['front',0],['front',2],['front',3]
 function prepareFight(){
   const ev=curRound();
   const p2=ev.type==='boss'&&ev.act===TUNE.acts&&S.part===2;
-  let tpl;
+  let tpl=null;
   if(p2)tpl=FINALE2;
   else if(ev.type==='boss')tpl=encBag('b'+ev.act,ENC[ev.act].bosses||[ENC[ev.act].boss]);
   else if(ev.act===1&&S.round<=2)tpl=pick(ENC[1].easy);
-  else tpl=encBag('n'+ev.act,ENC[ev.act].normal);
-  const enc=encParse(tpl);if(!p2&&rand()<.5)enc.forEach(e=>{e.col=3-e.col;}); // half the time the lineup is mirrored
+  else if(!TUNE.genOn)tpl=encBag('n'+ev.act,ENC[ev.act].normal);
+  const gen=!tpl&&TUNE.genOn?genLineup(ev.act,fightStep()):null;if(gen)tpl=encStr(gen);
+  const enc=gen||encParse(tpl);if(!p2&&!gen&&rand()<.5)enc.forEach(e=>{e.col=3-e.col;}); // half the time the lineup is mirrored
+  if(ev.type==='boss'&&TUNE.genOn&&rand()<TUNE.bossAffP[ev.act-1]){const bu=enc.find(e=>EN[e.key].x.boss);if(bu)bu.aff=pick(AFF_KEYS);}
   // normalise every template to its act's median normal strength; bosses are a fixed multiple of it
   const ref=ev.type==='boss'?ACT_REF[ev.act]*TUNE.bossF[ev.act-1]:(ev.act===1&&S.round<=2?ACT_REF[1]*0.55:ACT_REF[ev.act]);
-  const norm=Math.sqrt(ref/tplStrength(enc));
+  const norm=Math.sqrt(ref*(gen?TUNE.genK:1)/tplStrength(enc)); // v19.65 genK: strength of generated lineups vs the old ones
   const lead=enc.map(e=>EN[e.key]).sort((a,b)=>(b.x.boss?1e6:0)+b.hp-(a.x.boss?1e6:0)-a.hp)[0];
   // Guest Stars: the fight right before each boss is a mini-boss. Trial by Fire: the fight after the event is tougher.
   const nx=SCHEDULE[S.round];const elite=rule('elite')&&ev.type==='fight'&&!!nx&&nx.type==='boss';
@@ -7386,7 +7407,7 @@ function prepareFight(){
   rvMaybeEpisode(ev);
 }
 // v19.57: where the next enemy stands, before the fight (the same grid as See their team)
-function nextFoesList(){const e=S.enemy;if(!e)return [];const list=e.enc.map((x,i)=>{const d=EN[x.key],st=enemyStats(x);return {i,key:x.key,name:d.name,e:d.e,row:x.row,col:x.col,hp:st.hp,atk:st.atk,crowd:st.crowd||0,p:st.p,ab:(d.skill&&ABIL[d.skill]||'')+(d.x.dive?'🏃':'')};});
+function nextFoesList(){const e=S.enemy;if(!e)return [];const list=e.enc.map((x,i)=>{const d=EN[x.key],st=enemyStats(x),af=x.aff&&AFF[x.aff];return {i,key:x.key,name:(af?af.n+' ':'')+d.name,e:d.e,row:x.row,col:x.col,hp:st.hp,atk:st.atk,crowd:st.crowd||0,p:st.p,ab:(af?af.e:'')+(d.skill&&ABIL[d.skill]||'')+(d.x.dive?'🏃':''),aff:x.aff||null};});
   const tu=e.boss&&rule('twin')&&twinOf()?twinUnit():null;if(tu)list.push({twin:true,tid:tu.tid,name:tu.name,e:'😈',row:tu.row,col:tu.col,hp:tu.maxHp,atk:tu.atk,crowd:tu.crowd?tu.maxBodies:0,level:tu.level,ab:'😈'});return list;}
 function nextFoesHTML(){const e=S.enemy;if(!e)return '<p class="muted">No fight to show.</p>';const list=nextFoesList(),used=new Set();
   const card=k=>{const u=list[k];used.add(k);return `<button class="ftc" data-a="nextfoe" data-v="${k}" aria-label="${esc(u.name)}">${u.twin?(foePt(null,'ftp',u.tid)||pt({e:u.e,foe:true},'ftp')):(foePt(u.key,'ftp')||pt({e:u.e,foe:true},'ftp'))}<b class="ftn">${esc(u.name)}${u.level?' '+stars(u.level):''}</b><small class="fts">❤️ ${R(u.hp)}${u.crowd?' ×'+u.crowd:''} · ⚔️ ${R(u.atk)}${u.crowd?' each':''}</small>${u.ab?`<small class="ftd">${u.ab}</small>`:''}</button>`;};
@@ -7671,8 +7692,9 @@ function enemyUnit(e){
   const d=EN[e.key],st=enemyStats(e);
   const base={side:'E',name:d.name,e:d.e,foe:true,key:d.key,arm:d.arm,interval:d.spd,range:d.range,manaMax:d.mana,skill:d.skill,row:e.row,col:e.col,
     p:st.p,dive:!!d.x.dive,ls:d.x.ls||0,boss:!!d.x.boss};
-  if(st.crowd)return mkUnit(Object.assign(base,{crowd:true,maxBodies:st.crowd,bodyHp:st.bodyHp,bodyAtk:st.bodyAtk,maxHp:st.hp,hp:st.hp,atk:st.bodyAtk}));
-  return mkUnit(Object.assign(base,{maxHp:st.hp,hp:st.hp,atk:st.atk}));
+  const u=st.crowd?mkUnit(Object.assign(base,{crowd:true,maxBodies:st.crowd,bodyHp:st.bodyHp,bodyAtk:st.bodyAtk,maxHp:st.hp,hp:st.hp,atk:st.bodyAtk})):mkUnit(Object.assign(base,{maxHp:st.hp,hp:st.hp,atk:st.atk}));
+  if(e.aff&&AFF[e.aff]){AFF[e.aff].f(u);u.aff=e.aff;}
+  return u;
 }
 // Evil Twin: a boss brings a plain copy (no skill, no synergies) of your strongest fielded character
 function twinOf(){const f=fielded();if(!f.length)return null;const pw=u=>TIERM[HERO[u.id].tier-1]*LV[u.level-1];return f.slice().sort((a,b)=>pw(b)-pw(a))[0];}
@@ -8560,7 +8582,7 @@ function vsStrip(){return vsStrip0()+rvStrip();}
 function vsStrip0(){
   if(!S.enemy)return '';
   const e=S.enemy;if(e.rival)return rvEpHTML(e);
-  const foes=e.enc.map((x,i)=>{const d=EN[x.key];const st=enemyStats(x);const ab=(d.skill&&ABIL[d.skill]||'')+(d.x.dive?'🏃':'');
+  const foes=e.enc.map((x,i)=>{const d=EN[x.key];const st=enemyStats(x);const ab=(x.aff&&AFF[x.aff]?AFF[x.aff].e:'')+(d.skill&&ABIL[d.skill]||'')+(d.x.dive?'🏃':'');
     return `<button class="foe" data-a="enemy" data-v="${i}" aria-label="${esc(d.name)}">${foePt(x.key,'sm')||pt({e:d.e,foe:true},'sm')}<small>${st.crowd?'×'+st.crowd:R(st.hp)}</small>${ab?`<span class="ab">${ab}</span>`:''}</button>`;}).join('');
   const tw=e.boss&&rule('twin')?twinOf():null;
   const tu=tw&&twinUnit();
@@ -9146,7 +9168,7 @@ SCR.codex=()=>{
 </div>`;
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p></div>`;}).join('')}</div>`;
   if(tab==='rivals')body=`<p>From Game Level 11, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Each Game Level from 11 to 17 adds one more rival. Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><div class="cgrid">${RIVALS.map(x=>`<div class="ccard"><h3>${x.e} ${esc(x.name)} <small>${esc(x.style)}</small></h3><p>${esc(x.d)}</p><p><b>Tell:</b> ${esc(x.tell)}</p></div>`).join('')}</div>`;
-  if(tab==='enemies')body=Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...(ENC[a].codex||ENC[a].normal),...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
+  if(tab==='enemies')body=(TUNE.genOn?`<div class="rules"><p><b>Every fight is new.</b> Normal fights are put together each time from the act's monsters below, from 3 to about 5 enemies, sometimes a pack of one kind. Bosses stay, and from Act 2 a boss can be elite.</p><p><b>Elite traits:</b> ${AFF_KEYS.map(k=>AFF[k].e+' <b>'+AFF[k].n+'</b>: '+AFF[k].d).join(' · ')}.</p></div>`:'')+Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...(ENC[a].codex||ENC[a].normal),...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
   return `<section class="screen codex"><div class="row" style="justify-content:space-between"><h2>📖 Codex</h2><button class="btn" data-a="codex-back">Back</button></div>
     <div class="tabs" role="tablist">${CODEX_TABS.map(([k,n])=>`<button class="btn sm${tab===k?' on':''}" role="tab" aria-selected="${tab===k}" data-a="codex-tab" data-v="${k}">${n}</button>`).join('')}</div>${body}</section>`;
 };
@@ -9359,10 +9381,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.64',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.65',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.65',items:[["🎲", "Every fight is new: normal fights are put together each time from the act's monsters, 3 to about 5 enemies, sometimes a pack of one kind."], ["⭐", "Elite enemies: some are Armored, Swift, Shielded, Vampiric or Regenerating (shown on the lineup and in the Codex). From Act 2 a boss can be elite too."], ["⚖️", "Rebalanced for the new fights: Army +10% HP with 4, Kaiju Rampage +28% HP, Typecast boosts adjusted (Sportsball +8%), and Killer Bees, Bug Hunt and Fixed Match also give their genres +HP and damage."]]},
   {v:'19.64',items:[["🔥", "Harder: enemies hit about 4.5% harder in every act. The expert test bot got stronger, so the game was retuned so a strong player still wins about half the time with any genre or pair."], ["🎬", "Typecast boost for one-genre boards: Undead and Kaiju +15%, Wild West and Heist Crew +10% HP and damage (Slasher and Space Opera stay at +12%)."], ["⚖️", "Monster Bowl gives +2 armor (was +5). Sudden Death also gives Undead and Sportsball characters +12% HP and damage."]]},
   {v:'19.62',items:[["⚖️", "Rebalanced the two-genre pairs that won much more or less often than the rest. Swarm crowds regrow faster (every 2s with 2 Swarm, 1.25s with 4) and heal 20% on a knockout. Stronger: Killer Bees, Stampede, Plague of Locusts, Zombie Ants, Arms Deal, Grave Robbers, Rodeo. Weaker: Orbital Strike, Night Patrol, Ghost Ship, Hive Ship, Monster Island, Ransom Note."], ["🎬", "Typecast boost: a board of only Slasher or only Space Opera characters (3+) gets +12% HP and damage. Slasher terrify and Space Opera shields are a bit weaker, and Army's 4-character HP bonus is +5%."], ["🎞️", "Animations are always on, even when your device asks for reduced motion. The Animations switch is gone from Settings (the 3D toys and 3D battle arena switches stay)."], ["📖", "Fix: the Codex Events tab was empty when opened from the start menu."]]},
   {v:'19.61',items:[['🎬','Typecast: when everyone on your board is from the same genre, the shop at the start of every round always includes 1 card from that genre, so one-genre teams can find their cast.'],['🔥','Acts 3 and 4 are harder: the normal fights hit back (the bosses are unchanged).'],['⚖️','Rebalanced so every genre alone and every two-genre pair wins about as often as the others: Slasher, Space Opera and Kaiju get a much bigger 6-character bonus, Swarm and Undead get stronger 2-character bonuses, Wild West, Undead, Sportsball and Army need less from their 6-character bonus.']]},
