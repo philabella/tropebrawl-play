@@ -6522,19 +6522,19 @@ function genreWeight(id,units){const rare=HERO[id].tier>=3;if(!rare&&!legend('sp
 const PARKED=new Set(['orc','elf','fin','grim']);
 const live=k=>!PARKED.has(k);
 const GENRES_ALL={
-  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +55% HP and damage.']},
+  army:{name:'Army',e:'🎖️',tiers:[2,4,6],d:['Every 4s, artillery shells the most crowded enemy row.','Artillery fires every 3s, and Army characters get +12% HP.','Shells deal double damage and fire every 2s. Full Cast: Army characters get +35% HP and damage.']},
   orc:{name:'Orcs',e:'👹',tiers:[2,4],d:['Orcs deal +7% damage for each living ally.','Orcs get +12% per living ally, and every other hero gets +5%.']},
   elf:{name:'Elves',e:'🍃',tiers:[2,4],d:['Elves dodge 30% of attacks and regenerate 1.5% HP per second.','Elves dodge 45%, and every hero dodges 15%.']},
   fin:{name:'Finance',e:'💰',tiers:[2,4],d:['+2 gold after every fight. Finance heroes deal +1% damage per gold you hold (max +25%).','+4 gold after every fight, and every hero gets the gold damage bonus.']},
   grim:{name:'Crusaders',e:'✝️',tiers:[2,4],d:['Crusaders can\'t be stunned and gain +5 armor.','Every hero gains +5 armor. Crusaders deal +20% damage below half HP.']},
-  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 5s.','Swarm crowds regrow every 2.5s, and Swarm characters heal 10% when an enemy falls.','Swarm crowds regrow every second. Full Cast: Swarm characters get +35% HP and damage.']},
-  undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +4 attack (max +60).','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight). Full Cast: Undead characters get +35% HP and damage.']},
-  heist:{name:'Heist Crew',e:'💼',tiers:[2,4,6],d:['Heist characters deal +45% damage, plus 1% per 🪙 you hold (max +40%).','Knockouts by Heist characters steal 🪙1 (max 2 a fight), and all your characters get the gold part of the bonus (+1% per 🪙).','The Big Score: the gold damage bonus goes up to +80%. Full Cast: Heist characters get +50% HP and damage.']},
-  west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +30% crit chance.','Wild West characters get another +25% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 25 energy. Full Cast: Wild West characters get +50% HP and damage.']},
-  horror:{name:'Slasher',e:'🩸',tiers:[2,4,6],d:['Jump Scare: each Slasher character\'s first hit on an enemy terrifies it: it deals 35% less damage for 4s.','Picked Off: Slasher characters deal +50% damage to enemies with nobody beside, in front of or behind them. Terrify lasts 6s.','It\'s Behind You: the first time each Slasher character falls, it vanishes and comes back 2s later behind the enemy\'s back row at 40% HP. Full Cast: Slasher characters get +50% HP and damage.']},
-  space:{name:'Space Opera',e:'🚀',tiers:[2,4,6],d:['Deflector Shields: Space Opera characters start each fight with a shield worth 25% of their max HP.','Piercing Lasers: Space Opera characters\' attacks also hit the enemy directly behind (or in front of) the target for 50%.','Hyperdrive: Space Opera characters attack 30% faster and cast their skill as the fight starts. Full Cast: Space Opera characters get +40% HP and damage.']},
-  kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +30% HP, and their attacks also hit the enemies beside the target for 50%.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','King of the Monsters: as the fight starts, a roar stuns every enemy for 1s and your Kaiju characters deal +25% damage. Full Cast: Kaiju characters get +60% HP and damage.']},
-  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +70% HP and damage.']},
+  bug:{name:'Swarm',e:'🧬',tiers:[2,4,6],d:['Swarm crowds regrow one body every 3s.','Swarm crowds regrow every 2s, and Swarm characters heal 15% when an enemy falls.','Swarm crowds regrow every second. Full Cast: Swarm characters get +10% HP and damage.']},
+  undead:{name:'Undead',e:'🦴',tiers:[2,4,6],d:['Each body your crowds lose gives Undead characters +5 attack (max +75).','Your crowds start with +1 body and rise once with 3 bodies when wiped out.','Your characters that fall for good leave 3 skeletons behind (3 times per fight).']},
+  heist:{name:'Heist Crew',e:'💼',tiers:[2,4,6],d:['Heist characters deal +45% damage, plus 1% per 🪙 you hold (max +40%).','Knockouts by Heist characters steal 🪙1 (max 2 a fight), and all your characters get the gold part of the bonus (+1% per 🪙).','The Big Score: the gold damage bonus goes up to +80%. Full Cast: Heist characters get +40% HP and damage.']},
+  west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +30% crit chance.','Wild West characters get another +25% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 10 energy.']},
+  horror:{name:'Slasher',e:'🩸',tiers:[2,4,6],d:['Jump Scare: each Slasher character\'s first hit on an enemy terrifies it: it deals 40% less damage for 4s.','Picked Off: Slasher characters deal +50% damage to enemies with nobody beside, in front of or behind them. Terrify lasts 6s.','It\'s Behind You: the first time each Slasher character falls, it vanishes and comes back 2s later behind the enemy\'s back row at 70% HP. Full Cast: Slasher characters get +100% HP and damage.']},
+  space:{name:'Space Opera',e:'🚀',tiers:[2,4,6],d:['Deflector Shields: Space Opera characters start each fight with a shield worth 22% of their max HP.','Piercing Lasers: Space Opera characters\' attacks also hit the enemy directly behind (or in front of) the target for 50%.','Hyperdrive: Space Opera characters attack 50% faster and cast their skill as the fight starts. Full Cast: Space Opera characters get +95% HP and damage.']},
+  kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +35% HP, and their attacks also hit the enemies beside the target for 50%.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','King of the Monsters: as the fight starts, a roar stuns every enemy for 1.5s and your Kaiju characters deal +45% damage. Full Cast: Kaiju characters get +110% HP and damage.']},
+  ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +15% HP and damage.']},
 };
 const GENRES=Object.fromEntries(Object.entries(GENRES_ALL).filter(([k])=>live(k)));
 const TRAITS={
@@ -6677,7 +6677,7 @@ const CROSSOVERS_ALL=[
  {id:'bughunt',name:'Bug Hunt',a:'army',b:'bug',d:'Enemy crowds take 40% more damage.'},
  {id:'comrades',name:'Fallen Comrades',a:'army',b:'undead',d:'When one of your characters falls, the rest get +15% damage (up to 3 times).'},
  {id:'draft',name:'Draft Day',a:'army',b:'ball',d:'Get a free reroll after every fight.'},
- {id:'ants',name:'Zombie Ants',a:'bug',b:'undead',d:'Each enemy knockout regrows a body in all your crowds.'},
+ {id:'ants',name:'Zombie Ants',a:'bug',b:'undead',d:'Each enemy knockout regrows 2 bodies in all your crowds.'},
  {id:'bees',name:'Killer Bees',a:'bug',b:'ball',d:'Your crowds\' attacks bounce to a second enemy for 40%.'},
  {id:'armsdeal',name:'Arms Deal',a:'army',b:'heist',d:'Artillery deals +1% damage per 🪙 you hold (max +40%).'},
  {id:'locusts',name:'Plague of Locusts',a:'bug',b:'heist',d:'Your crowds\' attacks drain 5 energy from their target.'},
@@ -6854,7 +6854,7 @@ function buildSchedule(cut){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.628,3.79,2.5,1.95],bossF:[1.9,1.6,1.9,0.53],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{army:1.55,bug:1.35,undead:1.35,ball:1.7,heist:1.5,west:1.5,horror:1.5,space:1.4,kaiju:1.6},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.25,kHp:.3,spaceShield:.25,spacePierce:.5,spaceHaste:.3,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:.35,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[5,2.5,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:4,undeadMax:60,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
+const TUNE={tcSlots:1,tcRoll:0,antsN:2,devourPct:0.15,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.628,3.79,3.2,2.45],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.35,"bug":1.1,"undead":1.0,"ball":1.15,"heist":1.4,"west":1.0,"horror":2.0,"space":1.95,"kaiju":2.1},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.35,spaceShield:0.22,spacePierce:.5,spaceHaste:0.5,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.4,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[3,2,1],armyHp:1.12,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:4};
 buildSchedule(false);
@@ -7164,25 +7164,30 @@ function poolTake(id,n){S.pool=S.pool||{};S.pool[id]=Math.max(0,poolLeft(id)-n);
 function poolGive(id,n){S.pool=S.pool||{};S.pool[id]=Math.min(poolMax(id),poolLeft(id)+n);}
 function poolOpen(id){const sh=LOBBY.busy?(S.shop||[]).concat(LOBBY.hold||[]):(S.shop||[]);const shown=sh.filter(o=>o&&o.id===id).reduce((t,o)=>t+COPIES[o.level-1],0);return poolLeft(id)-shown>0;}
 function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);return pool.length?pick(pool):null;}
-function rollShop(){
+function rollShop(rr){
   if(typeof UI!=='undefined'){UI.pick=null;UI.deal=1;} // a new shop: no card stays half-selected
   const maxed=maxedIds();
-  S.shop=[];let nudged=0;
+  S.shop=[];let nudged=0;const tc=typecast(),tcK=tc?TUNE.tcSlots*(rr?TUNE.tcRoll:1):0,tcN=tc?Math.floor(tcK)+(tcK%1&&rand()<tcK%1?1:0):0;
   for(let i=0;i<SHOP_SLOTS;i++){
     let tier=rollTier();if(tier===5&&S.shop.some(o=>o&&HERO[o.id].tier===5))tier=4; // v19.56: at most one Mythic per shop
     let pool=HEROES.filter(h=>h[4]===tier&&!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])&&poolOpen(h[0])).map(h=>h[0]);
     // gentle nudge toward heroes you already own, so merges stay reachable as the roster grows
+    let tcCard=0;
+    if(tc&&i<tcN){const my=S.shop.some(o=>o&&HERO[o.id].tier===5),tp=pool.filter(id=>HERO[id].genre===tc),any=HEROES.filter(h=>h[2]===tc&&h[4]<=topTier(S.rank)&&!(my&&h[4]===5)&&!maxed.has(h[0])&&poolOpen(h[0])).map(h=>h[0]);
+      if(tp.length||any.length){pool=tp.length?tp:any;tcCard=1;}}
     const mine=pool.filter(id=>S.units.some(u=>u.id===id));
-    if(mine.length&&rand()<TUNE.ownBias&&nudged<TUNE.ownCap){pool=mine;nudged++;}
+    if(!tcCard&&mine.length&&rand()<TUNE.ownBias&&nudged<TUNE.ownCap){pool=mine;nudged++;}
     if(!pool.length)pool=HEROES.filter(h=>!maxed.has(h[0])&&!(S.cut||[]).includes(h[2])&&poolOpen(h[0])).map(h=>h[0]);
     if(!pool.length){S.shop.push(null);continue;}
     const id=pick(pool);
     // ready-made ★★: rare in a normal shop (RANK.lv2), common with the Talent Scout Legendary (any rarity)
-    S.shop.push({id,level:(legend('scout')?rand()<TUNE.scoutChance:HERO[id].tier<=2&&rand()<RANK.lv2[S.rank-1])?2:1});
+    S.shop.push(Object.assign({id,level:(legend('scout')?rand()<TUNE.scoutChance:HERO[id].tier<=2&&rand()<RANK.lv2[S.rank-1])?2:1},tcCard?{tc:1}:{}));
   }
   S.seen=S.seen||{};S.shop.forEach(o=>{if(o&&!S.seen[o.id]){o.nw=1;S.seen[o.id]=1;}});
   tlAct('o',S.shop.map(o=>o?o.id+(o.level>1?'*'+o.level:''):'-').join(',')); // the run log: what was offered
 }
+// v19.61 Typecast: everyone on the board is from one genre (3+ characters): that genre fills TUNE.tcSlots shop cards
+function typecast(){if(!S)return null;const f=fielded();if(f.length<3)return null;const g=HERO[f[0].id].genre;return f.every(u=>HERO[u.id].genre===g)&&!(S.cut||[]).includes(g)?g:null;}
 function shopPrice(o){const p=PRICE[HERO[o.id].tier-1];return o.level===2?Math.round(p*(legend('scout')?TUNE.scoutMult:3)):p;}
 function canBuy(i){
   const o=S.shop[i];if(!o)return {ok:false,why:'Sold'};
@@ -7218,7 +7223,7 @@ function rerollCost(){return legend('dircut')?1:TUNE.reroll;}
 function reroll(){
   if(S.freeRerolls>0)S.freeRerolls--;
   else{const c=rerollCost();if(S.gold<c){toast('Not enough gold');return false;}S.gold-=c;runStats().spend.reroll+=c;S.rrRound=(S.rrRound||0)+1;}
-  tlAct('r');runStats().rerolls++;rollShop();S.locked=false;return true;
+  tlAct('r');runStats().rerolls++;rollShop(true);S.locked=false;return true;
 }
 function xpNeed(){return S.rank>=RMAX?null:xpFor(S.rank-1);}
 function trainCost(){return S.rank>=RMAX?null:RANK.train;}
@@ -7701,7 +7706,7 @@ function startBattle(silent,seed){if(!silent)tlFight();
   if(legend('insidejob')){const e=B.units.filter(x=>x.side==='E').sort((a,b)=>b.maxHp-a.maxHp)[0];if(e){e.hp*=TUNE.ijHp;e.insideJob=true;}}
   wideFix();
   applyMods();
-  if(B.syn.G.kaiju>=3){sideUnits('E').forEach(x=>stunU(x,1));sideUnits('A').filter(x=>x.genre==='kaiju').forEach(x=>{x.dmgMult*=TUNE.kRoar;});}
+  if(B.syn.G.kaiju>=3){sideUnits('E').forEach(x=>stunU(x,TUNE.kRoarStun));sideUnits('A').filter(x=>x.genre==='kaiju').forEach(x=>{x.dmgMult*=TUNE.kRoar;});}
   if(B.syn.X.invasion)sideUnits('A').filter(x=>x.genre==='space'||x.genre==='kaiju').forEach(x=>{x.shield+=x.maxHp*.1;});
   if(B.syn.G.space)B.units.filter(u=>u.side==='A'&&u.genre==='space').forEach(u=>{u.shield+=u.maxHp*TUNE.spaceShield;if(B.syn.G.space>=3&&u.manaMax)u.mana=u.manaMax;});
   if(B.syn.X.orbital)B.artMult=(B.artMult||1)*1.5;
@@ -7737,7 +7742,7 @@ function applyMods(){
     if(G.grim&&u.genre==='grim'){u.ccImmune=true;u.arm+=5;}
     if(G.grim>=2){if(u.genre!=='grim')u.arm+=5;if(u.genre==='grim')u.lowHpBonus=.2;}
     if(legend('martyr')){u.hp=u.maxHp*.5;u.shield+=u.maxHp*.5;if(u.genre==='grim')u.lowHpBonus=.4;}
-    if(G.bug>=2&&u.genre==='bug')u.devour=.10;
+    if(G.bug>=2&&u.genre==='bug')u.devour=TUNE.devourPct;
     // Heist Crew: gold you hold is damage (Heist only at 2, everyone at 4; cap +30%, +60% at 6)
     if(G.heist&&(u.genre==='heist'||G.heist>=2))u.goldDmg=(u.goldDmg||0)+(u.genre==='heist'?TUNE.heistBase:0)+Math.min(legend('vault')&&u.genre==='heist'?Math.max(TUNE.vaultCap,G.heist>=3?2*TUNE.heistCap:TUNE.heistCap):G.heist>=3?2*TUNE.heistCap:TUNE.heistCap,S.gold*(legend('vault')&&u.genre==='heist'?.02:.01));
     // Wild West: High Noon (first shot instant, double); at 4 +15% crit and crits ricochet
@@ -7909,7 +7914,7 @@ function kill(t,src){
     if(B.syn.X.comrades&&(B.avenge||0)<3){B.avenge=(B.avenge||0)+1;sideUnits('A').forEach(a=>{a.dmgMult*=1.15;float(a,'+15%','sp');});}
   }
   if(t.side==='E'){
-    if(B.syn.X.ants)sideUnits('A').filter(a=>a.crowd).forEach(a=>regrow(a,1));
+    if(B.syn.X.ants)sideUnits('A').filter(a=>a.crowd).forEach(a=>regrow(a,TUNE.antsN));
     if(legend('feeding')){const bugs=sideUnits('A').filter(a=>a.genre==='bug');if((B.feed||0)<TUNE.feedMax){B.feed=(B.feed||0)+1;bugs.forEach(a=>{a.dmgMult*=1+TUNE.feedDmg;});}bugs.filter(a=>a.crowd).forEach(a=>regrow(a,TUNE.feedRegrow));}
     if(legend('wanted')&&src&&src.side==='A'&&src.genre==='west'&&(B.bounty||0)<TUNE.bountyMax){B.bounty=(B.bounty||0)+1;B.goldEarned++;float(src,'+1🪙','heal');}
     B.units.filter(u=>u.side==='A'&&u.alive&&u.devour).forEach(u=>heal(null,u,u.maxHp*u.devour));
@@ -7918,7 +7923,7 @@ function kill(t,src){
     if(src&&src.side==='A'&&src.genre==='heist'&&B.syn.G.heist>=2&&(B.stolen||0)<2){B.stolen=(B.stolen||0)+1;B.goldEarned++;float(src,'+1🪙','heal');}
     if(B.syn.X.ransom&&t.fearT>B.t&&(B.ransom||0)<2){B.ransom=(B.ransom||0)+1;B.goldEarned++;float(t,'+1🪙','heal');}
     if(B.syn.X.trainjob&&!B.train){B.train=true;B.goldEarned+=2;float(t,'+2🪙','heal');}
-    if(B.syn.G.west>=3)B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='west'&&u.manaMax).forEach(u=>u.mana=Math.min(u.manaMax,u.mana+25));
+    if(B.syn.G.west>=3)B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='west'&&u.manaMax).forEach(u=>u.mana=Math.min(u.manaMax,u.mana+TUNE.westKoMana));
     if(src&&src.genre==='ball'&&B.syn.X.sponsor&&B.sponsor<3){B.sponsor++;B.goldEarned++;float(src,'+1🪙','heal');}
   }
   // a slot opened. Priority: spawns left behind by the fallen character (Undead 6, above) already took it;
@@ -8082,7 +8087,7 @@ function act(u){
 function step(dt){
   B.t+=dt;
   B.units.forEach(x=>{if(x.lurking&&B.t>=x.lurking){x.lurking=0;const fo=x.side==='A'?'E':'A',sl=emptySlots(fo).find(q=>q[0]==='back')||emptySlots(fo)[0]||emptySlots(x.side)[0];if(!sl)return;
-    x.zone=sl===emptySlots(x.side)[0]&&!emptySlots(fo).length?null:fo;x.row=sl[0];x.col=sl[1];x.alive=true;x.hp=(x.crowd?x.bodyHp*Math.max(1,Math.ceil(bodies({crowd:1,hp:x.maxHp,bodyHp:x.bodyHp,maxBodies:x.maxBodies})*.4)):x.maxHp*(legend('sequel')?.7:.4));float(x,"It's behind you!",'sp');}});
+    x.zone=sl===emptySlots(x.side)[0]&&!emptySlots(fo).length?null:fo;x.row=sl[0];x.col=sl[1];x.alive=true;x.hp=(x.crowd?x.bodyHp*Math.max(1,Math.ceil(bodies({crowd:1,hp:x.maxHp,bodyHp:x.bodyHp,maxBodies:x.maxBodies})*.4)):x.maxHp*(legend('sequel')?.7:TUNE.behindHp));float(x,"It's behind you!",'sp');}});
   if(legend('shieldgen')&&B.syn.G.space&&B.t>=(B.sgen||TUNE.shieldGenEvery)){B.sgen=(B.sgen||TUNE.shieldGenEvery)+TUNE.shieldGenEvery;sideUnits('A').filter(x=>x.genre==='space').forEach(x=>{x.shield+=x.maxHp*TUNE.shieldGenPct;});}
   if(legend('mothership')&&B.syn.G.space&&!B.mother&&B.t>=TUNE.motherAt){B.mother=true;sideUnits('E').forEach(x=>dealDamage(null,x,x.maxHp*TUNE.motherPct,'true'));}
   if(legend('lightsout')&&B.syn.G.horror&&B.t>=(B.lights||TUNE.lightsEvery)){B.lights=(B.lights||TUNE.lightsEvery)+TUNE.lightsEvery;sideUnits('E').forEach(x=>terrify(x,2));sideUnits('A').filter(x=>x.genre==='horror').forEach(x=>{x.nextMult=Math.max(x.nextMult||1,2);});}
@@ -8624,7 +8629,7 @@ function shopHTML(){
     const mkTo=mk&&maxLv(o.id)>=3&&owned.some(u=>u.level===2)?3:2; // v19.56: ...and that ★★ joins another ★★ into a ★★★
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
     return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
-      ${o.rc?'<span class="rctag" title="Recast: this card replaced a card of the genre The Cut removed">Recast</span>':''}${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?`<span class="mk${mkTo===3?' mk3':''}" title="${mkTo===3?'You own two ★ and a ★★: this third copy makes a second ★★, and the two ★★ combine into a ★★★':'You own two: this third copy combines them into a ★★'}"><span class="mkl">Makes </span><span class="mka">→</span>${'★'.repeat(mkTo)}</span>`:''}
+      ${o.rc?'<span class="rctag" title="Recast: this card replaced a card of the genre The Cut removed">Recast</span>':''}${o.tc&&!o.rc?'<span class="rctag tctag" title="Typecast: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it">Typecast</span>':''}${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?`<span class="mk${mkTo===3?' mk3':''}" title="${mkTo===3?'You own two ★ and a ★★: this third copy makes a second ★★, and the two ★★ combine into a ★★★':'You own two: this third copy combines them into a ★★'}"><span class="mkl">Makes </span><span class="mka">→</span>${'★'.repeat(mkTo)}</span>`:''}
       ${heroArt(o.id)}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${(()=>{const sy=shopSyn(o,fieldNow,synNow),gn=GENRES[d.genre].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}>${GENRES[d.genre].e}<span class="gnm">${esc(gn)}</span>${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span>`;})()}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'<i class="crwg" title="Crowd: a squad of several bodies. Each body is its own target with its own HP and attack; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
@@ -9077,6 +9082,7 @@ SCR.codex=()=>{
     <p><b>Who attacks whom.</b> Taunting enemies are always hit first. Otherwise melee characters hit the nearest front-row enemy, ranged characters shoot the lowest-HP enemy anywhere, and Stalkers leap at the weakest back-row enemy. A melee character in your back row waits behind its own lane (the front square in its column) and <b>steps up</b> into it as soon as it is empty: at the start of the fight or the moment the front-liner falls. It steps up before your bench fills the gap, and charges its ability a little while it waits (Stalkers and Sportsball characters don't wait). When a side's whole front row is wiped out, its back row steps forward. New characters you buy go where they fight best: melee to an empty front square, everyone else to the back.</p>
     <p><b>Energy and skills.</b> Characters gain energy by attacking and getting hit. A full blue bar casts their skill. Stun, Terrify, Taunt and the other effects are explained in <button class="btn sm" data-a="codex-tab" data-v="effects">Effects</button>.</p>
     <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre from ★★, so a wide board of two or three genres fills up fast.</p>
+    <p><b>Typecast.</b> When everyone on your board is from the same genre (3 or more characters), the shop you get at the start of every round always includes 1 card from that genre (rerolls don\'t), so a one-genre team can find its cast.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you choose a Legendary, win or lose: 3 to choose from and a bonus item if you won, 2 if you lost. You hold one at a time.</p>
     <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic hops around the board, swapping places with whoever is hurt worst (front or back), and the Burrow Lurker tunnels into the enemy back row.</p>
@@ -9104,7 +9110,7 @@ SCR.codex=()=>{
     ['⏳','Overtime','After 30 seconds everyone takes growing damage, so fights always end.']];
     body=`<div class="rules"><p>The icons above a character in a fight show what is on it right now.</p><div class="cgrid">${fx.map(([e,n,d])=>`<div class="ccard"><div class="hd"><span class="emo" style="font-size:1.3rem">${e}</span><b>${n}</b></div><p>${d}</p></div>`).join('')}</div>
     <h3>Coming back from a KO</h3><p>When one of your characters falls, the first of these that applies saves it, and the others stay ready for later falls:</p><ol>
-    <li><b>It's Behind You</b> (6 Slashers, or the Sequel Legendary): it vanishes and comes back 2s later behind the enemy's back row at 40% HP.</li>
+    <li><b>It's Behind You</b> (6 Slashers, or the Sequel Legendary): it vanishes and comes back 2s later behind the enemy's back row at 70% HP.</li>
     <li><b>Undead crowds</b> (4 Undead): a crowd rises once with up to 3 bodies.</li>
     <li><b>Ghost Town</b> crossover: the first character to fall comes back at 40% HP, once a fight.</li>
     <li><b>Plot Armor</b> Legendary: each character survives one KO at 20% HP and can't be targeted for a moment.</li>
@@ -9347,10 +9353,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.60',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.61',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.61',items:[['🎬','Typecast: when everyone on your board is from the same genre, the shop at the start of every round always includes 1 card from that genre, so one-genre teams can find their cast.'],['🔥','Acts 3 and 4 are harder: the normal fights hit back (the bosses are unchanged).'],['⚖️','Rebalanced so every genre alone and every two-genre pair wins about as often as the others: Slasher, Space Opera and Kaiju get a much bigger 6-character bonus, Swarm and Undead get stronger 2-character bonuses, Wild West, Undead, Sportsball and Army need less from their 6-character bonus.']]},
   {v:'19.60',items:[['⚖️','Rebalance from the expert bot testing every two-genre combo and every Legendary: Heist Crew\'s 4-bonus now shares only the gold part of its damage bonus with the rest of your team (it gave everyone the full +45%); Wild West crits more; Kaiju (+30% HP) and Space Opera (25% shields, 30% faster) are stronger.'],['🏆','Legendaries: Endless Brood and Pheromone Trail weaker; Shock and Awe (12s), Field Hospital (100%) and The Mothership (8s, 22%) stronger; Crossover Episode +2% per crossover; Army of the Dead twice a fight.'],['🔗','Crossovers: No One Can Hear You Scream +35% to the back row, Killer Bees bounce 40%.']]},
   {v:'19.59',items:[['👾','More enemy lineups: 10 per act (was 4), using all four columns and mixing in the last act\'s enemies, three minion lineups for every boss, and lineups that can come mirrored. A lineup doesn\'t repeat until you\'ve seen the act\'s others.']]},
   {v:'19.58',items:[['🦖','New toys for the Kaiju: King of the Monsters gets a real monster body with glowing back plates, Giant Mecha gets armor, a V-fin and thrusters, Giant Moth gets painted wings, and Baby Kaiju gets back plates and claws.']]},
