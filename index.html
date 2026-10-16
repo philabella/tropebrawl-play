@@ -107,7 +107,7 @@ button{font:inherit;color:inherit}
 
 /* board */
 .board{display:grid;gap:6px;padding:8px;background:var(--bg2);border:1px solid var(--line);border-radius:14px}
-.frow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}
+.frow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 .frow.bench{grid-template-columns:repeat(5,minmax(0,1fr));padding-top:6px;border-top:1px dashed var(--line)}
 /* Buyback Wheel: characters that sell back at full price get a running gold border */
 @property --fsa{syntax:'<angle>';inherits:false;initial-value:0deg}
@@ -1077,7 +1077,7 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .ov:has(.ovbtns){max-width:400px}
 .ftc .pt.ftp{width:52px;height:52px;font-size:1.6rem}
 .ftsub{font-size:.82rem;margin:0}
-.ftgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.ftgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
 .ftrl{grid-column:1/-1;font-size:.75rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);font-weight:800;margin-top:2px}
 .ftc{position:relative;display:grid;justify-items:center;align-content:start;gap:3px;padding:18px 6px 8px;min-height:128px;background:var(--bg2);border:2px solid var(--inkline);border-radius:3px;color:var(--ink);font:inherit;cursor:pointer;text-align:center}
 .ftc:hover{border-color:var(--muted)}
@@ -6202,7 +6202,7 @@ const COPIES=[1,3,6];            // copies held by a hero at each level (sell va
 // shop rank N unlocks rarity N; odds are Common..Mythic per rank
 // the rank is a gauge (Dota Auto Chess style): ⬆️ Train buys shop XP, every round adds free XP, a full gauge ranks up and extra XP carries over
 // xp[N-1] = XP to go from rank N to N+1
-const RANK={odds:[[100,0,0,0,0],[75,25,0,0,0],[55,35,10,0,0],[40,35,22,3,0],[28,32,28,12,0],[18,28,34,20,0],[10,22,37.25,30,0.75]],xp:[4,8,12,16,20,24],train:4,trainXp:4,freeXp:1,board:[3,4,4,4,5,6,6],lv2:[0,0,0,0,0,0,0]};
+const RANK={odds:[[100,0,0,0,0],[75,25,0,0,0],[55,35,10,0,0],[40,35,22,3,0],[28,32,28,12,0],[18,28,34,20,0],[10,22,37.25,30,0.75],[8,18,34,34,6],[6,14,30,38,12]],xp:[4,8,12,16,20,24,40,56],train:4,trainXp:4,freeXp:1,board:[3,4,4,4,5,6,6,7,8],lv2:[0,0,0,0,0,0,0,0,0]};
 const RMAX=RANK.odds.length;
 // the rarest rarity a shop rank can show
 function topTier(r){const o=RANK.odds[Math.max(0,Math.min(RMAX,r)-1)];let t=1;o.forEach((p,i)=>{if(p>0)t=i+1;});return t;}
@@ -6724,7 +6724,7 @@ function itemSellValue(t){return 1+ilv(t);}
 function runStats(){const s=S.stats;s.dmg=s.dmg||{};s.taken=s.taken||{};s.spend=s.spend||{buy:0,reroll:0,rank:0};s.rerolls=s.rerolls||0;s.rounds=s.rounds||[];s.sold=s.sold||0;return s;}
 function legend(id){return !!S&&S.legend===id;}
 function boardSize(){return RANK.board[S.rank-1];}
-const fieldSlots=['f0','f1','f2','b0','b1','b2'];
+const fieldSlots=['f0','f1','f2','f3','b0','b1','b2','b3'];
 const benchSlots=['n0','n1','n2','n3','n4'];
 function unitAt(slot){return S.units.find(u=>u.slot===slot);}
 function fielded(){return S.units.filter(u=>u.slot[0]!=='n');}
@@ -6796,9 +6796,9 @@ function freeSlotFor(id){
   const room=id&&fielded().length<(legend('indie')?Math.min(4,boardSize()):boardSize());
   const dupe=id&&fielded().some(u=>u.id===id);
   const melee=id&&TBASE[HERO[id].trait].range==='melee'&&HERO[id].genre!=='ball'&&HERO[id].trait!=='stalker';
-  if(room&&!dupe){const order=melee?['f1','f0','f2','b1','b0','b2']:['b1','b0','b2','f1','f0','f2'];for(const s of order)if(!unitAt(s))return s;}
+  if(room&&!dupe){const order=melee?['f1','f2','f0','f3','b1','b2','b0','b3']:['b1','b2','b0','b3','f1','f2','f0','f3'];for(const s of order)if(!unitAt(s))return s;}
   for(const s of benchSlots)if(!unitAt(s))return s;
-  if(id&&fielded().length<boardSize())for(const s of ['f1','f0','f2','b1','b0','b2'])if(!unitAt(s))return s;
+  if(id&&fielded().length<boardSize())for(const s of ['f1','f2','f0','f3','b1','b2','b0','b3'])if(!unitAt(s))return s;
   if(!id)for(const s of fieldSlots)if(!unitAt(s)&&fielded().length<boardSize())return s;
   return null;
 }
@@ -6946,7 +6946,7 @@ const ACT_REF={};
 for(let a=1;a<=TUNE.acts;a++){const s=ENC[a].normal.map(t=>tplStrength(encParse(t))).sort((x,y)=>x-y);ACT_REF[a]=s[Math.floor(s.length/2)];}
 // Two-Part Finale: after Deus Ex Machina, the first two bosses return together
 const FINALE2='f1:mech b0:editor b2:shared';
-function freeSlotsE(enc){return [['front',1],['front',0],['front',2],['back',1],['back',0],['back',2]].filter(([r,c])=>!enc.some(e=>e.row===r&&e.col===c));}
+function freeSlotsE(enc){return [['front',1],['front',0],['front',2],['front',3],['back',1],['back',0],['back',2],['back',3]].filter(([r,c])=>!enc.some(e=>e.row===r&&e.col===c));}
 function prepareFight(){
   const ev=curRound();
   const p2=ev.type==='boss'&&ev.act===TUNE.acts&&S.part===2;
@@ -7272,7 +7272,7 @@ function startBattle(silent,seed){if(!silent)tlFight();
   if(legend('insidejob')){const e=B.units.filter(x=>x.side==='E').sort((a,b)=>b.maxHp-a.maxHp)[0];if(e){e.hp*=TUNE.ijHp;e.insideJob=true;}}
   applyMods();
   if(B.under){B.reserve.push(...B.under);B.under=null;}
-  ['A','E'].forEach(sd=>[0,1,2].forEach(c=>stepUp(sd,c)));
+  ['A','E'].forEach(sd=>[0,1,2,3].forEach(c=>stepUp(sd,c)));
 }
 function applyMods(){
   const {G,T,X}=B.syn;
@@ -7519,7 +7519,7 @@ function raiseFallen(u,f){let n=0;B.units.filter(x=>x.side===u.side&&!x.alive&&!
     if(!sl.length){if(x.side==='A'&&B.reserve){B.reserve.unshift({rise:x,f,e:x.e,name:'rise',maxBodies:1});float(u,'Rises soon','heal');}return;}
     [x.row,x.col]=sl[0];}
   riseUnit(x,f);});return n;}
-function emptySlots(side){const occ=new Set(B.units.filter(u=>Z(u)===side&&u.alive).map(u=>u.row+u.col));const out=[];for(const row of ['front','back'])for(const col of [1,0,2])if(!occ.has(row+col))out.push([row,col]);return out;}
+function emptySlots(side){const occ=new Set(B.units.filter(u=>Z(u)===side&&u.alive).map(u=>u.row+u.col));const out=[];for(const row of ['front','back'])for(const col of [1,0,2,3])if(!occ.has(row+col))out.push([row,col]);return out;}
 function summonHatch(u){
   const n=u.p>=3?7:u.p>=1.8?5:3;const bh=24*u.tierM*(u.p/1.5)*TUNE.hatchMul;
   const ok=deploy({side:u.side,name:'Hatchlings',e:'🥚',genre:'bug',trait:null,crowd:true,maxBodies:n,bodyHp:bh,bodyAtk:4*u.p*TUNE.hatchMul,maxHp:bh*n,hp:bh*n,atk:4*u.p*TUNE.hatchMul,
@@ -7765,13 +7765,13 @@ function rvArrange(P){const us=u=>u.level*10+HERO[u.id].tier*3+rvScore(u.id,P)*.
   const all=S.units.slice().sort((a,b)=>us(b)-us(a)),n=boardSize(),chosen=all.slice(0,n),rest=all.slice(n);
   const melee=chosen.filter(u=>TBASE[HERO[u.id].trait].range==='melee'),ranged=chosen.filter(u=>TBASE[HERO[u.id].trait].range!=='melee');
   const front=melee.sort((a,b)=>(HERO[b.id].trait==='guardian')-(HERO[a.id].trait==='guardian')),back=ranged;
-  while(front.length>3)back.push(front.pop());while(back.length>3)front.push(back.pop());
-  S.units.forEach(u=>u.slot='x');front.forEach((u,i)=>u.slot=['f1','f0','f2'][i]);back.forEach((u,i)=>u.slot=['b1','b0','b2'][i]);
+  while(front.length>4)back.push(front.pop());while(back.length>4)front.push(back.pop());
+  S.units.forEach(u=>u.slot='x');front.forEach((u,i)=>u.slot=['f1','f2','f0','f3'][i]);back.forEach((u,i)=>u.slot=['b1','b2','b0','b3'][i]);
   rest.forEach((u,i)=>u.slot=benchSlots[i]||'gone');
   if(!P.bench){const junk=rest.filter(u=>u.level===1&&S.units.filter(x=>x.id===u.id).length===1).sort((a,b)=>rvScore(a.id,P)-rvScore(b.id,P));
     junk.slice(0,Math.max(0,rest.length-2)).forEach(u=>u.slot='gone');}
   S.units.filter(u=>u.slot==='gone').forEach(u=>{S.gold+=sellValue(u);poolGive(u.id,COPIES[u.level-1]);});S.units=S.units.filter(u=>u.slot!=='gone');}
-function rvShop(P){const r=S.round,tg=P.target(r),cr=curRound()||{};
+function rvShop(P){const r=S.round,tg=Math.max(P.target(r),r>=31?9:r>=26?8:0),cr=curRound()||{};
   const bank=r>=3&&cr.type!=='boss'&&S.lives>4?((typeof P.econ==='function'?P.econ(r):P.econ)||0):0;
   const own=id=>S.units.filter(u=>u.id===id).reduce((t,u)=>t+COPIES[u.level-1],0);let guard=0;
   while(guard++<60){rvPend();
@@ -7993,7 +7993,7 @@ function foeTeamHTML(){const T=UI.foeTeam;if(!T)return '<p class="muted">No figh
       <span class="ftbar" aria-hidden="true"><i style="width:${Math.round(100*u.dmg/mx)}%"></i></span>
       <small class="ftd">💥 ${R(u.dmg)}${u===top?' · most':''}</small></button>`;};
   const cell=(row,col)=>{const k=T.list.findIndex((u,i)=>!used.has(i)&&u.row===row&&u.col===col);return k<0?'<div class="ftc empty" aria-hidden="true"></div>':card(k);};
-  const back=[0,1,2].map(c=>cell('back',c)).join(''),front=[0,1,2].map(c=>cell('front',c)).join('');
+  const back=[0,1,2,3].map(c=>cell('back',c)).join(''),front=[0,1,2,3].map(c=>cell('front',c)).join('');
   const rest=T.list.map((u,k)=>used.has(k)?'':card(k)).join('');
   return `<div class="eyebrow">Round ${T.round} · ${T.win?'You won':'You lost'}</div><h3 style="color:var(--gold)">🔭 Their team: ${esc(T.title)}</h3>
     <p class="muted ftsub">Where each one stood when the fight began, and the damage (💥) each did to your team. Tap one for its skill.</p>
@@ -8079,8 +8079,8 @@ function boardHTML(){
   const full=fielded().length>=bs;
   return `<section class="board" aria-label="Your board">
       <div class="rowlbl bhead"><span>Your board · front row faces the enemy</span><b style="${full?'color:var(--gold)':''}">${fielded().length}/${bs} on board</b></div>
-      <div class="frow" aria-label="Front row">${['f0','f1','f2'].map(cell).join('')}</div>
-      <div class="frow" aria-label="Back row">${['b0','b1','b2'].map(cell).join('')}</div>
+      <div class="frow" aria-label="Front row">${['f0','f1','f2','f3'].map(cell).join('')}</div>
+      <div class="frow" aria-label="Back row">${['b0','b1','b2','b3'].map(cell).join('')}</div>
       <div class="frow bench" aria-label="Bench">${benchSlots.map(cell).join('')}</div>
       <div class="rowlbl bfoot"><span>Bench · doesn't fight</span></div>
     </section>`;
@@ -8285,7 +8285,7 @@ SCR.plan=()=>{
   return wide?`<div class="layout">${inspHTML()}<div class="screen">${main}</div>${itemsPanel()}</div>`:`<div class="screen">${main}</div>`;
 };
 SCR.battle=()=>{
-  const row=(side,r)=>`<div class="frow">${[0,1,2].map(i=>`<div class="bslot" data-k="${side}${r[0]}${i}"></div>`).join('')}</div>`;
+  const row=(side,r)=>`<div class="frow">${[0,1,2,3].map(i=>`<div class="bslot" data-k="${side}${r[0]}${i}"></div>`).join('')}</div>`;
   return `<section>
     <div class="bhead"><div><div class="eyebrow">Round ${S.round} · ${S.enemy.part?'Boss · part 2':S.enemy.boss?'Boss':S.enemy.elite?'Mini-boss':S.enemy.trial?'Trial by Fire':'Fight'}</div><h2>${esc(S.enemy.title)}</h2></div>
       <div class="row"><span class="streak" id="streak" hidden></span><span id="bbench" hidden></span><span class="clock" id="clock">0.0s</span><div class="speed" role="group" aria-label="Battle speed">
@@ -8786,10 +8786,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.51',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.52',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.52',items:[['🟩','A bigger board: 4 wide × 2 rows. Two new ranks: Rank 8 opens slot 7 and Rank 9 opens slot 8.']]},
   {v:'19.51',items:[['🎬','Longer seasons: 4 acts of 9 episodes (36 rounds, was 28).'],['🐢','Fights play out at a calmer pace at 1× (same results, easier to follow). 2× and 4× are still there.']]},
   {v:'19.50',items:[['⚔️','New battle music: Rumble (new default), High Noon and Kaiju. Settings → Battle music; Showdown is still there.']]},
   {v:'19.49',items:[['🎭','Rival studios! Game Levels 11-17 each add a rival (Penny, Rex, Ivy, Duke, Goldie, Sal, Hugo, Ace) who buys from your character pool and plays the same episodes behind the scenes.'],['⚔️','From Ep 3, a normal episode can turn out to be a fight against a rival\'s cast: check the Next Episode panel. Codex → Rivals lists each one\'s style and tell.']]},
@@ -8959,7 +8960,7 @@ const DEV_KEY='tropebrawl-dev';
 const DEV=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(DEV_KEY)||'{}')||{};}catch(e){}return {on:!!d.on,all:d.all!==false,wheel:'',open:false};})();
 function devSave(){try{localStorage.setItem(DEV_KEY,JSON.stringify({on:DEV.on,all:DEV.all}));}catch(e){}}
 function devRun(){if(!S||S.over){clearSave();newRun(false);}if(!S.units.length)devCast();}
-function devCast(){const by=t=>HEROES.filter(h=>h[4]===t&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);const free=['f1','f0','f2','b1','b0','b2'].filter(x=>!S.units.some(u=>u.slot===x)).slice(0,Math.max(0,boardSize()-fielded().length)),slots=[...free,'n0','n1','n2','n3','n4'].filter(x=>!S.units.some(u=>u.slot===x));
+function devCast(){const by=t=>HEROES.filter(h=>h[4]===t&&!(S.cut||[]).includes(h[2])).map(h=>h[0]);const free=['f1','f2','f0','f3','b1','b2','b0','b3'].filter(x=>!S.units.some(u=>u.slot===x)).slice(0,Math.max(0,boardSize()-fielded().length)),slots=[...free,'n0','n1','n2','n3','n4'].filter(x=>!S.units.some(u=>u.slot===x));
   [1,1,2,2,3,3,4,1].forEach((t,k)=>{const p=by(t);if(!p.length||!slots[k])return;const id=p[(k*7)%p.length];if(S.units.some(u=>u.slot===slots[k]))return;S.units.push({uid:S.uid++,id,level:1,slot:slots[k],cost:PRICE[t-1]});});}
 function devEvent(k){devRun();UI.cutMode=null;UI.sheetOpen=false;
   if(SPECIALS[k])startSpecial(k);
@@ -9166,7 +9167,7 @@ const AR={f:null,cv:null,R:null,E:null,scene:null,cam:null,B:null,toys:[],proj:[
 // them, so a Bone Dragon or a boss towers over a person instead of matching one
 const AR_BASE=.78,AR_BOSS=1.18,AR_SIZE={hatch:.7,risen:.78,bonedragon:1.5,gravegolem:1.3,hivemind:1.25,scorpion:1.05,queen:1.08,lurker:.92,wraith:.88,mascot:.72,vampbat:.82,shared:1.25,deus:1.2};
 const AR_X=3.3,AR_Z={Eb:-5.5,Ef:-2.1,Af:2.1,Ab:5.5},AR_TOP=.16;
-function arWorld(k){return {x:(+k[2]-1)*AR_X,z:AR_Z[k[0]+k[1]]};}
+function arWorld(k){return {x:(+k[2]-1.5)*AR_X,z:AR_Z[k[0]+k[1]]};}
 function arKey(u){return Z(u)+u.row[0]+u.col;}
 function arStatus(){if(SET.arena===false)return 'Battle: flat board.';if(RM)return 'Battle: flat board (animations are off).';if(AR.dead)return 'Battle: flat board ('+(AR.why||'3D arena could not start')+').';if(TBA.tried&&!TBA.on)return 'Battle: flat board ('+(TBA.why||'3D could not start')+').';return 'Battle: 3D arena.';}
 function arInit(){if(AR.R)return !AR.dead;if(AR.dead||!TBA.on)return false;
@@ -9185,7 +9186,7 @@ function arMat(c,o){return new TBA.THREE.MeshStandardMaterial(Object.assign({col
 function arTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new TBA.THREE.CanvasTexture(c);t.colorSpace=TBA.THREE.SRGBColorSpace;t.anisotropy=4;return t;}
 const arNo=m=>{m.userData.outlineParameters={visible:false};return m;},arAt=(m,x,y,z)=>{m.position.set(x,y,z);return m;};
 function arFlat(geo,mat,x,y,z){const m=arNo(new TBA.THREE.Mesh(geo,mat));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);return m;}
-function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group(),TW=AR_X*3+1.3,TD=AR_Z.Ab*2+4.4,FL=-.62;
+function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group(),TW=AR_X*4+1.3,TD=AR_Z.Ab*2+4.4,FL=-.62;
   const M=(c,o)=>arMat(c,o),add=(m,x,y,z)=>{m.position.set(x,y,z);g.add(m);return m;},mesh=(geo,mat)=>new THREE.Mesh(geo,mat);
   // studio floor, table, plank top
   // v19.44: a lit studio floor instead of flat dark grey: warm pool under the board, lamp pools, concrete slabs
@@ -9207,10 +9208,10 @@ function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Gr
   const mat=(fill,tape)=>M('#ffffff',{transparent:true,depthWrite:false,roughness:.9,map:arTex(256,256,(x,w,h)=>{x.fillStyle=fill;x.fillRect(10,10,w-20,h-20);x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=3;x.strokeRect(22,22,w-44,h-44);
     x.fillStyle=tape;for(const [cx,cy,sx,sy] of [[10,10,1,1],[w-10,10,-1,1],[10,h-10,1,-1],[w-10,h-10,-1,-1]]){x.fillRect(cx,cy,sx*62,sy*14);x.fillRect(cx,cy,sx*14,sy*62);}})});
   const mA=mat('rgba(44,58,92,.62)','#5aa9ff'),mE=mat('rgba(92,36,52,.62)','#ff4d5e');
-  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<3;c++){const w=arWorld(k+c);g.add(arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z));}
+  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<4;c++){const w=arWorld(k+c);g.add(arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z));}
   // clash line: red-and-white tape
   const ct=arTex(512,32,(x,w,h)=>{for(let i=0;i<16;i++){x.fillStyle=i%2?'#f3eee4':'#e8303f';x.fillRect(i*32,0,32,h);}});
-  g.add(arFlat(new THREE.PlaneGeometry(AR_X*3+.8,.3),M('#ffffff',{map:ct,emissive:'#ff2d40',emissiveIntensity:.25}),0,.016,0));
+  g.add(arFlat(new THREE.PlaneGeometry(AR_X*4+.8,.3),M('#ffffff',{map:ct,emissive:'#ff2d40',emissiveIntensity:.25}),0,.016,0));
   // velvet curtain behind the enemy, with a gold-trimmed valance
   const cg=new THREE.PlaneGeometry(34,9,96,1),cp=cg.attributes.position;for(let i=0;i<cp.count;i++)cp.setZ(i,Math.sin(cp.getX(i)*2.3)*.28+Math.sin(cp.getX(i)*.7)*.15);cg.computeVertexNormals();
   add(arNo(mesh(cg,M('#6a1222',{roughness:.95,side:2}))),0,FL+4.5,-TD/2-2.4);
@@ -9242,7 +9243,7 @@ function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Gr
 function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelectorAll('.bslot')];slots.forEach(s=>{s.style.transform='';});
   const W=f.clientWidth,H0=f.clientHeight,top=Math.round(H0*AR_TOP),H=H0+top;Object.assign(AR,{W,H0,top});
   AR.cv.style.top=(-top)+'px';AR.cv.style.width=W+'px';AR.cv.style.height=H+'px';AR.R.setSize(W,H,false);cam.aspect=W/Math.max(1,H);
-  const pts=[],v=new THREE.Vector3();for(const k of ['Eb','Ab'])for(const c of [0,2]){const w=arWorld(k+c);for(const y of [0,3.1])pts.push(new THREE.Vector3(w.x+(c?.5:-.5)*AR_X,y,w.z+(k==='Ab'?1.5:-1.5)));}
+  const pts=[],v=new THREE.Vector3();for(const k of ['Eb','Ab'])for(const c of [0,3]){const w=arWorld(k+c);for(const y of [0,3.1])pts.push(new THREE.Vector3(w.x+(c?.5:-.5)*AR_X,y,w.z+(k==='Ab'?1.5:-1.5)));}
   // wide screens: a low view across the table; tall phone screens look down more steeply so the board fills them
   const asp=W/Math.max(1,H),el=Math.max(42,Math.min(56,42+(1.25-asp)*30))*Math.PI/180;let D=40,tz=0;
   for(let it=0;it<14;it++){cam.position.set(0,D*Math.sin(el),tz+D*Math.cos(el));cam.lookAt(0,0,tz);cam.updateProjectionMatrix();cam.updateMatrixWorld();
