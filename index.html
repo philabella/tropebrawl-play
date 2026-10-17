@@ -650,6 +650,21 @@ div.xlist{display:grid;gap:6px}
 .castring{position:absolute;left:50%;top:40%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:3px solid var(--mana);box-shadow:0 0 12px var(--mana);pointer-events:none;z-index:2;animation:cring .55s ease-out forwards}
 @keyframes cring{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.9);opacity:0}}
 .flt.dmg.big{font-size:1.3rem;color:#ffd7cf}
+/* v19.75: combat numbers by type and size, shield layer, status row with timer rings */
+.flt.num{font-weight:800;line-height:1;-webkit-text-stroke:3px #0b0a0e;paint-order:stroke fill;text-shadow:0 2px 0 #0b0a0e;z-index:9}
+.flt.n-phys{color:#fff}.flt.n-spell{color:#cf9dff}.flt.n-true{color:#ffa23d}.flt.n-tick{color:#cfe84a}
+.flt.num.crit{color:var(--gold);animation:rise 1.1s ease-out forwards,npunch .28s ease-out}
+.flt.n-heal{color:#4dff7c}.flt.n-heal2{color:#b9ffc9}.flt.n-shield{color:#cfe4ff}.flt.n-block{color:#c3cbd6}
+.flt.n-heal,.flt.n-heal2{top:26%}.flt.n-shield{top:50%}.flt.n-block{top:6%}
+@keyframes npunch{0%{scale:1.9}55%{scale:.9}100%{scale:1}}
+#field .hpb .sf{background:repeating-linear-gradient(135deg,#f2f7ff 0 3px,#a9c8f5 3px 6px);opacity:.95;box-shadow:inset 0 0 0 1px rgba(255,255,255,.75),-1px 0 0 #2b3a52}
+#field .hpb .shbrk{position:absolute;top:0;bottom:0;pointer-events:none;background:linear-gradient(115deg,transparent 0 30%,#0b0a0e 30% 36%,transparent 36% 62%,#0b0a0e 62% 68%,transparent 68%),repeating-linear-gradient(135deg,#f2f7ff 0 3px,#a9c8f5 3px 6px);animation:shbrk .5s ease-out forwards}
+@keyframes shbrk{0%{opacity:1;transform:none}40%{opacity:1;transform:translateY(-1px) skewX(-12deg)}100%{opacity:0;transform:translateY(5px) skewX(-25deg) scaleX(.6)}}
+#field .unit .sts{top:auto;right:0;left:0;bottom:26px;display:flex;justify-content:center;flex-wrap:wrap-reverse;gap:2px;pointer-events:none;scale:var(--fxk,1);transform-origin:50% 100%}
+#field .unit .sts .si{--p:1;--rc:#fff;position:relative;width:17px;height:17px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--rc) calc(var(--p)*1turn),rgba(255,255,255,.14) 0);box-shadow:0 1px 0 #0b0a0e}
+#field .unit .sts .si b{width:13px;height:13px;border-radius:50%;background:#0b0a0ecc;display:grid;place-items:center;font:400 9px/1 var(--f-emoji)}
+#field .unit .sts .si.s-stun{--rc:#ffd84a}#field .unit .sts .si.s-taunt{--rc:#ff8a3d}#field .unit .sts .si.s-fear{--rc:#c77dff}#field .unit .sts .si.s-burn{--rc:#ff5b3a}
+#field .unit .sts .si.s-drain{--rc:#5fb7ff}#field .unit .sts .si.s-vuln{--rc:#ff4d6a}#field .unit .sts .si.s-arm{--rc:#aab3bf}#field .unit .sts .si.s-mark{--rc:#fff}
 :root:not(.noanim) .unit.low .hpb .hf{animation:lowhp .7s ease-in-out infinite}
 @keyframes lowhp{50%{filter:brightness(2) saturate(1.4)}}
 :root:not(.noanim) .syn.newon{animation:synon .9s ease-out}
@@ -7128,9 +7143,9 @@ const SK={
  whiskey:{name:'Whiskey and Stitches',d:p=>`Heals your most wounded character for ${R(50*p)} and frees it from stuns.`,cast(u){const a=wounded(u,1)[0];if(!a)return;heal(u,a,50*u.p);a.stun=0;}},
  wanted:{name:'Wanted Poster',d:p=>`${R(45*p)} damage to the toughest enemy, doubled if it is below half HP.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.maxHp>a.maxHp?b:a);spell(u,t,t.hp<t.maxHp/2?90:45);}},
  dynamite:{name:'Dynamite',d:p=>`${R(30*p)} damage to every enemy in the most crowded row, and they are stunned for 0.5s.`,cast(u){rowMost(u).forEach(x=>{spell(u,x,30,true);stunU(x,.5);});}},
- fanhammer:{name:'Fan the Hammer',d:p=>`Six shots at random enemies for ${R(12*p)} each. Every shot can crit.`,cast(u){for(let i=0;i<6;i++){const t=randFoe(u);if(!t)break;const c=u.crit&&rand()<u.crit;spell(u,t,c?24:12);if(c)float(t,'CRIT','crit');}}},
+ fanhammer:{name:'Fan the Hammer',d:p=>`Six shots at random enemies for ${R(12*p)} each. Every shot can crit.`,cast(u){for(let i=0;i<6;i++){const t=randFoe(u);if(!t)break;const c=u.crit&&rand()<u.crit;B.fxCritS=c;spell(u,t,c?24:12);B.fxCritS=false;}}},
  showdown:{name:'Showdown',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, it shoots back at every attacker for ${R(15*p)}.`,cast(u){u.taunt=3;u.counterUntil=B.t+3;shieldU(u,u,40*u.p);}},
- deadeye:{name:'Dead Eye',d:p=>`Shoots the 3 lowest-HP enemies for ${R(110*p)} each (a guaranteed crit).`,cast(u){targetFoes(u).sort((a,b)=>a.hp-b.hp).slice(0,3).forEach(t=>{spell(u,t,110);float(t,'CRIT','crit');});}},
+ deadeye:{name:'Dead Eye',d:p=>`Shoots the 3 lowest-HP enemies for ${R(110*p)} each (a guaranteed crit).`,cast(u){targetFoes(u).sort((a,b)=>a.hp-b.hp).slice(0,3).forEach(t=>{B.fxCritS=true;spell(u,t,110);B.fxCritS=false;});}},
  holdline:{name:'Hold the Line',d:p=>`Taunts all enemies for 3s and shields itself for ${R(45*p)}.`,cast(u){shieldU(u,u,45*u.p);u.taunt=3;}},
  frag:{name:'Frag Grenade',d:p=>`${R(30*p)} damage to its target and the enemies beside it.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;[t,...beside(t)].forEach(x=>spell(u,x,30,true));}},
  artillery:{name:'Artillery Strike',d:p=>`${R(40*p)} damage to every enemy in the most crowded row.`,cast(u){rowMost(u).forEach(x=>spell(u,x,40,true));}},
@@ -8057,7 +8072,7 @@ function dealDamage(src,t,amt,type,aoe){
   if(t.meatShield&&t.taunt>0){const c=B.units.filter(x=>x.side===t.side&&x.alive&&x.crowd&&x!==t).sort((a,b)=>bodies(b)-bodies(a))[0];if(c){const sh=amt/3;amt-=sh;dealDamage(src,c,sh,'true');}}
   const dealt=amt;
   const b0=t.crowd?bodies(t):0;
-  if(t.shield>0){const s=Math.min(t.shield,amt);t.shield-=s;amt-=s;}
+  let sAbs=0;if(t.shield>0){const s=Math.min(t.shield,amt);t.shield-=s;amt-=s;sAbs=s;}
   t.blocked=(t.blocked||0)+Math.max(0,amt0-amt);
   t.hp-=amt;
   if(t.crowd){const lost=b0-bodies(t);if(lost>0)bodyLost(t,lost);}
@@ -8066,9 +8081,9 @@ function dealDamage(src,t,amt,type,aoe){
   if(src){src.dmgDone+=dealt;if(src.side==='E'&&t.side==='A'){const k=src.key||src.name;B.threat[k]=(B.threat[k]||0)+dealt;}}
   // energy from being hit (bounces, reflects and overtime give none)
   if((type==='attack'||type==='spell')&&t.manaMax)t.mana=Math.min(t.manaMax,t.mana+Math.min(8,dealt*.25));
-  if(src&&src.alive&&src.ls&&(type==='attack'||type==='spell'))heal(null,src,dealt*src.ls,true);
+  if(src&&src.alive&&src.ls&&(type==='attack'||type==='spell')){const lh=heal(null,src,dealt*src.ls,true);if(!B.silent)numFx(src,lh,'heal2');}
   if(!B.silent&&t.el){
-    float(t,''+R(dealt),dealt>=t.maxHp*.25?'dmg big':'dmg');t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');
+    numFx(t,dealt-sAbs,B.envSrc==='overtime'?'tick':type==='spell'?'spell':type==='attack'||type==='bounce'?'phys':'true',(B.fxCrit&&type==='attack')||(B.fxCritS&&type==='spell'));if(sAbs>0){numFx(t,sAbs,'block');if(t.shield<=0)shCrack(t);}t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');
     if(dealt>t.maxHp*.3)shake();
   }
   if(type==='attack'&&src&&src.alive&&src.range==='melee'&&has('spikes')&&t.side==='A'&&t.row==='front')dealDamage(t,src,dealt*tv('spikes')/100,'true');
@@ -8122,9 +8137,9 @@ function heal(src,t,amt,silent){
   const real=Math.min(t.maxHp-t.hp,amt);
   if(t.overShield&&amt>real)t.shield=Math.min(t.maxHp*t.overShield,t.shield+(amt-real)); // Bloodline
   if(real<=0)return 0;
-  t.hp+=real;if(healer)healer.healDone=(healer.healDone||0)+real;if(!silent&&real>=1)float(t,'+'+R(real),'heal');return real;
+  t.hp+=real;if(healer)healer.healDone=(healer.healDone||0)+real;if(!silent&&real>=1)numFx(t,real,'heal');return real;
 }
-function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;if(src)src.healDone=(src.healDone||0)+amt;float(t,'+'+R(amt),'shd');}
+function shieldU(src,t,amt){if(!t.alive)return;amt*=src?src.healMult:1;t.shield+=amt;if(src)src.healDone=(src.healDone||0)+amt;}
 function stunU(t,d){if(!t.alive||t.ccImmune)return;if(t.side==='E'&&B.syn.X.rodeo)d+=TUNE.xRodeo;t.stun=Math.max(t.stun,d);
   // a stunned ball holder fumbles: the pass streak resets
   if(B&&B.ball&&B.ball.holder===t&&B.ball.streak){B.ball.streak=0;float(t,'Fumble!','ko');}}
@@ -8213,8 +8228,7 @@ function attack(u,t){
   const crit=u.crit&&rand()<u.crit;if(crit)dmg*=(u.critX||2);
   if(u.nextMult>1){dmg*=u.nextMult;u.nextMult=1;}
   animAttack(u,t);
-  const d=dealDamage(u,t,dmg,'attack');
-  if(crit&&d>0)float(t,'CRIT','crit');
+  B.fxCrit=crit;const d=dealDamage(u,t,dmg,'attack');B.fxCrit=false;
   if(d>0&&u.side==='A')horrorHit(u,t,crit);
   if(u.splash&&d>0)beside(t).forEach(x=>dealDamage(u,x,dmg*u.splash,'bounce'));
   if(u.kscare&&d>0)terrify(t,2);
@@ -8268,7 +8282,7 @@ function stepUp(side,col){if(B.units.some(x=>x.alive&&Z(x)===side&&x.row==='fron
 function act(u){
   if(u.skill&&u.manaMax&&u.mana>=u.manaMax){
     u.mana=0;
-    if(!B.silent&&u.el){float(u,SK[u.skill].name,'sp');sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
+    if(!B.silent&&u.el){float(u,SK[u.skill].name,'sp');u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
       if(!RM){const ring=document.createElement('i');ring.className='castring';el.appendChild(ring);setTimeout(()=>ring.remove(),550);}}
     SK[u.skill].cast(u);return;
   }
@@ -8532,6 +8546,34 @@ function float(u,txt,cls){
   const s=document.createElement('span');s.className='flt '+cls;s.textContent=txt;s.style.left=(30+Math.random()*40)+'%';
   u.el.appendChild(s);setTimeout(()=>s.remove(),900);
 }
+// v19.75: combat numbers. numFx(u,v,kind,crit): kinds phys/spell/true/tick (damage), heal/heal2 (light: lifesteal),
+// shield ('Shield +N'), block ('Blocked N'). Same kind on the same character within 0.3 s adds into one number;
+// at most FXN.max numbers on the field, the smallest go first. Size grows with the share of max HP.
+const FXN={max:12,list:[],k:1,kt:0};
+// the 3D arena draws the board smaller than its layout (perspective): numbers and status icons grow back by FXN.k
+function fxK(u){const now=performance.now();if(now-FXN.kt<1000&&FXN.B===B)return;FXN.kt=now;FXN.B=B;const w=u.el.offsetWidth,r=u.el.getBoundingClientRect();
+  FXN.k=w&&r.width?Math.max(1,Math.min(1.8,w/r.width)):1;const f=document.getElementById('field');if(f)f.style.setProperty('--fxk',FXN.k.toFixed(2));}
+function numTxt(k,v,c){const n=R(v);return k==='heal'||k==='heal2'?'+'+n:k==='shield'?'Shield +'+n:k==='block'?'Blocked '+n:n+(c?'!':'');}
+function numSet(u,n,k,c){const sm=k==='tick'||k==='block'||k==='shield',f=Math.min(1,Math.sqrt(n.v/Math.max(1,u.maxHp)/.4));
+  n.el.style.fontSize=(((sm?.68:.78)+f*(sm?.22:.8)+(c?.3:0))*FXN.k).toFixed(2)+'rem';n.el.textContent=numTxt(k,n.v,c);}
+function numFx(u,v,k,c){
+  if(!B||B.silent||!u||!u.el||RM||!(v>=.5))return;
+  fxK(u);const now=performance.now(),m=u._nf||(u._nf={}),key=k+(c?'!':''),o=m[key];
+  if(k==='heal'||k==='heal2'){const b=u.el.querySelector('.hpb');if(b)b.animate([{boxShadow:'0 0 0 2px #4dff7c,0 0 10px #4dff7c'},{boxShadow:'0 0 0 0 transparent'}],{duration:500,easing:'ease-out'});}
+  if(o&&o.el.isConnected&&now-o.t0<300){o.v+=v;numSet(u,o,k,c);o.el.animate([{scale:1.25},{scale:1}],{duration:160,easing:'ease-out'});return;}
+  const el=document.createElement('span');el.className='flt num n-'+k+(c?' crit':'');el.style.left=(28+Math.random()*44)+'%';
+  const n={el,v,t0:now};m[key]=n;numSet(u,n,k,c);u.el.appendChild(el);
+  FXN.list=FXN.list.filter(x=>x.el.isConnected);FXN.list.push(n);
+  setTimeout(()=>el.remove(),c?1100:950);
+  while(FXN.list.length>FXN.max){let j=0;FXN.list.forEach((x,i)=>{if(x.v<FXN.list[j].v)j=i;});FXN.list[j].el.remove();FXN.list.splice(j,1);}
+}
+// a shield that just broke: its striped layer cracks and falls off the HP bar
+function shCrack(u){if(!B||B.silent||RM||!u.el||!u._shw)return;const b=u.el.querySelector('.hpb');if(!b)return;const c=document.createElement('i');c.className='shbrk';
+  c.style.left=u._shw[0]+'%';c.style.width=Math.max(6,u._shw[1])+'%';b.appendChild(c);setTimeout(()=>c.remove(),520);u._shw=null;}
+// status icons above the HP bar; a ring shows how much of the effect is left (the longest seen since it started)
+function stDraw(u,st){const sig=st.map(x=>x[0]).join(',');if(u._st!==sig){u._st=sig;u.$st.innerHTML=st.map(x=>`<i class="si s-${x[0]}"><b>${x[1]}</b></i>`).join('');}
+  const mx=u._stm||(u._stm={});st.forEach((x,i)=>{const el=u.$st.children[i];if(!el)return;if(x[2]==null){el.style.removeProperty('--p');return;}
+    const k=x[0];if(!(mx[k]>0)||x[2]>(mx[k+'_l']||0)+.05)mx[k]=x[2];mx[k+'_l']=x[2];el.style.setProperty('--p',Math.max(0,Math.min(1,x[2]/mx[k])).toFixed(3));});}
 let shakeT=0;
 function shake(){if(!B||B.silent||RM)return;const now=performance.now();if(now-shakeT<250)return;shakeT=now;const f=$('#field');if(!f)return;f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');}
 // a character with an <id>_atk sprite (Acid Spitters) shows that pose for a moment whenever it attacks
@@ -8629,7 +8671,8 @@ function drawBattle(){
     if(u.wide&&u.el)wideSize(u);
     const hp=Math.max(0,u.hp);
     u.$hf.style.width=(hp/u.maxHp*100)+'%';
-    u.$sf.style.width=Math.min(100,u.shield/u.maxHp*100)+'%';
+    {const sp=Math.min(100,Math.max(0,u.shield)/u.maxHp*100),sl=Math.max(0,Math.min(hp/u.maxHp*100,100-sp));u.$sf.style.width=sp+'%';u.$sf.style.left=sl+'%';if(sp>0)u._shw=[sl,sp];
+      if(u._shp!=null&&u.alive&&u.shield-u._shp>=1)numFx(u,u.shield-u._shp,'shield');u._shp=u.alive?Math.max(0,u.shield):0;}
     if(u.manaMax)u.$mp.style.width=(u.mana/u.manaMax*100)+'%';
     if(u.$bn)u.$bn.textContent=bodies(u);
     // a character with an <id>_up sprite (Burrow Lurker) switches to it once it has tunneled into the enemy side
@@ -8637,9 +8680,12 @@ function drawBattle(){
     if(u.$cs&&+u.$cs.dataset.n!==Math.min(3,bodies(u))){const n=Math.min(3,bodies(u));u.$cs.dataset.n=n;u.$cs.innerHTML=crowdImgs(u.art||u.id,n);}
     u.el.classList.toggle('dead',!u.alive);u.el.classList.toggle('low',u.alive&&hp<u.maxHp*.25);
     u.el.classList.toggle('hidden',u.alive&&!targetable(u));
-    let st='';
-    if(u.alive){if(B.ball&&B.ball.holder===u)st+='⚽';if(u.stun>0)st+='💫';if(u.taunt>0)st+='🎯';if(u.vuln>0)st+='🔻';if(u.armDownT>0)st+='🛠️';if(u.catches>0)st+='🧤';if(u.markUntil>B.t)st+='📍';if(u.fearT>B.t)st+='😱';if(u.star)st+='🍿';}
-    if(u._st!==st){u.$st.textContent=st;u._st=st;}
+    if(u.manaMax){if(u._cast)u._cast=0;else if(u._mp!=null&&u.alive&&u.mana<u._mp-1)u._drT=B.t+1.5;u._mp=u.mana;}
+    const st=[];
+    if(u.alive){const T=B.t;if(B.ball&&B.ball.holder===u)st.push(['ball','⚽']);if(u.stun>0)st.push(['stun','💫',u.stun]);if(u.taunt>0)st.push(['taunt','🎯',u.taunt]);
+      if(u.fearT>T)st.push(['fear','😱',u.fearT-T]);if(u.side==='E'&&B.burn&&T>=TUNE.burnAt)st.push(['burn','🔥']);if(u._drT>T)st.push(['drain','⚡',u._drT-T]);
+      if(u.vuln>0)st.push(['vuln','🔻',u.vuln]);if(u.armDownT>0)st.push(['arm','🛠️',u.armDownT]);if(u.catches>0)st.push(['catch','🧤']);if(u.markUntil>T)st.push(['mark','📍',u.markUntil-T]);if(u.star)st.push(['star','🍿']);}
+    if(u.alive&&!B.silent)fxK(u);stDraw(u,st);
   }
   const ck=$('#clock');if(ck){ck.textContent=B.t.toFixed(1)+'s'+(B.t>30?' · OVERTIME':'');ck.classList.toggle('ot',B.t>30);}
   {const bn=$('#bbench');if(bn)bn.hidden=true;bbqDraw();}
@@ -9688,10 +9734,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.73',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.75',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.75',items:[["💥", "Damage numbers you can read: big hits show big numbers, colours tell attacks (white), skills (purple) and true damage (orange) apart, crits are gold with a \"!\", and fast hits add up into one number instead of a wall of digits."], ["🛡️", "Shields show on the health bar as a silver layer, with \"Shield +N\", \"Blocked N\" and a crack when one breaks. Heals pop up in green and make the bar glow."], ["💫", "Stun, taunt, Terrified, burning, drained energy and more now sit in a row of icons above each health bar, with a ring that shrinks as the effect runs out."]]},
   {v:'19.73',items:[["⚽", "Fixed: with the Game Ball, the arena now shows exactly one ball, flying from the thrower to the enemy and on to the next catcher. Fast speeds no longer leave extra balls lying around."]]},
   {v:'19.72',items:[["🔓", "Game Levels now unlock things as you climb: Season 1 (Level 4) starts with 16 items, 13 Legendaries and the basic events, and higher levels add the rest (all items by Level 10, all Legendaries by Level 12)."], ["✨", "Winning a level shows everything it adds, and new items, Legendaries and events carry a New! badge in your runs until you beat that level."], ["📖", "The Codex greys out what you haven't unlocked yet and says at which Game Level it arrives."]]},
   {v:'19.71',items:[["🎬", "New players start with the Pilot: three short tutorial levels (Game Levels 1-3) that teach the game one step at a time, with a coach that points at what to press."], ["⏭", "Know auto-battlers already? Tap \"I know auto-battlers\" on the title screen to go straight to Season 1 (Level 4). Players who already have Level 4 open can still play Levels 1-3 any time."], ["💡", "Settings: \"Replay the tutorial tips\" shows the coach again, and the Coaching tips switch turns it off."]]},
