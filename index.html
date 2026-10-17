@@ -7867,7 +7867,7 @@ function twinUnit(){
   return mkUnit(Object.assign(base,{maxHp:mhp,hp:mhp,atk:b.atk*t*LV[h.level-1]}));
 }
 function foeInfo(k){const m=/^rv:(\w+):(\w+)$/.exec(k||'');if(m&&RIVAL[m[1]]&&HERO[m[2]])return {e:HERO[m[2]].e,name:RIVAL[m[1]].name+"'s "+HERO[m[2]].name};return EN[k]||(k==='twin'?{e:'😈',name:'Evil Twin'}:{e:'❓',name:k});}
-function startBattle(silent,seed){if(!silent)tlFight();
+function startBattle(silent,seed){if(!silent){gbClear();tlFight();}
   if(!silent&&!seeded&&S){if(!S.inFight)S.inFight={seed:seed!=null?seed:(Math.random()*2147483647)|0};FR=S.inFight.seed;save();}
   const syn=activeSyn(fielded());
   B={t:0,acc:0,last:null,speed:UI.speed,paused:false,units:[],done:false,win:null,silent:!!silent,startDelay:silent?0:.6,
@@ -8251,7 +8251,7 @@ function throwBall(u){
   const nx=nextBallHolder(u);
   if(nx&&nx!==u&&nx.id!==u.id){B.ball.holder=nx;B.ball.streak++;nx.timer=Math.max(TUNE.gbFlight,nx.interval*TUNE.gbPass);
     // the ball bounces off the enemy to the catcher (who throws again after one of its own attack intervals)
-    if(!B.silent&&!RM){const sp=B.speed,g=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);setTimeout(()=>{if(B&&!B.done&&t.el&&nx.el)projectile(t,nx,'ballp','⚽',14+g*7,240);},260/sp);}}
+    if(!B.silent&&!RM){const sp=B.speed,g=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);const b0=B;B.gbT=setTimeout(()=>{if(B===b0&&!B.done&&t.el&&nx.el){B.gbT=0;gbFly(t,nx,14+g*7,240);}},260/sp);}}
 }
 function stepper(u){return u.alive&&u.range==='melee'&&u.row==='back'&&Z(u)===u.side&&!isDiver(u)&&u.genre!=='ball'&&!u.summon;}
 function blocked(u){return stepper(u)&&B.units.some(x=>x.side===u.side&&x.alive&&x.row==='front'&&cv(x,u.col)&&Z(x)===Z(u));}
@@ -8544,13 +8544,15 @@ function projectile(u,t,cls,glyph,size){
   const pk=TBA.on&&!RM?tbaProjFor(u,glyph):null,pm=pk&&tbaProjImg(pk);
   if(pm){const q=document.createElement('img');q.className='proj3d';q.src=pm.url;q.alt='';const sz=Math.round(pm.sz*(glyph&&size?size/18:1));q.style.width=q.style.height=sz+'px';f.appendChild(q);
     const x0=ar.left+ar.width/2-fr.left,y0=ar.top+ar.height/2-fr.top,x1=br.left+br.width/2-fr.left,y1=br.top+br.height/2-fr.top,ang=Math.atan2(y1-y0,x1-x0)*180/Math.PI,a0=pm.spin?0:ang,a1=pm.spin?540:ang;
-    const qa=q.animate([{transform:`translate(${x0}px,${y0}px) rotate(${a0}deg) translate(-50%,-50%)`},{transform:`translate(${x1}px,${y1}px) rotate(${a1}deg) translate(-50%,-50%)`}],{duration:(arguments[5]||260)/B.speed,easing:'ease-in'});
-    qa.onfinish=()=>q.remove();return;}
+    const qa=q.animate([{transform:`translate(${x0}px,${y0}px) rotate(${a0}deg) translate(-50%,-50%)`},{transform:`translate(${x1}px,${y1}px) rotate(${a1}deg) translate(-50%,-50%)`}],{duration:(arguments[5]||260)/B.speed,easing:'ease-in',fill:'forwards'});
+    qa.onfinish=()=>q.remove();return q;}
   const p=document.createElement('i');p.className='proj '+cls;if(glyph){p.textContent=glyph;p.style.fontSize=(size||20)+'px';}f.appendChild(p);
-  const an=p.animate([{transform:`translate(${ar.left+ar.width/2-fr.left}px,${ar.top+ar.height/2-fr.top}px) rotate(0deg)`},{transform:`translate(${br.left+br.width/2-fr.left}px,${br.top+br.height/2-fr.top}px) rotate(${glyph?360:0}deg)`}],{duration:(arguments[5]||260)/B.speed,easing:'ease-in'});
-  an.onfinish=()=>p.remove();
+  const an=p.animate([{transform:`translate(${ar.left+ar.width/2-fr.left}px,${ar.top+ar.height/2-fr.top}px) rotate(0deg)`},{transform:`translate(${br.left+br.width/2-fr.left}px,${br.top+br.height/2-fr.top}px) rotate(${glyph?360:0}deg)`}],{duration:(arguments[5]||260)/B.speed,easing:'ease-in',fill:'forwards'});
+  an.onfinish=()=>p.remove();return p;
 }
-function ballFx(u,t,from,mult){if(!B||B.silent)return;projectile(from||u,t,'ballp',mult?'⚽':(BALLS[u.id]||'⚾'),mult?14+mult*7:18);}
+function ballFx(u,t,from,mult){if(!B||B.silent)return;if(mult){gbFly(from||u,t,14+mult*7);return;}projectile(from||u,t,'ballp',BALLS[u.id]||'⚾',18);}
+function gbClear(){if(typeof B!=='undefined'&&B&&B.gbT){clearTimeout(B.gbT);B.gbT=0;}if(typeof document==='undefined')return;document.querySelectorAll('.gball').forEach(e=>{e.getAnimations().forEach(a=>a.cancel());e.remove();});if(typeof AR!=='undefined'&&AR.scene)arGbClear();}
+function gbFly(u,t,size,dur){gbClear();const el=projectile(u,t,'ballp','⚽',size,dur);if(el)el.classList.add('gball');}
 // ranged recoil: the shooter kicks back away from its target
 // ranged recoil (v19.13): the shooter jerks back away from its target, tilts and squashes, then settles (art only
 // for characters with art; the square stays); a muzzle flash pops on the side facing the target. The kick scales
@@ -8673,7 +8675,7 @@ function battleLoop(ts){
     else{B.acc+=real*B.speed*TUNE.clock;while(B.acc>=DT&&!B.done){step(DT);B.acc-=DT;}}
   }
   drawBattle();
-  if(B.done){if(!B.ended){B.ended=true;sfx(B.win?'win':'lose');musDuck();const fx=battleEndFx();const live=TBA.on&&!RM&&!B.silent;if(live){const t=performance.now();TBA.end={win:!!B.win,t0:t,until:t+3200};}setTimeout(showResult,fx?(live?1600:950):500);}return;}
+  if(B.done){if(!B.ended){B.ended=true;gbClear();sfx(B.win?'win':'lose');musDuck();const fx=battleEndFx();const live=TBA.on&&!RM&&!B.silent;if(live){const t=performance.now();TBA.end={win:!!B.win,t0:t,until:t+3200};}setTimeout(showResult,fx?(live?1600:950):500);}return;}
   requestAnimationFrame(battleLoop);
 }
 // a fight that was under way when the page reloaded: the same fight again (same board, same seed)
@@ -9686,10 +9688,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.72',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.73',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.73',items:[["⚽", "Fixed: with the Game Ball, the arena now shows exactly one ball, flying from the thrower to the enemy and on to the next catcher. Fast speeds no longer leave extra balls lying around."]]},
   {v:'19.72',items:[["🔓", "Game Levels now unlock things as you climb: Season 1 (Level 4) starts with 16 items, 13 Legendaries and the basic events, and higher levels add the rest (all items by Level 10, all Legendaries by Level 12)."], ["✨", "Winning a level shows everything it adds, and new items, Legendaries and events carry a New! badge in your runs until you beat that level."], ["📖", "The Codex greys out what you haven't unlocked yet and says at which Game Level it arrives."]]},
   {v:'19.71',items:[["🎬", "New players start with the Pilot: three short tutorial levels (Game Levels 1-3) that teach the game one step at a time, with a coach that points at what to press."], ["⏭", "Know auto-battlers already? Tap \"I know auto-battlers\" on the title screen to go straight to Season 1 (Level 4). Players who already have Level 4 open can still play Levels 1-3 any time."], ["💡", "Settings: \"Replay the tutorial tips\" shows the coach again, and the Coaching tips switch turns it off."]]},
   {v:'19.70',items:[["🪜", "Game Levels are renumbered for the new 18-level ladder: the base game is now Level 4, and every level you unlocked moved up by 4 (your old Level 6 is Level 10). Nothing you earned is lost."], ["🎲", "From Level 5 the ladder adds one thing per level: Plot Twists first, then Limited Run, Slow Promotions, Guest Stars and the rest. The Lv button shows what each level adds."]]},
@@ -10227,9 +10230,10 @@ function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.un
     T.root.position.set(T.home.x+ox+(hit?Math.sin(now*.09)*.08*hit:0),.05+(ghost?.25+Math.sin(now/160)*.12:0),T.home.z+oz);
     const sq=1-.1*hit;T.root.scale.set(pop*(1+.05*hit),pop*sq,pop*(1+.05*hit));
     const gone=anim==='death'?Math.max(0,(now-t0)/1000*s-e.dur-.35):0;T.body.position.y=-gone*1.6;T.root.visible=gone<1.2;}}
-function arShot(u,t,glyph,size,ms){const pk=tbaProjFor(u,glyph),A=u._ar,Bt=t._ar;if(!pk||!A||!Bt)return false;
+function arGbClear(){if(AR.proj.some(P=>P.gb))AR.proj=AR.proj.filter(P=>{if(P.gb){arDispose(P.g);return false;}return true;});}
+function arShot(u,t,glyph,size,ms){const pk=tbaProjFor(u,glyph),A=u._ar,Bt=t._ar;if(!pk||!A||!Bt)return false;const gb=glyph==='⚽';if(gb)arGbClear();
   try{const {THREE,lib}=TBA,g=new THREE.Group(),o=lib.makeProj(pk[0],pk[1]);g.add(o);g.scale.setScalar(2.1*(glyph&&size?Math.min(1.8,size/18):1));AR.scene.add(g);
-    AR.proj.push({g,o,from:A.home.clone().setY(1.5),T:Bt,t0:performance.now(),ms:Math.max(260,ms*1.4),spin:!TBA_PSZ[pk[0]]||TBA_SPIN.has(pk[0]),arc:glyph||TBA_SPIN.has(pk[0])?1.3:pk[0]==='acid'||pk[0]==='shell'?1.1:.25});return true;}catch(e){return false;}}
+    AR.proj.push({g,o,gb,from:A.home.clone().setY(1.5),T:Bt,t0:performance.now(),ms:gb?Math.max(40,ms):Math.max(260,ms*1.4),spin:!TBA_PSZ[pk[0]]||TBA_SPIN.has(pk[0]),arc:glyph||TBA_SPIN.has(pk[0])?1.3:pk[0]==='acid'||pk[0]==='shell'?1.1:.25});return true;}catch(e){return false;}}
 function arProj(now){if(!AR.proj.length)return;const {THREE}=TBA,X=new THREE.Vector3(1,0,0),p=new THREE.Vector3(),q=new THREE.Vector3(),d=new THREE.Vector3();
   AR.proj=AR.proj.filter(P=>{const k=(now-P.t0)/P.ms;if(k>=1){arDispose(P.g);return false;}const to=P.T.home,e=k*k*.35+k*.65;
     const at=(z,out)=>out.set(P.from.x+(to.x-P.from.x)*z,P.from.y+(1.4-P.from.y)*z+Math.sin(Math.PI*z)*P.arc,P.from.z+(to.z-P.from.z)*z);
