@@ -5994,7 +5994,7 @@ const CAST = [
   belt(h, '#2a1a10', h.tc - .38, '#ffcc2e'); for (const s of [-1, 1]) { g.add(P(box(.13, .24, .1, .03), '#3a2416', { p: [s * .45, h.tc - .5, .05] })); g.add(P(box(.07, .12, .06, .02), '#6b4226', { p: [s * .45, h.tc - .34, .05] })); }
   for (const [arm, s] of [[h.armR, -1], [h.armL, 1]]) arm.rotation.set(-.15, 0, s * .55);
   return g; } },
-{ id: 'noname', name: 'The Man With No Name', genre: 'west', build() {
+{ id: 'noname', name: 'The Drifter', genre: 'west', build() {
   const h = humanoid({ skin: SKIN[1], shirt: '#d9c7a3', pants: '#5a5040', shoes: '#3a2416' }), { g, head } = h;
   boot(h, '#3a2416');
   const pon = lathe([[.001, .82], [.56, .82], [.6, .86], [.55, 1.05], [.45, 1.3], [.28, 1.52], [.001, 1.58]]); g.add(P(pon, '#6b7a4a'));
@@ -6031,7 +6031,7 @@ const CAST = [
   hair(head, .44, '#7a4a2a', { k: .48 }); const pt = at(head, [0, .25, -.42], [.6, 0, 0]); pt.add(P(capsule(.1, .3), '#7a4a2a', { p: [0, -.2, 0] }));
   h.armR.rotation.set(-2.2, 0, -.55); h.handR.add(P(box(.1, .28, .06, .02), '#2a2a33', { p: [0, .05, .05] }));
   h.armL.rotation.set(-.3, 0, .25); return g; } },
-{ id: 'exorcist', name: 'The Exorcist', genre: 'horror', build() {
+{ id: 'exorcist', name: 'The Priest', genre: 'horror', build() {
   const h = humanoid({ skin: SKIN[0], shirt: '#1d1d22', pants: '#1d1d22', shoes: '#121014', dims: { hr: .43 } }), { g, head } = h;
   coat(h, '#1d1d22', .08, h.tc + .02, { r1: .5 });
   g.add(P(box(.12, .07, .04, .015), '#f3eee4', { p: [0, h.shy + .05, h.d.tr + .03] }));
@@ -6085,7 +6085,7 @@ const CAST = [
   hair(head, .44, ['#3a2a1e', '#d8b060', '#1d1a18'][v], { k: .38 });
   h.armR.rotation.set(-1.25, 0, -.1); h.handR.add(P(box(.08, .1, .2, .02), '#9aa0aa', { p: [0, .02, .1] })); h.handR.add(P(sphere(.03), '#ff5a4a', { glow: 1, p: [0, .04, .22] }));
   h.armL.rotation.set(-.3, 0, .3); return g; } },
-{ id: 'droids', name: 'Repair Droids', genre: 'space', crowd: true, build({ variant: v = 0 } = {}) {
+{ id: 'droids', name: 'Repair Bots', genre: 'space', crowd: true, build({ variant: v = 0 } = {}) {
   const g = G(), body = ['#e8ecf2', '#d8c27a', '#e8ecf2'][v], trim = ['#3a7ad8', '#c8352b', '#4ab86a'][v];
   g.add(P(cyl(.36, .36, .7), body, { p: [0, .62, 0] })); for (const y of [.42, .72]) g.add(P(box(.3, .08, .04, .02), trim, { p: [0, y, .35] }));
   g.add(P(dome(.37, .5), '#c9ccd4', { p: [0, .97, 0] })); g.add(P(sphere(.09), '#16141c', { p: [0, 1.12, .3] })); g.add(P(sphere(.035), trim, { glow: 1, p: [.02, 1.13, .38] }));
@@ -6188,7 +6188,7 @@ const CAST = [
   h.armR.rotation.set(-1.2, 0, -.2); bottle(h.handR, { p: [0, -.02, .1], r: [1.2, 0, 0], color: '#5aff8a', alpha: .8 }); h.handR.add(P(sphere(.07), '#5aff8a', { glow: 1, p: [0, .12, .12] }));
   h.armL.rotation.set(-.9, 0, .25); h.handL.add(P(box(.28, .36, .03, .01), '#c9a46a', { p: [0, .02, .1], r: [-.3, 0, 0] }));
   return g; } },
-{ id: 'hunter', name: 'Monster Hunter', genre: 'kaiju', build() {
+{ id: 'hunter', name: 'Big-Game Hunter', genre: 'kaiju', build() {
   const h = humanoid({ skin: SKIN[3], shirt: '#a89a6a', pants: '#6a6040', shoes: '#3a2416' }), { g, head } = h;
   boot(h, '#3a2416'); straps(h, '#4a3a22', { cross: true }); belt(h, '#4a3a22', h.tc - .36, '#9aa0aa');
   eyes(head, { y: .02, squint: true }); beard(head, .44, '#2a1a12'); cowboy(head, .44, '#7a7048', '#3a3020', { tilt: -.05, w: .85 });
@@ -6264,7 +6264,7 @@ const CAST = [
   head.add(P(box(.1, .14, .1, .03), Rd, { p: [0, .2, .16] }));
   for (const s of [-1, 1]) { head.add(P(box(.05, .36, .05, .02), Y, { p: [s * .12, .34, .18], r: [0, 0, s * -.62] })); head.add(P(cyl(.06, .06, .08), Rd, { p: [s * .24, 0, 0], r: [0, 0, PI / 2] })); head.add(P(cyl(.015, .015, .2), F, { p: [s * .25, .12, -.04], r: [0, 0, s * .2] })); }
   return g; } },
-{ id: 'kingmonster', name: 'King of the Monsters', genre: 'kaiju', build() {
+{ id: 'kingmonster', name: 'The Leviathan', genre: 'kaiju', build() {
   // v19.58: built as a monster, not a person in a suit: thick digitigrade legs, a heavy pear body with a ribbed belly, a long
   // tapering tail, three rows of jagged dorsal plates that glow at the core, a reptile head with brow ridges, teeth and a jaw
   const g = G(), sk = '#4a5d4f', dk = '#2c3a31', bel = '#9aa684', pl = '#a9c3cc', gl = '#7af0ff';
@@ -6741,7 +6741,7 @@ const GENRES_ALL={
   west:{name:'Wild West',e:'🤠',tiers:[2,4,6],d:['High Noon: each Wild West character\'s first shot is instant and deals double damage, and they get +30% crit chance. Typecast: with only Wild West characters on your board (3+), they get +3% HP and damage.','Wild West characters get another +25% crit chance; their crits deal 2.5× damage and ricochet to a second enemy.','Dead or Alive: every enemy knockout gives your Wild West characters 10 energy.']},
   horror:{name:'Slasher',e:'🩸',tiers:[2,4,6],d:['Jump Scare: each Slasher character\'s first hit on an enemy terrifies it: it deals 28% less damage for 4s. Typecast: with only Slasher characters on your board (3+), they get +12% HP and damage.','Picked Off: Slasher characters deal +50% damage to enemies with nobody beside, in front of or behind them. Terrify lasts 6s.','It\'s Behind You: the first time each Slasher character falls, it vanishes and comes back 2s later behind the enemy\'s back row at 70% HP. Full Cast: Slasher characters get +100% HP and damage.']},
   space:{name:'Space Opera',e:'🚀',tiers:[2,4,6],d:['Deflector Shields: Space Opera characters start each fight with a shield worth 19% of their max HP. Typecast: with only Space Opera characters on your board (3+), they get +18% HP and damage.','Piercing Lasers: Space Opera characters\' attacks also hit the enemy directly behind (or in front of) the target for 50%.','Hyperdrive: Space Opera characters attack 50% faster and cast their skill as the fight starts. Full Cast: Space Opera characters get +95% HP and damage.']},
-  kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +25% HP, and their attacks also hit the enemies beside the target for 50%. Typecast: with only Kaiju characters on your board (3+), they get +15% HP and damage.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','King of the Monsters: as the fight starts, a roar stuns every enemy for 1.5s and your Kaiju characters deal +45% damage. Full Cast: Kaiju characters get +110% HP and damage.']},
+  kaiju:{name:'Kaiju',e:'🦖',tiers:[2,4,6],d:['Rampage: Kaiju characters get +25% HP, and their attacks also hit the enemies beside the target for 50%. Typecast: with only Kaiju characters on your board (3+), they get +15% HP and damage.','Monster Rage: Kaiju characters deal +5% damage every time they are hit (max +75%).','Mega Roar: as the fight starts, a roar stuns every enemy for 1.5s and your Kaiju characters deal +45% damage. Full Cast: Kaiju characters get +110% HP and damage.']},
   ball:{name:'Sportsball',e:'🏆',tiers:[2,4,6],d:['Sportsball throws bounce to a second enemy for 70%. Typecast: with only Sportsball characters on your board (3+), they get +8% HP and damage.','Throws bounce twice; your other characters\' attacks bounce once for 20%.','Sportsball bounces hit for 90%. Full Cast: Sportsball characters get +15% HP and damage.']},
 };
 const GENRES=Object.fromEntries(Object.entries(GENRES_ALL).filter(([k])=>live(k)));
@@ -6788,13 +6788,13 @@ const HEROES_ALL=[
  ['fieldmed','Field Medic','army','medic',3,0,'fallback','⛑️','Has carried every one of you at least once.'],
  ['observer','Forward Observer','army','guardian',4,0,'onmypos','📡','Calls shells on himself. Somehow walks away every time.'],
  ['gunny','Gunnery Sergeant','army','gunner',5,0,'openfire','📣','Has one volume setting: OPEN FIRE.'],
- ['ironhide','Ironhide','orc','guardian',1,0,'warcry','🐗','Scarred, grinning, immovable.'],
+ ['ironhide','Tuskhide','orc','guardian',1,0,'warcry','🐗','Scarred, grinning, immovable.'],
  ['goblins','Goblin Cutthroats','orc','stalker',1,1,'gangup','👺','They never fight fair, and there are always more.'],
  ['javelin','Javelin Thrower','orc','gunner',2,0,'javelin','🔱','Throws hard. Throws often.'],
  ['warchief','Orc Warchief','orc','brawler',3,0,'charge','🪓','Where the Warchief walks, the horde runs.'],
  ['dancer','Blade Dancer','elf','stalker',1,0,'whirl','🗡️','Moves like smoke between the blades.'],
  ['ranger','Longbow Ranger','elf','gunner',1,0,'pierce','🏹','Never misses. Never brags. Mostly.'],
- ['priestess','Moonwell Priestess','elf','medic',2,0,'moonlight','🌙','Carries the light of a well older than the hills.'],
+ ['priestess','Wellspring Priestess','elf','medic',2,0,'moonlight','🌙','Carries the light of a well older than the hills.'],
  ['starcaller','Starcaller','elf','mystic',3,0,'starfall','🌠','Pulls the sky down, gently.'],
  ['interns','Unpaid Interns','fin','guardian',1,1,'blame','☕','Exposure is its own reward.'],
  ['raider','Corporate Raider','fin','stalker',1,0,'strip','💼','Sees a weak balance sheet from across the room.'],
@@ -6803,7 +6803,7 @@ const HEROES_ALL=[
  ['shieldbro','Shield Brother','grim','guardian',1,0,'shieldwall','🧱','The wall does not break. The wall is faith.'],
  ['chainblade','Chainblade Brother','grim','brawler',1,0,'rend','⚔️','The teeth of the blade sing hymns.'],
  ['hospitaller','Hospitaller','grim','medic',2,0,'lastrites','🕯️','Mends the body so it may serve again.'],
- ['seer','Warp Seer','grim','mystic',3,0,'scream','👁️','Hears the void, and answers.'],
+ ['seer','Void Seer','grim','mystic',3,0,'scream','👁️','Hears the void, and answers.'],
  ['ravager','Ravager Brood','bug','brawler',1,1,'frenzy','🐜','Hungry from the moment they hatch.'],
  ['spitters','Acid Spitters','bug','gunner',1,1,'acid','🐛','The acid is the argument.'],
  ['beetles','Shellback Beetles','bug','guardian',1,1,'swell','🐞','Step on one and two more show up.'],
@@ -6843,31 +6843,31 @@ const HEROES_ALL=[
  ['prospector','Prospector','west','mystic',2,0,'dynamite','🧨','Struck gold once. Has been blowing up hills since.'],
  ['gunslinger','The Gunslinger','west','gunner',3,0,'fanhammer','🔫','Fastest draw west of anywhere.'],
  ['sheriff','The Sheriff','west','guardian',4,0,'showdown','🤠','This town ain\'t big enough. It never is.'],
- ['noname','The Man With No Name','west','stalker',5,0,'deadeye','🌵','Says nothing. Squints a lot. Never misses.'],
+ ['noname','The Drifter','west','stalker',5,0,'deadeye','🌵','Says nothing. Collar up. Never misses.'],
  ['counselors','Camp Counselors','horror','guardian',1,1,'splitup','🏕️','"Let\'s split up." Famous last words, times three.'],
- ['kids','Creepy Kids','horror','stalker',1,1,'comeplay','🧸','They just want someone to play with. Forever.'],
- ['babysitter','The Babysitter','horror','medic',1,0,'hide','📞','The calls are coming from inside the house.'],
- ['exorcist','The Exorcist','horror','mystic',2,0,'compels','📿','Brought holy water and a very long weekend.'],
+ ['kids','Creepy Kids','horror','stalker',1,1,'comeplay','🧸','They just want someone to play with. For keeps.'],
+ ['babysitter','The Babysitter','horror','medic',1,0,'hide','📞','The phone keeps ringing. She keeps answering.'],
+ ['exorcist','The Priest','horror','mystic',2,0,'compels','📿','Brought holy water and a very long weekend.'],
  ['chainsaw','Chainsaw Maniac','horror','brawler',2,0,'revup','🪚','Lives in the woods. Owns one tool.'],
  ['finalgirl','The Final Girl','horror','gunner',3,0,'survivor','🪓','Everyone else made a bad decision. She didn\'t.'],
  ['brute','The Brute','horror','guardian',4,0,'unstoppable','🎭','Walks slowly. Somehow always catches up.'],
- ['dreamstalker','The Dream Stalker','horror','mystic',5,0,'wakeup','🌙','Don\'t fall asleep. Whatever you do.'],
- ['redshirts','Redshirts','space','guardian',1,1,'expendable','👕','Just here for this one away mission.'],
- ['droids','Repair Droids','space','medic',1,1,'repair','🤖','Beep. Boop. Boop. (That was rude.)'],
- ['pilot','Hotshot Pilot','space','gunner',1,0,'barrelroll','🛩️','Never tell them the odds.'],
- ['smuggler','Space Smuggler','space','stalker',2,0,'shootfirst','🔫','Owes money on four planets. Shoots first on all of them.'],
+ ['dreamstalker','The Dream Stalker','horror','mystic',5,0,'wakeup','🌙','It sleepwalks. You don\'t wake up.'],
+ ['redshirts','Redshirts','space','guardian',1,1,'expendable','👕','Just here for this one mission.'],
+ ['droids','Repair Bots','space','medic',1,1,'repair','🤖','Beep. Boop. Boop. (That was rude.)'],
+ ['pilot','Hotshot Pilot','space','gunner',1,0,'barrelroll','🛩️','Brakes are for cowards.'],
+ ['smuggler','Space Smuggler','space','stalker',2,0,'shootfirst','🔫','Owes money on four planets. Pays none of them.'],
  ['telepath','The Telepath','space','mystic',2,0,'mindblast','👽','Knows what you\'re thinking. Disapproves.'],
  ['captain','Starship Captain','space','brawler',3,0,'engage','🖖','Fights with his fists, then gives a speech about it.'],
- ['starknight','Star Knight','space','guardian',4,0,'deflect','🗡️','An elegant weapon, for a more civilized episode.'],
- ['darklord','The Dark Lord','space','mystic',5,0,'darklightning','⚡','Breathes loudly. Has a very good cape.'],
+ ['starknight','Star Knight','space','guardian',4,0,'deflect','🗡️','Last of an ancient order. Mentions it constantly.'],
+ ['darklord','The Dark Lord','space','mystic',5,0,'darklightning','⚡','Monologues a lot. Has a very good cape.'],
  ['tanks','Defense Force Tanks','kaiju','gunner',1,1,'barrage','💥','"Open fire!" They have never once hit the monster.'],
  ['babykaiju','Baby Kaiju','kaiju','brawler',1,1,'tantrum','🦎','A clutch of future city-enders. Currently toddlers.'],
  ['reporter','TV Reporter','kaiju','medic',1,0,'breaking','🎤','"I\'m standing in front of the monster now—"'],
  ['scientist','The Scientist','kaiju','mystic',2,0,'weakness','🔬','Has a theory. The theory is always radiation.'],
- ['hunter','Monster Hunter','kaiju','stalker',2,0,'harpoon','🔱','Wants the trophy. Ignores the size difference.'],
- ['giantmoth','Giant Moth','kaiju','mystic',3,0,'scales','🦋','Divine guardian of the island. Takes 2 board squares.'],
+ ['hunter','Big-Game Hunter','kaiju','stalker',2,0,'harpoon','🔱','Wants the trophy. Ignores the size difference.'],
+ ['giantmoth','Giant Moth','kaiju','mystic',3,0,'scales','🦋','Loves city lights. Too much. Takes 2 board squares.'],
  ['mecha','Giant Mecha','kaiju','guardian',4,0,'rocketpunch','🦾','Built to fight monsters. Mostly fights buildings. Takes 2 board squares.'],
- ['kingmonster','King of the Monsters','kaiju','brawler',5,0,'atomicbreath','🦖','Rises from the sea every sequel. Takes 2 board squares.'],
+ ['kingmonster','The Leviathan','kaiju','brawler',5,0,'atomicbreath','🦖','Rises from the sea every sequel. Takes 2 board squares.'],
 ];
 const HEROES=HEROES_ALL.filter(h=>live(h[2]));
 const HERO={};
@@ -6905,7 +6905,7 @@ const CROSSOVERS_ALL=[
  {id:'trainjob',name:'The Great Train Robbery',a:'heist',b:'west',d:'The first enemy to fall each fight pays 🪙2.'},
  {id:'nightpatrol',name:'Night Patrol',a:'army',b:'horror',d:'Your characters deal +5% damage to terrified enemies.'},
  {id:'vents',name:'It Came From the Vents',a:'bug',b:'horror',d:'Your crowds\' attacks terrify for 2s.'},
- {id:'livingdead',name:'Night of the Living Dead',a:'undead',b:'horror',d:'Undead and Slasher characters regenerate 1.5% HP per second.'},
+ {id:'livingdead',name:'Nobody Stays Dead',a:'undead',b:'horror',d:'Undead and Slasher characters regenerate 1.5% HP per second.'},
  {id:'jock',name:'The Jock Dies First',a:'ball',b:'horror',d:'When your first character falls, the rest attack 20% faster for 5s.'},
  {id:'ransom',name:'Ransom Note',a:'heist',b:'horror',d:'Knocking out a terrified enemy pays 🪙1 (max 1 a fight).'},
  {id:'ghostriders',name:'Ghost Riders',a:'west',b:'horror',d:'Wild West and Slasher characters\' crits terrify for 3s.'},
@@ -6913,11 +6913,11 @@ const CROSSOVERS_ALL=[
  {id:'hive',name:'The Hive Ship',a:'bug',b:'space',d:'Swarm and Space Opera characters attack 5% faster.'},
  {id:'ghostship',name:'Ghost Ship',a:'undead',b:'space',d:'Undead and Space Opera characters get +2 armor.'},
  {id:'zerog',name:'Zero-G League',a:'ball',b:'space',d:'Sportsball and Space Opera characters start fights with 30 energy.'},
- {id:'smuggle',name:"Smuggler's Run",a:'heist',b:'space',d:'+🪙1 after every fight you win.'},
+ {id:'smuggle',name:"Contraband Run",a:'heist',b:'space',d:'+🪙1 after every fight you win.'},
  {id:'cowboys',name:'Space Cowboys',a:'west',b:'space',d:'Wild West and Space Opera characters get +15% crit chance.'},
- {id:'noscream',name:'No One Can Hear You Scream',a:'horror',b:'space',d:'Your characters deal +35% damage to back-row enemies. Slasher and Space Opera characters get +10% HP and damage.'},
+ {id:'noscream',name:'Scream Into the Void',a:'horror',b:'space',d:'Your characters deal +35% damage to back-row enemies. Slasher and Space Opera characters get +10% HP and damage.'},
  {id:'defense',name:'Defense Force',a:'army',b:'kaiju',d:'Army and Kaiju characters get +10% HP.'},
- {id:'monsterisland',name:'Monster Island',a:'bug',b:'kaiju',d:'Swarm and Kaiju characters regenerate 0.3% HP per second.'},
+ {id:'monsterisland',name:'Monster Reserve',a:'bug',b:'kaiju',d:'Swarm and Kaiju characters regenerate 0.3% HP per second.'},
  {id:'atomzomb',name:'Atomic Zombies',a:'undead',b:'kaiju',d:'Undead and Kaiju characters deal +10% damage.'},
  {id:'monsterbowl',name:'Monster Bowl',a:'ball',b:'kaiju',d:'Sportsball and Kaiju characters get +1 armor.'},
  {id:'insurance2',name:'Disaster Insurance',a:'heist',b:'kaiju',d:'+🪙1 after every fight you lose.'},
@@ -6937,7 +6937,7 @@ const CROSSOVERS=CROSSOVERS_ALL.filter(x=>live(x.a)&&live(x.b));
 const TRINKETS=[
  ['prop','Prop Master','R','🎭','Item picks get a reroll button: 🪙{v} for 3 new choices (each extra reroll of the same pick costs 🪙1 more).',['2','1','0']],
 // {v} is the item's number at ★ / ★★ / ★★★ (taking a copy of an item you hold levels it up)
- ['kevlar','Kevlar Vest','C','🦺','All your characters have {v} more max HP.',['15%','22%','30%']],
+ ['kevlar','Flak Vest','C','🦺','All your characters have {v} more max HP.',['15%','22%','30%']],
  ['energy','Energy Drink','C','⚡','All your characters attack {v} faster.',['10%','15%','20%']],
  ['coin','Lucky Coin','C','🪙','{v} gold after every win.',['+1','+2','+3']],
  ['battery','Battery Pack','C','🔋','All your characters start fights with {v} energy.',['30%','45%','60%']],
@@ -6985,10 +6985,10 @@ const LEGENDS_ALL={
   getaway:{name:'Clean Getaway',e:'🏃',genre:'heist',d:'Once a fight, each Heist character that drops below 35% HP vanishes for 2s and heals 35% of its max HP.'},
   wanted:{name:'Wanted Posters',e:'📜',genre:'west',d:'Every enemy knocked out by a Wild West character pays 🪙1 (up to 🪙3 a fight).'},
   press:{name:'Full-Court Press',e:'🏀',genre:'ball',d:'Sportsball hits and bounces drain 5 energy from enemies, holding back their skills.'},
-  armydead:{name:'Army of the Dead',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (twice per fight).'},
-  tokyo:{name:'Tokyo Tower',e:'🗼',genre:'kaiju',d:'Your 2-square Kaiju characters get +30% HP and damage.'},
+  armydead:{name:'Grave Recruits',e:'⚰️',genre:'undead',d:'Each enemy that falls joins you as 3 skeletons (twice per fight).'},
+  tokyo:{name:'TV Tower',e:'🗼',genre:'kaiju',d:'Your 2-square Kaiju characters get +30% HP and damage.'},
   atomic:{name:'Atomic Age',e:'☢️',genre:'kaiju',d:'Rampage hits the enemies beside the target for 100% instead of 50%, even without 2 Kaiju.'},
-  finalwars:{name:'Final Wars',e:'⚔️',genre:'kaiju',d:'Whenever one of your Kaiju characters falls, your other Kaiju characters get +20% damage.'},
+  finalwars:{name:'Payback',e:'⚔️',genre:'kaiju',d:'Whenever one of your Kaiju characters falls, your other Kaiju characters get +20% damage.'},
   warp:{name:'Warp Speed',e:'🌌',genre:'space',d:'Your Space Opera characters attack 40% faster for the first 6s of every fight.'},
   shieldgen:{name:'Shield Generator',e:'🛡️',genre:'space',d:'Every 3s, your Space Opera characters gain a shield worth 5% of their max HP.'},
   mothership:{name:'The Mothership',e:'🛸',genre:'space',d:'8s into every fight, the Mothership\'s beam hits every enemy for 22% of its max HP.'},
@@ -7156,7 +7156,7 @@ function evDesc(k){
 // Unlocks live in their own localStorage key, so runs and saves are untouched.
 const pctOf=k=>Math.round(100*k)+'%';
 const LEVELS=[
-  {id:'limited',e:'📉',name:'Limited Run',d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies, so ★★★ characters are harder to finish.`},
+  {id:'limited',e:'📉',name:'Limited Run',d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies (never fewer than the 6 a ★★★ needs), so ★★★ characters are harder to finish.`},
   {id:'plot',e:'🎲',name:'Plot Twists',d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant.'},
   {id:'xp1',e:'🐢',name:'Slow Promotions',d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP.`},
   {id:'elite',e:'🌟',name:'Guest Stars',d:()=>`The fight before each boss is a mini-boss: enemies get +${pctOf(TUNE.lvElite-1)} HP and damage, and a win pays 🪙${TUNE.lvEliteGold}.`},
@@ -7185,7 +7185,7 @@ const LADDER=[null,
   {n:3,e:'📖',name:'Table Read',acts:3,cap:4,rv:1,rvK:.85,foe:.84,sched:['FFEFFFFFB','FFERFFFFB','FFEFFFFFB'],g:['heist','horror'],rules:['coach3','xover','rv1'],legends:['fieldhosp','brood','bloodline','getaway','sixgun','halftime','sequel'],d:()=>'Three acts, Heist Crew and Slasher. Your first Legendary after the Act 1 boss. Two genres side by side switch on crossovers. '+lvRv('A rival studio shares your character pool.')},
   {n:4,e:'📺',name:'Season 1',acts:4,cap:5,rvP:.3,rvK:1,foe:1,sched:'FFEFFFFFB',g:['space','kaiju'],rules:['rv1'],items:['battery','hollow','spikes','flare','stage','overclock','glass','extralife'],legends:['warp','tokyo','blockbuster','underdog','ensemble','hype'],events:['deal','promotion','reinforce','cameo','fanmail','craft'],d:()=>TUNE.epsMode?'The full show: four acts, Mythic characters, more items, Legendaries and events. Space Opera, Kaiju and more join as episodes air. ':'The full show: four acts, all 9 genres with Space Opera and Kaiju, Mythic characters, more items, Legendaries and events. '+lvRv("A rival studio's cast can turn up in any normal episode from Ep 3.")},
   {n:5,e:'🎲',name:'Plot Twists',rules:['plot'],events:['trial','casting','merchant','wheel','montage','cursed','insurance','reboot'],d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant. '+lvGtA('New random events: trade-offs.')},
-  {n:6,e:'📉',name:'Limited Run',rules:['limited'],legends:['danger','feeding','graveyard','insidejob','quickdraw','press','scream','shieldgen','atomic','crossep','cult','plotarmor'],d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies, so ★★★ characters are harder to finish. `+lvGtA('A second Legendary for every genre.')},
+  {n:6,e:'📉',name:'Limited Run',rules:['limited'],legends:['danger','feeding','graveyard','insidejob','quickdraw','press','scream','shieldgen','atomic','crossep','cult','plotarmor'],d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies (never fewer than the 6 a ★★★ needs), so ★★★ characters are harder to finish. `+lvGtA('A second Legendary for every genre.')},
   {n:7,e:'🎭',name:'Second Studio',rv:2,rules:['rv2'],items:['smoke','tesla','teamup','residuals','slowburn'],d:()=>lvRv('2 rival studios share your pool and your episodes. ')+lvGtA('5 new items.')},
   {n:8,e:'🐢',name:'Slow Promotions',rules:['xp1'],events:['strike','review','props','cut'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP. `+lvGtA('Bad random events start. ')+`Enemies get +${pct1(TUNE.lvFoe)} HP and damage per level from here.`},
   {n:9,e:'🎭',name:'Bidding War',rv:3,rules:['rv3'],legends:['shock','pheromone','armydead','vault','wanted','gameball','lightsout','mothership','finalwars','placement','indie','extuniv'],d:()=>lvRv('3 rival studios. ')+lvGtA('A third Legendary for every genre.')},
@@ -7325,24 +7325,24 @@ const SK={
  weakness:{name:'I Found Its Weakness!',d:p=>`${R(40*p)} damage to the toughest enemy, which takes 25% more damage from everything for 5s.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.maxHp>a.maxHp?b:a);spell(u,t,40);t.vuln=Math.max(t.vuln||0,5);}},
  harpoon:{name:'Harpoon',d:p=>`${R(50*p)} damage to the biggest enemy, which is stunned for 0.5s.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.maxHp>a.maxHp?b:a);spell(u,t,50);stunU(t,.5);}},
  scales:{name:'Glittering Scales',d:p=>'Every enemy loses 20 energy and its next attack misses.',cast(u){targetFoes(u).forEach(t=>{t.mana=Math.max(0,(t.mana||0)-20);t.blind=(t.blind||0)+1;float(t,'Blinded','miss');});}},
- rocketpunch:{name:'Rocket Punch',d:p=>`Taunts for 3s, shields itself for ${R(80*p)}, and punches the enemy in front for ${R(60*p)}, stunning it for 1s.`,cast(u){u.taunt=3;shieldU(u,u,80*u.p);const t=pickTarget(u)||randFoe(u);if(t){spell(u,t,60);stunU(t,1);}}},
- atomicbreath:{name:'Atomic Breath',d:p=>`${R(85*p)} damage to every front-row enemy, then ${R(45*p)} to every back-row enemy.`,cast(u){targetFoes(u).forEach(t=>spell(u,t,t.row==='front'?85:45,true));}},
+ rocketpunch:{name:'Wrecking Punch',d:p=>`Taunts for 3s, shields itself for ${R(80*p)}, and punches the enemy in front for ${R(60*p)}, stunning it for 1s.`,cast(u){u.taunt=3;shieldU(u,u,80*u.p);const t=pickTarget(u)||randFoe(u);if(t){spell(u,t,60);stunU(t,1);}}},
+ atomicbreath:{name:'Meltdown Breath',d:p=>`${R(85*p)} damage to every front-row enemy, then ${R(45*p)} to every back-row enemy.`,cast(u){targetFoes(u).forEach(t=>spell(u,t,t.row==='front'?85:45,true));}},
  expendable:{name:'Expendable',d:p=>`Taunts for 3s and shields itself for 10 per redshirt (${bodiesFromP(p)} redshirts).`,cast(u){u.taunt=3;shieldU(u,u,10*bodies(u)*u.tierM);}},
- repair:{name:'Repair Protocol',d:p=>`Every droid repairs your most wounded character for 8 (${bodiesFromP(p)} droids).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const a=wounded(u,1)[0];if(!a)break;heal(u,a,8*u.tierM);}}},
- barrelroll:{name:'Do a Barrel Roll',d:p=>`Can't be targeted for 1s and shoots the lowest-HP enemy for ${R(35*p)}.`,cast(u){u.untarget=Math.max(u.untarget||0,1);const t=lowest(targetFoes(u));if(t)spell(u,t,35);}},
- shootfirst:{name:'Shoots First',d:p=>`${R(60*p)} damage to the enemy closest to its skill, and it loses all its energy.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>(b.mana||0)>(a.mana||0)?b:a);spell(u,t,60);t.mana=0;}},
+ repair:{name:'Repair Protocol',d:p=>`Every bot repairs your most wounded character for 8 (${bodiesFromP(p)} bots).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const a=wounded(u,1)[0];if(!a)break;heal(u,a,8*u.tierM);}}},
+ barrelroll:{name:'Barrel Roll',d:p=>`Can't be targeted for 1s and shoots the lowest-HP enemy for ${R(35*p)}.`,cast(u){u.untarget=Math.max(u.untarget||0,1);const t=lowest(targetFoes(u));if(t)spell(u,t,35);}},
+ shootfirst:{name:'From the Hip',d:p=>`${R(60*p)} damage to the enemy closest to its skill, and it loses all its energy.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>(b.mana||0)>(a.mana||0)?b:a);spell(u,t,60);t.mana=0;}},
  mindblast:{name:'Mind Blast',d:p=>`${R(40*p)} damage to the 2 enemies with the most energy, and they are stunned for 1s.`,cast(u){targetFoes(u).sort((a,b)=>(b.mana||0)-(a.mana||0)).slice(0,2).forEach(t=>{spell(u,t,40);stunU(t,1);});}},
- engage:{name:'Engage!',d:p=>`Your characters attack 30% faster for 4s and get a ${R(25*p)} shield.`,cast(u){allies(u).forEach(a=>{a.hastes.push({m:.3,t:4});shieldU(u,a,25*u.p);});}},
+ engage:{name:'Battle Stations!',d:p=>`Your characters attack 30% faster for 4s and get a ${R(25*p)} shield.`,cast(u){allies(u).forEach(a=>{a.hastes.push({m:.3,t:4});shieldU(u,a,25*u.p);});}},
  deflect:{name:'Deflect',d:p=>`Taunts for 3s and shields itself for ${R(60*p)}. Meanwhile, half the damage of every attack on it bounces back.`,cast(u){u.taunt=3;u.reflectT=B.t+3;shieldU(u,u,60*u.p);}},
  darklightning:{name:'Dark Lightning',d:p=>`Lightning jumps across 4 enemies for ${R(70*p)} each, and they lose 40 energy.`,cast(u){targetFoes(u).sort(()=>0).slice(0,4).forEach(t=>{spell(u,t,70,true);t.mana=Math.max(0,(t.mana||0)-40);});}},
  splitup:{name:"Let's Split Up",d:p=>`Taunts for 2s, and every counselor shields a random ally for 12 (${bodiesFromP(p)} counselors).`,cast(u){u.taunt=2;const n=bodies(u),al=allies(u);for(let i=0;i<n&&al.length;i++)shieldU(u,al[Math.floor(rand()*al.length)],12*u.tierM);}},
- comeplay:{name:'Come Play With Us',d:p=>`Every kid hits the lowest-HP enemy for 6 and terrifies it for 3s (${bodiesFromP(p)} kids).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=lowest(targetFoes(u));if(!t)break;spellFlat(u,t,6*u.tierM);terrify(t,3);}}},
+ comeplay:{name:'Tag, You\'re It',d:p=>`Every kid hits the lowest-HP enemy for 6 and terrifies it for 3s (${bodiesFromP(p)} kids).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=lowest(targetFoes(u));if(!t)break;spellFlat(u,t,6*u.tierM);terrify(t,3);}}},
  hide:{name:'Hide!',d:p=>`Heals your most wounded character for ${R(45*p)} and hides it: it can't be targeted for 1.5s.`,cast(u){const a=wounded(u,1)[0];if(!a)return;heal(u,a,45*u.p);a.untarget=Math.max(a.untarget||0,1.5);}},
- compels:{name:'The Power Compels You',d:p=>`${R(30*p)} damage to every front-row enemy, and they lose 30 energy.`,cast(u){const f=targetFoes(u),fr=f.filter(t=>t.row==='front');(fr.length?fr:f).forEach(t=>{spell(u,t,30,true);t.mana=Math.max(0,(t.mana||0)-30);});}},
+ compels:{name:'Begone, Demon!',d:p=>`${R(30*p)} damage to every front-row enemy, and they lose 30 energy.`,cast(u){const f=targetFoes(u),fr=f.filter(t=>t.row==='front');(fr.length?fr:f).forEach(t=>{spell(u,t,30,true);t.mana=Math.max(0,(t.mana||0)-30);});}},
  revup:{name:'Rev It Up',d:p=>'Attacks 50% faster for 4s, and its next attack deals double damage.',cast(u){u.hastes.push({m:.5,t:4});u.nextMult=Math.max(u.nextMult||1,2);}},
  survivor:{name:'Last One Standing',d:p=>`Hits the toughest enemy for ${R(50*p)}, +${R(25*p)} for each of your fallen characters, and heals herself for the same.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.hp>a.hp?b:a),k=B.units.filter(x=>x.side===u.side&&!x.alive&&!x.summon&&!x.lurking&&!x.sat).length;spell(u,t,50+25*k);heal(u,u,(50+25*k)*u.p);}},
  unstoppable:{name:'Unstoppable',d:p=>`Taunts for 3s and shields itself for ${R(60*p)}. Meanwhile, enemies that hit it are terrified for 3s.`,cast(u){u.taunt=3;u.scareBack=B.t+3;shieldU(u,u,60*u.p);}},
- wakeup:{name:"Don't Fall Asleep",d:p=>`Every enemy falls asleep for 1.5s, takes ${R(45*p)} damage and is terrified for 4s.`,cast(u){targetFoes(u).forEach(t=>{spell(u,t,45,true);stunU(t,1.5);terrify(t,4);});}},
+ wakeup:{name:"Lullaby",d:p=>`Every enemy falls asleep for 1.5s, takes ${R(45*p)} damage and is terrified for 4s.`,cast(u){targetFoes(u).forEach(t=>{spell(u,t,45,true);stunU(t,1.5);terrify(t,4);});}},
  bodyguard:{name:'Bodyguard',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}, +${R(p)} per 🪙 you hold (up to 30).`,cast(u){u.taunt=3;shieldU(u,u,(40+Math.min(30,B.gold||0))*u.p);}},
  flashlight:{name:'Flashlights',d:p=>`Every lookout shoots a random enemy for 5 and blinds it: its next attack misses (${bodiesFromP(p)} lookouts).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,5*u.tierM);t.blind=(t.blind||0)+1;float(t,'Blinded','miss');}}},
  smashgrab:{name:'Smash and Grab',d:p=>`${R(40*p)} damage to the weakest back-row enemy. A knockout steals 🪙1 (once a fight).`,cast(u){const t=backWeakest(u);if(!t)return;spell(u,t,40);if(!t.alive&&!u.grabbed&&u.side==='A'){u.grabbed=1;B.goldEarned++;float(u,'+1🪙','heal');}}},
@@ -7358,7 +7358,7 @@ const SK={
  dynamite:{name:'Dynamite',d:p=>`${R(30*p)} damage to every enemy in the most crowded row, and they are stunned for 0.5s.`,cast(u){rowMost(u).forEach(x=>{spell(u,x,30,true);stunU(x,.5);});}},
  fanhammer:{name:'Fan the Hammer',d:p=>`Six shots at random enemies for ${R(12*p)} each. Every shot can crit.`,cast(u){for(let i=0;i<6;i++){const t=randFoe(u);if(!t)break;const c=u.crit&&rand()<u.crit;B.fxCritS=c;spell(u,t,c?24:12);B.fxCritS=false;}}},
  showdown:{name:'Showdown',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, it shoots back at every attacker for ${R(15*p)}.`,cast(u){u.taunt=3;u.counterUntil=B.t+3;shieldU(u,u,40*u.p);}},
- deadeye:{name:'Dead Eye',d:p=>`Shoots the 3 lowest-HP enemies for ${R(110*p)} each (a guaranteed crit).`,cast(u){targetFoes(u).sort((a,b)=>a.hp-b.hp).slice(0,3).forEach(t=>{B.fxCritS=true;spell(u,t,110);B.fxCritS=false;});}},
+ deadeye:{name:'Sure Shot',d:p=>`Shoots the 3 lowest-HP enemies for ${R(110*p)} each (a guaranteed crit).`,cast(u){targetFoes(u).sort((a,b)=>a.hp-b.hp).slice(0,3).forEach(t=>{B.fxCritS=true;spell(u,t,110);B.fxCritS=false;});}},
  holdline:{name:'Hold the Line',d:p=>`Taunts all enemies for 3s and shields itself for ${R(45*p)}.`,cast(u){shieldU(u,u,45*u.p);u.taunt=3;}},
  frag:{name:'Frag Grenade',d:p=>`${R(30*p)} damage to its target and the enemies beside it.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;[t,...beside(t)].forEach(x=>spell(u,x,30,true));}},
  artillery:{name:'Artillery Strike',d:p=>`${R(40*p)} damage to every enemy in the most crowded row.`,cast(u){rowMost(u).forEach(x=>spell(u,x,40,true));}},
@@ -7497,7 +7497,7 @@ function shopOdds(){return RANK.odds[S.rank-1];}
 function rollTier(){const t=rollTier1();return S&&S.cap&&t>S.cap?S.cap:t;} // v19.70: the level's rarity cap
 function rollTier1(){const o=shopOdds();let r=rand()*100;for(let i=0;i<o.length;i++){if(r<o[i])return i+1;r-=o[i];}return 1;}
 // character pools: a fixed number of copies per character (by rarity); buying takes copies out, selling puts them back
-function poolMax(id){const t=HERO[id].tier-1;return TUNE.poolSize[t]+Math.round((TUNE.poolPer||[0,0,0,0,0])[t]*lobbyN())-(rule('limited')?TUNE.poolCut:0);}
+function poolMax(id){const t=HERO[id].tier-1,b=TUNE.poolSize[t]+Math.round((TUNE.poolPer||[0,0,0,0,0])[t]*lobbyN());return rule('limited')?Math.max(Math.min(b,6),b-TUNE.poolCut):b;} // v19.86: never below the 6 copies a ★★★ needs
 function poolLeft(id){return S.pool&&S.pool[id]!=null?S.pool[id]:poolMax(id);}
 function poolTake(id,n){S.pool=S.pool||{};S.pool[id]=Math.max(0,poolLeft(id)-n);}
 function poolGive(id,n){S.pool=S.pool||{};S.pool[id]=Math.min(poolMax(id),poolLeft(id)+n);}
@@ -8460,7 +8460,10 @@ function attack(u,t){
   if(u.crowd&&u.side==='A'&&B.syn.X.locusts&&t.alive)t.mana=Math.max(0,(t.mana||0)-TUNE.xLocust);
   if(u.manaMax)u.mana=Math.min(u.manaMax,u.mana+10+(crit?u.critRefund:0));
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
-  // bounces: a share of the hit jumps to nearby enemies; they give no energy to anyone
+  bounceHits(u,t,dmg);
+}
+// bounces: a share of the hit jumps to nearby enemies; they give no energy to anyone (attacks and Game Ball throws)
+function bounceHits(u,t,dmg){
   if(u.bounces){const hy=allies(u).some(a=>a.hype&&a.taunt>0)?2:1;let from=t;const hit=[t];for(let i=0;i<u.bounces;i++){const nx=markOf(u,hit)||nearestOther(from,hit);if(!nx)break;if(u.genre==='ball')ballFx(u,nx,from);dealDamage(u,nx,dmg*Math.min(1,u.bouncePct*hy),'bounce');if(u.genre==='ball'&&u.side==='A'&&legend('press'))nx.mana=Math.max(0,(nx.mana||0)-TUNE.pressDrain);hit.push(nx);from=nx;}}
 }
 // ---- Game Ball ----
@@ -8479,7 +8482,9 @@ function throwBall(u){
   const comb=Object.values(best).reduce((s,x)=>s+x,0);
   const mult=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);
   ballFx(u,t,null,mult);recoil(u,t,14);if(!B.silent&&TBA.on){u.atkT=performance.now();u.atkK='atkShoot';}
-  dealDamage(u,t,comb*mult*outMult(u,t),'attack');
+  const gd=comb*mult*outMult(u,t);dealDamage(u,t,gd,'attack');
+  if(legend('press'))t.mana=Math.max(0,(t.mana||0)-TUNE.pressDrain);
+  bounceHits(u,t,gd);
   ballOrder().forEach(b=>{if(b.manaMax)b.mana=Math.min(b.manaMax,b.mana+TUNE.gbEnergy);});
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
   const nx=nextBallHolder(u);
@@ -9749,7 +9754,7 @@ SCR.codex=()=>{
     <p><b>Overtime.</b> After 30 seconds everyone takes growing damage and Swarm crowds stop regrowing, so fights always end.</p>
     <p><b>Game Levels.</b> Win a run to unlock the next Game Level: the same game plus one new rule or unlock, stacked on the earlier ones. Level 4 is the full game; Levels 5 to 18 make it harder step by step. Pick any unlocked level on the title screen. In a run, the Lv button in the top bar shows your level's rules and what the next one adds.</p>
     <p><b>Next enemy.</b> The Next episode panel shows who you fight next; 🔭 Lineup (or V) shows where each one stands.</p>
-    <p><b>Keyboard</b> (the same keys as TFT and Underlords): <kbd>D</kbd> or <kbd>R</kbd> reroll · <kbd>F</kbd> or <kbd>T</kbd> train · <kbd>Q</kbd> or <kbd>L</kbd> lock · <kbd>E</kbd> sell the character under the mouse · <kbd>W</kbd> move it between board and bench · <kbd>1</kbd>–<kbd>5</kbd> buy · <kbd>V</kbd> next enemy's lineup · <kbd>Space</kbd> fight. In a fight: <kbd>Space</kbd> pause, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> speed, <kbd>S</kbd> skip, <kbd>V</kbd> their team. In the Codex: <kbd>/</kbd> search.</p></div>`;
+    <p><b>Keyboard</b> (the usual auto-battler keys): <kbd>D</kbd> or <kbd>R</kbd> reroll · <kbd>F</kbd> or <kbd>T</kbd> train · <kbd>Q</kbd> or <kbd>L</kbd> lock · <kbd>E</kbd> sell the character under the mouse · <kbd>W</kbd> move it between board and bench · <kbd>1</kbd>–<kbd>5</kbd> buy · <kbd>V</kbd> next enemy's lineup · <kbd>Space</kbd> fight. In a fight: <kbd>Space</kbd> pause, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> speed, <kbd>S</kbd> skip, <kbd>V</kbd> their team. In the Codex: <kbd>/</kbd> search.</p></div>`;
   if(tab==='fight'){const TR=['guardian','brawler','stalker','gunner','mystic','medic'],ROLE={guardian:'Tank: soaks hits in the front row and protects the back row (Cover).',brawler:'Front-line fighter: the most HP, hits hard up close.',stalker:'Assassin: ignores the front line and goes for the weakest back-liner.',gunner:'Damage from range: picks off the lowest-HP enemy anywhere.',mystic:'Caster: weak hits, big skills that charge fast.',medic:'Support: heals and shields, casts often.'};
     const odd=HEROES.filter(h=>heroReach(h[0])!==TBASE[h[3]].range).map(h=>esc(HERO[h[0]].name));
     const prof=Object.keys(GENRES).map(g=>HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]],rk=rowKey(d.id);return `<tr><td>${esc(d.name)}</td><td>${GENRES[g].e} ${GENRES[g].name}</td><td>${TRAITS[d.trait].name}</td><td>${reachLabel(d.id)}</td><td>${atkVerb(d.id)}</td><td>${targetShort(d.id)}</td><td>${ROWP[rk].n.replace('Prefers ','')}</td></tr>`;}).join('')).join('');
@@ -9774,14 +9779,14 @@ SCR.codex=()=>{
     <p>Melee characters lunge and strike; Gunners and gunslingers shoot; Sportsball throws its ball; Mystics and Medics cast. When a skill hits several characters, a shot (or a slash, for melee) goes to every one of them.</p>
     <h3>Every character's combat profile</h3>
     <div class="cxtw"><table class="cxt"><tr><th>Character</th><th>Genre</th><th>Trait</th><th>Reach</th><th>Attacks</th><th>Aim</th><th>Row</th></tr>${prof}</table></div></div>`;}
-  if(tab==='effects'){const fx=[['💫','Stun','Can\'t attack, move or cast for a moment. Sleep (Don\'t Fall Asleep) is a stun.'],
+  if(tab==='effects'){const fx=[['💫','Stun','Can\'t attack, move or cast for a moment. Sleep (Lullaby) is a stun.'],
     ['😱','Terrify (Slasher)',`A terrified enemy deals ${pctOf(TUNE.fear)} less damage. Each Slasher character terrifies each enemy with its first hit on it: 4s, 6s with 4 Slashers.`],
     ['🎯','Taunt','Enemies must attack it first, whatever their targeting rule.'],
     ['🔻','Vulnerable','Takes 25% more damage from everything.'],
     ['🛠️','Armor down','Loses armor for a few seconds (Crack the Safe: −10), so every hit lands harder.'],
     ['🛡️','Shield','Soaks up damage before HP (the white bar over the health bar). Space Opera starts every fight with one.'],
-    ['👻','Can\'t be targeted','Faded out: enemies pick someone else (Do a Barrel Roll, Plot Armor, a Slasher between vanishing and coming back).'],
-    ['⏩','Haste','Attacks faster for a few seconds (Engage!, Breaking News, Warp Speed).'],
+    ['👻','Can\'t be targeted','Faded out: enemies pick someone else (Barrel Roll, Plot Armor, a Slasher between vanishing and coming back).'],
+    ['⏩','Haste','Attacks faster for a few seconds (Battle Stations!, Breaking News, Warp Speed).'],
     ['🧤','Catch','Catches the next attacks aimed at it: no damage, and each catch brings back a fallen body of its crowd.'],
     ['📍','Marked','Sportsball bounces fly to it.'],['⚽','Game Ball','The Sportsball holder throws it; each catch in a row raises its damage.'],['🍿','Blockbuster','The star of the Blockbuster Legendary.'],
     ['💥','Crit','A critical hit deals double damage (Stalkers).'],['💨','Dodge','A dodged attack misses completely.'],['🧛','Lifesteal','Heals for part of the damage it deals.'],
@@ -9817,8 +9822,8 @@ SCR.codex=()=>{
   if(tab==='trinkets')body='<p class="muted" style="font-size:.85rem">Items come from the first ★★ or ★★★ of a Rare, Epic or Mythic character, the Supply Drop, and Act 1, 2 and 3 boss wins. They help your whole team; you hold up to 5.</p><ul class="irules" style="font-size:.85rem"><li>Pick an item you have and the copy combines into it: ★ → ★★ → ★★★ (numbers below).</li><li>A pick of 3 includes one level-up and skips items your board can\'t use.</li><li>Tap an item to sell it for 🪙2 / 3 / 4 by level.</li><li>Full? A new item replaces one (that one is sold).</li></ul>'+['C','R'].map(r=>`<h3>${r==='R'?'Rare items':'Common items'}</h3><div class="cgrid">${TRINKETS.filter(t=>t[2]===r).map(t=>`<div class="ccard${cxLk('i',t[0])}"><div class="hd"><span class="emo" style="font-size:1.4rem">${t[3]}</span><b>${esc(t[1])}</b></div><p>${trText(t[0],0)}</p>${cxLkP('i',t[0])}</div>`).join('')}</div>`).join('');
   if(tab==='credits')body=`<div class="rules credits" data-noemoji>
     <h3>Art</h3>
-    <p><b>Icons</b>: icons made by Delapouite, Lorc, Carl Olsen, Caro Asercion, Cathelineau, DarkZaitzev, Guard13007, Sbed, Skoll and Sparker (CC BY 3.0) and Zeromancer (CC0), from <a href="https://game-icons.net" target="_blank" rel="noopener">game-icons.net</a>.</p>
-    <p><b>Music</b>: "Backstage" and "Showdown", composed for Tropebrawl.</p>
+    <p><b>Icons</b>: icons made by Delapouite, Lorc, Carl Olsen, Caro Asercion, Cathelineau, DarkZaitzev, Guard13007, Sbed, Skoll and Sparker (<a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener">CC BY 3.0</a>) and Zeromancer (CC0), from <a href="https://game-icons.net" target="_blank" rel="noopener">game-icons.net</a>.</p>
+    <p><b>Music</b>: every track is original, composed for Tropebrawl.</p>
     <p><b>Sound</b>: sound effects and jingles by <a href="https://kenney.nl" target="_blank" rel="noopener">Kenney</a> (Interface Sounds, Impact Sounds, RPG Audio, Casino Audio, Music Jingles), CC0.</p>
     <p><b>3D</b>: the toys are drawn and animated with <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> (MIT licence).</p>
     <p><b>Fonts</b>: Anton (Vernon Adams) and Barlow (Jeremy Tribby), SIL Open Font License.</p>
@@ -10047,16 +10052,17 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.85',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.86',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.86',items:[["⚽", "Fix: the Game Ball now bounces like every Sportsball throw. With 2+ Sportsball characters its throw hits a second enemy (more at 4 and 6), and Point Guard's mark, Showboat and Full-Court Press work on it too."], ["⭐", "Fix: from Game Level 6 (Limited Run) a Mythic's pool dropped to 5 copies, one short of ★★★. Pools now never go below the 6 a ★★★ needs."], ["✍️", "Names and lines that echoed specific films and games were rewritten: The Man With No Name is now The Drifter, King of the Monsters is The Leviathan, Repair Droids are Repair Bots, Monster Hunter is the Big-Game Hunter and The Exorcist is The Priest, plus new names for a skill, a Legendary, a crossover and a few flavour lines."]]},
   {v:'19.85',items:[["🪖", "Proper sizes: the Defense Force Tanks are now bigger than a person (they were toy-car sized), in the shop, on the board and in the 3D arena."]]},
   {v:'19.84',items:[["🃏", "Shop cards rebuilt: the whole toy always fits its art window (no more cut-off heads), one clean line each for genre and trait (no more wrapping tags), plain Attack and Health numbers, and a sleeker dark card with a thin rarity line."]]},
   {v:'19.83',items:[["🎭", "Board and shop dressed up: characters stand on a spotlit floor in their genre colour with Attack and Health badges, rarity frames glow, empty squares look like a stage, and the shop is a store counter with a shelf under the cards."]]},
   {v:'19.82',items:[["🎬", "Big moments, mobile style: when a Rare, Epic or Mythic character or a boss uses its skill, a cut-in banner with its art and the skill name sweeps across the screen."], ["💢", "Hits land harder: attackers wind up, targets flash white and get knocked back, an impact spark pops, and crits freeze the action for a split second. Health bars show the chunk a hit just took."], ["🔢", "Damage numbers pop, arc and fall away; crits are big and gold. Shop cards show Attack and Health on the art, with rarity frames and a foil shine on Mythics."]]},
-  {v:'19.81',items:[["🏹", "Reach is now a tag on every character: Melee or Ranged. Sportsball and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) are Ranged: they hit from either row, never wait to step up, and count for Scope instead of War Banner and Spiked Armor."], ["📖", "New Codex tab, Combat: the tags every character has, the six roles and their numbers, how Reach, Aim and movement work, energy, damage types and armor, and every character's combat profile in one table."]]},
-  {v:'19.80',items:[["🎯", "Everyone attacks the way they look: Sportsball throws (no more walking up to punch in 3D), and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) shoot from where they stand."], ["💥", "Skills show who they hit: a shot flies to every enemy a skill damages (a slash for melee casters), and a green shot to every ally it heals."]]},
+  {v:'19.81',items:[["🏹", "Reach is now a tag on every character: Melee or Ranged. Sportsball and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Drifter) are Ranged: they hit from either row, never wait to step up, and count for Scope instead of War Banner and Spiked Armor."], ["📖", "New Codex tab, Combat: the tags every character has, the six roles and their numbers, how Reach, Aim and movement work, energy, damage types and armor, and every character's combat profile in one table."]]},
+  {v:'19.80',items:[["🎯", "Everyone attacks the way they look: Sportsball throws (no more walking up to punch in 3D), and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Drifter) shoot from where they stand."], ["💥", "Skills show who they hit: a shot flies to every enemy a skill damages (a slash for melee casters), and a green shot to every ally it heals."]]},
   {v:'19.79',items:[["✨", "Skills you can see: a full energy bar glows, and when a character casts, it flashes in its genre colour, the skill's name pops up and a burst shows what it does (heal, shield, stun, summon, area hit, buff)."], ["⏸️", "Knockouts land with a tiny freeze-frame, and the battle bench is now Up next: who steps in or joins, and when."]]},
   {v:'19.78',items:[["🔒", "A locked shop now stays locked through an intermission, so you get exactly those cards back afterwards."]]},
   {v:'19.77',items:[["🔎", "The Codex search now looks in every tab: if the open tab has nothing, it shows which tabs do."], ["🏷️", "Shop and board tags (Recast, Typecast, New!, in pool, MAX...) are explained in Codex > Effects."]]},
@@ -10069,19 +10075,19 @@ const WHATS_NEW=[
   {v:'19.69',items:[["🔎", "The Codex has a search bar: type a name, a skill or a word like \"stun\" and the open tab shows only what matches. Press / to jump to it."]]},
   {v:'19.68',items:[["🤠", "Wild West's Typecast bonus (only Wild West on your board) is now +3% HP and damage, down from +10%."]]},
   {v:'19.67',items:[["📼", "Reruns: from Act 2, some normal fights are another studio's cast, a real team our test bots built at that same episode (any genre or pair), with its items and Legendary."], ["⚖️", "Each Rerun is scaled to its episode, so it is a different fight, not a harder one. The lineup screen shows where their cast stands; tap one to see the character."]]},
-  {v:'19.66',items:[["👥", "Enemy families: every monster belongs to the Extras, Stunt Team, Camera Crew or Plot Devices. 2 or 3 of a family on the field switch on its bonuses, like your genres, and fights are built around 1-2 families."], ["🔗", "Enemy crossovers: two families with 2+ each switch on one of 6 (Crowd Control, Wide Shot, Expendable, Cover Fire, Script Immunity, Dramatic Reveal). The lineup screen and the Codex show them before the fight."], ["⚖️", "Space Opera shields 19% (was 15%), Typecast boost Space Opera +18% and Kaiju +15%, No One Can Hear You Scream also gives +10% HP and damage, Bug Hunt +5%."]]},
+  {v:'19.66',items:[["👥", "Enemy families: every monster belongs to the Extras, Stunt Team, Camera Crew or Plot Devices. 2 or 3 of a family on the field switch on its bonuses, like your genres, and fights are built around 1-2 families."], ["🔗", "Enemy crossovers: two families with 2+ each switch on one of 6 (Crowd Control, Wide Shot, Expendable, Cover Fire, Script Immunity, Dramatic Reveal). The lineup screen and the Codex show them before the fight."], ["⚖️", "Space Opera shields 19% (was 15%), Typecast boost Space Opera +18% and Kaiju +15%, Scream Into the Void also gives +10% HP and damage, Bug Hunt +5%."]]},
   {v:'19.65',items:[["🎲", "Every fight is new: normal fights are put together each time from the act's monsters, 3 to about 5 enemies, sometimes a pack of one kind."], ["⭐", "Elite enemies: some are Armored, Swift, Shielded, Vampiric or Regenerating (shown on the lineup and in the Codex). From Act 2 a boss can be elite too."], ["⚖️", "Rebalanced for the new fights: Army +10% HP with 4, Kaiju Rampage +28% HP, Typecast boosts adjusted (Sportsball +8%), and Killer Bees, Bug Hunt and Fixed Match also give their genres +HP and damage."]]},
   {v:'19.64',items:[["🔥", "Harder: enemies hit about 4.5% harder in every act. The expert test bot got stronger, so the game was retuned so a strong player still wins about half the time with any genre or pair."], ["🎬", "Typecast boost for one-genre boards: Undead and Kaiju +15%, Wild West and Heist Crew +10% HP and damage (Slasher and Space Opera stay at +12%)."], ["⚖️", "Monster Bowl gives +2 armor (was +5). Sudden Death also gives Undead and Sportsball characters +12% HP and damage."]]},
-  {v:'19.62',items:[["⚖️", "Rebalanced the two-genre pairs that won much more or less often than the rest. Swarm crowds regrow faster (every 2s with 2 Swarm, 1.25s with 4) and heal 20% on a knockout. Stronger: Killer Bees, Stampede, Plague of Locusts, Zombie Ants, Arms Deal, Grave Robbers, Rodeo. Weaker: Orbital Strike, Night Patrol, Ghost Ship, Hive Ship, Monster Island, Ransom Note."], ["🎬", "Typecast boost: a board of only Slasher or only Space Opera characters (3+) gets +12% HP and damage. Slasher terrify and Space Opera shields are a bit weaker, and Army's 4-character HP bonus is +5%."], ["🎞️", "Animations are always on, even when your device asks for reduced motion. The Animations switch is gone from Settings (the 3D toys and 3D battle arena switches stay)."], ["📖", "Fix: the Codex Events tab was empty when opened from the start menu."]]},
+  {v:'19.62',items:[["⚖️", "Rebalanced the two-genre pairs that won much more or less often than the rest. Swarm crowds regrow faster (every 2s with 2 Swarm, 1.25s with 4) and heal 20% on a knockout. Stronger: Killer Bees, Stampede, Plague of Locusts, Zombie Ants, Arms Deal, Grave Robbers, Rodeo. Weaker: Orbital Strike, Night Patrol, Ghost Ship, Hive Ship, Monster Reserve, Ransom Note."], ["🎬", "Typecast boost: a board of only Slasher or only Space Opera characters (3+) gets +12% HP and damage. Slasher terrify and Space Opera shields are a bit weaker, and Army's 4-character HP bonus is +5%."], ["🎞️", "Animations are always on, even when your device asks for reduced motion. The Animations switch is gone from Settings (the 3D toys and 3D battle arena switches stay)."], ["📖", "Fix: the Codex Events tab was empty when opened from the start menu."]]},
   {v:'19.61',items:[['🎬','Typecast: when everyone on your board is from the same genre, the shop at the start of every round always includes 1 card from that genre, so one-genre teams can find their cast.'],['🔥','Acts 3 and 4 are harder: the normal fights hit back (the bosses are unchanged).'],['⚖️','Rebalanced so every genre alone and every two-genre pair wins about as often as the others: Slasher, Space Opera and Kaiju get a much bigger 6-character bonus, Swarm and Undead get stronger 2-character bonuses, Wild West, Undead, Sportsball and Army need less from their 6-character bonus.']]},
-  {v:'19.60',items:[['⚖️','Rebalance from the expert bot testing every two-genre combo and every Legendary: Heist Crew\'s 4-bonus now shares only the gold part of its damage bonus with the rest of your team (it gave everyone the full +45%); Wild West crits more; Kaiju (+30% HP) and Space Opera (25% shields, 30% faster) are stronger.'],['🏆','Legendaries: Endless Brood and Pheromone Trail weaker; Shock and Awe (12s), Field Hospital (100%) and The Mothership (8s, 22%) stronger; Crossover Episode +2% per crossover; Army of the Dead twice a fight.'],['🔗','Crossovers: No One Can Hear You Scream +35% to the back row, Killer Bees bounce 40%.']]},
+  {v:'19.60',items:[['⚖️','Rebalance from the expert bot testing every two-genre combo and every Legendary: Heist Crew\'s 4-bonus now shares only the gold part of its damage bonus with the rest of your team (it gave everyone the full +45%); Wild West crits more; Kaiju (+30% HP) and Space Opera (25% shields, 30% faster) are stronger.'],['🏆','Legendaries: Endless Brood and Pheromone Trail weaker; Shock and Awe (12s), Field Hospital (100%) and The Mothership (8s, 22%) stronger; Crossover Episode +2% per crossover; Grave Recruits twice a fight.'],['🔗','Crossovers: Scream Into the Void +35% to the back row, Killer Bees bounce 40%.']]},
   {v:'19.59',items:[['👾','More enemy lineups: 10 per act (was 4), using all four columns and mixing in the last act\'s enemies, three minion lineups for every boss, and lineups that can come mirrored. A lineup doesn\'t repeat until you\'ve seen the act\'s others.']]},
-  {v:'19.58',items:[['🦖','New toys for the Kaiju: King of the Monsters gets a real monster body with glowing back plates, Giant Mecha gets armor, a V-fin and thrusters, Giant Moth gets painted wings, and Baby Kaiju gets back plates and claws.']]},
-  {v:'19.57',items:[['🧸','Your board faces you in the shop.'],['⌨️','TFT and Underlords keys: D/R reroll, F/T train, Q/L lock, E sells, W moves between board and bench, 1-5 buy, V shows the next lineup.'],['🔭','🔭 Lineup in the Next episode panel shows where the next enemies stand.'],['🏁','The end screen lists your final genres and crossovers and what the next Game Level adds; the Lv button is always in the top bar.'],['📖','Codex: new Effects tab (stun, terrify, taunt... and how revives stack) and Events tab; How it works is up to date.'],['💖','Extra Life is no longer used up by a summon; Bone Dragon can\'t raise a vanished Slasher or someone who sat the fight out. Terrified enemies show 😱.'],['🎭','Prop Master\'s New choices button works now (it could not be clicked); each extra reroll of the same pick costs 🪙1 more.']]},
+  {v:'19.58',items:[['🦖','New toys for the Kaiju: King of the Monsters gets a real monster body, Giant Mecha gets armor and thrusters, Giant Moth gets painted wings, and Baby Kaiju gets claws.']]},
+  {v:'19.57',items:[['🧸','Your board faces you in the shop.'],['⌨️','Auto-battler keys: D/R reroll, F/T train, Q/L lock, E sells, W moves between board and bench, 1-5 buy, V shows the next lineup.'],['🔭','🔭 Lineup in the Next episode panel shows where the next enemies stand.'],['🏁','The end screen lists your final genres and crossovers and what the next Game Level adds; the Lv button is always in the top bar.'],['📖','Codex: new Effects tab (stun, terrify, taunt... and how revives stack) and Events tab; How it works is up to date.'],['💖','Extra Life is no longer used up by a summon; Bone Dragon can\'t raise a vanished Slasher or someone who sat the fight out. Terrified enemies show 😱.'],['🎭','Prop Master\'s New choices button works now (it could not be clicked); each extra reroll of the same pick costs 🪙1 more.']]},
   {v:'19.56',items:[['🎬','The 3D battle stage now fills the whole screen.'],['▦','Shop cards show where each character wants to stand: front row, back row or either. Hover any card symbol to see what it means.'],['🦖','Giants\' health and energy bars now run under both of their squares.'],['⚖️','Balance: the three Kaiju giants are weaker (2× HP, 1.8× attack); Slasher (Jump Scare 35%, Picked Off +50%, Full Cast +50%) and Space Opera (shields 20%) are stronger.'],['👀','The Legendary and item picks have a See my team first button (or click outside): look at your board, genres and crossovers, then press Choose Legendary (where Fight is) when you are ready.'],['🎲','Mythics are rarer at Ranks 7-9 (Rank 9: 6% per card, was 12%), and a shop never shows more than one Mythic.'],['⭐','A third copy that finishes a ★★★ now says Makes ★★★ in the shop.'],['🔪','Slashers that come back behind the enemy now face the enemy (they faced away until they attacked).'],['🎲','Risky Deal now needs 3 or more lives, like every other choice that costs lives.'],['🎭','Rival studios are switched off for now while the new genres settle in.']]},
-  {v:'19.55',items:[['🦖','New genre: Kaiju! Defense Force Tanks, Baby Kaiju, TV Reporter, The Scientist, Monster Hunter, and three giants that take 2 board squares: Giant Moth, Giant Mecha and King of the Monsters.'],['🔗','Eight new Kaiju crossovers and three Legendaries: Tokyo Tower, Atomic Age, Final Wars.']]},
-  {v:'19.54',items:[['🚀','New genre: Space Opera! Redshirts, Repair Droids, Hotshot Pilot, Space Smuggler, The Telepath, Starship Captain, Star Knight and The Dark Lord. Deflector shields, piercing lasers and a hyperdrive.'],['🔗','Seven new Space Opera crossovers and three Legendaries: Warp Speed, Shield Generator, The Mothership.']]},
-  {v:'19.53',items:[['🩸','New genre: Slasher! Camp Counselors, Creepy Kids, The Babysitter, The Exorcist, Chainsaw Maniac, The Final Girl, The Brute and The Dream Stalker. Terrify enemies, pick off stragglers, and come back from behind.'],['🔗','Six new Slasher crossovers and three Slasher Legendaries: The Sequel, Scream Queen, Lights Out.']]},
+  {v:'19.55',items:[['🦖','New genre: Kaiju! Defense Force Tanks, Baby Kaiju, TV Reporter, The Scientist, Big-Game Hunter, and three giants that take 2 board squares: Giant Moth, Giant Mecha and The Leviathan.'],['🔗','Eight new Kaiju crossovers and three Legendaries: TV Tower, Atomic Age, Payback.']]},
+  {v:'19.54',items:[['🚀','New genre: Space Opera! Redshirts, Repair Bots, Hotshot Pilot, Space Smuggler, The Telepath, Starship Captain, Star Knight and The Dark Lord. Deflector shields, piercing lasers and a hyperdrive.'],['🔗','Seven new Space Opera crossovers and three Legendaries: Warp Speed, Shield Generator, The Mothership.']]},
+  {v:'19.53',items:[['🩸','New genre: Slasher! Camp Counselors, Creepy Kids, The Babysitter, The Priest, Chainsaw Maniac, The Final Girl, The Brute and The Dream Stalker. Terrify enemies, pick off stragglers, and come back from behind.'],['🔗','Six new Slasher crossovers and three Slasher Legendaries: The Sequel, Scream Queen, Lights Out.']]},
   {v:'19.52',items:[['🟩','A bigger board: 4 wide × 2 rows. Two new ranks: Rank 8 opens slot 7 and Rank 9 opens slot 8.']]},
   {v:'19.51',items:[['🎬','Longer seasons: 4 acts of 9 episodes (36 rounds, was 28).'],['🐢','Fights play out at a calmer pace at 1× (same results, easier to follow). 2× and 4× are still there.']]},
   {v:'19.50',items:[['⚔️','New battle music: Rumble (new default), High Noon and Kaiju. Settings → Battle music; Showdown is still there.']]},
@@ -10112,7 +10118,7 @@ const WHATS_NEW=[
     ['🏹','Real projectiles: bullets, arrows, acid, syringes, glowing orbs and proper balls.'],
     ['💫','Knocked-out toys buckle and topple over before they fade.']]},
   {v:'19.25',items:[['🕺','The toys are alive: everyone breathes and shifts on the board, in the shop and in battle.'],
-    ['🎉','Win a fight and your team celebrates: cheers, dances, the floss. Lose, and the enemies gloat.'],
+    ['🎉','Win a fight and your team celebrates: cheers, dances, a victory jig. Lose, and the enemies gloat.'],
     ['⚙️','Animations off in Settings (or reduced motion) keeps the still pictures.']]},
   {v:'19.24',items:[['🧰','Fixed five toys: the Prospector\'s beard and pickaxe, the Star Quarterback\'s helmet, the Hacker\'s laptop, the Boom Mic Operator\'s pole, and Backstage Rats back to rat size.']]},
   {v:'19.23',items:[['✂️','The Cut swaps only the cut genre\'s cards: they wear a Recast ribbon, and the message says what changed.'],
