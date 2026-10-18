@@ -8838,7 +8838,7 @@ function topBar(){
   const items=itemIcons();
   return `<header class="top">
     <div class="r1">
-      <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="Game Level ${S.lv|0}: tap for its rules and the next level" aria-label="Game Level ${S.lv|0}: see its rules">Lv ${S.lv|0}</button></div>
+      <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${(S.lv|0)<=3?'L'+(S.lv|0):(S.lv|0)===4?'Season':'A'+((S.lv|0)-4)}</button></div>
       <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖 Codex</button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}</div>
@@ -9482,7 +9482,10 @@ function cxFilter(){const root=document.querySelector('.cx-body');if(!root)retur
   const vis=el=>!el.classList.contains('cxh')&&shown.some(u=>el===u||el.contains(u));
   root.querySelectorAll('.cgrid,.xlist,ul,ol').forEach(c=>c.classList.toggle('cxh',!!q&&!vis(c)));
   root.querySelectorAll('h3').forEach(h=>{let any=false;for(let e=h.nextElementSibling;e&&e.tagName!=='H3';e=e.nextElementSibling)if(vis(e)){any=true;break;}h.classList.toggle('cxh',!!q&&!any);});
-  const none=document.querySelector('.cx-none');if(none){none.classList.toggle('cxh',!q||n>0);none.textContent=q&&!n?'No matches for "'+UI.codexQ.trim()+'" in this tab. Try another tab.':'';}}
+  const none=document.querySelector('.cx-none');if(none){none.classList.toggle('cxh',!q||n>0);if(q&&!n){const o=cxOther(words);none.innerHTML=`No matches for "${esc(UI.codexQ.trim())}" in this tab.${o.length?' Found in: '+o.map(([k,nm])=>`<button class="btn sm" data-a="codex-tab" data-v="${k}">${esc(nm)}</button>`).join(' '):' Nothing in the other tabs either.'}`;}else none.textContent='';}}
+// v19.77: the other Codex tabs whose text has every search word (their HTML is built off-screen, art stripped)
+function cxOther(words){const cur=UI.codexTab||'how',out=[];try{CODEX_TABS.forEach(([k,nm])=>{if(k===cur)return;UI.codexTab=k;let h='';try{h=SCR.codex();}catch(e){}const i=h.indexOf('<div class="cx-body">');
+    const t=(i<0?'':h.slice(i)).replace(/data:[^"')\s]+/g,'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').toLowerCase();if(words.every(w=>t.includes(w)))out.push([k,nm]);});}finally{UI.codexTab=cur;}return out;}
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='cxq'){UI.codexQ=e.target.value;cxFilter();}});
 document.addEventListener('keydown',e=>{try{if(UI.screen!=='codex')return;const t=e.target||{},inField=/INPUT|TEXTAREA|SELECT/.test(t.tagName||'')||t.isContentEditable;
   if(t.id==='cxq'&&e.key==='Escape'){e.preventDefault();e.stopPropagation();if(t.value){t.value='';UI.codexQ='';cxFilter();}else t.blur();return;}
@@ -9528,6 +9531,14 @@ SCR.codex=()=>{
     ['💥','Crit','A critical hit deals double damage (Stalkers).'],['💨','Dodge','A dodged attack misses completely.'],['🧛','Lifesteal','Heals for part of the damage it deals.'],
     ['⏳','Overtime','After 30 seconds everyone takes growing damage, so fights always end.']];
     body=`<div class="rules"><p>The icons above a character in a fight show what is on it right now.</p><div class="cgrid">${fx.map(([e,n,d])=>`<div class="ccard"><div class="hd"><span class="emo" style="font-size:1.3rem">${e}</span><b>${n}</b></div><p>${d}</p></div>`).join('')}</div>
+    <h3>Tags on cards</h3><div class="cgrid">${[['🎭','Recast','On a shop card: The Cut (a bad random event) removed a genre from the show, and this card replaced a card of that genre that was already in your shop. Same price and odds, a fresh pick from the genres still in.'],
+      ['🎬','Typecast','On a shop card: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it. Typecast also gives that genre extra HP and damage (see the genre in Genres & traits).'],
+      ['✨','New!','You haven\'t seen this card, item, Legendary or event before, or it was just unlocked by episodes aired.'],
+      ['🎭','RECAST / 🔁 REBOOT (events)','On the event screen, marks the character the event will change: Casting Call recasts it as a Rare of its genre, Reboot recasts it one rarity higher. It keeps its stars.'],
+      ['🧮','N in pool','Copies of this character left in the shared pool. Buying takes one out, selling puts it back; at 0 it stops showing up.'],
+      ['💎','Rare: counts as 2 from ★★','A Rare or better character at ★★ counts as 2 characters toward its genre and trait bonuses.'],
+      ['🔝','MAX','On a board character: it is at its top star level, so copies can\'t raise it any more. Commons and Uncommons top out at ★★, Rares and up at ★★★ (Spin-off lifts everyone to ★★★).'],
+      ['📦','SPARE','On a bench character: a copy of someone already at MAX. It can\'t merge, so sell it or use it as a body.']].map(([e,n,d])=>`<div class="ccard"><div class="hd"><span class="emo" style="font-size:1.3rem">${e}</span><b>${n}</b></div><p>${d}</p></div>`).join('')}</div>
     <h3>Coming back from a KO</h3><p>When one of your characters falls, the first of these that applies saves it, and the others stay ready for later falls:</p><ol>
     <li><b>It's Behind You</b> (6 Slashers, or the Sequel Legendary): it vanishes and comes back 2s later behind the enemy's back row at 70% HP.</li>
     <li><b>Undead crowds</b> (4 Undead): a crowd rises once with up to 3 bodies.</li>
@@ -9780,10 +9791,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.76',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.77',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.77',items:[["🔎", "The Codex search now looks in every tab: if the open tab has nothing, it shows which tabs do."], ["🏷️", "Shop and board tags (Recast, Typecast, New!, in pool, MAX...) are explained in Codex > Effects."]]},
   {v:'19.76',items:[["📺", "The Season is the main game now. After the Pilot you play the Season with seven genres; every run, won or lost, airs episodes, and episodes unlock Space Opera, Kaiju and more items, Legendaries and events."], ["🔥", "Win the Season to open Ascension: the old harder levels, now tiers you choose (Ascension 1 to 14), each adding one rule."], ["🎞️", "Two lost Seasons in a row? You can start the next one Renewed for another season, with 5 extra gold."]]},
   {v:'19.75',items:[["💥", "Damage numbers you can read: big hits show big numbers, colours tell attacks (white), skills (purple) and true damage (orange) apart, crits are gold with a \"!\", and fast hits add up into one number instead of a wall of digits."], ["🛡️", "Shields show on the health bar as a silver layer, with \"Shield +N\", \"Blocked N\" and a crack when one breaks. Heals pop up in green and make the bar glow."], ["💫", "Stun, taunt, Terrified, burning, drained energy and more now sit in a row of icons above each health bar, with a ring that shrinks as the effect runs out."]]},
   {v:'19.73',items:[["⚽", "Fixed: with the Game Ball, the arena now shows exactly one ball, flying from the thrower to the enemy and on to the next catcher. Fast speeds no longer leave extra balls lying around."]]},
