@@ -376,6 +376,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .evresult{font-size:1rem;text-align:center;margin:6px 0 10px}
 .scard .aimg{font-style:normal;font-size:.7rem;margin-right:1px}
 .proj{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--gc);box-shadow:0 0 10px var(--gc);pointer-events:none;z-index:4}
+.cxt{border-collapse:collapse;width:100%;font-size:.8rem;margin:.4em 0}.cxt th,.cxt td{border-bottom:1px solid var(--line,rgba(255,255,255,.12));padding:.3em .45em;text-align:left;vertical-align:top}.cxt th{font-weight:800;opacity:.85}.cxtw{overflow-x:auto;max-width:100%}.cxt svg{width:1.15em;height:1.15em;vertical-align:-.2em;display:inline-block}.cxt td:first-child{white-space:nowrap}
 .proj.healp{background:#4dff7c;box-shadow:0 0 12px #4dff7c}
 .unit .slashfx{position:absolute;left:50%;top:45%;width:70%;height:6px;margin:-3px 0 0 -35%;border-radius:3px;background:linear-gradient(90deg,transparent,#fff 35%,var(--sc,#fff) 65%,transparent);box-shadow:0 0 10px var(--sc,#fff);pointer-events:none;z-index:7;animation:slashfx .34s ease-out forwards}
 @keyframes slashfx{0%{opacity:0;transform:rotate(-35deg) scaleX(.2)}35%{opacity:1;transform:rotate(-35deg) scaleX(1.1)}100%{opacity:0;transform:rotate(-35deg) scaleX(1.25) translateY(4px)}}
@@ -6610,6 +6611,13 @@ const TBASE={
   mystic:{hp:115,atk:9,arm:2,spd:1.4,mana:70,range:'ranged'},
   medic:{hp:120,atk:10,arm:3,spd:1.4,mana:70,range:'ranged'},
 };
+// v19.81: Reach (Melee or Ranged) is its own tag. It comes from the trait, except for characters whose attack is
+// obviously thrown or shot: all Sportsball (they throw) and the gunslingers (they shoot) are Ranged whatever their trait.
+const REACH_SHOOT=new Set(['outlaws','smuggler','bounty','noname']);
+function heroReach(id){const d=HERO[id];return d.genre==='ball'||REACH_SHOOT.has(id)?'ranged':TBASE[d.trait].range;}
+// how it attacks, for cards and the Codex: strikes (melee), throws (Sportsball), casts (Mystics, Medics), shoots
+function atkVerb(id){const d=HERO[id];return d.genre==='ball'?'throws':heroReach(id)==='melee'?'strikes':d.trait==='mystic'||d.trait==='medic'?'casts':'shoots';}
+function reachLabel(id){return heroReach(id)==='melee'?'⚔️ Melee':'🏹 Ranged';}
 // trait icons: game-icons.net (Lorc, Delapouite: CC BY 3.0; Zeromancer: CC0)
 const ICON={
   guardian:'<path d="M48.906 19.656v10.782c0 103.173 10.53 206.07 41.313 289.53 30.78 83.463 82.763 148.094 164.53 170.563l2.188.626 2.25-.5c89.686-19.12 142.322-84.028 171.187-168.344 28.865-84.315 35.406-188.656 35.406-291.875v-10.78l-10.655 1.53C323.26 39.954 191.452 40 59.595 21.188l-10.69-1.53zM67.75 41.03c63.242 8.536 126.495 12.792 189.75 12.782v184.532h174.78c-4.905 27.572-11.31 53.747-19.592 77.937-27.348 79.884-73.757 137.33-155.157 155.564-.008-.003-.02.003-.03 0v-233.5H86.53c-12.87-60.99-18.277-128.81-18.78-197.313z"/>',
@@ -7383,7 +7391,7 @@ function freeSlotFor(id){
   // Indie Darling: automatic placement stops at 4 on the board (its bonus needs 4 or fewer); a full bench still uses the board
   const room=id&&fieldCount()+(twoSlot(id)?2:1)<=(legend('indie')?Math.min(4,boardSize()):boardSize());
   const dupe=id&&fielded().some(u=>u.id===id);
-  const melee=id&&TBASE[HERO[id].trait].range==='melee'&&HERO[id].genre!=='ball'&&HERO[id].trait!=='stalker';
+  const melee=id&&heroReach(id)==='melee'&&HERO[id].trait!=='stalker';
   if(room&&!dupe){const order=melee?['f1','f2','f0','f3','b1','b2','b0','b3']:['b1','b2','b0','b3','f1','f2','f0','f3'];for(const s of (twoSlot(id)?(melee?['f0','f2','b0','b2']:['b0','b2','f0','f2']):order))if(slotOK(s,id))return s;}
   for(const s of benchSlots)if(!unitAt(s))return s;
   if(id&&fieldCount()+(twoSlot(id)?2:1)<=boardSize())for(const s of (twoSlot(id)?['f0','f2','b0','b2']:['f1','f2','f0','f3','b1','b2','b0','b3']))if(slotOK(s,id))return s;
@@ -7471,7 +7479,7 @@ function checkMerges(){
 }
 // offers skip items that can't help right now: Ledger at Rank 5, Scope with no ranged, Banner with no melee on the board
 function itemUseful(t){
-  if(t==='scope'||t==='banner'){const f=fielded();const r=t==='scope'?'ranged':'melee';return !f.length||f.some(u=>TBASE[HERO[u.id].trait].range===r);}
+  if(t==='scope'||t==='banner'){const f=fielded();const r=t==='scope'?'ranged':'melee';return !f.length||f.some(u=>heroReach(u.id)===r);}
   if(t==='extras')return !S.units.length||S.units.some(u=>HERO[u.id].crowd);
   if(t==='understudy')return benched().length>0;
   if(t==='battery')return !legend('wallet'); // Haunted Wallet already starts you at full energy
@@ -7913,7 +7921,7 @@ function heroUnit(h){
   const d=HERO[h.id],b=TBASE[d.trait],t=TIERM[d.tier-1];
   const hpMul=(1+tv('kevlar')/100)*(has('glass')?0.9:1);
   const base={side:'A',ref:h.uid,id:h.id,name:d.name,e:d.e,genre:d.genre,trait:d.trait,level:h.level,tier:d.tier,
-    arm:b.arm,interval:b.spd,range:b.range,manaMax:b.mana,skill:d.skill,row:h.slot[0]==='f'?'front':'back',col:+h.slot[1],tierM:t};
+    arm:b.arm,interval:b.spd,range:heroReach(h.id),manaMax:b.mana,skill:d.skill,row:h.slot[0]==='f'?'front':'back',col:+h.slot[1],tierM:t};
   base.row0=base.row;
   if(d.crowd){
     const n=BODIES[h.level-1];const bh=b.hp*FRAC*t*hpMul;
@@ -7935,9 +7943,9 @@ function twinOf(){const f=fielded();if(!f.length)return null;const pw=u=>TIERM[H
 function twinUnit(){
   const h=twinOf();if(!h)return null;
   const d=HERO[h.id],b=TBASE[d.trait],t=TIERM[d.tier-1]*TUNE.lvTwin;
-  const melee=b.range==='melee'&&d.trait!=='stalker';
+  const melee=heroReach(h.id)==='melee'&&d.trait!=='stalker';
   const sl=freeSlotsE(S.enemy.enc);const s=sl.find(x=>x[0]===(melee?'front':'back'))||sl[0];if(!s)return null;
-  const base={side:'E',name:'Evil '+d.name,e:d.e,foe:true,key:'twin',twin:true,tid:h.id,level:h.level,arm:b.arm,interval:b.spd,range:b.range,manaMax:0,skill:null,row:s[0],col:s[1],p:t,dive:d.trait==='stalker',ls:0,boss:false};
+  const base={side:'E',name:'Evil '+d.name,e:d.e,foe:true,key:'twin',twin:true,tid:h.id,level:h.level,arm:b.arm,interval:b.spd,range:heroReach(h.id),manaMax:0,skill:null,row:s[0],col:s[1],p:t,dive:d.trait==='stalker',ls:0,boss:false};
   if(d.crowd){const n=BODIES[h.level-1],bh=b.hp*FRAC*t;return mkUnit(Object.assign(base,{crowd:true,maxBodies:n,bodyHp:bh,bodyAtk:b.atk*FRAC*t,maxHp:bh*n,hp:bh*n,atk:b.atk*FRAC*t}));}
   const mhp=b.hp*t*LV[h.level-1];
   return mkUnit(Object.assign(base,{maxHp:mhp,hp:mhp,atk:b.atk*t*LV[h.level-1]}));
@@ -8548,7 +8556,7 @@ function rvPend(){let g=0;while(S.pending.length&&g++<10){const p=S.pending.shif
   takeTrinket(up||(nw&&S.trinkets.length<TRINKET_CAP?nw:null));}}
 function rvArrange(P){const us=u=>(u.level*10+HERO[u.id].tier*3+rvScore(u.id,P)*.5)*(twoSlot(u.id)?1.8:1);
   const all=S.units.slice().sort((a,b)=>us(b)-us(a));let cap=boardSize();const chosen=[],rest=[];all.forEach(u=>{const c=twoSlot(u.id)?2:1;if(c<=cap){chosen.push(u);cap-=c;}else rest.push(u);});
-  const melee=chosen.filter(u=>TBASE[HERO[u.id].trait].range==='melee'),ranged=chosen.filter(u=>TBASE[HERO[u.id].trait].range!=='melee');
+  const melee=chosen.filter(u=>heroReach(u.id)==='melee'),ranged=chosen.filter(u=>heroReach(u.id)!=='melee');
   const front=melee.sort((a,b)=>(HERO[b.id].trait==='guardian')-(HERO[a.id].trait==='guardian')),back=ranged;
   while(front.length>4)back.push(front.pop());while(back.length>4)front.push(back.pop());
   S.units.forEach(u=>u.slot='x');front.forEach((u,i)=>u.slot=['f1','f2','f0','f3'][i]);back.forEach((u,i)=>u.slot=['b1','b2','b0','b3'][i]);
@@ -9065,7 +9073,7 @@ function dtKeys(){try{
 function dtMove(slot){const u=slot&&unitAt(slot);if(!u||!S||S.over)return;
   if(u.slot[0]!=='n'){const b=benchSlots.find(x=>!unitAt(x));if(!b){toast('The bench is full.');return;}move(u.slot,b);}
   else{if(fieldCount()+(twoSlot(u.id)?2:1)>boardSize()){toast('No room on the board: train the shop for more slots.');return;}
-    const d=HERO[u.id],melee=TBASE[d.trait].range==='melee'&&d.genre!=='ball'&&d.trait!=='stalker';
+    const d=HERO[u.id],melee=heroReach(u.id)==='melee'&&d.trait!=='stalker';
     const order=twoSlot(u.id)?(melee?['f0','f2','b0','b2']:['b0','b2','f0','f2']):(melee?['f1','f2','f0','f3','b1','b2','b0','b3']:['b1','b2','b0','b3','f1','f2','f0','f3']);
     const to=order.find(x=>slotOK(x,u.id));if(!to){toast('No room on the board.');return;}move(u.slot,to);}
   UI.sel=null;UI.insp=null;go();}
@@ -9368,8 +9376,10 @@ const AIM={lane:{e:'↕️',name:'Lane',d:'Hits the enemy front-liner straight a
   sharp:{e:'🎯',name:'Sharpshooter',d:'Shoots the lowest-HP enemy anywhere, ignoring lanes.'},
   backline:{e:'🗡️',name:'Backline',d:'Leaps at the weakest enemy in the back row.'}};
 function targetText(id){const d=HERO[id],b=TBASE[d.trait],a=AIM[aimRule(id)];let t=`${a.e} ${a.name}: ${a.d}`;
-  if(d.genre==='ball')t+=' Throws from either row.';else if(b.range==='melee'&&d.trait!=='stalker')t+=' In the back row it waits behind its lane and steps up as soon as the square in front of it is empty.';
+  t+=' '+moveText(id);
   return t+' Taunting enemies are always hit first.';}
+function moveText(id){const d=HERO[id];if(d.trait==='stalker')return heroReach(id)==='melee'?'Melee: leaps at its target from either row and springs back.':'Ranged: '+atkVerb(id)+' from either row, never moves.';
+  return heroReach(id)==='melee'?'Melee: hits only from the front row. In the back row it waits behind its lane and steps up as soon as the square in front of it is empty.':'Ranged: '+atkVerb(id)+' from either row and never moves.';}
 function targetShort(id){const a=AIM[aimRule(id)];return a.e+' '+a.name;}
 // a value at every star: "150 / 270 / 480", the current star in bold (level 0: none)
 function starVals(id,level,f){const n=maxLv(id),v=[];for(let l=1;l<=n;l++)v.push(f(heroStatsAt(id,l)));return v.every(x=>x===v[0])?String(v[0]):v.map((x,i)=>i===level-1?`<b>${x}</b>`:x).join(' / ');}
@@ -9396,12 +9406,12 @@ function shopPreview(i){const o=S.shop[i];if(!o)return '';const d=HERO[o.id],c=c
     <ul class="bprev">${fx.map(t=>`<li>${t}</li>`).join('')}</ul>${heroDetail(o.id,o.level||1)}`;}
 // row preference (the rule auto-placement uses): melee only hits from the front; ranged is safer behind it;
 // Sportsball throws and Stalkers leap from either row, so no tag
-function rowPref(id){const d=HERO[id];if(d.genre==='ball'||d.trait==='stalker')return null;return TBASE[d.trait].range==='melee'?'front':'back';}
+function rowPref(id){const d=HERO[id],rc=heroReach(id);if(d.trait==='stalker'||(rc==='ranged'&&(d.trait==='guardian'||d.trait==='brawler')))return null;return rc==='melee'?'front':'back';}
 // v19.56: the same marker on shop cards: a tiny board (front row on top) with the preferred row lit
 const ROWP={front:{n:'Prefers front row',t:'Prefers the front row: it only hits from there. In the back row it waits and steps up when the square in front of it is free.'},
   back:{n:'Prefers back row',t:'Prefers the back row: it hits from either row, and your front row shields it there.'},
   dive:{n:'Either row',t:'Either row: it leaps at the enemy back row from wherever it stands.'},
-  any:{n:'Either row',t:'Either row: it throws from wherever it stands.'}};
+  any:{n:'Either row',t:'Either row: it hits from wherever it stands, and it is tough enough for the front.'}};
 function rowKey(id){const p=rowPref(id);return p||(HERO[id].trait==='stalker'?'dive':'any');}
 function rowSvg(k){const on='fill="currentColor" stroke="none"',off='fill="none" stroke="currentColor" stroke-width="1.3" opacity=".55"',sq=(y,a)=>[1.5,8.5].map(x=>`<rect x="${x}" y="${y}" width="6" height="5.5" rx="1.2" ${a}/>`).join('');
   return `<svg class="rowsv" viewBox="0 0 16 16" aria-hidden="true">${k==='front'?sq(1.5,on)+sq(9,off):k==='back'?sq(1.5,off)+sq(9,on):k==='dive'?sq(1.5,off)+sq(9,off)+'<path d="M3 14 Q8 -2 13 4.5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M10.4 4.6 13.3 4.6 12.6 1.9" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>':sq(1.5,on)+sq(9,on)}</svg>`;}
@@ -9410,9 +9420,9 @@ function rowPrefChip(id){const k=rowKey(id);return `<span class="chip rowp rp-${
 function traitTip(t){try{const T=TRAITS[t];return T?`<title>${esc(T.name)} (trait). ${T.tiers[0]} on your board: ${esc(T.d[0])}</title>`:'';}catch(e){return '';}}
 function heroDetail(id,level){
   const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);const poolLine=S?`<p class="poolln">Pool: <b>${poolLeft(id)}</b> of ${poolMax(id)} copies left. ★★ takes 3 copies, ★★★ takes 6.</p>`:'';
-  const range=d.genre==='ball'?'Throws':b.range==='melee'?'Melee':'Ranged';
+  const range=reachLabel(id)+' · '+atkVerb(id);
   return `<div class="hs-head">${heroArt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
-    <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip">${range}</span>${rowPrefChip(id)}${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 from ★★':' · max ★★'}</span></div>
+    <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${GENRES[d.genre].e} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip" title="Reach: Melee hits only from the front row; Ranged hits from either row. Codex → Combat has the rules.">${range}</span>${rowPrefChip(id)}${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 from ★★':' · max ★★'}</span></div>
     <div class="statrow"><span>❤️ HP<b>${R(st.hp)}${d.crowd?' each':''}</b></span><span>⚔️ ATK<b>${R(st.atk)}${d.crowd?' each':''}</b></span><span>🛡️ Armor<b>${b.arm}</b></span><span>⏱ Speed<b>${b.spd}s</b></span></div>
     <div class="lvrow"><span class="muted">${'★'.repeat(1)} / ${'★'.repeat(2)}${maxLv(id)>2?' / '+'★'.repeat(3):''}</span>${d.crowd?`<span>👥 ${starVals(id,level,s=>s.n)} bodies</span>`:`<span>❤️ ${starVals(id,level,s=>R(s.hp))}</span><span>⚔️ ${starVals(id,level,s=>R(s.atk))}</span>`}</div>
     <div class="skill"><b>${SK[d.skill].name}</b> <span class="muted">· ${b.mana} energy</span><br>${skillStars(id,level)}</div>
@@ -9534,7 +9544,7 @@ document.addEventListener('input',e=>{if(e.target&&e.target.id==='cxq'){UI.codex
 document.addEventListener('keydown',e=>{try{if(UI.screen!=='codex')return;const t=e.target||{},inField=/INPUT|TEXTAREA|SELECT/.test(t.tagName||'')||t.isContentEditable;
   if(t.id==='cxq'&&e.key==='Escape'){e.preventDefault();e.stopPropagation();if(t.value){t.value='';UI.codexQ='';cxFilter();}else t.blur();return;}
   if(e.key==='/'&&!inField&&!UI.sheetOpen&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const i=document.getElementById('cxq');if(i){e.preventDefault();i.focus();i.select();}}}catch(err){}},true);
-const CODEX_TABS=[['how','How it works'],['effects','Effects'],['heroes','Characters'],['syn','Genres & traits'],['cross','Crossovers'],['trinkets','Items'],['legends','Legendaries'],['events','Events'],['enemies','Enemies'],['rivals','Rivals'],['credits','Credits']].filter(t=>t[0]!=='rivals'||TUNE.rivalsOn);
+const CODEX_TABS=[['how','How it works'],['fight','Combat'],['effects','Effects'],['heroes','Characters'],['syn','Genres & traits'],['cross','Crossovers'],['trinkets','Items'],['legends','Legendaries'],['events','Events'],['enemies','Enemies'],['rivals','Rivals'],['credits','Credits']].filter(t=>t[0]!=='rivals'||TUNE.rivalsOn);
 SCR.codex=()=>{
   const tab=UI.codexTab||'how';
   let body='';
@@ -9545,13 +9555,13 @@ SCR.codex=()=>{
     <p><b>Rarity and shop rank.</b> Characters are <span class="tier1" style="color:var(--tc)">Common</span>, <span class="tier2" style="color:var(--tc)">Uncommon</span>, <span class="tier3" style="color:var(--tc)">Rare</span>, <span class="tier4" style="color:var(--tc)">Epic</span> or <span class="tier5" style="color:var(--tc)">Mythic</span> (🪙${PRICE[0]}–${PRICE[PRICE.length-1]}). ⬆️ Train the shop (🪙${RANK.train} for ${RANK.trainXp} XP; it also gets ${RANK.freeXp} XP free every round). Each full gauge is a rank: ${[2,3,4,5,6,7,8,9].filter(r=>r<=RMAX&&topTier(r)>topTier(r-1)).map(r=>'Rank '+r+' unlocks '+RARITY[topTier(r)-1]).join(', ')}, and every rank improves the odds. Ranks ${(a=>a.slice(0,-1).join(', ')+' and '+a[a.length-1])([2,3,4,5,6,7,8,9].filter(r=>r<=RMAX&&RANK.board[r-1]>RANK.board[r-2]))} add a board slot. Mythics only show up at Rank ${RANK.odds.findIndex(o=>o[4]>0)+1}, and rarely. <button class="btn sm" data-a="rank-info">See the odds</button></p>
     <p><b>Leveling up.</b> 3 copies of a character combine into ★★; two ★★ combine into ★★★. Commons and Uncommons stop at ★★ (the Spin-off Deal Legendary lifts that). Maxed characters stop appearing in the shop. With the Talent Scout Legendary, the shop also offers ready-made ★★ cards; buying one levels up your best copy. The first time a Rare, Epic or Mythic character reaches ★★ or ★★★ you pick an item for your whole team (hold up to 5; pick one you have again to level it up, or sell one to free a slot).</p>
     <p><b>Board.</b> The top row is your front row; it gets hit first. Benched characters don't fight.</p>
-    <p><b>Who attacks whom.</b> Taunting enemies are always hit first. Otherwise melee characters hit the nearest front-row enemy, ranged characters shoot the lowest-HP enemy anywhere, and Stalkers leap at the weakest back-row enemy. A melee character in your back row waits behind its own lane (the front square in its column) and <b>steps up</b> into it as soon as it is empty: at the start of the fight or the moment the front-liner falls. It steps up before your bench fills the gap, and charges its ability a little while it waits (Stalkers and Sportsball characters don't wait). When a side's whole front row is wiped out, its back row steps forward. New characters you buy go where they fight best: melee to an empty front square, everyone else to the back.</p>
+    <p><b>Fights.</b> Fights play out on their own. Every character has a <b>Reach</b> (⚔️ Melee hits only from the front row; 🏹 Ranged hits from either row) and an <b>Aim</b> (↕️ Lane, 🎯 Sharpshooter or 🗡️ Backline). Taunting enemies are always hit first. A back-row melee character waits behind its lane and <b>steps up</b> when the square in front of it is empty; when a whole front row falls, the back row steps forward. New characters you buy go where they fight best. Every rule, number and character profile is in <button class="btn sm" data-a="codex-tab" data-v="fight">Combat</button>.</p>
     <p><b>Energy and skills.</b> Characters gain energy by attacking and getting hit. A full blue bar casts their skill. Stun, Terrify, Taunt and the other effects are explained in <button class="btn sm" data-a="codex-tab" data-v="effects">Effects</button>.</p>
     <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre from ★★, so a wide board of two or three genres fills up fast.</p>
     <p><b>Typecast.</b> When everyone on your board is from the same genre (3 or more characters), the shop you get at the start of every round always includes 1 card from that genre (rerolls don\'t), so a one-genre team can find its cast.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you choose a Legendary, win or lose: 3 to choose from and a bonus item if you won, 2 if you lost. You hold one at a time.</p>
-    <p><b>Targeting.</b> Every character shows its rule: ↕️ Lane (the front-liner straight across first), 🎯 Sharpshooter (Gunners: the lowest-HP enemy anywhere) or 🗡️ Backline (Stalkers: the weakest back-liner). Taunts override all of them. Some characters move mid-fight: the Field Medic hops around the board, swapping places with whoever is hurt worst (front or back), and the Burrow Lurker tunnels into the enemy back row.</p>
+    
     <p><b>The Cut.</b> A bad random event: the studio goes after your biggest genre and it leaves the shop for the rest of the run. Pay gold to keep your characters of that genre, let them go (sold for half), or fight it with lives.</p>
     <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-6 of each act). You never know exactly when: it pops up at the start of a round, before the shop. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props), or trade-offs (The Cut, Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher Game Levels bring more of them, and more bad ones: a window fires 40% of the time at Level 4, plus 6% per level after it.</p>
     <p><b>Buyback Wheel.</b> A random event: spin for Uncommon, Rare or Epic. Spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud. A thin gold ALL sliver (6%) covers every rarity but Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
@@ -9562,6 +9572,30 @@ SCR.codex=()=>{
     <p><b>Game Levels.</b> Win a run to unlock the next Game Level: the same game plus one new rule or unlock, stacked on the earlier ones. Level 4 is the full game; Levels 5 to 18 make it harder step by step. Pick any unlocked level on the title screen. In a run, the Lv button in the top bar shows your level's rules and what the next one adds.</p>
     <p><b>Next enemy.</b> The Next episode panel shows who you fight next; 🔭 Lineup (or V) shows where each one stands.</p>
     <p><b>Keyboard</b> (the same keys as TFT and Underlords): <kbd>D</kbd> or <kbd>R</kbd> reroll · <kbd>F</kbd> or <kbd>T</kbd> train · <kbd>Q</kbd> or <kbd>L</kbd> lock · <kbd>E</kbd> sell the character under the mouse · <kbd>W</kbd> move it between board and bench · <kbd>1</kbd>–<kbd>5</kbd> buy · <kbd>V</kbd> next enemy's lineup · <kbd>Space</kbd> fight. In a fight: <kbd>Space</kbd> pause, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> speed, <kbd>S</kbd> skip, <kbd>V</kbd> their team. In the Codex: <kbd>/</kbd> search.</p></div>`;
+  if(tab==='fight'){const TR=['guardian','brawler','stalker','gunner','mystic','medic'],ROLE={guardian:'Tank: soaks hits in the front row and protects the back row (Cover).',brawler:'Front-line fighter: the most HP, hits hard up close.',stalker:'Assassin: ignores the front line and goes for the weakest back-liner.',gunner:'Damage from range: picks off the lowest-HP enemy anywhere.',mystic:'Caster: weak hits, big skills that charge fast.',medic:'Support: heals and shields, casts often.'};
+    const odd=HEROES.filter(h=>heroReach(h[0])!==TBASE[h[3]].range).map(h=>esc(HERO[h[0]].name));
+    const prof=Object.keys(GENRES).map(g=>HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]],rk=rowKey(d.id);return `<tr><td>${esc(d.name)}</td><td>${GENRES[g].e} ${GENRES[g].name}</td><td>${TRAITS[d.trait].name}</td><td>${reachLabel(d.id)}</td><td>${atkVerb(d.id)}</td><td>${targetShort(d.id)}</td><td>${ROWP[rk].n.replace('Prefers ','')}</td></tr>`;}).join('')).join('');
+    body=`<div class="rules">
+    <h3>Every character has these tags</h3>
+    <ul class="irules"><li><b>Genre</b> (Army, Sportsball…): its team bonuses at 2, 4 and 6.</li><li><b>Trait</b> (its role: Guardian, Brawler, Stalker, Gunner, Mystic, Medic): its base numbers, its Aim and a trait bonus at 2 and 4.</li><li><b>Reach</b>: ⚔️ Melee or 🏹 Ranged. Where it can hit from, whom it falls back on, and which items count it.</li><li><b>Aim</b>: ↕️ Lane, 🎯 Sharpshooter or 🗡️ Backline. Whom it attacks.</li><li><b>Rarity</b>: price, how strong, and whether it counts as 2 for its genre from ★★ (Rare and up).</li><li><b>Skill</b>: what it casts when its energy bar is full. Some are <b>crowds</b> (👥): one card, several bodies.</li></ul>
+    <h3>Roles (traits)</h3>
+    <div class="cxtw"><table class="cxt"><tr><th>Trait</th><th>❤️ HP</th><th>⚔️ ATK</th><th>🛡️ Armor</th><th>⏱ Attacks every</th><th>⚡ Energy</th><th>Reach</th><th>Aim</th><th>Job</th></tr>${TR.map(k=>{const b=TBASE[k];return `<tr><td>${tsvg(k)} ${TRAITS[k].name}</td><td>${b.hp}</td><td>${b.atk}</td><td>${b.arm}</td><td>${b.spd}s</td><td>${b.mana}</td><td>${b.range==='melee'?'⚔️ Melee':'🏹 Ranged'}</td><td>${targetShort(HEROES.find(h=>h[3]===k)[0])}</td><td>${ROLE[k]}</td></tr>`;}).join('')}</table></div>
+    <p class="muted">Base numbers at ★ for a Common. Higher rarity and every star multiply HP and ATK (see each character's card); crowds split them across their bodies.</p>
+    <h3>Reach</h3>
+    <p><b>⚔️ Melee</b> hits only from the front row. In the back row it waits behind its own lane and steps up the moment the square in front of it is empty (it charges a little energy while it waits). Stalkers are the exception: they leap at their target from either row and spring back. <b>🏹 Ranged</b> hits from either row and never moves; your front row shields it.</p>
+    <p>Reach comes from the trait, except when the attack is obviously thrown or shot: ${odd.join(', ')} are 🏹 Ranged whatever their trait. Items that care: <b>Spiked Armor</b> reflects melee hits only, <b>War Banner</b> boosts melee, <b>Scope</b> boosts ranged. Evil twins copy their original's Reach.</p>
+    <h3>Aim (whom it attacks)</h3>
+    <ul class="irules"><li><b>🎯 Taunt first.</b> A taunting enemy is always hit first, whatever the Aim.</li><li><b>↕️ Lane</b> (Guardians, Brawlers, Mystics, Medics): the enemy front-liner in its own column. If that lane is empty: melee hits the nearest front-liner, ranged shoots the lowest-HP enemy.</li><li><b>🎯 Sharpshooter</b> (Gunners): the lowest-HP enemy anywhere, ignoring lanes.</li><li><b>🗡️ Backline</b> (Stalkers): the weakest enemy in the back row; the front row only once the back row is empty.</li></ul>
+    <h3>Movement</h3>
+    <ul class="irules"><li><b>Step up:</b> a waiting back-row melee character moves into the empty square in front of it, before your bench fills it.</li><li><b>Front row wiped:</b> when a side has nobody left in its front row, its whole back row steps forward.</li><li><b>Ranged</b> characters and Stalkers stay in their square all fight.</li><li><b>Special moves</b> come from skills: the Field Medic hops to whoever is hurt worst and swaps places, the Burrow Lurker tunnels into the enemy back row, some skills pull an enemy to the front.</li><li><b>Bench:</b> summons wait on the battle bench when there is no room and step in as squares open (Up next).</li></ul>
+    <h3>Attacks and energy</h3>
+    <ul class="irules"><li>Each character attacks once every <b>⏱ Speed</b> seconds (haste makes it faster). An attack deals its ATK (crowds: ATK per body × bodies left).</li><li><b>Energy:</b> +10 per attack, and up to +8 when hit (a quarter of the damage taken). Splash, bounces, reflects and overtime give none. A full bar casts the skill instead of attacking.</li><li><b>Crits</b> deal double; <b>Dodge</b> and <b>Blind</b> make an attack miss. Skills never miss.</li></ul>
+    <h3>Damage</h3>
+    <ul class="irules"><li><b>Attacks</b>, splash, bounces and reflects are reduced by armor: damage × 20 ÷ (20 + armor). 10 armor takes a third off; 20 armor takes half.</li><li><b>Skill damage</b> ignores armor. <b>True damage</b> (overtime, Spiked Armor, some skills) ignores armor too.</li><li><b>Shields</b> soak damage before HP. <b>Cover:</b> a back-row character behind one of your Guardians takes 25% less. Area attacks deal crowds double.</li><li><b>Overtime:</b> after 30 seconds everyone takes growing damage, so fights always end.</li></ul>
+    <h3>How they look</h3>
+    <p>Melee characters lunge and strike; Gunners and gunslingers shoot; Sportsball throws its ball; Mystics and Medics cast. When a skill hits several characters, a shot (or a slash, for melee) goes to every one of them.</p>
+    <h3>Every character's combat profile</h3>
+    <div class="cxtw"><table class="cxt"><tr><th>Character</th><th>Genre</th><th>Trait</th><th>Reach</th><th>Attacks</th><th>Aim</th><th>Row</th></tr>${prof}</table></div></div>`;}
   if(tab==='effects'){const fx=[['💫','Stun','Can\'t attack, move or cast for a moment. Sleep (Don\'t Fall Asleep) is a stun.'],
     ['😱','Terrify (Slasher)',`A terrified enemy deals ${pctOf(TUNE.fear)} less damage. Each Slasher character terrifies each enemy with its first hit on it: 4s, 6s with 4 Slashers.`],
     ['🎯','Taunt','Enemies must attack it first, whatever their targeting rule.'],
@@ -9597,7 +9631,7 @@ SCR.codex=()=>{
     <h3>Plot Twists (Game Level 5+)</h3><p>One choice of every event round is swapped for a risky one.</p><div class="cgrid">${['trial','casting','merchant'].filter(k=>EVENTS[k]).map(k=>ev(k)).join('')}</div>
     <h3>Random events</h3><p>Each act can bring one, at the start of any episode between its first fight and its boss. Each happens at most once a run; higher Game Levels bring more, and more bad ones.</p>
     <div class="cgrid">${['fanmail','craft','cameo','review','props','strike','montage','cursed','insurance','reboot','cut','wheel'].filter(k=>EVENTS[k]).map(k=>ev(k,ch(k))).join('')}</div></div>`;}
-  if(tab==='heroes')body=Object.keys(GENRES).map(g=>`<h3>${GENRES[g].e} ${GENRES[g].name}</h3><div class="cgrid">${HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]];const st=heroStatsAt(d.id,1);return `<button class="ccard g-${g}${cxLk('h',d.id)}" data-a="hero-info" data-v="${d.id}" data-l="1" aria-label="${esc(d.name)} details"><div class="hd">${heroPt(d.id,'sm')}<span><b>${esc(d.name)}</b><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${TRAITS[d.trait].name}${d.crowd?' · 👥 crowd':''}</span></div><p><b>${SK[d.skill].name}:</b> ${skillStars(d.id,0)}</p><p>🎯 ${targetShort(d.id)}</p>${cxLkP('h',d.id)}</button>`;}).join('')}</div>`).join('');
+  if(tab==='heroes')body=Object.keys(GENRES).map(g=>`<h3>${GENRES[g].e} ${GENRES[g].name}</h3><div class="cgrid">${HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]];const st=heroStatsAt(d.id,1);return `<button class="ccard g-${g}${cxLk('h',d.id)}" data-a="hero-info" data-v="${d.id}" data-l="1" aria-label="${esc(d.name)} details"><div class="hd">${heroPt(d.id,'sm')}<span><b>${esc(d.name)}</b><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${TRAITS[d.trait].name}${d.crowd?' · 👥 crowd':''}</span></div><p><b>${SK[d.skill].name}:</b> ${skillStars(d.id,0)}</p><p>${reachLabel(d.id)} · ${atkVerb(d.id)} · ${targetShort(d.id)}</p>${cxLkP('h',d.id)}</button>`;}).join('')}</div>`).join('');
   if(tab==='syn')body=`<h3>Genres</h3><div class="cgrid">${Object.keys(GENRES).map(k=>`<div class="ccard g-${k}${cxLk('g',k)}"><div class="hd"><span class="emo" style="font-size:1.4rem">${GENRES[k].e}</span><b>${GENRES[k].name}</b></div>${GENRES[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${GENRES[k].d[i]}</p>`).join('')}${cxLkP('g',k)}</div>`).join('')}</div>
     <h3>Traits</h3><div class="cgrid">${Object.keys(TRAITS).map(k=>`<div class="ccard"><div class="hd"><span class="syn" style="padding:.2em .4em">${tsvg(k)}</span><b>${TRAITS[k].name}</b></div>${TRAITS[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${TRAITS[k].d[i]}</p>`).join('')}</div>`).join('')}</div>
     <h3>Crossovers</h3><p class="muted" style="font-size:.82rem">Two genres together switch on a crossover bonus. <button class="btn sm" data-a="codex-tab" data-v="cross">See all ${CROSSOVERS.length} crossovers</button></p>`;
@@ -9835,10 +9869,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.80',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.81',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.81',items:[["🏹", "Reach is now a tag on every character: Melee or Ranged. Sportsball and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) are Ranged: they hit from either row, never wait to step up, and count for Scope instead of War Banner and Spiked Armor."], ["📖", "New Codex tab, Combat: the tags every character has, the six roles and their numbers, how Reach, Aim and movement work, energy, damage types and armor, and every character's combat profile in one table."]]},
   {v:'19.80',items:[["🎯", "Everyone attacks the way they look: Sportsball throws (no more walking up to punch in 3D), and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) shoot from where they stand."], ["💥", "Skills show who they hit: a shot flies to every enemy a skill damages (a slash for melee casters), and a green shot to every ally it heals."]]},
   {v:'19.79',items:[["✨", "Skills you can see: a full energy bar glows, and when a character casts, it flashes in its genre colour, the skill's name pops up and a burst shows what it does (heal, shield, stun, summon, area hit, buff)."], ["⏸️", "Knockouts land with a tiny freeze-frame, and the battle bench is now Up next: who steps in or joins, and when."]]},
   {v:'19.78',items:[["🔒", "A locked shop now stays locked through an intermission, so you get exactly those cards back afterwards."]]},
