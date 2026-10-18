@@ -651,6 +651,7 @@ div.xlist{display:grid;gap:6px}
 @keyframes cring{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.9);opacity:0}}
 .flt.dmg.big{font-size:1.3rem;color:#ffd7cf}
 /* v19.75: combat numbers by type and size, shield layer, status row with timer rings */
+.epsbox{border:1px solid var(--line,#333);border-radius:10px;padding:10px 12px;margin:8px 0;background:rgba(255,255,255,.03)}.epsbox p{margin:4px 0}.epsbar{height:8px;border-radius:5px;background:rgba(255,255,255,.08);overflow:hidden;margin:6px 0 2px}.epsbar i{display:block;height:100%;background:linear-gradient(90deg,var(--leg,#f6c945),var(--gold,#ffd34d))}.renew{border-color:var(--leg,#f6c945)!important}.renew.on{background:rgba(246,201,69,.18)}.lvn.asc{font-size:.72rem}
 .flt.num{font-weight:800;line-height:1;-webkit-text-stroke:3px #0b0a0e;paint-order:stroke fill;text-shadow:0 2px 0 #0b0a0e;z-index:9}
 .flt.n-phys{color:#fff}.flt.n-spell{color:#cf9dff}.flt.n-true{color:#ffa23d}.flt.n-tick{color:#cfe84a}
 .flt.num.crit{color:var(--gold);animation:rise 1.1s ease-out forwards,npunch .28s ease-out}
@@ -6902,7 +6903,7 @@ function buildSchedule(n){
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
 const TUNE={xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:1,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"horror":0.12,"space":0.18,"undead":0.08,"kaiju":0.15,"west":0.03,"heist":0.1,"ball":0.08},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.746,3.961,3.344,2.56],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:.7,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.35,"bug":1.1,"undead":1.0,"ball":1.15,"heist":1.4,"west":1.0,"horror":2.0,"space":1.95,"kaiju":2.1},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.19,spacePierce:.5,spaceHaste:0.5,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:.3,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
-  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:8,lvMin:1,lvGate:1};
+  lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:8,lvMin:1,lvGate:1,epsMode:1,renewGold:5};
 buildSchedule(false);
 
 const EVENTS={
@@ -7004,20 +7005,20 @@ const LEVELS=[
 // acts, cap (top rarity), lives, rv (rival count), rvP (rival odds per normal fight), rvK (rival strength), foe
 // (enemy strength) and sched (one act template, or one per act) carry over until a row changes them.
 // Text parts: rv() only while rivals are on, gt() only while unlock gating is on (TUNE.lvGate).
-const lvRv=t=>TUNE.rivalsOn?t:'',lvGt=t=>TUNE.lvGate?t:'',pct1=k=>(Math.round(1000*k)/10)+'%';
+const lvRv=t=>TUNE.rivalsOn?t:'',lvGt=t=>TUNE.lvGate?t:'',lvGtA=t=>TUNE.lvGate&&!TUNE.epsMode?t:'',pct1=k=>(Math.round(1000*k)/10)+'%';
 const LADDER=[null,
   {n:1,e:'🎬',name:'Pilot',acts:1,cap:3,lives:10,rv:0,rvP:0,rvK:1,foe:.75,sched:'FFEFFFFFB',g:['army','ball','west'],rules:['coach1'],items:[],legends:[],events:['recruit'],d:()=>'Buy characters, put 3 of a kind together for ★★, line them up and press Fight. One act, three genres.'},
   {n:2,e:'🎬',name:'Pilot, Part 2',acts:2,foe:.8,g:['bug','undead'],rules:['coach2'],items:['kevlar','energy','coin','fangs','plating','ledger','scope','banner'],events:['payday','supply'],d:()=>'Two acts and two new genres: Swarm and Undead. Gold you hold earns interest (🪙1 per 🪙10, up to 🪙5). Train raises your shop rank. '+lvGt('Items arrive.')},
   {n:3,e:'📖',name:'Table Read',acts:3,cap:4,rv:1,rvK:.85,foe:.84,sched:['FFEFFFFFB','FFERFFFFB','FFEFFFFFB'],g:['heist','horror'],rules:['coach3','xover','rv1'],legends:['fieldhosp','brood','bloodline','getaway','sixgun','halftime','sequel'],d:()=>'Three acts, Heist Crew and Slasher. Your first Legendary after the Act 1 boss. Two genres side by side switch on crossovers. '+lvRv('A rival studio shares your character pool.')},
-  {n:4,e:'📺',name:'Season 1',acts:4,cap:5,rvP:.3,rvK:1,foe:1,sched:'FFEFFFFFB',g:['space','kaiju'],rules:['rv1'],items:['battery','hollow','spikes','flare','stage','overclock','glass','extralife'],legends:['warp','tokyo','blockbuster','underdog','ensemble','hype'],events:['deal','promotion','reinforce','cameo','fanmail','craft'],d:()=>'The full show: four acts, all 9 genres with Space Opera and Kaiju, Mythic characters, more items, Legendaries and events. '+lvRv("A rival studio's cast can turn up in any normal episode from Ep 3.")},
-  {n:5,e:'🎲',name:'Plot Twists',rules:['plot'],events:['trial','casting','merchant','wheel','montage','cursed','insurance','reboot'],d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant. '+lvGt('New random events: trade-offs.')},
-  {n:6,e:'📉',name:'Limited Run',rules:['limited'],legends:['danger','feeding','graveyard','insidejob','quickdraw','press','scream','shieldgen','atomic','crossep','cult','plotarmor'],d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies, so ★★★ characters are harder to finish. `+lvGt('A second Legendary for every genre.')},
-  {n:7,e:'🎭',name:'Second Studio',rv:2,rules:['rv2'],items:['smoke','tesla','teamup','residuals','slowburn'],d:()=>lvRv('2 rival studios share your pool and your episodes. ')+lvGt('5 new items.')},
-  {n:8,e:'🐢',name:'Slow Promotions',rules:['xp1'],events:['strike','review','props','cut'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP. `+lvGt('Bad random events start. ')+`Enemies get +${pct1(TUNE.lvFoe)} HP and damage per level from here.`},
-  {n:9,e:'🎭',name:'Bidding War',rv:3,rules:['rv3'],legends:['shock','pheromone','armydead','vault','wanted','gameball','lightsout','mothership','finalwars','placement','indie','extuniv'],d:()=>lvRv('3 rival studios. ')+lvGt('A third Legendary for every genre.')},
-  {n:10,e:'🌟',name:'Guest Stars',sched:'FFEFFFFMB',rules:['elite'],items:['prop','crest','extras','understudy'],d:()=>`The fight before each boss is a mini-boss: +${pctOf(TUNE.lvElite-1)} HP and damage, a win pays 🪙${TUNE.lvEliteGold}. `+lvGt('The last 4 items.')},
+  {n:4,e:'📺',name:'Season 1',acts:4,cap:5,rvP:.3,rvK:1,foe:1,sched:'FFEFFFFFB',g:['space','kaiju'],rules:['rv1'],items:['battery','hollow','spikes','flare','stage','overclock','glass','extralife'],legends:['warp','tokyo','blockbuster','underdog','ensemble','hype'],events:['deal','promotion','reinforce','cameo','fanmail','craft'],d:()=>TUNE.epsMode?'The full show: four acts, Mythic characters, more items, Legendaries and events. Space Opera, Kaiju and more join as episodes air. ':'The full show: four acts, all 9 genres with Space Opera and Kaiju, Mythic characters, more items, Legendaries and events. '+lvRv("A rival studio's cast can turn up in any normal episode from Ep 3.")},
+  {n:5,e:'🎲',name:'Plot Twists',rules:['plot'],events:['trial','casting','merchant','wheel','montage','cursed','insurance','reboot'],d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant. '+lvGtA('New random events: trade-offs.')},
+  {n:6,e:'📉',name:'Limited Run',rules:['limited'],legends:['danger','feeding','graveyard','insidejob','quickdraw','press','scream','shieldgen','atomic','crossep','cult','plotarmor'],d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies, so ★★★ characters are harder to finish. `+lvGtA('A second Legendary for every genre.')},
+  {n:7,e:'🎭',name:'Second Studio',rv:2,rules:['rv2'],items:['smoke','tesla','teamup','residuals','slowburn'],d:()=>lvRv('2 rival studios share your pool and your episodes. ')+lvGtA('5 new items.')},
+  {n:8,e:'🐢',name:'Slow Promotions',rules:['xp1'],events:['strike','review','props','cut'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP. `+lvGtA('Bad random events start. ')+`Enemies get +${pct1(TUNE.lvFoe)} HP and damage per level from here.`},
+  {n:9,e:'🎭',name:'Bidding War',rv:3,rules:['rv3'],legends:['shock','pheromone','armydead','vault','wanted','gameball','lightsout','mothership','finalwars','placement','indie','extuniv'],d:()=>lvRv('3 rival studios. ')+lvGtA('A third Legendary for every genre.')},
+  {n:10,e:'🌟',name:'Guest Stars',sched:'FFEFFFFMB',rules:['elite'],items:['prop','crest','extras','understudy'],d:()=>`The fight before each boss is a mini-boss: +${pctOf(TUNE.lvElite-1)} HP and damage, a win pays 🪙${TUNE.lvEliteGold}. `+lvGtA('The last 4 items.')},
   {n:11,e:'💔',name:'Short Season',lives:9,rv:4,rules:['life1','rv4'],d:()=>'You start with 9 lives. '+lvRv('4 rival studios.')},
-  {n:12,e:'😈',name:'Evil Twin',rv:5,rules:['twin','rv5'],legends:['dircut','spinoff','wallet','scout'],d:()=>`Bosses bring an evil twin of your strongest character, with +${pctOf(TUNE.lvTwin-1)} HP and damage but no skill. `+lvRv('5 rival studios. ')+lvGt('The last Legendaries.')},
+  {n:12,e:'😈',name:'Evil Twin',rv:5,rules:['twin','rv5'],legends:['dircut','spinoff','wallet','scout'],d:()=>`Bosses bring an evil twin of your strongest character, with +${pctOf(TUNE.lvTwin-1)} HP and damage but no skill. `+lvRv('5 rival studios. ')+lvGtA('The last Legendaries.')},
   {n:13,e:'👥',name:'Crowd Scenes',rvP:.45,rules:['extras','rvOdds2'],d:()=>'From Act 2, normal fights bring an extra crowd of Nameless Mooks. '+lvRv('Rival casts turn up more often.')},
   {n:14,e:'🐌',name:'Slower Promotions',rv:6,rules:['xp2','rv6'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0]+TUNE.lvXp[1])} more XP in total. `+lvRv('6 rival studios.')},
   {n:15,e:'🎞️',name:'Two-Part Finale',rules:['finale2','rvFull'],d:()=>'After Deus Ex Machina, the first two bosses return together. '+lvRv('Rival casts fight at full strength.')},
@@ -7041,9 +7042,10 @@ function unlockLv(kind,id){const f={g:'g',i:'items',l:'legends',e:'events'}[kind
 // Codex lock: greyed card + "Unlocks at Game Level N" when the player hasn't opened that level yet.
 // Genres and characters are gated by the run itself; items, Legendaries and events only with TUNE.lvGate.
 function cxLockLv(kind,id){if(!(kind==='g'||kind==='h'||TUNE.lvGate))return 0;const n=unlockLv(kind,id);if(!n)return 0;
-  const p=lvLoad();return p.dev||n<=p.open?0:n;}
-function cxLk(kind,id){return cxLockLv(kind,id)?' cxlk':'';}
-function cxLkP(kind,id){const n=cxLockLv(kind,id);return n?`<p class="cxlkp">🔒 Unlocks at Game Level ${n}</p>`:'';}
+  const p=lvLoad();if(TUNE.epsMode&&p.open>=4&&n>=4)return 0;return p.dev||n<=p.open?0:n;}
+function cxEps(kind,id){if(!TUNE.epsMode||epsAll()||lvLoad().open<4)return 0;const at=epsAt(kind,id);return at&&at>profLoad().eps?at:0;}
+function cxLk(kind,id){return cxLockLv(kind,id)||cxEps(kind,id)?' cxlk':'';}
+function cxLkP(kind,id){const e=cxEps(kind,id);if(e)return `<p class="cxlkp">🔒 Unlocks after ${e} episodes aired (you have ${profLoad().eps})</p>`;const n=cxLockLv(kind,id);return n?`<p class="cxlkp">🔒 Unlocks at Game Level ${n}</p>`:'';}
 function lvText(n){const x=LADDER[n];if(!x)return '';const t=x.d().trim();return t||'Same rules as the level before, for now.';}
 function lvLine(n){const x=LADDER[n];return x?`${x.e} <b>${esc(x.name)}:</b> ${esc(lvText(n))}`:'';}
 function rulesFor(n){return lvDef(lvClamp(n)).rules;}
@@ -7051,26 +7053,26 @@ function rulesFor(n){return lvDef(lvClamp(n)).rules;}
 // lists; Level 4+ only once TUNE.lvGate is on (Phase C). Crossovers from Level 3; no Train at Level 1.
 const LVD_C={};function lvDefC(n){return LVD_C[n]||(LVD_C[n]=lvDef(n));}
 function lvGated(){return !!(S&&S.ladder&&(TUNE.lvGate||(S.lv|0)<4));}
-function lvList(kind){const d=lvDefC(S.lv|0);return kind==='i'?d.items:kind==='l'?d.legends:d.events;}
+function lvList(kind){const d=S.cont||lvDefC(S.lv|0);return kind==='i'?d.items:kind==='l'?d.legends:d.events;}
 function lvOK(kind,id){return !lvGated()||lvList(kind).includes(id);}
 function lvHas(kind){return !lvGated()||lvList(kind).length>0;}
 function xoOn(){return !S||!S.ladder||(S.lv|0)>=4||rule('xover');}
 function noTrain(){return !!(S&&S.ladder&&(S.lv|0)===1);}
 function rule(id){return !!S&&!!S.rules&&S.rules.includes(id);}
 // v19.72: New! = this level added it and the player hasn't won this level yet
-function lvNew(kind,id){if(!lvGated()||(S.lv|0)<2||unlockLv(kind,id)!==(S.lv|0))return false;return !lvLoad().won.includes(S.lv|0);}
+function lvNew(kind,id){if(S&&S.cont){const at=epsAt(kind,id);return !!at&&EPS.findIndex(d=>d.at===at)>=(S.newFrom|0);}if(!lvGated()||(S.lv|0)<2||unlockLv(kind,id)!==(S.lv|0))return false;return !lvLoad().won.includes(S.lv|0);}
 function newB(kind,id){return lvNew(kind,id)?'<span class="newb">New!</span>':'';}
 // the level-up reveal: everything Level n adds, by kind
 function lvNewHTML(n){const x=LADDER[n];if(!x)return '';const gt=TUNE.lvGate||n<4,ch=(e,t)=>`<span class="endchip"><span class="emo">${e}</span>${esc(t)}</span>`,rows=[];
   const add=(lab,a)=>{if(a.length)rows.push(`<div class="lvnrow"><b>${lab}</b>${a.join('')}</div>`);};
-  add('Genres',(x.g||[]).filter(g=>GENRES[g]).map(g=>ch(GENRES[g].e,GENRES[g].name)));
+  add('Genres',(x.g||[]).filter(g=>GENRES[g]&&!(TUNE.epsMode&&n===4&&EPS_LATE.includes(g))).map(g=>ch(GENRES[g].e,GENRES[g].name)));
   if(gt){add('Items',(x.items||[]).filter(t=>TR[t]).map(t=>ch(TR[t].e,TR[t].name)));
     add('Legendaries',(x.legends||[]).filter(l=>LEGENDS[l]).map(l=>ch(LEGENDS[l].e,LEGENDS[l].name)));
     add('Events',(x.events||[]).filter(k=>EVENTS[k]).map(k=>ch(EVENTS[k].e,EVENTS[k].name)));}
   return rows.length?`<div class="lvnew"><span class="newb">New!</span>${rows.join('')}</div>`:'';}
 // v19.57: what the next Game Level adds, and whether it is open yet
-function nextLvNote(){const n=S?S.lv|0:lvMin();if(n>=LV_MAX)return '<p class="lvnext">🏆 This is the top Game Level.</p>';if(S&&S.newLv)return '';const open=lvLoad().open>n;
-  return `<p class="lvnext">${open?`🔓 <b>Game Level ${n+1}</b> is unlocked. It adds`:`🔒 Win this run to unlock <b>Game Level ${n+1}</b>. It adds`} ${lvLine(n+1)}</p>`;}
+function nextLvNote(){const n=S?S.lv|0:lvMin();if(n>=LV_MAX)return '<p class="lvnext">🏆 This is the top Ascension.</p>';if(S&&S.newLv)return '';const open=lvLoad().open>n,nm=lvNm(n+1).replace(/^the S/,'The S');
+  return `<p class="lvnext">${open?`🔓 <b>${nm}</b> is unlocked. It adds`:`🔒 Win this run to unlock <b>${nm}</b>. It adds`} ${lvLine(n+1)}</p>`;}
 function maxLives(){return (S&&S.maxLives)||10;}
 // Tougher Reviews: from Game Level lvFoeFrom on, enemies get +lvFoe HP and damage per level
 function foeStep(n){return Math.max(0,(n|0)-TUNE.lvFoeFrom+1)*TUNE.lvFoe;}
@@ -7095,12 +7097,50 @@ function lvLoad(){let j={};try{j=JSON.parse(localStorage.getItem(LV_KEY)||'{}')|
   if((DEV.on&&DEV.all)||SET.allLv)return {v:2,open:LV_MAX,won:Array.isArray(j.won)?j.won:[],pick:Math.max(lo,Math.min(LV_MAX,j.pick|0)),dev:1};
   return {v:2,open,won:Array.isArray(j.won)?j.won.filter(n=>n>=1&&n<=open):[],pick:Math.max(lo,Math.min(open,j.pick|0))};}
 function lvStore(p){if(p.dev){try{const j=lvMigrate(JSON.parse(localStorage.getItem(LV_KEY)||'{}')||{});j.pick=p.pick;localStorage.setItem(LV_KEY,JSON.stringify(j));}catch(e){}return;}try{localStorage.setItem(LV_KEY,JSON.stringify(p));}catch(e){}}
+// v19.76 (Option B): the Season (Level 4) is the default mode, Levels 5-18 are opt-in Ascension tiers 1-14. Content past
+// the Season starter set unlocks by episodes aired (rounds played in any run, lost runs too). Only runs started from
+// the title (UI.real) read the profile; sims and bots call newRun directly and keep the level-based lists.
+const PROF_KEY='tropebrawl-profile';
+const EPS=[{at:40,g:['space']},{at:80,lv:5},{at:120,g:['kaiju']},{at:160,lv:6},{at:200,lv:7},{at:240,lv:8},{at:280,lv:9},{at:320,lv:10},{at:360,lv:12}];
+const EPS_LATE=['space','kaiju'];
+function epsAll(){return !!((DEV.on&&DEV.all)||SET.allLv);}
+function profLoad(){let j=null;try{j=JSON.parse(localStorage.getItem(PROF_KEY)||'null');}catch(e){}
+  if(!j||typeof j!=='object'){const o=lvLoad().open; // first time: credit what the player had on the old ladder
+    const at=o>=12?360:o>=10?320:o>=9?280:o>=8?240:o>=7?200:o>=6?160:o>=5?120:0;
+    j={v:1,eps:at,seen:EPS.filter(d=>d.at<=at).length,ls:0};profStore(j);}
+  j.eps=Math.max(0,j.eps|0);j.seen=j.seen|0;j.ls=j.ls|0;return j;}
+function profStore(j){try{localStorage.setItem(PROF_KEY,JSON.stringify(j));}catch(e){}}
+function epsDrops(eps){return EPS.filter(d=>d.at<=eps);}
+function dropLists(d){const x=d.lv?LADDER[d.lv]:{};return {g:d.g||[],items:x.items||[],legends:x.legends||[],events:x.events||[]};}
+// what a real run plays with: the Season starter lists plus every unlocked drop (rules still come from the level)
+function epsCont(eps){const b=lvDef(4),o={g:b.g.filter(g=>!EPS_LATE.includes(g)),items:b.items.slice(),legends:b.legends.slice(),events:b.events.slice()};
+  epsDrops(eps).forEach(x=>{const l=dropLists(x);['g','items','legends','events'].forEach(f=>l[f].forEach(v=>{if(!o[f].includes(v))o[f].push(v);}));});return o;}
+// the episodes something unlocks at; 0 = Season starter set (or not episode-gated)
+function epsAt(kind,id){if(kind==='h'){const h=HERO[id];return h?epsAt('g',h.genre):0;}
+  const f={g:'g',i:'items',l:'legends',e:'events'}[kind];if(!f)return 0;for(const d of EPS)if(dropLists(d)[f].includes(id))return d.at;return 0;}
+function epsName(d){const l=dropLists(d),n=[];l.g.forEach(g=>n.push(GENRES[g].e+' '+GENRES[g].name));
+  if(l.items.length)n.push(l.items.length+' items');if(l.legends.length)n.push(l.legends.length+' Legendaries');if(l.events.length)n.push(l.events.length+' events');return n.join(', ');}
+function epsChips(d){const l=dropLists(d),ch=(e,t)=>`<span class="endchip"><span class="emo">${e}</span>${esc(t)}</span>`;
+  return [...l.g.map(g=>ch(GENRES[g].e,GENRES[g].name)),...l.items.filter(t=>TR[t]).map(t=>ch(TR[t].e,TR[t].name)),...l.legends.filter(x=>LEGENDS[x]).map(x=>ch(LEGENDS[x].e,LEGENDS[x].name)),...l.events.filter(k=>EVENTS[k]).map(k=>ch(EVENTS[k].e,EVENTS[k].name))].join('');}
+function epsNext(eps){return EPS.find(d=>d.at>eps)||null;}
+function epsBar(eps){const nx=epsNext(eps);if(!nx)return '<p class="sub">📺 Everything is unlocked.</p>';const i=EPS.indexOf(nx),from=i?EPS[i-1].at:0;
+  return `<div class="epsbar"><i style="width:${Math.max(2,Math.round(100*(eps-from)/(nx.at-from)))}%"></i></div><p class="sub">Next at ${nx.at} episodes: ${esc(epsName(nx))}</p>`;}
+// result screen: episodes this run, what they unlocked, progress to the next drop
+function epsHTML(){if(!S||!S.real||S.epsAfter==null)return '';const got=EPS.filter(d=>d.at>S.epsBefore&&d.at<=S.epsAfter);
+  return `<div class="epsbox"><p>📺 <b>Episodes aired: +${S.epsAdd}</b> · ${S.epsAfter} in total</p>${got.map(d=>`<div class="lvnew"><span class="newb">Unlocked!</span><div class="lvnrow">${epsChips(d)}</div></div>`).join('')}${epsBar(S.epsAfter)}</div>`;}
+// title: episodes so far, and the opt-in Renewed start after two lost Seasons in a row
+function epsTitleHTML(cur){if(lvLoad().open<4||epsAll())return '';const pf=profLoad();
+  return `<div class="epsbox"><p>📺 <b>${pf.eps} episodes aired</b></p>${epsBar(pf.eps)}${cur===4&&pf.ls>=2?`<button class="btn renew${UI.renew?' on':''}" data-a="renew" aria-pressed="${!!UI.renew}">🎞️ Renewed for another season: start with +🪙${TUNE.renewGold}${UI.renew?' ✓':''}</button>`:''}</div>`;}
+function lvNm(n){n=n|0;return n<=3?'Level '+n:n===4?'the Season':'Ascension '+(n-4);}
+function lvTitle(n){n=n|0;return n<=3?'Pilot · Level '+n+': '+LADDER[n].name:n===4?'📺 The Season':'🔥 Ascension '+(n-4)+': '+LADDER[n].name;}
 // called once when a run ends (from the result screen): a win unlocks the next level and selects it
 function lvRecord(){
   if(!S||!S.over||S.recorded)return;S.recorded=true;tlEnd(false);
   const p=lvLoad(),n=S.lv|0;
   if(S.result==='win'){if(!p.won.includes(n))p.won.push(n);if(n>=p.open&&n<LV_MAX){p.open=n+1;p.pick=n+1;S.newLv=n+1;UI.lv=n+1;}}
   lvStore(p);
+  if(S.real&&!epsAll()){const pf=profLoad();S.epsBefore=pf.eps;S.epsAdd=Math.max(0,Math.min(lvRounds(n),S.round|0));pf.eps+=S.epsAdd;S.epsAfter=pf.eps;
+    if(n===4)pf.ls=S.result==='win'?0:pf.ls+1;profStore(pf);}
 }
 
 // ================= skills =================
@@ -7269,6 +7309,10 @@ function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=null;UI._bk=null;}
   S.maxLives=lvD.lives;S.lives=S.maxLives;S.cap=lvD.cap;
   // the level's genres (null = all of them): locked genres never show up, like a genre that got The Cut
   S.lvG=Object.keys(GENRES).every(g=>lvD.g.includes(g))?null:lvD.g.filter(g=>GENRES[g]);
+  if(typeof UI!=='undefined'&&UI.real){S.real=1;if(S.lv>=4&&TUNE.epsMode){const all=epsAll(),pf=profLoad();S.newFrom=all?EPS.length:pf.seen;S.cont=epsCont(all?1e9:pf.eps);
+      const gs=lvD.g.filter(g=>GENRES[g]&&S.cont.g.includes(g));S.lvG=gs.length===Object.keys(GENRES).length?null:gs;
+      if(!all){pf.seen=epsDrops(pf.eps).length;profStore(pf);if(UI.renew&&pf.ls>=2&&S.lv===4){S.gold+=TUNE.renewGold;S.renewed=1;}}}}
+  if(typeof UI!=='undefined'){UI.real=0;UI.renew=0;}
   buildSchedule(S.lv);
   rollSpecials();
   rollShop();
@@ -8920,14 +8964,14 @@ function shopHTML(){
 // Game Level picker: one chip per level; the newest rule in one line, the dials below, the earlier rules folded away
 function lvPicker(){
   const p=lvLoad(),lo=lvMin();const cur=Math.max(lo,Math.min(UI.lv|0,p.open));UI.lv=cur;
-  const chips=LADDER.map((_,i)=>i).filter(n=>n>=lo).map(n=>{const lock=n>p.open,won=p.won.includes(n),nm='Level '+n;
-    return `<button class="lvn${n===cur?' on':''}${won?' won':''}" data-a="lv" data-v="${n}" ${lock?'disabled':''} role="radio" aria-checked="${n===cur}" aria-label="${nm}${lock?', locked':won?', cleared':''}" title="${nm}${lock?' · win Level '+(n-1)+' first':won?' · cleared':''}">${lock?'🔒':n}</button>`;}).join('');
+  const chips=LADDER.map((_,i)=>i).filter(n=>n>=lo).map(n=>{const lock=n>p.open,won=p.won.includes(n),nm=lvNm(n).replace(/^the S/,'The S');
+    return `<button class="lvn${n===cur?' on':''}${won?' won':''}" data-a="lv" data-v="${n}" ${lock?'disabled':''} role="radio" aria-checked="${n===cur}" aria-label="${nm}${lock?', locked':won?', cleared':''}" title="${nm}${lock?' · win '+lvNm(n-1)+' first':won?' · cleared':''}">${lock?'🔒':n<=3?n:n===4?'S':'A'+(n-4)}</button>`;}).join('').replace(/class="lvn([^"]*)" data-a="lv" data-v="(\d+)"/g,(m,c,v)=>+v>=5?`class="lvn asc${c}" data-a="lv" data-v="${v}"`:m);
   const lo4=cur>=4?Math.max(lo,4):lo,older=LADDER.map((_,i)=>i).filter(n=>n>=lo4&&n<cur).map(n=>`<li>${lvLine(n)}</li>`).join('');
-  return `<div class="lvpick"><div class="row" style="justify-content:space-between"><b class="lvh">Game Level ${cur}: ${esc(LADDER[cur].name)}</b><span class="muted" style="font-size:.78rem">${p.won.filter(n=>n>=lo).length?p.won.filter(n=>n>=lo).length+' cleared · ':''}win one to unlock the next</span></div>
+  return `<div class="lvpick"><div class="row" style="justify-content:space-between"><b class="lvh">${esc(lvTitle(cur))}</b><span class="muted" style="font-size:.78rem">${cur<4?'win one to unlock the next':cur===4?'win the Season to open Ascension':'opt-in challenge · win to open the next'}</span></div>
     <div class="lvnums" role="radiogroup" aria-label="Game Level">${chips}</div>
     <p class="lvnew">${cur>lo?'New: ':''}${lvLine(cur)}</p>
     <p class="lvdial">${lvDials(cur)}</p>
-    ${older?`<details class="lvold"><summary>Plus ${cur-lo4} earlier level${cur-lo4>1?'s':''}</summary><ul>${older}</ul></details>`:''}</div>`;
+    ${older?`<details class="lvold"><summary>Plus ${cur-lo4} earlier rule${cur-lo4>1?'s':''}</summary><ul>${older}</ul></details>`:''}${epsTitleHTML(cur)}</div>`;
 }
 SCR.title=()=>{
   const sv=loadSave();
@@ -9131,7 +9175,7 @@ function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primar
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start Season 1'}[S.newLv]||'New run';
   return `<button class="btn primary big" data-a="new">${lbl}</button>${n===3?'<button class="btn" data-a="title">Back to the title</button>':''}`;}
 function tutWrapHTML(){return `<div class="lvwin tutwrap"><p>📺 <b>That's a wrap on the Pilot.</b> You can hire, merge, line up, save and pick a Legendary. The network ordered a full season.</p>
-  <p><b>Season 1 is open:</b> all ${lvDef(4).g.length} genres with Space Opera and Kaiju, four acts, Mythic characters, more items and events${TUNE.rivalsOn?', and a rival studio in your episodes':''}.</p>
+  <p><b>The Season is open:</b> four acts, Mythic characters, more items and events${TUNE.rivalsOn?', and a rival studio in your episodes':''}. Every run airs episodes, won or lost: they unlock Space Opera, Kaiju and more.</p>
   <p class="muted" style="font-size:.8rem"><i>Coach tips are done. Replay them any time in Settings.</i></p></div>`;}
 function coachTip(){try{
   if(!SET.coach||!S||S.over||(S.lv|0)<9||UI.screen!=='plan')return null;
@@ -9247,9 +9291,10 @@ SCR.end=()=>{
   const lst=(rows,ic)=>rows.length?rows.map(([id,v])=>`<div class="row endrow" data-a="endhero" data-v="${id}" data-l="${final.get(id)||1}">${heroPt(id,'sm')}<span><b>${esc(HERO[id].name)}</b><br><span class="sub">${ic} ${fmtN(v)}</span></span></div>`).join(''):'<p class="sub">None this run.</p>';
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
-    <div><div class="eyebrow">${S.lv?'Game Level '+S.lv+' · ':''}${win?(rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
+    <div><div class="eyebrow">${S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
     <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1></div>
-    ${S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>Game Level ${S.newLv} unlocked!</b> New: ${lvLine(S.newLv)}</p>${lvNewHTML(S.newLv)}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Game Level.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
+    ${S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
+    ${epsHTML()}
     <div class="kpis">${kpis}</div>
     <div class="endgrid">
       <div class="endcard"><h3>DAMAGE THIS RUN</h3>${bars||'<p class="sub">No fights yet.</p>'}<p class="sub">Your top ${top.length} damage sources across every fight, including artillery, items and summons. Hover or tap a bar for details.</p></div>
@@ -9407,7 +9452,7 @@ function infoBody(I){
   if(I.kind==='enemy'){const e=S.enemy&&S.enemy.enc[I.i];return e?enemyDetail(e.key,enemyStats(e)):'';}
   if(I.kind==='twin'){const u=twinOf();if(!u)return '';const d=HERO[u.id];
     return `<div class="hs-head">${foePt(null,'lg',u.id)||pt({e:d.e,foe:true},'lg')}<div><div class="eyebrow">Evil twin</div><div class="hs-name">Evil ${esc(d.name)} ${stars(u.level)}</div></div></div><p class="targ">😈 Copies your strongest character on the board with +${pctOf(TUNE.lvTwin-1)} HP and damage, but no skill. Change your board to change the twin.</p>`;}
-  if(I.kind==='lv')return `<div class="eyebrow">Difficulty</div><h3 style="color:var(--leg)">Game Level ${S.lv|0}: ${esc((LADDER[S.lv]||{}).name||'')}</h3><p class="lvdial">${lvDials(S.lv)}</p><ul class="lvlist">${LADDER.map((_,i)=>i).filter(n=>n>=(S.lv>=4?Math.max(4,lvMin()):Math.min(lvMin(),S.lv))&&n<=S.lv).map(n=>`<li>${lvLine(n)}</li>`).join('')}</ul>${nextLvNote()}`;
+  if(I.kind==='lv')return `<div class="eyebrow">Difficulty</div><h3 style="color:var(--leg)">${esc(lvTitle(S.lv))}</h3><p class="lvdial">${lvDials(S.lv)}</p><ul class="lvlist">${LADDER.map((_,i)=>i).filter(n=>n>=(S.lv>=4?Math.max(4,lvMin()):Math.min(lvMin(),S.lv))&&n<=S.lv).map(n=>`<li>${lvLine(n)}</li>`).join('')}</ul>${nextLvNote()}`;
   return '';
 }
 function inspHTML(){
@@ -9568,7 +9613,8 @@ function onAction0(a,v,el){
   switch(a){
     case 'pend-hide':if(!UI.pendOpen)break;UI.legPeek=true;UI.swap=null;closeSheet();render();break;
     case 'pend-show':UI.legPeek=false;closeSheet();render();break;
-    case 'new':UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;newRun(false);go();break;
+    case 'new':UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();break;
+    case 'renew':UI.renew=!UI.renew;render();break;
     case 'continue':{const sv=loadSave();if(sv){restore(sv);if(S.inFight)resumeFight();else go();}break;}
     case 'pick':{hoverCard(null);if(!canHover&&S.shop[+v]){sheet(shopPreview(+v));break;}if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
     case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
@@ -9734,10 +9780,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.75',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.76',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.76',items:[["📺", "The Season is the main game now. After the Pilot you play the Season with seven genres; every run, won or lost, airs episodes, and episodes unlock Space Opera, Kaiju and more items, Legendaries and events."], ["🔥", "Win the Season to open Ascension: the old harder levels, now tiers you choose (Ascension 1 to 14), each adding one rule."], ["🎞️", "Two lost Seasons in a row? You can start the next one Renewed for another season, with 5 extra gold."]]},
   {v:'19.75',items:[["💥", "Damage numbers you can read: big hits show big numbers, colours tell attacks (white), skills (purple) and true damage (orange) apart, crits are gold with a \"!\", and fast hits add up into one number instead of a wall of digits."], ["🛡️", "Shields show on the health bar as a silver layer, with \"Shield +N\", \"Blocked N\" and a crack when one breaks. Heals pop up in green and make the bar glow."], ["💫", "Stun, taunt, Terrified, burning, drained energy and more now sit in a row of icons above each health bar, with a ring that shrinks as the effect runs out."]]},
   {v:'19.73',items:[["⚽", "Fixed: with the Game Ball, the arena now shows exactly one ball, flying from the thrower to the enemy and on to the next catcher. Fast speeds no longer leave extra balls lying around."]]},
   {v:'19.72',items:[["🔓", "Game Levels now unlock things as you climb: Season 1 (Level 4) starts with 16 items, 13 Legendaries and the basic events, and higher levels add the rest (all items by Level 10, all Legendaries by Level 12)."], ["✨", "Winning a level shows everything it adds, and new items, Legendaries and events carry a New! badge in your runs until you beat that level."], ["📖", "The Codex greys out what you haven't unlocked yet and says at which Game Level it arrives."]]},
@@ -9967,7 +10014,7 @@ function devAct(d,v,el){
     case 'off':DEV.on=false;DEV.open=false;devSave();break;
     case 'all':DEV.all=!!el.checked;devSave();break;
     case 'lv':{UI.lv=+v;const p=lvLoad();p.pick=Math.max(lvMin(),Math.min(+v,p.open));lvStore(p);UI.lv=+v;if(UI.screen==='title')render();break;}
-    case 'newrun':clearSave();UI.insp=null;UI.sel=null;UI.swap=null;newRun(false);DEV.open=false;go();break;
+    case 'newrun':clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);DEV.open=false;go();break;
     case 'ev':devEvent(v);DEV.open=false;break;
     case 'wheel':DEV.wheel=v;break;
     case 'gold':devRun();S.gold+=+v;go();break;
