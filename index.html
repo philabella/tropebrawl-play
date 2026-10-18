@@ -994,6 +994,61 @@ html.dt .dshop .shop>[data-hov]>.info{bottom:6px;right:6px}
 html.dt .dshop .scard{padding-bottom:7px}
 @media (max-height:860px){html.dt .dshop .scard .sart{zoom:var(--az)}html.dt .dshop .scard .pleft{display:block}html.dt .dshop .scard{padding-top:7px}}
 
+/* v19.82: impact feel */
+@keyframes atk{40%{filter:brightness(1.18) drop-shadow(0 0 4px var(--gold))}}
+.unit.hit{animation:hitw .22s}
+@keyframes hitw{0%,35%{background:#fff;box-shadow:0 0 0 2px #fff}36%{background:color-mix(in srgb,var(--red) 40%,var(--panel))}}
+.unit.hasspr.hit{animation:none}
+.unit.hasspr.hit .spr,.unit.hasspr.hit .crowdspr img{animation:hitflash .24s linear}
+@keyframes hitflash{0%,38%{filter:brightness(0) invert(1) drop-shadow(0 0 5px #fff)}39%{filter:brightness(1.1) sepia(.6) saturate(3) hue-rotate(-35deg) drop-shadow(0 4px 2px rgba(0,0,0,.45))}100%{filter:drop-shadow(0 4px 2px rgba(0,0,0,.45))}}
+.unit .impact{position:absolute;left:var(--ix,50%);top:var(--iy,42%);width:calc(46px*var(--fxk,1)*var(--isz,1));height:calc(46px*var(--fxk,1)*var(--isz,1));margin:calc(-23px*var(--fxk,1)*var(--isz,1));pointer-events:none;z-index:8;animation:impact .2s ease-out forwards}
+.unit .impact::before{content:'';position:absolute;inset:0;background:var(--ic,#fff);clip-path:polygon(50% 0,61% 34%,98% 21%,70% 50%,98% 79%,61% 66%,50% 100%,39% 66%,2% 79%,30% 50%,2% 21%,39% 34%);filter:drop-shadow(0 0 4px var(--ic,#fff))}
+.unit .impact::after{content:'';position:absolute;inset:18%;border-radius:50%;border:3px solid var(--ic,#fff);opacity:.9}
+.unit .impact.k-spell{--ic:#cf9dff}.unit .impact.k-true{--ic:#ffa23d}.unit .impact.k-crit{--ic:#ffd23f;--isz:1.7}
+@keyframes impact{0%{transform:scale(.25) rotate(0deg);opacity:1}60%{opacity:1}100%{transform:scale(1.15) rotate(25deg);opacity:0}}
+.hpb .hg{position:absolute;inset:0 auto 0 0;background:#fff3c9;opacity:.85;transition:width .4s ease-in .28s}
+.flt.num{animation:npop .95s cubic-bezier(.2,.8,.3,1) forwards}
+@keyframes npop{0%{opacity:0;transform:translate(-50%,0) scale(.3)}12%{opacity:1;transform:translate(calc(-50% + var(--dx,0px)*.3),-16px) scale(1.4)}26%{transform:translate(calc(-50% + var(--dx,0px)*.5),-22px) scale(1)}72%{opacity:1;transform:translate(calc(-50% + var(--dx,0px)),-30px) scale(1)}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)*1.25),-18px) scale(.9)}}
+.flt.num.crit{animation:ncrit 1.15s cubic-bezier(.2,.8,.3,1) forwards;z-index:10}
+.flt.num.crit::before{content:'';position:absolute;left:50%;top:50%;width:2.4em;height:2.4em;margin:-1.2em;z-index:-1;background:radial-gradient(circle,#ff7a1a 0 30%,#ffd23f 31% 52%,transparent 53%);clip-path:polygon(50% 0,60% 30%,93% 15%,72% 45%,100% 60%,66% 66%,72% 100%,50% 75%,28% 100%,34% 66%,0 60%,28% 45%,7% 15%,40% 30%);opacity:.9}
+@keyframes ncrit{0%{opacity:0;transform:translate(-50%,0) scale(.3) rotate(-14deg)}10%{opacity:1;transform:translate(calc(-50% + var(--dx,0px)*.3),-18px) scale(1.7) rotate(-9deg)}24%{transform:translate(calc(-50% + var(--dx,0px)*.5),-24px) scale(1.15) rotate(-7deg)}75%{opacity:1;transform:translate(calc(-50% + var(--dx,0px)),-32px) scale(1.15) rotate(-7deg)}100%{opacity:0;transform:translate(calc(-50% + var(--dx,0px)*1.2),-20px) scale(1) rotate(-7deg)}}
+.flt.n-heal,.flt.n-heal2,.flt.n-shield{animation:nheal 1s ease-out forwards}
+@keyframes nheal{0%{opacity:0;transform:translate(-50%,6px) scale(.6)}18%{opacity:1;transform:translate(-50%,-6px) scale(1.15)}30%{transform:translate(-50%,-10px) scale(1)}100%{opacity:0;transform:translate(-50%,-34px) scale(1)}}
+html.noanim .flt.num,html.noanim .unit .impact{animation-duration:.01s}
+/* v19.82: mobile-style combat text: gradient fill, thick outline, CRIT tag; numbers stack upward */
+.flt.num{-webkit-text-stroke:4px #0b0a0e;text-shadow:0 3px 0 #0b0a0e,0 0 10px rgba(0,0,0,.5);letter-spacing:.02em}
+.flt.num.n-phys{color:#fff}.flt.num.n-spell{color:#d9b3ff}.flt.num.n-true{color:#ffb347}.flt.num.n-heal{color:#5dff86}
+.flt.num.crit{color:#ffd23f}
+.flt.num.crit::after{content:'CRIT!';position:absolute;left:50%;top:-.7em;transform:translateX(-50%) rotate(4deg);font:400 .4em/1 var(--f-display);color:#fff;-webkit-text-stroke:0;background:#e5212f;padding:.18em .4em .12em;border-radius:4px;box-shadow:0 2px 0 #0b0a0e;letter-spacing:.06em}
+/* v19.82: ultimate cut-in (mobile auto battler style) for Rare+ characters and bosses */
+.cutin{position:absolute;left:0;right:0;top:calc(50% - 64px*var(--fxk,1));height:calc(128px*var(--fxk,1));z-index:20;pointer-events:none;overflow:hidden;animation:cutin .9s cubic-bezier(.2,.9,.3,1) forwards}
+.cutin .cb{position:absolute;inset:20% -6%;transform:skewY(-2deg);background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--gc,#e5212f) 85%,#000) 14%,var(--gc,#e5212f) 50%,color-mix(in srgb,var(--gc,#e5212f) 85%,#000) 86%,transparent);box-shadow:0 0 0 3px #0b0a0e,0 0 26px var(--gc,#e5212f)}
+.cutin .cb::after{content:'';position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(255,255,255,.18) 0 2px,transparent 2px 26px);animation:cutlines .5s linear infinite}
+@keyframes cutlines{to{background-position:-52px 0}}
+.cutin .ca{position:absolute;left:12%;bottom:-6%;height:118%;filter:drop-shadow(4px 4px 0 #0b0a0e);animation:cutart .9s ease-out forwards}
+.cutin .ce{position:absolute;left:15%;top:50%;transform:translateY(-50%);font-size:calc(4rem*var(--fxk,1));font-family:var(--f-emoji)}
+.cutin .ct{position:absolute;left:30%;right:4%;top:50%;transform:translateY(-55%)}
+.cutin .cw{display:block;font:800 calc(.8rem*var(--fxk,1))/1 var(--f-body);color:#fff;text-transform:uppercase;letter-spacing:.12em;text-shadow:0 2px 0 #0b0a0e}
+.cutin .cn{display:block;font:400 calc(2.7rem*var(--fxk,1))/1.05 var(--f-display);color:#fff;-webkit-text-stroke:5px #0b0a0e;paint-order:stroke fill;white-space:nowrap}
+.cutin.foe .cn{color:#ffd0d0}
+@keyframes cutin{0%{transform:translateX(-105%)}14%{transform:translateX(0)}80%{transform:translateX(0);opacity:1}100%{transform:translateX(25%);opacity:0}}
+@keyframes cutart{0%{transform:translateX(-40%) scale(.9)}20%{transform:translateX(0) scale(1.08)}100%{transform:translateX(8%) scale(1.04)}}
+.cutdim{position:absolute;inset:0;z-index:19;pointer-events:none;background:rgba(5,4,8,.5);animation:cutdim .9s ease-out forwards}
+@keyframes cutdim{0%{opacity:0}15%,70%{opacity:1}100%{opacity:0}}
+html.noanim .cutin,html.noanim .cutdim{display:none}
+/* v19.82: shop cards */
+.scard .sstat{display:none}
+html.dt .dshop .scard .sstat{display:flex;position:absolute;left:5px;bottom:30px;width:calc(var(--aw) + 6px);justify-content:space-between;z-index:4;pointer-events:none}
+.scard .sstat b{display:inline-flex;align-items:center;justify-content:center;min-width:2.1em;height:2.1em;padding:0 .35em;border-radius:999px;font:400 .95rem/1 var(--f-display);color:#fff;-webkit-text-stroke:2.5px #0b0a0e;paint-order:stroke fill;border:2px solid #0b0a0e;box-shadow:0 2px 0 #0b0a0e}
+.scard .sstat .sa{background:linear-gradient(#ffb43a,#e2771a)}.scard .sstat .sh{background:linear-gradient(#ff5c5c,#c81e3a)}
+.scard.tier3,.scard.tier4,.scard.tier5{border-color:color-mix(in srgb,var(--tc) 80%,#000)}
+.scard.tier4{box-shadow:3px 3px 0 var(--inkline),0 0 12px color-mix(in srgb,var(--r4) 40%,transparent)}
+.scard.tier5{box-shadow:3px 3px 0 var(--inkline),0 0 16px color-mix(in srgb,var(--r5) 55%,transparent)}
+.scard.tier5::after{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:5;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.22) 45%,rgba(255,215,120,.18) 50%,transparent 62%);background-size:250% 100%;mix-blend-mode:screen;animation:foil 3.2s ease-in-out infinite}
+@keyframes foil{0%{background-position:120% 0}55%,100%{background-position:-60% 0}}
+html.noanim .scard.tier5::after{animation:none}
+@media (hover:hover){.shop .scard:not(.sold){transition:transform .14s ease-out,box-shadow .14s}.shop .scard:hover:not(:disabled):not(:active){transform:translateY(-6px) scale(1.015);box-shadow:5px 8px 0 var(--inkline),0 10px 18px rgba(0,0,0,.45)}}
+
 /* characters with art stand on their square: the tile is the floor, the body can rise past its top edge */
 .slot.hasspr,.unit.hasspr{overflow:visible}
 .spr{position:absolute;left:50%;transform:translateX(-50%);pointer-events:none;user-select:none;z-index:3;filter:drop-shadow(0 4px 2px rgba(0,0,0,.45))}
@@ -8153,7 +8208,7 @@ function dealDamage(src,t,amt,type,aoe){
   if((type==='attack'||type==='spell')&&t.manaMax)t.mana=Math.min(t.manaMax,t.mana+Math.min(8,dealt*.25));
   if(src&&src.alive&&src.ls&&(type==='attack'||type==='spell')){const lh=heal(null,src,dealt*src.ls,true);if(!B.silent)numFx(src,lh,'heal2');}
   if(!B.silent&&t.el){
-    numFx(t,dealt-sAbs,B.envSrc==='overtime'?'tick':type==='spell'?'spell':type==='attack'||type==='bounce'?'phys':'true',(B.fxCrit&&type==='attack')||(B.fxCritS&&type==='spell'));if(sAbs>0){numFx(t,sAbs,'block');if(t.shield<=0)shCrack(t);}t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');
+    FXN.src=src;numFx(t,dealt-sAbs,B.envSrc==='overtime'?'tick':type==='spell'?'spell':type==='attack'||type==='bounce'?'phys':'true',(B.fxCrit&&type==='attack')||(B.fxCritS&&type==='spell'));if(sAbs>0){numFx(t,sAbs,'block');if(t.shield<=0)shCrack(t);}t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');hitFx(src,t,dealt,type);
     if(dealt>t.maxHp*.3)shake();
   }
   if(type==='attack'&&src&&src.alive&&src.range==='melee'&&has('spikes')&&t.side==='A'&&t.row==='front')dealDamage(t,src,dealt*tv('spikes')/100,'true');
@@ -8364,7 +8419,7 @@ function castFx(u){const el=u.el;if(!el)return;const k=skKind(u.skill);fxK(u);
 function act(u){
   if(u.skill&&u.manaMax&&u.mana>=u.manaMax){
     u.mana=0;
-    if(!B.silent&&u.el){if(RM)float(u,SK[u.skill].name,'sp');else castFx(u);u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
+    if(!B.silent&&u.el){if(RM)float(u,SK[u.skill].name,'sp');else{castFx(u);cutIn(u);}u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
       if(!RM){const ring=document.createElement('i');ring.className='castring';el.appendChild(ring);setTimeout(()=>ring.remove(),550);}}
     const cfx=!B.silent&&u.el&&!RM;if(cfx){u._casting=1;B._cs=new Set();}
     try{SK[u.skill].cast(u);}finally{if(cfx){u._casting=0;B._cs=null;}}return;
@@ -8645,6 +8700,8 @@ function numFx(u,v,k,c){
   if(k==='heal'||k==='heal2'){const b=u.el.querySelector('.hpb');if(b)b.animate([{boxShadow:'0 0 0 2px #4dff7c,0 0 10px #4dff7c'},{boxShadow:'0 0 0 0 transparent'}],{duration:500,easing:'ease-out'});}
   if(o&&o.el.isConnected&&now-o.t0<300){o.v+=v;numSet(u,o,k,c);o.el.animate([{scale:1.25},{scale:1}],{duration:160,easing:'ease-out'});return;}
   const el=document.createElement('span');el.className='flt num n-'+k+(c?' crit':'');el.style.left=(28+Math.random()*44)+'%';
+  {const st=u._nst&&now-u._nst.t<450?u._nst.n+1:0;u._nst={n:st,t:now};if(st%3)el.style.marginTop=(-(st%3)*15*FXN.k).toFixed(0)+'px';}
+  {const sx=FXN.src&&FXN.src.el&&FXN.src!==u?Math.sign(u.el.getBoundingClientRect().left-FXN.src.el.getBoundingClientRect().left)||(Math.random()<.5?-1:1):(Math.random()<.5?-1:1);el.style.setProperty('--dx',(sx*(10+Math.random()*14)*FXN.k).toFixed(0)+'px');}
   const n={el,v,t0:now};m[key]=n;numSet(u,n,k,c);u.el.appendChild(el);
   FXN.list=FXN.list.filter(x=>x.el.isConnected);FXN.list.push(n);
   setTimeout(()=>el.remove(),c?1100:950);
@@ -8658,6 +8715,24 @@ function stDraw(u,st){const sig=st.map(x=>x[0]).join(',');if(u._st!==sig){u._st=
   const mx=u._stm||(u._stm={});st.forEach((x,i)=>{const el=u.$st.children[i];if(!el)return;if(x[2]==null){el.style.removeProperty('--p');return;}
     const k=x[0];if(!(mx[k]>0)||x[2]>(mx[k+'_l']||0)+.05)mx[k]=x[2];mx[k+'_l']=x[2];el.style.setProperty('--p',Math.max(0,Math.min(1,x[2]/mx[k])).toFixed(3));});}
 let shakeT=0;
+// v19.82: ultimate cut-in, mobile auto battler style: a Rare+ character (or a boss) casting sweeps a banner with its
+// art and the skill name across the dimmed field, with a short pause. At most one every 2.5 s; off at 4x.
+function cutIn(u){if(!B||B.silent||RM||(B.speed||1)>2||!SK[u.skill])return;const rare=u.side==='A'&&!u.summon&&HERO[u.id]&&HERO[u.id].tier>=3;if(!rare&&!(u.side==='E'&&u.boss))return;
+  const now=performance.now();if(B._cut&&now-B._cut<2500)return;B._cut=now;const f=document.getElementById('field');if(!f)return;const sp=B.speed||1,ms=Math.round(900/sp);
+  const c=document.createElement('div');c.className='cutin '+(u.side==='E'?'foe g-foe':'g-'+(u.genre||'foe'));c.style.animationDuration=ms+'ms';
+  const art=u.art&&SPRITES[u.art]?`<img class="ca" alt="" src="${SPRITES[u.art]}" style="animation-duration:${ms}ms">`:`<span class="ce">${u.e||'✨'}</span>`;
+  c.innerHTML=`<div class="cb"></div>${art}<div class="ct"><span class="cw">${esc(u.name)}</span><span class="cn">${esc(SK[u.skill].name)}</span></div>`;
+  const d=document.createElement('div');d.className='cutdim';d.style.animationDuration=ms+'ms';f.appendChild(d);f.appendChild(c);setTimeout(()=>{c.remove();d.remove();},ms+60);
+  B.hs=Math.max(B.hs||0,now+Math.round(170/sp));}
+// v19.82: impact on a hit: spark (colour by kind, big gold on crits), knockback away from the attacker, and a 35 ms
+// freeze on crits and big hits at 1x/2x. Splash, bounces and overtime ticks get the spark only.
+function hitFx(src,t,dealt,type){if(!B||B.silent||RM||!t.el)return;if(B.envSrc==='overtime')return;
+  const crit=(B.fxCrit&&type==='attack')||(B.fxCritS&&type==='spell'),big=dealt>=t.maxHp*.25;
+  const i=document.createElement('i');i.className='impact k-'+(crit?'crit':type==='spell'?'spell':type==='true'?'true':'phys');
+  i.style.setProperty('--ix',(38+Math.random()*24).toFixed(0)+'%');i.style.setProperty('--iy',(30+Math.random()*24).toFixed(0)+'%');t.el.appendChild(i);setTimeout(()=>i.remove(),260);
+  if(src&&src.el&&(type==='attack'||type==='spell')){const a=src.el.getBoundingClientRect(),b=t.el.getBoundingClientRect(),dx=(b.left+b.width/2)-(a.left+a.width/2),dy=(b.top+b.height/2)-(a.top+a.height/2),d=Math.hypot(dx,dy)||1,k=(crit||big?9:5)*(FXN.k||1);
+    const mv=t.el.querySelector('.spr,.crowdspr')||t.el;mv.animate([{translate:'0 0'},{translate:`${(dx/d*k).toFixed(1)}px ${(dy/d*k).toFixed(1)}px`,offset:.25},{translate:'0 0'}],{duration:Math.max(110,170/(B.speed||1)),easing:'ease-out',composite:'add'});}
+  if((crit||big)&&(B.speed||1)<=2&&typeof performance!=='undefined')B.hs=Math.max(B.hs||0,performance.now()+35);}
 function shake(){if(!B||B.silent||RM)return;const now=performance.now();if(now-shakeT<250)return;shakeT=now;const f=$('#field');if(!f)return;f.classList.remove('shake');void f.offsetWidth;f.classList.add('shake');}
 // a character with an <id>_atk sprite (Acid Spitters) shows that pose for a moment whenever it attacks
 function atkPose(u){if(TBA.shown)return;if(!B||B.silent||!u.el||u.side!=='A'||u.summon||!SPRITES[u.id+'_atk'])return;const ims=u.el.querySelectorAll('img.spr,.crowdspr img');if(!ims.length)return;
@@ -8722,7 +8797,7 @@ function animAttack(u,t){
     // melee: the character's square travels to its target, hits it, and comes back
     const k=Math.max(0,(dist-rb.height*.55)/dist),ms=Math.max(180,Math.min(420,dist*1.3))/B.speed;
     u.el.style.zIndex=5;
-    const an=mover.animate([{transform:mover===u.el?'translate(0,0) scale(1)':'translateX(-50%) translate(0,0) scale(1)'},{transform:(mover.classList.contains('spr')?'translateX(-50%) ':'')+`translate(${dx*k}px,${dy*k}px) scale(1.1)`,offset:.45},{transform:(mover.classList.contains('spr')?'translateX(-50%) ':'')+`translate(${dx*k*.92}px,${dy*k*.92}px) scale(1.05)`,offset:.6},{transform:(mover.classList.contains('spr')?'translateX(-50%) ':'')+'translate(0,0) scale(1)'}],{duration:ms,easing:'ease-in-out'});
+    const P=mover.classList.contains('spr')?'translateX(-50%) ':'';const an=mover.animate([{transform:mover===u.el?'translate(0,0) scale(1)':'translateX(-50%) translate(0,0) scale(1)'},{transform:P+`translate(${-dx*k*.1}px,${-dy*k*.1}px) scale(.93,1.07)`,offset:.2},{transform:P+`translate(${dx*k}px,${dy*k}px) scale(1.12,.92)`,offset:.47},{transform:(mover.classList.contains('spr')?'translateX(-50%) ':'')+`translate(${dx*k*.92}px,${dy*k*.92}px) scale(1.05)`,offset:.6},{transform:(mover.classList.contains('spr')?'translateX(-50%) ':'')+'translate(0,0) scale(1)'}],{duration:ms,easing:'ease-in-out'});
     an.onfinish=()=>{if(u.el)u.el.style.zIndex='';};
   }else{
     // ranged: the shot flies, and the shooter recoils away from its target
@@ -8737,9 +8812,9 @@ function mountUnit(u){
   if(art)el.className+=' hasspr'+(u.twin?' evil':'');
   el.innerHTML=`<div class="sts"></div>${art?(u.crowd?crowdSpr(art,bodies(u)):sprImg(art)):pt({e:u.e,genre:u.genre,trait:u.side==='A'?u.trait:null,foe:u.side==='E'})}
     <div class="meta">${u.level?stars(u.level):''}${u.crowd?`<span class="crowdn g-${u.genre||'foe'}">×<span class="bn">${bodies(u)}</span></span>`:''}</div>
-    <div class="hpb"><i class="hf"></i><i class="sf"></i></div><div class="mpb"><i></i></div>`;
+    <div class="hpb"><i class="hg"></i><i class="hf"></i><i class="sf"></i></div><div class="mpb"><i></i></div>`;
   el.title=u.name;
-  u.el=el;u.$hf=el.querySelector('.hf');u.$sf=el.querySelector('.sf');u.$mp=el.querySelector('.mpb i');u.$st=el.querySelector('.sts');u.$bn=el.querySelector('.bn');u.$cs=el.querySelector('.crowdspr');
+  u.el=el;u.$hf=el.querySelector('.hf');u.$hg=el.querySelector('.hg');u.$sf=el.querySelector('.sf');u.$mp=el.querySelector('.mpb i');u.$st=el.querySelector('.sts');u.$bn=el.querySelector('.bn');u.$cs=el.querySelector('.crowdspr');
   if(!u.manaMax)el.querySelector('.mpb').style.visibility='hidden';
   placeUnit(u);
 }
@@ -8765,7 +8840,7 @@ function drawBattle(){
     if(u.alive)placeUnit(u);
     if(u.wide&&u.el)wideSize(u);
     const hp=Math.max(0,u.hp);
-    u.$hf.style.width=(hp/u.maxHp*100)+'%';
+    u.$hf.style.width=(hp/u.maxHp*100)+'%';if(u.$hg)u.$hg.style.width=(hp/u.maxHp*100)+'%';
     {const sp=Math.min(100,Math.max(0,u.shield)/u.maxHp*100),sl=Math.max(0,Math.min(hp/u.maxHp*100,100-sp));u.$sf.style.width=sp+'%';u.$sf.style.left=sl+'%';if(sp>0)u._shw=[sl,sp];
       if(u._shp!=null&&u.alive&&u.shield-u._shp>=1)numFx(u,u.shield-u._shp,'shield');u._shp=u.alive?Math.max(0,u.shield):0;}
     if(u.manaMax){u.$mp.style.width=(u.mana/u.manaMax*100)+'%';const full=u.alive&&u.mana>=u.manaMax;if(u._mf!==full){u._mf=full;u.$mp.parentNode.classList.toggle('full',full);}}
@@ -8986,7 +9061,7 @@ function shopHTML(){
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
     return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.rc?'<span class="rctag" title="Recast: this card replaced a card of the genre The Cut removed">Recast</span>':''}${o.tc&&!o.rc?'<span class="rctag tctag" title="Typecast: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it">Typecast</span>':''}${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?`<span class="mk${mkTo===3?' mk3':''}" title="${mkTo===3?'You own two ★ and a ★★: this third copy makes a second ★★, and the two ★★ combine into a ★★★':'You own two: this third copy combines them into a ★★'}"><span class="mkl">Makes </span><span class="mka">→</span>${'★'.repeat(mkTo)}</span>`:''}
-      ${heroArt(o.id)}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${(()=>{const sy=shopSyn(o,fieldNow,synNow),gn=GENRES[d.genre].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}>${GENRES[d.genre].e}<span class="gnm">${esc(gn)}</span>${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span>`;})()}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'<i class="crwg" title="Crowd: a squad of several bodies. Each body is its own target with its own HP and attack; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${heroArt(o.id)}${(()=>{const st=heroStatsAt(o.id,o.level||1);return `<span class="sstat"><b class="sa" title="Attack${d.crowd?' per body':''}">${R(st.atk)}</b><b class="sh" title="Health${d.crowd?' per body':''}">${R(st.hp)}</b></span>`;})()}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${(()=>{const sy=shopSyn(o,fieldNow,synNow),gn=GENRES[d.genre].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}>${GENRES[d.genre].e}<span class="gnm">${esc(gn)}</span>${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span>`;})()}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'<i class="crwg" title="Crowd: a squad of several bodies. Each body is its own target with its own HP and attack; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -9869,10 +9944,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.81',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.82',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.82',items:[["🎬", "Big moments, mobile style: when a Rare, Epic or Mythic character or a boss uses its skill, a cut-in banner with its art and the skill name sweeps across the screen."], ["💢", "Hits land harder: attackers wind up, targets flash white and get knocked back, an impact spark pops, and crits freeze the action for a split second. Health bars show the chunk a hit just took."], ["🔢", "Damage numbers pop, arc and fall away; crits are big and gold. Shop cards show Attack and Health on the art, with rarity frames and a foil shine on Mythics."]]},
   {v:'19.81',items:[["🏹", "Reach is now a tag on every character: Melee or Ranged. Sportsball and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) are Ranged: they hit from either row, never wait to step up, and count for Scope instead of War Banner and Spiked Armor."], ["📖", "New Codex tab, Combat: the tags every character has, the six roles and their numbers, how Reach, Aim and movement work, energy, damage types and armor, and every character's combat profile in one table."]]},
   {v:'19.80',items:[["🎯", "Everyone attacks the way they look: Sportsball throws (no more walking up to punch in 3D), and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) shoot from where they stand."], ["💥", "Skills show who they hit: a shot flies to every enemy a skill damages (a slash for melee casters), and a green shot to every ally it heals."]]},
   {v:'19.79',items:[["✨", "Skills you can see: a full energy bar glows, and when a character casts, it flashes in its genre colour, the skill's name pops up and a burst shows what it does (heal, shield, stun, summon, area hit, buff)."], ["⏸️", "Knockouts land with a tiny freeze-frame, and the battle bench is now Up next: who steps in or joins, and when."]]},
