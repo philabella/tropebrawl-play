@@ -1375,15 +1375,90 @@ html:not(.glass) .board .slot.tier3,html:not(.glass) .board .slot.tier4,html:not
 html:not(.glass) .board .slot.tier4:not(.sel){box-shadow:3px 3px 0 var(--inkline),0 0 12px color-mix(in srgb,var(--r4) 38%,transparent)}
 html:not(.glass) .board .slot.tier5:not(.sel){box-shadow:3px 3px 0 var(--inkline),0 0 16px color-mix(in srgb,var(--r5) 52%,transparent)}
 html:not(.glass) .board .slot.empty{background:radial-gradient(ellipse 60% 45% at 50% 60%,rgba(255,255,255,.05),transparent 70%),repeating-linear-gradient(45deg,rgba(255,255,255,.028) 0 6px,transparent 6px 12px),rgba(0,0,0,.3)}
-.slot .bstat{position:absolute;left:3px;right:3px;bottom:-7px;display:flex;justify-content:space-between;z-index:4;pointer-events:none}
-.slot .bstat b{display:inline-flex;align-items:center;justify-content:center;min-width:1.8em;height:1.8em;padding:0 .3em;border-radius:999px;font:400 .76rem/1 var(--f-display);color:#fff;-webkit-text-stroke:2.5px #0b0a0e;paint-order:stroke fill;border:2px solid #0b0a0e;box-shadow:0 2px 0 #0b0a0e}
-.slot .bstat .sa{background:linear-gradient(#ffb43a,#e2771a)}.slot .bstat .sh{background:linear-gradient(#ff5c5c,#c81e3a)}
-.board .slot[data-v^="n"] .bstat b{font-size:.64rem;border-width:1.5px;-webkit-text-stroke:2px #0b0a0e}
+.slot .bstat{position:absolute;left:6px;right:6px;bottom:5px;display:flex;justify-content:space-between;z-index:4;pointer-events:none}
+.slot .bstat>span{display:inline-flex;align-items:center;gap:3px;padding:2px 5px 2px 4px;border-radius:4px;background:rgba(8,7,10,.62);font:700 11px/1 var(--f-body);font-variant-numeric:tabular-nums;color:#f3eee4}
+.board .slot[data-v^="n"] .bstat>span{font-size:10px;padding:1px 4px 1px 3px}
+/* v19.84: shop card, rebuilt (desktop). Layout rules hold for every look; the skin rules skip the Glass look. */
+.scard .sst{display:none}
+html.dt .dshop .shop .scard{--pad:6px;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto auto auto auto 1fr auto;grid-template-areas:"rar rar" "nm nm" "gen gen" "tr tr" "sx sx" "st pr";align-items:center;justify-items:stretch;align-content:stretch;text-align:left;gap:3px 8px;padding:calc(var(--pad) + 4px) 10px calc(var(--pad) + 3px) calc(var(--aw) + var(--pad) + 10px);min-height:calc(var(--ah) + 14px)}
+html.dt:not(.glass) .dshop .shop .scard:not(.sold){border-radius:8px;border:1px solid rgba(255,255,255,.075);background:radial-gradient(140% 90% at 0% 0%,color-mix(in srgb,var(--tc) 13%,transparent),transparent 58%),linear-gradient(180deg,#1e1a23,#141217 72%);box-shadow:inset 0 2px 0 var(--tc),0 10px 20px -12px rgba(0,0,0,.8)}
+html.dt:not(.glass) .dshop .shop .scard.tier4:not(.sold){box-shadow:inset 0 2px 0 var(--tc),0 0 0 1px color-mix(in srgb,var(--tc) 36%,transparent),0 0 18px -6px color-mix(in srgb,var(--tc) 60%,transparent),0 10px 20px -12px rgba(0,0,0,.8)}
+html.dt:not(.glass) .dshop .shop .scard.tier5:not(.sold){box-shadow:inset 0 2px 0 var(--tc),0 0 0 1px color-mix(in srgb,var(--tc) 50%,transparent),0 0 22px -5px color-mix(in srgb,var(--tc) 70%,transparent),0 10px 20px -12px rgba(0,0,0,.8)}
+html.dt:not(.glass) .dshop .shop .scard.ready:not(.sold){box-shadow:inset 0 2px 0 var(--gold),0 0 0 1.5px var(--gold),0 0 20px -4px color-mix(in srgb,var(--gold) 60%,transparent)}
+html.dt:not(.glass) .dshop .shop .scard:not(.sold):hover:not(:disabled):not(:active){transform:translateY(-3px);border-color:rgba(255,255,255,.16);box-shadow:inset 0 2px 0 var(--tc),0 0 0 1px color-mix(in srgb,var(--tc) 55%,transparent),0 16px 26px -12px rgba(0,0,0,.85)}
+html.dt:not(.glass) .dshop .shop .scard:not(.sold):active{transform:translateY(-1px);box-shadow:inset 0 2px 0 var(--tc),0 6px 12px -8px rgba(0,0,0,.8)}
+html.dt:not(.glass) .dshop .shop .scard.sold{border-radius:8px;border:1px dashed rgba(255,255,255,.1);background:rgba(255,255,255,.02);box-shadow:none;opacity:1}
+html.dt .dshop .shop .scard.tier5::after{display:none}
+/* the art window always holds the whole toy */
+html.dt .dshop .shop .scard>.sart{position:absolute;left:var(--pad);top:var(--pad);bottom:var(--pad);width:var(--aw);height:auto;margin:0;zoom:1;overflow:hidden;border-radius:6px;pointer-events:none}
+html.dt:not(.glass) .dshop .shop .scard>.sart{background:radial-gradient(ellipse 90% 64% at 50% 40%,color-mix(in srgb,var(--gc) 55%,transparent),transparent 74%),linear-gradient(180deg,#332d3a,#1a161e);box-shadow:inset 0 0 0 1px rgba(255,255,255,.07),inset 0 -26px 26px -18px rgba(0,0,0,.7)}
+html.dt .dshop .shop .scard>.sart::after{height:2px}
+html.dt .dshop .shop .scard>.sart>svg{display:none}
+html.dt .dshop .shop .scard>.sart img{top:0;bottom:auto;left:50%;width:auto;height:205%;aspect-ratio:1/1;transform:translateX(-50%);transform-origin:50% 0;filter:none}
+html.dt .dshop .shop .scard.w2>.sart img{height:150%;top:2%}
+html.dt .dshop .shop .scard>.sart canvas.toylive{top:auto;bottom:0;left:50%;width:auto;height:100%;aspect-ratio:1/1;transform:translateX(-50%);transform-origin:50% 100%;filter:none}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(1),html.dt .dshop .shop .scard>.sart.crowd>:nth-child(3){display:none}
+html.dt .dshop .shop .scard>.pt{left:calc(var(--pad) + var(--aw)*.1)}
+html.dt .dshop .shop .scard.tier5>.sart::before{content:'';position:absolute;inset:0;z-index:3;pointer-events:none;background:linear-gradient(115deg,transparent 38%,rgba(255,255,255,.15) 48%,rgba(255,226,150,.1) 53%,transparent 64%);background-size:260% 100%;mix-blend-mode:screen;animation:foil 4.5s ease-in-out infinite}
+html.noanim .dshop .shop .scard.tier5>.sart::before{display:none}
+/* tabs on the art: Makes / 3-in-1 and owned copies on top, key and copies in pool at the bottom */
+html.dt .dshop .shop .scard .mk,html.dt .dshop .shop .scard .lv2{top:calc(var(--pad) + 5px);left:calc(var(--pad) + 5px);font:800 max(11px,.64rem)/1 var(--f-body);padding:3px 6px;border-radius:4px;background:var(--gold);color:#1a1408;box-shadow:0 2px 6px rgba(0,0,0,.45);letter-spacing:.02em}
+html.dt .dshop .shop .scard .own{top:calc(var(--pad) + 5px);left:calc(var(--pad) + var(--aw) - 5px);right:auto;transform:translateX(-100%);z-index:4;font:800 max(11px,.64rem)/1 var(--f-body);color:var(--gold);padding:3px 5px;border-radius:4px;background:rgba(8,7,10,.62);text-shadow:none}
+html.dt .dshop .shop .scard:has(.lv2) .own{top:calc(var(--pad) + 27px)}
+html.dt .dshop .shop .scard .kh{left:calc(var(--pad) + var(--aw) - 5px);bottom:calc(var(--pad) + 5px);transform:translateX(-100%);z-index:4;font:700 10px/1 var(--f-body);padding:3px 5px;border-radius:4px;background:rgba(8,7,10,.68);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.75)}
+html.dt .dshop .shop .scard .pleft{position:static;grid-area:st;align-self:end;display:block;margin:0 0 3px;padding:0 0 0 5px;transform:none;font:600 max(11px,calc(.5rem*var(--az)))/1 var(--f-body);letter-spacing:0;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
+html.dt .dshop .shop .scard .pleft .plw{display:inline!important}
+html.dt .dshop .shop .scard .pleft .pls,.scard .pleft .pls{display:none}
+html.dt .dshop .shop .scard .rctag{top:-8px;left:calc(var(--pad) + var(--aw)/2);font:800 max(10px,.6rem)/1 var(--f-body);padding:3px 7px;border-radius:4px;border:0;box-shadow:0 2px 8px rgba(0,0,0,.5);letter-spacing:.08em}
+html.dt .dshop .shop>[data-hov]>.info{top:7px;right:7px;bottom:auto;width:18px;height:18px;font-size:.62rem;background:rgba(8,7,10,.4);border:1px solid rgba(255,255,255,.14);color:rgba(255,255,255,.6);z-index:5}
+html.dt .dshop .shop>[data-hov]>.info:hover{color:#fff;border-color:rgba(255,255,255,.4)}
+/* text column: rarity, name, genre row, trait row, crossover / can't-buy line, footer */
+html.dt .dshop .shop .scard .rarl{grid-area:rar;align-self:end;padding:0 22px 0 0;font:800 max(10px,.58rem)/1 var(--f-body);letter-spacing:.14em;text-transform:uppercase;color:var(--tc);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.scard .rarl .rx,.scard .gcn{display:none}
+html.dt .dshop .shop .scard .rarl .rx{display:inline;font-style:normal;color:color-mix(in srgb,var(--ink) 58%,transparent);letter-spacing:.1em}
+html.dt .dshop .shop .scard .gch .x2s,html.dt .dshop .shop .scard .tx{display:none}
+html.dt .dshop .shop .scard .nm{grid-area:nm;display:block;-webkit-line-clamp:unset;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:400 max(.9rem,calc(.8rem*var(--az)))/1.08 var(--f-display);letter-spacing:.015em;color:var(--ink);margin:0 0 2px;padding:0}
+html.dt .dshop .shop .scard .tags{display:contents}
+html.dt .dshop .shop .scard .gch,html.dt .dshop .shop .scard .tgr{display:flex;flex-wrap:nowrap;align-items:center;gap:5px;min-width:0;max-width:none;min-height:max(20px,calc(15px*var(--az)));padding:0 6px 0 5px;border-radius:5px;line-height:1}
+html.dt .dshop .shop .scard .gch{grid-area:gen;background:color-mix(in srgb,var(--gc) 13%,rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc) 32%,transparent)}
+html.dt .dshop .shop .scard .gch.up{background:color-mix(in srgb,var(--gc) 22%,rgba(255,255,255,.02));box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gc) 80%,#fff)}
+html.dt .dshop .shop .scard .gch.tierup{box-shadow:inset 0 0 0 1px var(--gold)}
+html.dt .dshop .shop .scard .tgr{grid-area:tr;background:rgba(255,255,255,.035);box-shadow:inset 0 0 0 1px rgba(255,255,255,.06)}
+html.dt .dshop .shop .scard .tgr.tierup{box-shadow:inset 0 0 0 1px var(--gold)}
+html.dt .dshop .shop .scard .gch .ge{font-style:normal;font-family:var(--f-emoji);font-size:max(13px,calc(.6rem*var(--az)));flex:none;line-height:1}
+html.dt .dshop .shop .scard .tgr>svg{width:max(13px,calc(.6rem*var(--az)));height:max(13px,calc(.6rem*var(--az)));flex:none;color:var(--ink);opacity:.9}
+html.dt .dshop .shop .scard .gch .gnm,html.dt .dshop .shop .scard .tnm{display:block!important;flex:1 1 auto;min-width:0;margin:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font:700 max(12px,calc(.54rem*var(--az)))/1.2 var(--f-body);color:var(--ink)}
+html.dt .dshop .shop .scard .tnm{font-weight:600;color:color-mix(in srgb,var(--ink) 78%,transparent)}
+html.dt .dshop .shop .scard .gch .x2s{flex:none;margin:0;font:800 max(10px,calc(.46rem*var(--az)))/1 var(--f-body);color:var(--tc);padding:2px 4px;border-radius:3px;background:rgba(0,0,0,.35)}
+html.dt .dshop .shop .scard .gct{display:inline-block;flex:none;margin:0;font:800 max(11px,calc(.5rem*var(--az)))/1 var(--f-body);font-variant-numeric:tabular-nums;color:var(--ink);white-space:nowrap}
+html.dt .dshop .shop .scard .tierup>.gct{color:#1a1408;background:var(--gold);padding:2px 5px;border-radius:3px}
+@media (max-width:1499px){html.dt .dshop .shop .scard .gct{display:none}
+  html.dt .dshop .shop .scard .gch,html.dt .dshop .shop .scard .tgr{position:relative}
+  html.dt .dshop .shop .scard .gcn{display:block;position:absolute;left:13px;top:-3px;min-width:13px;height:13px;padding:0 3px;border-radius:7px;font:800 9px/13px var(--f-body);text-align:center;color:#141218;background:color-mix(in srgb,var(--gc,#ccc) 85%,#fff)}
+  html.dt .dshop .shop .scard .tgr .gcn{background:#d8d2c8}
+  html.dt .dshop .shop .scard .tierup>.gcn{background:var(--gold)}
+  html.dt .dshop .shop .scard .pleft .plw{display:none!important}html.dt .dshop .shop .scard .pleft .pls{display:inline}
+  html.dt .dshop .shop .scard .rarl{letter-spacing:.06em}html.dt .dshop .shop .scard .rarl .rx{letter-spacing:.03em}}
+html.dt .dshop .shop .scard .sx{grid-area:sx;display:flex;flex-direction:column;gap:2px;align-self:start;min-width:0;max-width:100%;margin-top:1px}
+html.dt .dshop .shop .scard .sx .fl{display:none!important}
+html.dt .dshop .shop .scard .sx .xo{position:static;transform:none;display:block;width:auto;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;font:700 max(11px,calc(.5rem*var(--az)))/1.3 var(--f-body);letter-spacing:0;color:var(--gold);background:none;border:0;box-shadow:none;padding:0 0 0 5px}
+html.dt .dshop .shop .scard .sx .why{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font:700 max(11px,calc(.5rem*var(--az)))/1.3 var(--f-body);color:#ff7a7a;padding-left:5px}
+html.dt .dshop .shop .scard .sst{position:absolute;left:calc(var(--pad) + 5px);bottom:calc(var(--pad) + 5px);z-index:4;display:flex;flex-direction:column;align-items:flex-start;gap:3px;pointer-events:none}
+html.dt .dshop .shop .scard .sst>span{display:inline-flex;align-items:center;gap:4px;padding:3px 6px 3px 5px;border-radius:4px;background:rgba(8,7,10,.68);font:700 max(11px,calc(.52rem*var(--az)))/1 var(--f-body);font-variant-numeric:tabular-nums;color:#f3eee4;white-space:nowrap}
+html.dt .dshop .shop .scard .pr{grid-area:pr;align-self:end;justify-self:end;margin:0}
+html.dt:not(.glass) .dshop .shop .scard .pr{display:inline-flex;align-items:center;gap:2px;padding:3px 8px 3px 6px;border-radius:6px;font:400 max(1rem,calc(.86rem*var(--az)))/1 var(--f-display);color:var(--gold);background:rgba(0,0,0,.38);border:1px solid color-mix(in srgb,var(--gold) 32%,transparent);box-shadow:none}
+html.dt:not(.glass) .dshop .shop .scard.poor .pr{color:#ff6b6b;border-color:color-mix(in srgb,#ff6b6b 40%,transparent)}
+/* phones and narrow windows keep the compact card: the new rows flow like the old icon row */
+html:not(.dt) .shop .scard .tgr,html:not(.dt) .shop .scard .tx{display:contents}
+html:not(.dt) .shop .scard .tnm,html:not(.dt) .shop .scard .tgr>.gct{display:none}
+html:not(.dt) .shop .scard .gch .ge{font-style:normal}
+html:not(.dt) .slot .bstat{display:none}
+
+.slot .bstat svg,.scard .sst svg{width:1em;height:1em;flex:none}
+.slot .bstat .s-a svg,.scard .sst .s-a svg{fill:#f4a64a}.slot .bstat .s-h svg,.scard .sst .s-h svg{fill:#f2596b}
 html:not(.glass) #field:not(.arena) .unit{background:linear-gradient(to top,#0e0d10 0 26px,#000 26px 28px,transparent 28px),radial-gradient(ellipse 62% 40% at 50% calc(100% - 34px),color-mix(in srgb,var(--gc,#888) 34%,transparent),transparent 72%),linear-gradient(180deg,#17141c,#2a2531 88%)}
 html:not(.glass) #field:not(.arena) .unit.foe{background:linear-gradient(to top,#0e0d10 0 26px,#000 26px 28px,transparent 28px),radial-gradient(ellipse 62% 40% at 50% calc(100% - 34px),color-mix(in srgb,var(--red) 34%,transparent),transparent 72%),linear-gradient(180deg,#1c1418,#33242a 88%)}
-html:not(.glass) .shopwrap.shopwrap.shopwrap{background-image:linear-gradient(180deg,color-mix(in srgb,var(--gold) 10%,transparent),transparent 38%),repeating-linear-gradient(135deg,rgba(255,255,255,.022) 0 10px,transparent 10px 20px);border-top-color:color-mix(in srgb,var(--gold) 60%,var(--inkline))}
-html.dt:not(.glass) .dshop .shop{position:relative;padding-bottom:4px}
-html.dt:not(.glass) .dshop .shop::after{content:'';position:absolute;left:-6px;right:-6px;bottom:-8px;height:8px;border-radius:2px;background:linear-gradient(#6b5238,#3a2a1c 60%,#22180f);box-shadow:0 3px 0 #0b0a0e,0 8px 12px rgba(0,0,0,.5);pointer-events:none}
+html:not(.glass) .shopwrap.shopwrap.shopwrap{background-image:linear-gradient(180deg,rgba(255,255,255,.045),transparent 30%);border-top-color:rgba(255,255,255,.14)}
 @media (min-width:900px){.rgem b{display:none}.rgem i{display:inline}}
 .slot[data-v^="n"] .rgem{font-size:.52rem;padding:2px 4px}
 
@@ -8895,7 +8970,7 @@ function bbqDraw(){const el=$('#bbq');if(!el||!B||!S)return;const q=B.reserve||[
   if(el._sig===sig)return;el._sig=sig;el.hidden=false;const und=has('understudy');
   const card=s=>{const u=bench.find(x=>x.slot===s);if(!u)return `<div data-v="${s}" class="slot empty bq" aria-hidden="true"></div>`;const d=HERO[u.id],w=waiting.has(u.uid),f=fought.has(u.uid);
     const tag=w?'<span class="bqtag under" title="Steps in when a character falls">🎟️<i> STEPS IN</i></span>':f?'<span class="bqtag join" title="Stepped in and is fighting">⚔️<i> IN THE FIGHT</i></span>':'';
-    return `<div data-v="${s}" class="slot bq g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${f?' bqgone':''}" title="${esc(d.name)}">${tag}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span>${(()=>{const st=heroStatsAt(u.id,u.level);return `<span class="bstat"><b class="sa" title="Attack${d.crowd?' per body':''}">${R(st.atk)}</b><b class="sh" title="Health${d.crowd?' per body':''}">${R(st.hp)}</b></span>`;})()}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}</span></div>`;};
+    return `<div data-v="${s}" class="slot bq g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${f?' bqgone':''}" title="${esc(d.name)}">${tag}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span><span class="bstat">${statChips(heroStatsAt(u.id,u.level),d.crowd)}</span><span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}</span></div>`;};
   el.innerHTML=`<section class="board bqboard"><div class="rowlbl bqlbl">${und?`Up next · Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left, the best one takes the square of a fallen character`:'Bench · doesn\'t fight'}</div><div class="frow bench bqrow">${benchSlots.map(card).join('')}</div>${extra.length?`<div class="rowlbl bqlbl">Up next · joins as soon as a square opens</div><div class="frow bench bqrow">${extra.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}</div>`:''}</section>`;}
 function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
   B.units.filter(u=>u.alive&&u.el&&u.side===(win?'A':'E')).forEach((u,i)=>{u.el.style.setProperty('--cd',(i*70)+'ms');u.el.classList.add('cheer');});return true;}catch(e){return false;}}
@@ -9020,7 +9095,7 @@ function boardHTML(){
     const u=unitAt(slot);const isSel=sel===slot;
     if(!u)return `<button class="slot empty" data-a="slot" data-v="${slot}" aria-label="Empty slot"></button>`;
     const d=HERO[u.id];
-    return `<button class="slot g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}${!RM&&u.uid===UI.pop?' popin':''}${!RM&&u.uid===UI.merged?' merged':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${!RM&&u.uid===UI.merged?`<i class="mfx" aria-hidden="true">${'★'.repeat(u.level)}</i>`:''}${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${buybackOn(u)?'<span class="sbdg fr" title="Buyback Wheel: sells back for what you paid">FULL REFUND</span>':''}${SPRITES[u.id]?boardArt(u.id,d.crowd?BODIES[u.level-1]:0):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span>${(()=>{const st=heroStatsAt(u.id,u.level);return `<span class="bstat"><b class="sa" title="Attack${d.crowd?' per body':''}">${R(st.atk)}</b><b class="sh" title="Health${d.crowd?' per body':''}">${R(st.hp)}</b></span>`;})()}<span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
+    return `<button class="slot g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${isSel?' sel':''}${buybackOn(u)?' fullsell':''}${!RM&&u.uid===UI.pop?' popin':''}${!RM&&u.uid===UI.merged?' merged':''}" data-a="slot" data-v="${slot}" aria-pressed="${isSel}" aria-label="${esc(d.name)}${u.level>=maxLv(u.id)?' (max level)':mx.has(u.id)?' (spare copy)':''}">${!RM&&u.uid===UI.merged?`<i class="mfx" aria-hidden="true">${'★'.repeat(u.level)}</i>`:''}${u.level>=maxLv(u.id)?'<span class="tagl max">MAX</span>':mx.has(u.id)?'<span class="tagl spare">SPARE</span>':''}${buybackOn(u)?'<span class="sbdg fr" title="Buyback Wheel: sells back for what you paid">FULL REFUND</span>':''}${SPRITES[u.id]?boardArt(u.id,d.crowd?BODIES[u.level-1]:0):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span><span class="bstat">${statChips(heroStatsAt(u.id,u.level),d.crowd)}</span><span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}${d.crowd?`<span class="crowdn g-${d.genre}">×${BODIES[u.level-1]}</span>`:''}</span></button>`;
   };
   const full=fieldCount()>=bs;
   return `<section class="board" aria-label="Your board">
@@ -9075,9 +9150,9 @@ function shopHTML(){
     const mk=o.level===1&&(l1[o.id]||0)>=2; // buying it combines three copies into a ★★
     const mkTo=mk&&maxLv(o.id)>=3&&owned.some(u=>u.level===2)?3:2; // v19.56: ...and that ★★ joins another ★★ into a ★★★
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
-    return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${ready?' ready':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
+    return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${twoSlot(o.id)?' w2':''}${ready?' ready':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.rc?'<span class="rctag" title="Recast: this card replaced a card of the genre The Cut removed">Recast</span>':''}${o.tc&&!o.rc?'<span class="rctag tctag" title="Typecast: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it">Typecast</span>':''}${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?`<span class="mk${mkTo===3?' mk3':''}" title="${mkTo===3?'You own two ★ and a ★★: this third copy makes a second ★★, and the two ★★ combine into a ★★★':'You own two: this third copy combines them into a ★★'}"><span class="mkl">Makes </span><span class="mka">→</span>${'★'.repeat(mkTo)}</span>`:''}
-      ${heroArt(o.id)}${(()=>{const st=heroStatsAt(o.id,o.level||1);return `<span class="sstat"><b class="sa" title="Attack${d.crowd?' per body':''}">${R(st.atk)}</b><b class="sh" title="Health${d.crowd?' per body':''}">${R(st.hp)}</b></span>`;})()}<span class="nm">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}</span><span class="tags"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${(()=>{const sy=shopSyn(o,fieldNow,synNow),gn=GENRES[d.genre].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}>${GENRES[d.genre].e}<span class="gnm">${esc(gn)}</span>${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span>`;})()}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${tsvg(d.trait)}${d.crowd?'<i class="crwg" title="Crowd: a squad of several bodies. Each body is its own target with its own HP and attack; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span></span></button>
+      ${heroArt(o.id)}<span class="sst">${statChips(heroStatsAt(o.id,o.level||1),d.crowd)}</span><span class="nm" title="${esc(d.name)}">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}${d.tier>=3?'<i class="rx" title="Counts as 2 for its genre from ★★"> · ×2</i>':''}${d.crowd?'<i class="rx" title="Crowd: a squad of several bodies. Each body is its own target with its own HP and attack; more stars, more bodies."> · Crowd</i>':''}${twoSlot(o.id)?'<i class="rx" title="Takes 2 board squares"> · 2 squares</i>':''}</span><span class="tags">${(()=>{const cs=cardSyn(o,fieldNow,synNow),sy=cs.g,ty=cs.t,gn=GENRES[d.genre].name,tn=TRAITS[d.trait].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}><i class="ge">${GENRES[d.genre].e}</i>${sy?`<b class="gcn">${sy.c1}</b>`:''}<span class="gnm">${esc(gn)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span><span class="tgr${ty?' up':''}${ty&&ty.up?' tierup':''}" title="${esc(tn)}${ty?` on your board: ${ty.c0} → ${ty.c1}${ty.up?', the next bonus switches on':''}`:` trait: bonuses with ${TRAITS[d.trait].tiers.join(' / ')} on your board`}">${tsvg(d.trait)}${ty?`<b class="gcn">${ty.c1}</b>`:''}<span class="tnm">${esc(tn)}</span>${ty?`<b class="gct">${ty.c0}→${ty.c1}${ty.up?' ✓':''}</b>`:''}<span class="tx"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${d.crowd?'<i class="crwg" title="Crowd: a squad of several bodies. Each body is its own target with its own HP and attack; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span></span>`;})()}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span><span class="pls"> left</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -9336,6 +9411,14 @@ const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Sa
 function shy(t){return String(t).replace(/[A-Za-z]{8,}/g,w=>SHY[w]?SHY[w].replace('-','­'):w);}
 // v19.18: shop synergy preview. A card whose genre is already on the board (count >= 1): the count it brings it to,
 // and whether that switches on the next genre bonus. Same counting as the board (activeSyn), the card added as fielded.
+// v19.84: Attack / Health readouts for shop cards and board tiles
+const SV_ATK='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M11.9 1.4h2.7v2.7L7.3 11.4 4.6 8.7zM3.3 8.4l4.3 4.3-1.1 1.1-4.3-4.3zM4.6 11.2l.9.9-3 3-.9-.9z"/></svg>';
+const SV_HP='<svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 14.4 2 8.6C.4 7 .5 4.4 2.2 3c1.6-1.3 3.9-1.1 5.3.4L8 4l.5-.6c1.4-1.5 3.7-1.7 5.3-.4 1.7 1.4 1.8 4 .2 5.6z"/></svg>';
+function statChips(st,crowd){const pb=crowd?' per body':'';return `<span class="s-a" title="Attack${pb}">${SV_ATK}${R(st.atk)}</span><span class="s-h" title="Health${pb}">${SV_HP}${R(st.hp)}</span>`;}
+// v19.84: what buying this card does to its genre and trait counts on the board (null when it changes nothing)
+function cardSyn(o,fieldNow,synNow){try{const d=HERO[o.id],after=activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]);
+  const one=(k,K,T)=>{const c0=synNow.c[k][K]||0,c1=after.c[k][K]||0;return c0&&c1>c0?{c0,c1,up:(after[T][K]||0)>(synNow[T][K]||0)}:null;};
+  return {g:one('g',d.genre,'G'),t:one('t',d.trait,'T')};}catch(e){return {g:null,t:null};}}
 function shopSyn(o,fieldNow,synNow){try{const g=HERO[o.id].genre,c0=synNow.c.g[g]||0;if(!c0)return null;
   const after=activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]),c1=after.c.g[g]||0;if(c1<=c0)return null;
   return {c0,c1,up:(after.G[g]||0)>(synNow.G[g]||0)};}catch(e){return null;}}
@@ -9960,10 +10043,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.83',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.84',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.84',items:[["🃏", "Shop cards rebuilt: the whole toy always fits its art window (no more cut-off heads), one clean line each for genre and trait (no more wrapping tags), plain Attack and Health numbers, and a sleeker dark card with a thin rarity line."]]},
   {v:'19.83',items:[["🎭", "Board and shop dressed up: characters stand on a spotlit floor in their genre colour with Attack and Health badges, rarity frames glow, empty squares look like a stage, and the shop is a store counter with a shelf under the cards."]]},
   {v:'19.82',items:[["🎬", "Big moments, mobile style: when a Rare, Epic or Mythic character or a boss uses its skill, a cut-in banner with its art and the skill name sweeps across the screen."], ["💢", "Hits land harder: attackers wind up, targets flash white and get knocked back, an impact spark pops, and crits freeze the action for a split second. Health bars show the chunk a hit just took."], ["🔢", "Damage numbers pop, arc and fall away; crits are big and gold. Shop cards show Attack and Health on the art, with rarity frames and a foil shine on Mythics."]]},
   {v:'19.81',items:[["🏹", "Reach is now a tag on every character: Melee or Ranged. Sportsball and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) are Ranged: they hit from either row, never wait to step up, and count for Scope instead of War Banner and Spiked Armor."], ["📖", "New Codex tab, Combat: the tags every character has, the six roles and their numbers, how Reach, Aim and movement work, energy, damage types and armor, and every character's combat profile in one table."]]},
@@ -10295,11 +10379,14 @@ function tbaInit(){if(TBA.tried)return TBA.on;TBA.tried=true;
 function tbaScene(){const {THREE}=TBA,scene=new THREE.Scene();scene.add(new THREE.HemisphereLight('#cfd6ff','#2a2030',1.25));
   const k=new THREE.DirectionalLight('#fff1dd',2.4);k.position.set(4,9,7);scene.add(k);const rim=new THREE.DirectionalLight('#8fb4ff',1.1);rim.position.set(-6,5,-7);scene.add(rim);return scene;}
 // framing: the same as art/toy/render.html (feet on the 88% line, 3.2 units tall unless the toy is bigger)
-function tbaFrame(obj,elev,cam){const {THREE}=TBA,th=elev*Math.PI/180,v=new THREE.Vector3();let Hf=3.2;
+function tbaFrame(obj,elev,cam,fig,anims){const {THREE}=TBA,th=elev*Math.PI/180,v=new THREE.Vector3();let Hf=3.2;
+  // v19.84: with a figure and its emotes, the frame fits every sampled pose (idle bob, hover wave), not just standing
+  const poses=[];if(fig&&anims&&TBA.lib)anims.forEach(a=>{const e=TBA.lib.EMOTES[a];if(e)for(let i=0;i<12;i++)poses.push([e,i/12*e.dur]);});
   for(let it=0;it<4;it++){const ty=.38*Hf/Math.cos(th),t=new THREE.Vector3(0,ty,0);cam.position.copy(t).add(new THREE.Vector3(0,Math.sin(th),Math.cos(th)).multiplyScalar(30));cam.up.set(0,1,0);cam.lookAt(t);
     Object.assign(cam,{left:-Hf/2,right:Hf/2,top:Hf/2,bottom:-Hf/2});cam.updateProjectionMatrix();cam.updateMatrixWorld();obj.updateMatrixWorld(true);let mx=0,my=-9;
-    obj.traverse(m=>{if(!m.isMesh||!m.visible||(m.material&&m.material.transparent&&m.material.opacity<.3))return;const p=m.geometry.attributes.position;
-      for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(m.matrixWorld).project(cam);mx=Math.max(mx,Math.abs(v.x));my=Math.max(my,v.y);}});
+    const meas=()=>{obj.updateMatrixWorld(true);obj.traverse(m=>{if(!m.isMesh||!m.visible||(m.material&&m.material.transparent&&m.material.opacity<.3))return;const p=m.geometry.attributes.position;
+      for(let i=0;i<p.count;i++){v.fromBufferAttribute(p,i).applyMatrix4(m.matrixWorld).project(cam);mx=Math.max(mx,Math.abs(v.x));my=Math.max(my,v.y);}});};
+    if(poses.length){for(const [e,t] of poses){fig.position.y=TBA.lib.poseFigure(fig,TBA.lib.sampleEmote(e,t),1,e.rel);meas();}fig.position.y=TBA.lib.poseFigure(fig,null,0);}else meas();
     const f=Math.max(1,mx/.94,(my+.76)/1.7);if(f<=1.0005)break;Hf*=f;}}
 const tbaYield=()=>new Promise(r=>setTimeout(r,0));
 // v19.37: frames are kept as image blobs (compact) rather than base64 text; falls back to a data URL
@@ -10307,7 +10394,7 @@ const tbaBlob=c=>new Promise(res=>{try{c.toBlob(b=>res(b?URL.createObjectURL(b):
 async function tbaRender(key,anim){const p=tbaParse(key),{THREE,lib,R,E}=TBA;if(!p)return [];const scene=tbaScene(),cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);
   const c=(p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);if(!c)return [];
   const root=new THREE.Group(),fig=c.build({variant:p.v});root.add(fig);scene.add(root);root.rotation.y=p.view==='back'?Math.PI:p.view==='foe'?0:-.38;
-  tbaFrame(root,p.view==='back'?16:p.view==='foe'?14:8,cam);const camState={l:cam.left,r:cam.right,t:cam.top,b:cam.bottom,pos:cam.position.clone(),q:cam.quaternion.clone()};
+  tbaFrame(root,p.view==='back'?16:p.view==='foe'?14:8,cam,fig,['idle','wave']);const camState={l:cam.left,r:cam.right,t:cam.top,b:cam.bottom,pos:cam.position.clone(),q:cam.quaternion.clone()};
   const e=lib.EMOTES[anim],N=anim==='idle'?32:e.once?18:24,out=[];
   try{for(let i=0;i<N;i++){if(!TBA.on)break;
     Object.assign(cam,{left:camState.l,right:camState.r,top:camState.t,bottom:camState.b});cam.position.copy(camState.pos);cam.quaternion.copy(camState.q);cam.updateProjectionMatrix();cam.updateMatrixWorld();
@@ -10580,12 +10667,25 @@ function tlFail(why){LV3.dead=true;LV3.why=why;tlRestore();}
 function tlRestore(){document.querySelectorAll('canvas.toylive').forEach(c=>{if(c._img){c._img._tlx=0;c.replaceWith(c._img);}});LV3.on=false;}
 function tlSwap(img){const k=img._tbk;img._tlx=1;const c=document.createElement('canvas');c.width=c.height=LV3.CELL;
   c.className=(img.className?img.className+' ':'')+'toylive';const st=img.getAttribute('style');if(st)c.setAttribute('style',st);c.setAttribute('aria-hidden','true');
-  c._img=img;c._k=k;c._ph=Math.random();img.replaceWith(c);return c;}
+  c._img=img;c._k=k;c._ph=Math.random();c._pt=!!img.closest('.dshop .scard');img.replaceWith(c);return c;}
 function tlFig(k){let f=LV3.figs.get(k);if(f!==undefined)return f;f=null;const p=tbaParse(k);
   if(p){const {THREE,lib}=TBA,c=(p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);
     if(c)try{const g=new THREE.Group(),fig=c.build({variant:p.v});g.add(fig);g.rotation.y=p.view==='back'?Math.PI:p.view==='foe'?0:-.38;
-      const cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);tbaFrame(g,p.view==='back'?16:p.view==='foe'?14:8,cam);f={g,fig,cam};}catch(e){f=null;}}
+      const cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);tbaFrame(g,p.view==='back'?16:p.view==='foe'?14:8,cam,fig,['idle','wave']);f={g,fig,cam,id:p.id};}catch(e){f=null;}}
   LV3.figs.set(k,f);return f;}
+// v19.84: desktop shop cards show a head-and-shoulders portrait (Dota Underlords style): a second camera, same view
+// angle, aimed at the neck joint (hats, antennae and helmets included, 7% headroom); toys without a usable neck get a
+// whole-body frame
+const TL_PFULL=new Set(['bonedragon','tanks','hivemind','vampbat','droids']);
+function tlPortCam(f){const {THREE}=TBA,g=f.g,fig=f.fig;fig.position.y=TBA.lib.poseFigure(fig,null,0);g.updateMatrixWorld(true);
+  let neck=null;if(!TL_PFULL.has(f.id))g.traverse(o=>{if(!neck&&o.userData&&o.userData.joint==='neck')neck=o;});
+  const full=new THREE.Box3().setFromObject(g),H=full.max.y-full.min.y,W=full.max.x-full.min.x,hb=neck?new THREE.Box3().setFromObject(neck):null;let h,cy,c;
+  if(hb&&!hb.isEmpty()){const hh=hb.max.y-hb.min.y,hw=Math.min(hb.max.x-hb.min.x,hb.max.z-hb.min.z,hh*1.6);h=Math.min(H*1.02,Math.max(hh*2.1,hw*1.2));c=hb.getCenter(new THREE.Vector3());
+    const top=full.max.y-hb.max.y<hh*.9?full.max.y:hb.max.y;cy=top+h*.07-h/2;}
+  else{h=Math.max(H,W*.95)*1.06;c=full.getCenter(new THREE.Vector3());cy=c.y+h*.02;}
+  if(HERO[f.id]&&twoSlot(f.id)&&hb&&!hb.isEmpty()){const h2=Math.min(H*1.02,h*1.75);cy+=(h-h2)/2*.6;h=h2;} // giants: more of the body
+  const d=new THREE.Vector3();f.cam.getWorldDirection(d).negate();const pc=new THREE.OrthographicCamera(-h/2,h/2,h/2,-h/2,.1,100),t=new THREE.Vector3(c.x,cy,c.z);
+  pc.position.copy(t).add(d.multiplyScalar(30));pc.up.set(0,1,0);pc.lookAt(t);pc.updateProjectionMatrix();pc.updateMatrixWorld();return pc;}
 function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
   if(!tlWanted()){if(LV3.on||document.querySelector('canvas.toylive'))tlRestore();return;}
   if(t-LV3.last<1000/LV3.fps-2)return;const gap=LV3.last?t-LV3.last:16;LV3.last=t;
@@ -10602,7 +10702,7 @@ function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
   const drawn=[];list.forEach((c,i)=>{const f=tlFig(c._k);if(!f)return;const x=(i%cols)*C,y=HH-(Math.floor(i/cols)+1)*C;
     const hov=c.parentNode&&c.closest('button,.scard,.unit,.slot,.bslot,[data-a]');const wave=hov&&hov.matches(':hover');
     const e=lib.EMOTES[wave?'wave':'idle'],ps=lib.sampleEmote(e,now+c._ph*e.dur);f.fig.position.y=lib.poseFigure(f.fig,ps,1,e.rel);
-    LV3.root.add(f.g);R.setViewport(x,y,C,C);R.setScissor(x,y,C,C);LV3.E.render(LV3.scene,f.cam);LV3.root.remove(f.g);drawn.push([c,x,HH-y-C]);});
+    LV3.root.add(f.g);R.setViewport(x,y,C,C);R.setScissor(x,y,C,C);LV3.E.render(LV3.scene,c._pt?(f.pc||(f.pc=tlPortCam(f))):f.cam);LV3.root.remove(f.g);drawn.push([c,x,HH-y-C]);});
   const src=R.domElement;drawn.forEach(([c,x,y])=>{const g=c._g||(c._g=c.getContext('2d'));g.clearRect(0,0,C,C);g.drawImage(src,x,y,C,C,0,0,C,C);});
   // too slow here: draw less often, then give the toys back their pre-drawn pictures
   if(!LV3.keep){const cost=performance.now()-t0;LV3.ema=LV3.nf?LV3.ema*.93+cost*.07:cost;
