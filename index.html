@@ -376,6 +376,9 @@ strong.lvon{color:var(--gold);font-weight:800}
 .evresult{font-size:1rem;text-align:center;margin:6px 0 10px}
 .scard .aimg{font-style:normal;font-size:.7rem;margin-right:1px}
 .proj{position:absolute;left:-5px;top:-5px;width:10px;height:10px;border-radius:50%;background:var(--gc);box-shadow:0 0 10px var(--gc);pointer-events:none;z-index:4}
+.proj.healp{background:#4dff7c;box-shadow:0 0 12px #4dff7c}
+.unit .slashfx{position:absolute;left:50%;top:45%;width:70%;height:6px;margin:-3px 0 0 -35%;border-radius:3px;background:linear-gradient(90deg,transparent,#fff 35%,var(--sc,#fff) 65%,transparent);box-shadow:0 0 10px var(--sc,#fff);pointer-events:none;z-index:7;animation:slashfx .34s ease-out forwards}
+@keyframes slashfx{0%{opacity:0;transform:rotate(-35deg) scaleX(.2)}35%{opacity:1;transform:rotate(-35deg) scaleX(1.1)}100%{opacity:0;transform:rotate(-35deg) scaleX(1.25) translateY(4px)}}
 .proj.ballp{width:auto;height:auto;background:none;box-shadow:none;font-family:var(--f-emoji);left:-10px;top:-10px;line-height:1}
 .streak{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-size:.9rem;color:var(--leg);padding:.15em .6em;border:1px solid var(--leg);border-radius:999px}
 .clock{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem}
@@ -8099,6 +8102,7 @@ function outMult(u,t){
 }
 function dealDamage(src,t,amt,type,aoe){
   if(!t.alive||amt<=0)return 0;
+  if(src&&src._casting&&(type==='spell'||type==='true'))castShot(src,t);
   if(type==='attack'&&t.catches>0&&t.crowd){t.catches--;regrow(t,1);float(t,'Caught!','heal');return 0;}
   // Smoke Grenade: extra dodge for your characters during the first 10s (no rand() drawn when there is no dodge at all)
   const dg=t.dodge+(t.side==='A'&&B.t<10&&has('smoke')?tv('smoke')/100:0);
@@ -8188,7 +8192,7 @@ function kill(t,src){
   if(B.ball&&B.ball.holder===t){const nx=nextBallHolder(t);B.ball.holder=nx;if(nx)nx.timer=Math.min(nx.timer,.4);if(B.ball.streak)float(nx||t,'Fumble!','ko');B.ball.streak=0;}
 }
 function heal(src,t,amt,silent){
-  if(!t.alive)return 0;amt*=src?src.healMult:1;
+  if(!t.alive)return 0;if(src&&src._casting)castShot(src,t,1);amt*=src?src.healMult:1;
   const healer=src;
   // Neighbors: Medics heal the characters right beside them more
   if(src&&src!==t&&src.trait==='medic'&&src.side===t.side&&Z(src)===Z(t)&&src.row===t.row&&Math.abs(src.col-t.col)===1)amt*=1+TUNE.medicNear;
@@ -8316,7 +8320,7 @@ function throwBall(u){
   const best={};ballOrder().forEach(b=>{const a=b.crowd?b.bodyAtk*bodies(b):b.atk+b.atkStack;best[b.id]=Math.max(best[b.id]||0,a);});
   const comb=Object.values(best).reduce((s,x)=>s+x,0);
   const mult=Math.min(TUNE.gbMax,TUNE.gbStart+TUNE.gbStep*B.ball.streak);
-  ballFx(u,t,null,mult);recoil(u,t,14);
+  ballFx(u,t,null,mult);recoil(u,t,14);if(!B.silent&&TBA.on){u.atkT=performance.now();u.atkK='atkShoot';}
   dealDamage(u,t,comb*mult*outMult(u,t),'attack');
   ballOrder().forEach(b=>{if(b.manaMax)b.mana=Math.min(b.manaMax,b.mana+TUNE.gbEnergy);});
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
@@ -8354,7 +8358,8 @@ function act(u){
     u.mana=0;
     if(!B.silent&&u.el){if(RM)float(u,SK[u.skill].name,'sp');else castFx(u);u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
       if(!RM){const ring=document.createElement('i');ring.className='castring';el.appendChild(ring);setTimeout(()=>ring.remove(),550);}}
-    SK[u.skill].cast(u);return;
+    const cfx=!B.silent&&u.el&&!RM;if(cfx){u._casting=1;B._cs=new Set();}
+    try{SK[u.skill].cast(u);}finally{if(cfx){u._casting=0;B._cs=null;}}return;
   }
   if(B.ball&&u.side==='A'&&u.genre==='ball'){if(B.ball.holder===u)throwBall(u);return;}
   if(blocked(u)){if(u.manaMax)u.mana=Math.min(u.manaMax,u.mana+8);return;}
@@ -8662,6 +8667,18 @@ function projectile(u,t,cls,glyph,size){
   const an=p.animate([{transform:`translate(${ar.left+ar.width/2-fr.left}px,${ar.top+ar.height/2-fr.top}px) rotate(0deg)`},{transform:`translate(${br.left+br.width/2-fr.left}px,${br.top+br.height/2-fr.top}px) rotate(${glyph?360:0}deg)`}],{duration:(arguments[5]||260)/B.speed,easing:'ease-in',fill:'forwards'});
   an.onfinish=()=>p.remove();return p;
 }
+// v19.80: how each character attacks (visual only): Sportsball throws, gunslingers shoot, the rest by trait
+const SHOOTERS=new Set(['outlaws','smuggler','bounty','noname']);
+function atkStyle(u){const id=u.twin?u.tid:u.side==='A'?u.id:null,d=id&&HERO[id];if(d&&d.genre==='ball')return 'throw';if(id&&SHOOTERS.has(id))return 'shoot';return u.range==='melee'?'melee':'ranged';}
+// a skill's hit on one target: the caster's shot (ball, bullet, bolt) or a slash for melee casters; heals send a green shot
+let CAST_OWNFX=null;
+function castShot(u,t,isHeal){if(!B||B.silent||RM||!B._cs||!u.el||!t||!t.el||t===u||B._cs.has(t)||B._cs.size>=8)return;
+  if(!CAST_OWNFX)CAST_OWNFX=new Set(Object.keys(SK).filter(k=>/ballFx|projectile\(/.test(String(SK[k].cast))));
+  if(CAST_OWNFX.has(u.skill))return;B._cs.add(t);const st=atkStyle(u);
+  if(isHeal){projectile(u,t,'healp',null,0,300);return;}
+  if(st==='melee'){const i=document.createElement('i');i.className='slashfx';i.style.setProperty('--sc',getComputedStyle(u.el).getPropertyValue('--gc')||'#fff');t.el.appendChild(i);setTimeout(()=>i.remove(),Math.max(200,380/(B.speed||1)));return;}
+  if(st==='throw'){projectile(u,t,'ballp',BALLS[u.twin?u.tid:u.id]||'⚾',18,300);return;}
+  projectile(u,t,u.genre?'g-'+u.genre:'g-foe',null,0,300);}
 function ballFx(u,t,from,mult){if(!B||B.silent)return;if(mult){gbFly(from||u,t,14+mult*7);return;}projectile(from||u,t,'ballp',BALLS[u.id]||'⚾',18);}
 function gbClear(){if(typeof B!=='undefined'&&B&&B.gbT){clearTimeout(B.gbT);B.gbT=0;}if(typeof document==='undefined')return;document.querySelectorAll('.gball').forEach(e=>{e.getAnimations().forEach(a=>a.cancel());e.remove();});if(typeof AR!=='undefined'&&AR.scene)arGbClear();}
 function gbFly(u,t,size,dur){gbClear();const el=projectile(u,t,'ballp','⚽',size,dur);if(el)el.classList.add('gball');}
@@ -8686,14 +8703,14 @@ function aimLine(u,t){if(!B||B.silent||RM||!u.el||!t.el)return;const f=$('#field
 function animAttack(u,t){
   if(B.silent||RM||!u.el||!t.el)return;
   if(TBA.on){u.atkT=performance.now();u.atkK=tbaAtkKind(u);}
-  if(u.genre==='ball'){ballFx(u,t);recoil(u,t,14);return;}
+  const st=atkStyle(u);if(st==='throw'){ballFx(u,t);recoil(u,t,14);return;}
   // make every attack readable: the attacker glows; melee lunges at its target
   u.el.classList.remove('atk');void u.el.offsetWidth;u.el.classList.add('atk');
   const mover=u.el.querySelector('.spr,.crowdspr')||u.el; // characters with art: only the art moves, the square stays
   atkPose(u);
   const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect();
   const dx=(rb.left+rb.width/2)-(ra.left+ra.width/2),dy=(rb.top+rb.height/2)-(ra.top+ra.height/2),dist=Math.hypot(dx,dy)||1;
-  if(u.range==='melee'){
+  if(st==='melee'){
     // melee: the character's square travels to its target, hits it, and comes back
     const k=Math.max(0,(dist-rb.height*.55)/dist),ms=Math.max(180,Math.min(420,dist*1.3))/B.speed;
     u.el.style.zIndex=5;
@@ -9818,10 +9835,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.79',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.80',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.80',items:[["🎯", "Everyone attacks the way they look: Sportsball throws (no more walking up to punch in 3D), and the gunslingers (Outlaw Gang, Space Smuggler, Bounty Hunter, The Man With No Name) shoot from where they stand."], ["💥", "Skills show who they hit: a shot flies to every enemy a skill damages (a slash for melee casters), and a green shot to every ally it heals."]]},
   {v:'19.79',items:[["✨", "Skills you can see: a full energy bar glows, and when a character casts, it flashes in its genre colour, the skill's name pops up and a burst shows what it does (heal, shield, stun, summon, area hit, buff)."], ["⏸️", "Knockouts land with a tiny freeze-frame, and the battle bench is now Up next: who steps in or joins, and when."]]},
   {v:'19.78',items:[["🔒", "A locked shop now stays locked through an intermission, so you get exactly those cards back afterwards."]]},
   {v:'19.77',items:[["🔎", "The Codex search now looks in every tab: if the open tab has nothing, it shows which tabs do."], ["🏷️", "Shop and board tags (Recast, Typecast, New!, in pool, MAX...) are explained in Codex > Effects."]]},
@@ -10179,10 +10197,10 @@ function tbaTrim(){let n=0;for(const f of TBA.cache.values())n+=f?f.length:0;if(
   const old=[...TBA.cache.keys()].filter(k=>TBA.cache.get(k)&&now-(U.get(k)||0)>2000).sort((a,b)=>(U.get(a)||0)-(U.get(b)||0));
   for(const k of old){if(n<=TBA_MAXF*.8)break;const f=TBA.cache.get(k);TBA.cache.delete(k);U.delete(k);n-=f.length;f.forEach(u=>{if(u.startsWith('blob:'))URL.revokeObjectURL(u);});}}
 function tbaAsk(k,anim,pr){const id=k+'|'+anim;if(TBA.cache.has(id))return;TBA.want.set(id,Math.max(pr,TBA.want.get(id)||0));}
-function tbaAtkKind(u){if(u.range==='melee')return 'atkMelee';const tr=u.side==='A'&&HERO[u.id]?HERO[u.id].trait:u.twin&&HERO[u.tid]?HERO[u.tid].trait:'';return tr==='mystic'||tr==='medic'?'atkCast':'atkShoot';}
+function tbaAtkKind(u){const st=atkStyle(u);if(st==='melee')return 'atkMelee';if(st!=='ranged')return 'atkShoot';const tr=u.side==='A'&&HERO[u.id]?HERO[u.id].trait:u.twin&&HERO[u.tid]?HERO[u.tid].trait:'';return tr==='mystic'||tr==='medic'?'atkCast':'atkShoot';}
 const TBA_GCOL={army:'#a3b462',bug:'#c49cff',undead:'#8fd18a',ball:'#4fa3f7',heist:'#e9c352',west:'#e0874f',horror:'#e2507e',space:'#46c8e0',kaiju:'#cfe04a'};
 const TBA_GLYPH={'⚾':'base','🔴':'dodge','🏀':'basket','🏈':'foot','⚽':'soccer','💧':'drop','📋':'clipboard','👕':'shirt','🎊':'confetti'};
-const TBA_PID={radio:['shell'],observer:['shell'],queen:['stinger'],hivemind:['psy'],necro:['skull'],hacker:['packet'],prospector:['dynamite'],bonesetter:['bone'],fixer:['cash'],doc:['bottle']};
+const TBA_PID={outlaws:['bullet'],smuggler:['bullet'],bounty:['bullet'],noname:['bullet'],ranger:['arrow','#9fd88a'],radio:['shell'],observer:['shell'],queen:['stinger'],hivemind:['psy'],necro:['skull'],hacker:['packet'],prospector:['dynamite'],bonesetter:['bone'],fixer:['cash'],doc:['bottle']};
 const TBA_SPIN=new Set(['clipboard','dynamite','bone','cash','bottle','shirt','confetti','skull']);
 function tbaProjFor(u,glyph){if(glyph)return TBA_GLYPH[glyph]?[TBA_GLYPH[glyph]]:null;
   if(u.side==='E'&&!u.twin)return ['sniper','cgi','mooks','figures','double'].includes(u.key)?['bullet']:['orb','#ff5a4a'];
