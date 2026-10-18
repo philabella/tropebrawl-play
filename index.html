@@ -647,6 +647,18 @@ div.xlist{display:grid;gap:6px}
 @keyframes die{0%{opacity:1;filter:brightness(2.4);transform:none}25%{opacity:1;filter:brightness(1.6);transform:scale(1.08) rotate(-5deg)}100%{opacity:.12;filter:grayscale(1);transform:scale(.84) rotate(7deg) translateY(6px)}}
 :root:not(.noanim) .unit.cheer{animation:cheer .5s ease-out 2 both;animation-delay:var(--cd,0ms)}
 @keyframes cheer{0%,100%{transform:none}40%{transform:translateY(-12px) scale(1.05)}}
+.mpb.full{box-shadow:0 0 6px var(--mana);animation:mfull .55s ease-in-out infinite alternate}
+@keyframes mfull{to{filter:brightness(1.7)}}
+.castbn{position:absolute;left:50%;top:-4px;transform:translate(-50%,-100%);white-space:nowrap;font-weight:900;font-size:calc(.78rem*var(--fxk,1));line-height:1.2;padding:2px 9px;border-radius:999px;background:var(--gc,var(--mana));color:#0b0a0e;box-shadow:0 0 14px var(--gc,var(--mana)),0 0 0 2px #0b0a0e;z-index:12;pointer-events:none;animation:castbn .95s ease-out forwards}
+@keyframes castbn{0%{opacity:0;transform:translate(-50%,-60%) scale(.5)}15%{opacity:1;transform:translate(-50%,-100%) scale(1.18)}30%{transform:translate(-50%,-100%) scale(1)}80%{opacity:1}100%{opacity:0;transform:translate(-50%,-150%) scale(1)}}
+.unit.casting2{animation:castpulse .45s ease-out}
+@keyframes castpulse{0%{filter:none}30%{filter:drop-shadow(0 0 10px var(--gc,var(--mana))) brightness(1.45)}100%{filter:none}}
+.cfx{position:absolute;left:50%;top:45%;width:0;height:0;pointer-events:none;z-index:11}
+.cfx i{position:absolute;left:0;top:0;font-style:normal;font-weight:900;color:var(--cfc);text-shadow:0 0 6px var(--cfc),0 1px 0 #0b0a0e;font-size:calc(1rem*var(--fxk,1));transform:translate(-50%,-50%);animation:cfxp .7s ease-out forwards}
+@keyframes cfxp{0%{opacity:1;transform:translate(-50%,-50%) scale(.4)}100%{opacity:0;transform:translate(calc(-50% + var(--dx)),calc(-50% + var(--dy))) scale(1.25)}}
+.cfx b{position:absolute;left:0;top:0;width:22px;height:22px;margin:-11px;border-radius:50%;border:3px solid var(--cfc);box-shadow:0 0 10px var(--cfc);animation:cfxr .6s ease-out forwards}
+@keyframes cfxr{to{transform:scale(var(--rs,4));opacity:0}}
+.cfx.k-heal{--cfc:#4dff7c}.cfx.k-shield{--cfc:#cfe3ff}.cfx.k-stun{--cfc:#ffd34d}.cfx.k-summon{--cfc:#c69bff}.cfx.k-aoe{--cfc:#ff7a45;--rs:8}.cfx.k-buff{--cfc:#ffb347}.cfx.k-hit{--cfc:var(--gc,#fff)}
 .castring{position:absolute;left:50%;top:40%;width:56px;height:56px;margin:-28px 0 0 -28px;border-radius:50%;border:3px solid var(--mana);box-shadow:0 0 12px var(--mana);pointer-events:none;z-index:2;animation:cring .55s ease-out forwards}
 @keyframes cring{0%{transform:scale(.4);opacity:1}100%{transform:scale(1.9);opacity:0}}
 .flt.dmg.big{font-size:1.3rem;color:#ffd7cf}
@@ -7662,7 +7674,9 @@ function intMeter(inc){const cap=intCap(),n=inc.interest,nx=n<cap?TUNE.intPer*(n
 function streakGold(n){const t=TUNE.streakGold;return t[Math.min(t.length-1,Math.abs(n|0))];}
 function payIncome(extra){S.rrRound=0;if(legend('dircut'))S.freeRerolls=(S.freeRerolls||0)+3;const inc=income();S.stats.int=(S.stats.int||0)+inc.interest;const t=inc.base+inc.interest+inc.coin+inc.ledger+(extra||0);S.gold+=t;S.stats.gold+=t;
   const r0=S.rank,b0=boardSize();gainXp(inc.xp,true);
-  if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}S.locked=false;
+  if(!S.locked){rollShop();if(S.rank>r0)rankPreview();}
+  // v19.78: an event round next (no shop before it) keeps the lock for the round after it
+  {const nx=curRound();S.locked=!!(S.locked&&nx&&nx.type==='event');}
   if(S.rank>r0)toast(rankMsg(b0).replace('⬆️','⬆️ Free XP filled the gauge.'));}
 function nextRound(){payIncome();startRound();}
 // Field Promotion's target: your lowest-level character on the board that can still level up (Rare or below)
@@ -8144,7 +8158,7 @@ function kill(t,src){
   if(t.side==='A'&&!t.summon&&legend('plotarmor')&&!t.plotSaved){t.plotSaved=true;B.plot=true;t.hp=t.maxHp*.2;t.untarget=1;float(t,'Plot Armor!','heal');return;}
   if(t.side==='A'&&!t.summon&&!t.revived&&B.revive){B.revive=false;t.revived=true;t.hp=t.maxHp*tv('extralife')/100;float(t,'Extra Life!','heal');return;}
   t.hp=0;t.alive=false;t.shield=0;t.taunt=0;
-  float(t,'KO','ko');
+  float(t,'KO','ko');if(!B.silent&&!RM&&!t.summon&&typeof performance!=='undefined')B.hs=Math.max(B.hs||0,performance.now()+(t.side==='E'?45:70));
   if(t.side==='A'&&t.genre==='kaiju'&&legend('finalwars'))sideUnits('A').filter(a=>a!==t&&a.genre==='kaiju').forEach(a=>{a.dmgMult*=1.2;float(a,'+20%','sp');});
   if(t.side==='A'&&!B.firstDown){B.firstDown=t;if(B.syn.X.jock)sideUnits('A').forEach(a=>a.hastes.push({m:.2,t:5}));}
   if(t.side==='A'&&!t.summon){
@@ -8214,7 +8228,7 @@ function fillFromBench(row,col){if(!B.reserve||!B.reserve.length)return;if(B.uni
   while(i<B.reserve.length&&B.reserve[i].under&&(!(B.underLeft>0)||(B.reserve[i].tier||1)>ft))i++;if(i>=B.reserve.length)return;
   const o=B.reserve.splice(i,1)[0];if(o.under){B.underLeft--;if(B.underLeft<=0)B.reserve=B.reserve.filter(x=>!x.under);}
   if(o.rise){o.rise.row=row;o.rise.col=col;riseUnit(o.rise,o.f);return;}
-  o.row=row;o.col=col;const nu=mkUnit(o);nu.subIn=true;B.units.push(nu);}
+  o.row=row;o.col=col;const nu=mkUnit(o);nu.subIn=true;if(!B.silent&&o.under)nu._stepIn=1;B.units.push(nu);}
 function deploy(o,owner,cap){if(owner!=null){if(spawnsOut(owner)>=cap)return false;o.owner=owner;}
   const sl=emptySlots(o.side);
   if(sl.length){o.row=sl[0][0];o.col=sl[0][1];B.units.push(mkUnit(o));return true;}
@@ -8323,10 +8337,22 @@ function wideFix(){for(const sd of ['A','E']){const us=B.units.filter(u=>u.side=
     const free=['front','back'].flatMap(rw=>(x.wide?[0,2,1]:[1,2,0,3]).map(c=>[rw,c])).find(([rw,c])=>!occ.has(rw+c)&&(!x.wide||(c<3&&!occ.has(rw+(c+1)))));if(free){x.row=free[0];x.col=free[1];}else{x.alive=false;x.sat=true;}}}}}
 function stepUp(side,col){if(B.units.some(x=>x.alive&&Z(x)===side&&x.row==='front'&&cv(x,col)))return false;
   const u=B.units.find(x=>x.side===side&&x.col===col&&stepper(x));if(!u)return false;u.row='front';if(!B.silent)float(u,'Step up!','sp');return true;}
+// v19.79: what kind of skill it is, from its own text (cached): drives the colour and glyph of the cast burst
+const SKFX={},SKG={heal:'✚',shield:'⬢',stun:'✦',summon:'✨',aoe:'💥',buff:'⬆',hit:'✸'};
+function skKind(k){if(SKFX[k])return SKFX[k];let d='';try{d=SK[k].d(3);}catch(e){}d=((SK[k]||{}).name+' '+d).toLowerCase();
+  const P=[['aoe',/every enemy|all enemies|each enemy|random enem|every (tank|baby|body|one)|nearby|beside|around it/],['stun',/stun|asleep|sleep|freez|daze/],['heal',/\bheals?\b|restores?|patch(es)? up|mends?/],
+    ['shield',/shield|barrier/],['summon',/summon|spawn|calls? in|raises?|joins?/],['buff',/attack speed|% attack|haste|faster|% damage for/],['hit',/\b(deals?|hits?|shoots?|strikes?|slams?|stomps?|damage|steals?)\b/]];
+  let best='hit',bi=1e9;P.forEach(([n,re])=>{if(n==='hit')return;const m=d.search(re);if(m>=0&&m<bi){bi=m;best=n;}});return SKFX[k]=best;}
+function castFx(u){const el=u.el;if(!el)return;const k=skKind(u.skill);fxK(u);
+  const bn=document.createElement('span');bn.className='castbn';bn.textContent=SK[u.skill].name;el.appendChild(bn);setTimeout(()=>bn.remove(),980);
+  el.classList.remove('casting2');void el.offsetWidth;el.classList.add('casting2');
+  const f=document.createElement('span');f.className='cfx k-'+k;const n=k==='aoe'?8:6;let h='<b></b>';
+  for(let i=0;i<n;i++){const a=i/n*Math.PI*2+.3,r=(k==='aoe'?46:34)+(i%2)*10;h+=`<i style="--dx:${Math.round(Math.cos(a)*r)}px;--dy:${Math.round(Math.sin(a)*r)}px">${SKG[k]}</i>`;}
+  f.innerHTML=h;el.appendChild(f);setTimeout(()=>f.remove(),760);if(k==='aoe')shake();}
 function act(u){
   if(u.skill&&u.manaMax&&u.mana>=u.manaMax){
     u.mana=0;
-    if(!B.silent&&u.el){float(u,SK[u.skill].name,'sp');u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
+    if(!B.silent&&u.el){if(RM)float(u,SK[u.skill].name,'sp');else castFx(u);u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
       if(!RM){const ring=document.createElement('i');ring.className='castring';el.appendChild(ring);setTimeout(()=>ring.remove(),550);}}
     SK[u.skill].cast(u);return;
   }
@@ -8717,7 +8743,8 @@ function drawBattle(){
     u.$hf.style.width=(hp/u.maxHp*100)+'%';
     {const sp=Math.min(100,Math.max(0,u.shield)/u.maxHp*100),sl=Math.max(0,Math.min(hp/u.maxHp*100,100-sp));u.$sf.style.width=sp+'%';u.$sf.style.left=sl+'%';if(sp>0)u._shw=[sl,sp];
       if(u._shp!=null&&u.alive&&u.shield-u._shp>=1)numFx(u,u.shield-u._shp,'shield');u._shp=u.alive?Math.max(0,u.shield):0;}
-    if(u.manaMax)u.$mp.style.width=(u.mana/u.manaMax*100)+'%';
+    if(u.manaMax){u.$mp.style.width=(u.mana/u.manaMax*100)+'%';const full=u.alive&&u.mana>=u.manaMax;if(u._mf!==full){u._mf=full;u.$mp.parentNode.classList.toggle('full',full);}}
+    if(u._stepIn&&u.el){u._stepIn=0;float(u,'Steps in!','sp');}
     if(u.$bn)u.$bn.textContent=bodies(u);
     // a character with an <id>_up sprite (Burrow Lurker) switches to it once it has tunneled into the enemy side
     if(u.side==='A'&&!u.summon&&SPRITES[u.id+'_up']){const im=u.el.querySelector('img.spr'),wk=(u.zone||u.side)!==u.side?u.id+'_up':u.id;if(im&&(im._tbk!==undefined?im._tbk||im._wk:TBA.rev&&TBA.rev.get(im.getAttribute('src')))!==wk){im._tbk=undefined;im._cur=null;im._wk=wk;im.setAttribute('src',SPRITES[wk]);}}
@@ -8753,13 +8780,13 @@ function bbqDraw(){const el=$('#bbq');if(!el||!B||!S)return;const q=B.reserve||[
   const card=s=>{const u=bench.find(x=>x.slot===s);if(!u)return `<div data-v="${s}" class="slot empty bq" aria-hidden="true"></div>`;const d=HERO[u.id],w=waiting.has(u.uid),f=fought.has(u.uid);
     const tag=w?'<span class="bqtag under" title="Steps in when a character falls">🎟️<i> STEPS IN</i></span>':f?'<span class="bqtag join" title="Stepped in and is fighting">⚔️<i> IN THE FIGHT</i></span>':'';
     return `<div data-v="${s}" class="slot bq g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${f?' bqgone':''}" title="${esc(d.name)}">${tag}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span><span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}</span></div>`;};
-  el.innerHTML=`<section class="board bqboard"><div class="rowlbl bqlbl">Bench · ${und?`Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left`:'doesn\'t fight'}</div><div class="frow bench bqrow">${benchSlots.map(card).join('')}</div>${extra.length?`<div class="rowlbl bqlbl">Waiting to join</div><div class="frow bench bqrow">${extra.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}</div>`:''}</section>`;}
+  el.innerHTML=`<section class="board bqboard"><div class="rowlbl bqlbl">${und?`Up next · Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left, the best one takes the square of a fallen character`:'Bench · doesn\'t fight'}</div><div class="frow bench bqrow">${benchSlots.map(card).join('')}</div>${extra.length?`<div class="rowlbl bqlbl">Up next · joins as soon as a square opens</div><div class="frow bench bqrow">${extra.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}</div>`:''}</section>`;}
 function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
   B.units.filter(u=>u.alive&&u.el&&u.side===(win?'A':'E')).forEach((u,i)=>{u.el.style.setProperty('--cd',(i*70)+'ms');u.el.classList.add('cheer');});return true;}catch(e){return false;}}
 function battleLoop(ts){
   if(!B||UI.screen!=='battle')return;
   if(B.last==null)B.last=ts;
-  const real=Math.min(.1,(ts-B.last)/1000);B.last=ts;
+  let real=Math.min(.1,(ts-B.last)/1000);B.last=ts;if(B.hs&&ts<B.hs)real=0;
   if(!B.paused&&!B.done){
     if(B.startDelay>0)B.startDelay-=real;
     else{B.acc+=real*B.speed*TUNE.clock;while(B.acc>=DT&&!B.done){step(DT);B.acc-=DT;}}
@@ -8954,7 +8981,7 @@ function shopHTML(){
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
       <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Reroll the shop: 🪙${TUNE.reroll}">🔄<span class="blbl">Reroll</span> ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
-      <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop" title="${S.locked?'Locked: these cards stay for next round. Click to unlock.':'Lock: keep these cards for next round.'}">${S.locked?'🔒':'🔓'}<span class="blbl">${S.locked?'Locked':'Lock'}</span></button>
+      <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop" title="${S.locked?'Locked: these cards stay until your next shop, through any intermission. Click to unlock.':'Lock: keep these cards for your next shop.'}">${S.locked?'🔒':'🔓'}<span class="blbl">${S.locked?'Locked':'Lock'}</span></button>
       <button class="btn sm rankbtn" data-a="rank" ${noTrain()?'hidden ':''}${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}${rc==null?'':'<span class="blbl">Train</span>'}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
       <span class="grow"></span>
@@ -9791,10 +9818,12 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.77',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.79',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.79',items:[["✨", "Skills you can see: a full energy bar glows, and when a character casts, it flashes in its genre colour, the skill's name pops up and a burst shows what it does (heal, shield, stun, summon, area hit, buff)."], ["⏸️", "Knockouts land with a tiny freeze-frame, and the battle bench is now Up next: who steps in or joins, and when."]]},
+  {v:'19.78',items:[["🔒", "A locked shop now stays locked through an intermission, so you get exactly those cards back afterwards."]]},
   {v:'19.77',items:[["🔎", "The Codex search now looks in every tab: if the open tab has nothing, it shows which tabs do."], ["🏷️", "Shop and board tags (Recast, Typecast, New!, in pool, MAX...) are explained in Codex > Effects."]]},
   {v:'19.76',items:[["📺", "The Season is the main game now. After the Pilot you play the Season with seven genres; every run, won or lost, airs episodes, and episodes unlock Space Opera, Kaiju and more items, Legendaries and events."], ["🔥", "Win the Season to open Ascension: the old harder levels, now tiers you choose (Ascension 1 to 14), each adding one rule."], ["🎞️", "Two lost Seasons in a row? You can start the next one Renewed for another season, with 5 extra gold."]]},
   {v:'19.75',items:[["💥", "Damage numbers you can read: big hits show big numbers, colours tell attacks (white), skills (purple) and true damage (orange) apart, crits are gold with a \"!\", and fast hits add up into one number instead of a wall of digits."], ["🛡️", "Shields show on the health bar as a silver layer, with \"Shield +N\", \"Blocked N\" and a crack when one breaks. Heals pop up in green and make the bar glow."], ["💫", "Stun, taunt, Terrified, burning, drained energy and more now sit in a row of icons above each health bar, with a ring that shrinks as the effect runs out."]]},
