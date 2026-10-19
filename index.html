@@ -19849,7 +19849,7 @@ const R=n=>Math.round(n);const R1d=n=>Math.round(n*10)/10; /* v19.89: one decima
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick?(d.look==='glass'?'glass':'comic'):'glass',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=false; // v19.62: animations are always on
 function applyMotion(){RM=false;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -23275,10 +23275,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.0',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.1',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.1',items:[["🎨", "Comic is the default look again (Glass is still in Settings -> Look)."]]},
   {v:'20.0',items:[["🔒", "Runs are recorded anonymously to train the AI rivals (no names, no personal info). <b>Settings → Share anonymous run data</b> turns it off; Codex → Credits → Privacy says exactly what is sent."], ["🔧", "The level line on the start menu reads as one line again, and the Credits carry the three.js copyright line."]]},
   {v:'19.99',items:[["🎯", "Rivals are matched to the level: when a rival cast is due, the show looks at a few rival studios and sends the one whose cast best fits the level's difficulty against your board. Their stats never change, only who comes."], ["📈", "Sweeps Week and Series Finale are a little gentler: the casts in their scheduled rival rounds are weaker, and Series Finale stays the hardest level."], ["🎭", "Rival fights are more even through a run: late in a run their casts are less often a pushover."]]},
   {v:'19.98',items:[["🎭", "Rival casts now follow the Game Level: they grow stronger like Reruns, turn up more often from Level 13 (45% of normal episodes), fight at full strength from Level 15 (+3% HP and damage), and Sweeps Week and Series Finale put them on the schedule. At Table Read your first rival cast comes in Act 2."], ["🧠", "A rival whose cast is about to fight you lines up against your board: it tries a few placements and keeps the best one."], ["📈", "Rival fights get harder up the ladder: easiest at Season 1, hardest at the top levels."]]},
