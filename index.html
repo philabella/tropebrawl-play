@@ -154,7 +154,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 @media (min-width:1000px){.shopitems{display:none}}
 /* end-of-run stats: KPI tiles, one emphasis bar chart (damage), one stacked bar (gold), a round strip */
 :root{--s-char:#3987e5;--s-roll:#d95926;--s-rank:#199e70}
-.endwrap{display:grid;gap:14px;padding-block:24px}
+.endwrap{display:grid;gap:14px;padding-block:24px}.endbar{position:sticky;bottom:0;z-index:5;padding:10px 0;background:linear-gradient(transparent,var(--bg) 35%)}
 .kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(112px,1fr));gap:8px}
 .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:2px;align-content:start}
 .kpi>span{font-size:.75rem;color:var(--muted);font-weight:700}
@@ -22612,6 +22612,7 @@ function tutSkip(){const p=lvLoad();if(!p.dev)p.open=Math.max(p.open,4);p.pick=4
   UI.screen='title';closeSheet();render();window.scrollTo(0,0);toast('Season 1 is open. Levels 1-3 stay in the level list.');}
 function tutTitleBtns(){const p=lvLoad(),n=UI.lv|0;
   return `<button class="btn primary big" data-a="new">${n===1?'🎬 Start the Pilot':n>=2&&n<=3?'▶ Play '+esc(LADDER[n].name):'New run'}</button>${p.open<4&&!p.dev?'<button class="btn" data-a="tut-skip">I know auto-battlers</button>':''}`;}
+if(window.top!==window)addEventListener('wheel',e=>{if(e.defaultPrevented||e.ctrlKey||!e.deltaY)return;for(let el=e.target;el&&el!==document.body&&el.nodeType===1;el=el.parentElement){const c=getComputedStyle(el).overflowY;if((c==='auto'||c==='scroll')&&el.scrollHeight>el.clientHeight+1)return;}const se=document.scrollingElement,y=se.scrollTop;requestAnimationFrame(()=>{if(se.scrollTop===y)se.scrollBy(0,e.deltaMode===1?e.deltaY*40:e.deltaY);});},{passive:true});
 function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primary big" data-a="title">🏠 Main menu</button><button class="btn" data-a="new">New run</button>';
   if(!win)return '<button class="btn primary big" data-a="new">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start Season 1'}[S.newLv]||'New run';
@@ -22758,7 +22759,7 @@ SCR.end=()=>{
     </div>
     <div class="endcard"><h3>YOUR FINAL TEAM</h3><div class="chiprow">${team||'<span>Nobody on the board</span>'}</div>${synEnd()}${items?`<h3>ITEMS</h3><div class="chiprow">${items}</div>`:''}</div>
     ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run recorded <small>anonymous · <button class="lnk" data-a="privacy">privacy</button></small></p>':''}
-    <div class="row">${tutEndBtns(win)}<button class="btn" data-a="codex">📖 Codex</button></div>
+    <div class="row endbar">${tutEndBtns(win)}<button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;
 };
 
