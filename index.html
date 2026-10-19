@@ -20221,17 +20221,17 @@ const SCHEDULE=[];
 function buildSchedule(n){
   SCHEDULE.length=0;
   // v19.70: a level number builds that level's schedule (LADDER): F fight, E event, M mini-boss (Guest Stars), R rival
-  // cast (a mini-boss while rivals are off), B boss. Anything else (load time) builds the plain 4-act season.
+  // round (v19.97: a mini-boss from Level 4, a normal fight at Level 3; guaranteed rival casts there are Phase 2), B boss. Anything else (load time) builds the plain 4-act season.
   if(typeof n==='number'){const d=lvDef(n);for(let a=1;a<=d.acts;a++){const tp=Array.isArray(d.sched)?d.sched[a-1]||d.sched[0]:d.sched,L=tp.length;
     [...tp].forEach((c,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(L-1),o={type:c==='E'?'event':c==='B'?'boss':'fight',act:a,g:nom+(i-nom)*TUNE.actLenG};
-      if(c==='M'||c==='R'&&(TUNE.rivalsOn||n>3))o.m=1;if(c==='R')o.rv=1;SCHEDULE.push(o);});}return;}
+      if(c==='M'||c==='R'&&n>3)o.m=1;if(c==='R')o.rv=1;SCHEDULE.push(o);});}return;}
   // TUNE.acts acts of 7 (4 since v19): fight, fight, event, fight, fight, fight, boss. Enemy growth follows the act (a 7-round act grows
   // a little more than the old 5-round one, by TUNE.actLenG)
   const act=['fight','fight','event','fight','fight','fight','fight','fight','boss'];
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:1,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"horror":0.12,"space":0.18,"undead":0.08,"kaiju":0.15,"west":0.03,"heist":0.1,"ball":0.08},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.773,4.001,3.377,2.586],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:0.85,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.45,"bug":1.2,"undead":1.15,"ball":1.25,"heist":1.5,"west":1.1,"horror":1.4,"space":1.35,"kaiju":1.5},rivalsOn:false,wideHp:2.0,wideAtk:1.8,wideP:1.4,giant3:0.85,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.19,spacePierce:.5,spaceHaste:0.15,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:0.25,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
+const TUNE={symFoes:1,xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:0.7,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"horror":0.12,"space":0.18,"undead":0.08,"kaiju":0.15,"west":0.03,"heist":0.1,"ball":0.08},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.773,4.001,3.377,2.586],bossF:[1.9,1.6,1.2,0.37],lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:0.85,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.45,"bug":1.2,"undead":1.15,"ball":1.25,"heist":1.5,"west":1.1,"horror":1.4,"space":1.35,"kaiju":1.5},rivalsOn:true,wideHp:2.0,wideAtk:1.8,wideP:1.4,giant3:0.85,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.19,spacePierce:.5,spaceHaste:0.15,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:0.25,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:8,lvMin:1,lvGate:1,epsMode:1,renewGold:5};
 buildSchedule(false);
@@ -20340,7 +20340,7 @@ const LADDER=[null,
   {n:1,e:'🎬',name:'Pilot',acts:1,cap:3,lives:10,rv:0,rvP:0,rvK:1,foe:.75,sched:'FFEFFFFFB',g:['army','ball','west'],rules:['coach1'],items:[],legends:[],events:['recruit'],d:()=>'Buy characters, put 3 of a kind together for ★★, line them up and press Fight. One act, three genres. Gold you hold earns interest (🪙1 per 🪙10, up to 🪙5).'},
   {n:2,e:'🎬',name:'Pilot, Part 2',acts:2,foe:.8,g:['bug','undead'],rules:['coach2'],items:['kevlar','energy','coin','fangs','plating','ledger','scope','banner'],events:['payday','supply'],d:()=>'Two acts and two new genres: Swarm and Undead. Train raises your shop rank. '+lvGt('Items arrive.')},
   {n:3,e:'📖',name:'Table Read',acts:3,cap:4,rv:1,rvK:.85,foe:.84,sched:['FFEFFFFFB','FFERFFFFB','FFEFFFFFB'],g:['heist','horror'],rules:['coach3','xover','rv1'],legends:['fieldhosp','brood','bloodline','getaway','sixgun','halftime','sequel'],d:()=>'Three acts, Heist Crew and Slasher. Your first Legendary after the Act 1 boss. Two genres side by side switch on crossovers. '+lvRv('A rival studio shares your character pool.')},
-  {n:4,e:'📺',name:'Season 1',acts:4,cap:5,rvP:.3,rvK:1,foe:1,sched:'FFEFFFFFB',g:['space','kaiju'],rules:['rv1'],items:['battery','hollow','spikes','flare','stage','overclock','glass','extralife'],legends:['warp','tokyo','blockbuster','underdog','ensemble','hype'],events:['deal','promotion','reinforce','cameo','fanmail','craft'],d:()=>TUNE.epsMode?'The full show: four acts, Mythic characters, more items, Legendaries and events. Space Opera, Kaiju and more join as episodes air. ':'The full show: four acts, all 9 genres with Space Opera and Kaiju, Mythic characters, more items, Legendaries and events. '+lvRv("A rival studio's cast can turn up in any normal episode from Ep 3.")},
+  {n:4,e:'📺',name:'Season 1',acts:4,cap:5,rvP:.3,rvK:1,foe:1,sched:'FFEFFFFFB',g:['space','kaiju'],rules:['rv1'],items:['battery','hollow','spikes','flare','stage','overclock','glass','extralife'],legends:['warp','tokyo','blockbuster','underdog','ensemble','hype'],events:['deal','promotion','reinforce','cameo','fanmail','craft'],d:()=>(TUNE.epsMode?'The full show: four acts, Mythic characters, more items, Legendaries and events. Space Opera, Kaiju and more join as episodes air. ':'The full show: four acts, all 9 genres with Space Opera and Kaiju, Mythic characters, more items, Legendaries and events. ')+lvRv("A rival studio's cast can turn up in any normal episode from Ep 3.")},
   {n:5,e:'🎲',name:'Plot Twists',rules:['plot'],events:['trial','casting','merchant','wheel','montage','cursed','insurance','reboot'],d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant. '+lvGtA('New random events: trade-offs.')},
   {n:6,e:'📉',name:'Limited Run',rules:['limited'],legends:['danger','feeding','graveyard','insidejob','quickdraw','press','scream','shieldgen','atomic','crossep','cult','plotarmor'],d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies (never fewer than the 6 a ★★★ needs), so ★★★ characters are harder to finish. `+lvGtA('A second Legendary for every genre.')},
   {n:7,e:'🎭',name:'Second Studio',rv:2,rules:['rv2'],items:['smoke','tesla','teamup','residuals','slowburn'],d:()=>lvRv('2 rival studios share your pool and your episodes. ')+lvGtA('5 new items.')},
@@ -20349,12 +20349,12 @@ const LADDER=[null,
   {n:10,e:'🌟',name:'Guest Stars',sched:'FFEFFFFMB',rules:['elite'],items:['prop','crest','extras','understudy'],d:()=>`The fight before each boss is a mini-boss: +${pctOf(TUNE.lvElite-1)} HP and damage, a win pays 🪙${TUNE.lvEliteGold}. `+lvGtA('The last 4 items.')},
   {n:11,e:'💔',name:'Short Season',lives:9,rv:4,rules:['life1','rv4'],d:()=>'You start with 9 lives. '+lvRv('4 rival studios.')},
   {n:12,e:'😈',name:'Evil Twin',rv:5,rules:['twin','rv5'],legends:['dircut','spinoff','wallet','scout'],d:()=>`Bosses bring an evil twin of your strongest character${TUNE.lvTwin>1?`, with +${pctOf(TUNE.lvTwin-1)} HP and damage`:''} (no skill, no bonuses or items). `+lvRv('5 rival studios. ')+lvGtA('The last Legendaries.')},
-  {n:13,e:'👥',name:'Crowd Scenes',rvP:.45,rules:['extras','rvOdds2'],d:()=>'From Act 2, normal fights bring an extra crowd of Nameless Mooks. '+lvRv('Rival casts turn up more often.')},
+  {n:13,e:'👥',name:'Crowd Scenes',rvP:.45,rules:['extras','rvOdds2'],d:()=>'From Act 2, normal fights bring an extra crowd of Nameless Mooks.'},
   {n:14,e:'🐌',name:'Slower Promotions',rv:6,rules:['xp2','rv6'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0]+TUNE.lvXp[1])} more XP in total. `+lvRv('6 rival studios.')},
-  {n:15,e:'🎞️',name:'Two-Part Finale',rules:['finale2','rvFull'],d:()=>'After Deus Ex Machina, the first two bosses return together. '+lvRv('Rival casts fight at full strength.')},
+  {n:15,e:'🎞️',name:'Two-Part Finale',rules:['finale2','rvFull'],d:()=>'After Deus Ex Machina, the first two bosses return together.'},
   {n:16,e:'🏠',name:'Full House',lives:8,rv:7,rules:['life2','rv7'],d:()=>'You start with 8 lives. '+lvRv('7 rival studios.')},
-  {n:17,e:'📈',name:'Sweeps Week',sched:'FFEFFRRMB',rules:['sweeps'],d:()=>`The last three fights of every act are ${TUNE.rivalsOn?'rival casts and a mini-boss':'mini-bosses'}.`},
-  {n:18,e:'🏆',name:'Series Finale',sched:'FREMRMRMB',rules:['seriesfin'],d:()=>`Most episodes are bosses${TUNE.rivalsOn?', mini-bosses or rival casts':' or mini-bosses'}. This is the top Game Level.`},
+  {n:17,e:'📈',name:'Sweeps Week',sched:'FFEFFRRMB',rules:['sweeps'],d:()=>'The last three fights of every act are mini-bosses.'},
+  {n:18,e:'🏆',name:'Series Finale',sched:'FREMRMRMB',rules:['seriesfin'],d:()=>'Most episodes are bosses or mini-bosses. This is the top Game Level.'},
 ];
 const LV_MAX=LADDER.length-1,LV_KEY='tropebrawl-levels';
 // the playable bottom of the ladder (Level 4 until the tutorial is in); tools asking for 0 get it too (old Level 0)
@@ -20412,7 +20412,7 @@ function xpMul(){return 1+(rule('xp1')?TUNE.lvXp[0]:0)+(rule('xp2')?TUNE.lvXp[1]
 function xpFor(i){return Math.round(RANK.xp[i]*xpMul());}
 // the dials at level n in one line: rounds, lives, shop XP, bosses
 function lvRounds(n){const d=lvDef(n);return 9*d.acts+(d.rules.includes('finale2')?1:0);}
-function lvMinis(n){const d=lvDef(n);let k=0;for(let a=1;a<=d.acts;a++){const tp=Array.isArray(d.sched)?d.sched[a-1]||d.sched[0]:d.sched;k+=[...tp].filter(c=>c==='M'||c==='R'&&(TUNE.rivalsOn||n>3)).length;}return k;}
+function lvMinis(n){const d=lvDef(n);let k=0;for(let a=1;a<=d.acts;a++){const tp=Array.isArray(d.sched)?d.sched[a-1]||d.sched[0]:d.sched;k+=[...tp].filter(c=>c==='M'||c==='R'&&n>3).length;}return k;}
 function lvDials(n){const d=lvDef(n),R=d.rules,h=id=>R.includes(id);
   const rounds=lvRounds(n),lives=d.lives,xp=(h('xp1')?TUNE.lvXp[0]:0)+(h('xp2')?TUNE.lvXp[1]:0);
   const bosses=d.acts+(h('finale2')?1:0),mb=lvMinis(n),fm=(d.foe||1)*(1+foeStep(n))-1;
@@ -22546,7 +22546,7 @@ const COACH=[
  // waits for rivals (Track 2): the triggers marked false get wired when rv1 works
  {id:'c3-rival',lv:3,w:'plan',rv:1,on:()=>S.round===1,t:()=>'A rival studio shares your character pool. Copies they hire leave your shop.'},
  {id:'c3-pool',lv:3,w:'plan',rv:1,on:()=>false,t:()=>'Fewer copies left: the rival hired some. Check the count before chasing ★★★.'},
- {id:'c3-rivalep',lv:3,w:'plan',rv:1,on:()=>{const x=curRound();return !!(x&&x.rv);},done:['fight'],at:'.vs.feat',t:()=>'Next episode: the rival\'s cast, not the production. Same rules, their board.'},
+ {id:'c3-rivalep',lv:3,w:'plan',rv:1,on:()=>!!(S.enemy&&S.enemy.rival),done:['fight'],at:'.vs.feat',t:()=>'Next episode: the rival\'s cast, not the production. Same rules, their board.'},
  {id:'c3-rivalwon',lv:3,w:'plan',rv:1,on:()=>false,t:()=>'From Season 1, a rival\'s cast can turn up in any normal episode.'},
 ];
 function tutLoad(){if(!TUT.seen){try{TUT.seen=JSON.parse(localStorage.getItem(TUT_KEY)||'[]')||[];}catch(e){TUT.seen=[];}if(!Array.isArray(TUT.seen))TUT.seen=[];}return TUT.seen;}
@@ -23024,8 +23024,8 @@ SCR.codex=()=>{
     <p><b>Characters</b>: 3D toy figures modelled in code for Tropebrawl, rendered with <a href="https://threejs.org" target="_blank" rel="noopener">three.js</a> (MIT).</p>
 </div>`;
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard${cxLk('l',id)}" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p>${cxLkP('l',id)}</div>`;}).join('')}</div>`;
-  if(tab==='rivals')body=`<p>From Game Level 3, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Higher Game Levels add more rivals, up to 7. Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><div class="cgrid">${RIVALS.map(x=>`<div class="ccard"><h3>${x.e} ${esc(x.name)} <small>${esc(x.style)}</small></h3><p>${esc(x.d)}</p><p><b>Tell:</b> ${esc(x.tell)}</p></div>`).join('')}</div>`;
-  if(tab==='enemies')body=(TUNE.genOn?`<div class="rules"><p><b>Every fight is new.</b> Normal fights are put together each time from the act's monsters below, from 3 to about 5 enemies, sometimes a pack of one kind. Bosses stay, and from Act 2 a boss can be elite.</p>${TUNE.ghOn?`<p><b>📼 Reruns.</b> From Act 2, some normal fights are another studio's cast: a real team our test bots built at that same episode, with its items and Legendary, scaled to the episode. Their characters keep their genre bonuses; battlefield-wide effects like Army barrages stay home.</p>`:''}<p><b>Elite traits:</b> ${AFF_KEYS.map(k=>AFF[k].e+' <b>'+AFF[k].n+'</b>: '+AFF[k].d).join(' · ')}.</p>${TUNE.efamOn?`<p><b>Enemy families</b> (bonuses switch on with 2 and 3 on the field, like your genres):</p><ul>${Object.values(EFAM).map(x=>`<li>${x.e} <b>${x.n}</b> (${x.m.filter(k=>EN[k]).map(k=>EN[k].name).join(', ')}): 2: ${x.d2}. 3: ${x.d3}.</li>`).join('')}</ul><p><b>Enemy crossovers</b> (two families with 2+ each):</p><ul>${EXO.map(x=>`<li>🔗 <b>${x.n}</b> (${EFAM[x.a].n} + ${EFAM[x.b].n}): ${x.d}</li>`).join('')}</ul>`:''}</div>`:'')+Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...(ENC[a].codex||ENC[a].normal),...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
+  if(tab==='rivals')body=`<p>From Game Level 3, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Their casts fight with everything yours has: genre and trait bonuses, items, their Legendary and battlefield-wide effects like Army barrages. Higher Game Levels add more rivals, up to 7. Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><div class="cgrid">${RIVALS.map(x=>`<div class="ccard"><h3>${x.e} ${esc(x.name)} <small>${esc(x.style)}</small></h3><p>${esc(x.d)}</p><p><b>Tell:</b> ${esc(x.tell)}</p></div>`).join('')}</div>`;
+  if(tab==='enemies')body=(TUNE.genOn?`<div class="rules"><p><b>Every fight is new.</b> Normal fights are put together each time from the act's monsters below, from 3 to about 5 enemies, sometimes a pack of one kind. Bosses stay, and from Act 2 a boss can be elite.</p>${TUNE.ghOn?`<p><b>📼 Reruns.</b> From Act 2, some normal fights are another studio's cast: a real team our test bots built at that same episode, with its items and Legendary, scaled to the episode. They fight with everything a player's cast has: genre and trait bonuses and battlefield-wide effects like Army barrages, Swarm regrowth and the Game Ball.</p>`:''}<p><b>Elite traits:</b> ${AFF_KEYS.map(k=>AFF[k].e+' <b>'+AFF[k].n+'</b>: '+AFF[k].d).join(' · ')}.</p>${TUNE.efamOn?`<p><b>Enemy families</b> (bonuses switch on with 2 and 3 on the field, like your genres):</p><ul>${Object.values(EFAM).map(x=>`<li>${x.e} <b>${x.n}</b> (${x.m.filter(k=>EN[k]).map(k=>EN[k].name).join(', ')}): 2: ${x.d2}. 3: ${x.d3}.</li>`).join('')}</ul><p><b>Enemy crossovers</b> (two families with 2+ each):</p><ul>${EXO.map(x=>`<li>🔗 <b>${x.n}</b> (${EFAM[x.a].n} + ${EFAM[x.b].n}): ${x.d}</li>`).join('')}</ul>`:''}</div>`:'')+Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...(ENC[a].codex||ENC[a].normal),...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
   return `<section class="screen codex"><div class="row" style="justify-content:space-between"><h2>📖 Codex</h2><button class="btn" data-a="codex-back">Back</button></div>
     <div class="cxs${UI.codexQ?' has':''}"><span class="cxi" aria-hidden="true">🔎</span><input id="cxq" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search this tab (press /)" aria-label="Search this Codex tab" value="${esc(UI.codexQ||'')}"><button class="cxx" data-a="codex-clear" aria-label="Clear search" title="Clear search">✕</button></div>
     <div class="tabs" role="tablist">${CODEX_TABS.map(([k,n])=>`<button class="btn sm${tab===k?' on':''}" role="tab" aria-selected="${tab===k}" data-a="codex-tab" data-v="${k}">${n}</button>`).join('')}</div><p class="cx-none cxh" role="status"></p><div class="cx-body">${body}</div></section>`;
@@ -23249,10 +23249,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.96',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.97',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.97',items:[["🎭", "Rival studios are on. From Game Level 3 they share your character pool and play your season, and from Ep 3 any normal episode can be a fight against one of their casts (Codex → Rivals)."], ["⚔️", "Rival casts and Reruns now fight with everything a player's cast has, including battlefield-wide effects like Army barrages, Swarm regrowth, Undead rising and the Game Ball. Rival fights are harder than before."], ["📼", "Reruns are scaled down a little to make up for it, so they stay about as hard as they were."]]},
   {v:'19.96',items:[["🦖", "Kaiju balance (late game): The Leviathan's Meltdown Breath hits the front row for 50 and the back row for 25 x its skill power (was 85 and 45). Giant Mecha and The Leviathan grow 15% less at ★★★ (x2.72 instead of x3.2). Two giants plus any partner genre beat almost every late team; now they are strong, not a sure thing."], ["🎬", "Reruns of other studios' casts with these giants keep the strength they had, so the difficulty of every Game Level stays where it was."]]},
   {v:'19.95',items:[["⚖️", "Genre balance: the Full Cast bonus (6 of one genre) is now closer between genres. Kaiju +110% -> +50%, Slasher +100% -> +40%, Space Opera +95% -> +35%, Heist Crew +40% -> +50%, Army +35% -> +45%, Sportsball +15% -> +25%, Swarm +10% -> +20%, and Undead and Wild West now get one too (+15% and +10%)."], ["🚀", "Space Opera's Hyperdrive (6 Space Opera) speeds attacks by 15% (was 50%). Sportsball's first bounce hits for 85% (was 70%). Wild West's High Noon crit chance is 25% (was 30%)."], ["🎬", "Reruns of other studios' casts keep the strength they had, so the difficulty of every Game Level stays where it was."]]},
   {v:'19.94',items:[["🎬", "Animation Studio is on the main menu. Animations are in a list you can click, with Prev / Next and the arrow keys; characters with one model no longer show a variant picker."], ["🔓", "Playtest defaults: every Game Level is unlocked and the Glass look is on (change either in Settings)."], ["🧍", "Character looks renamed: Polygon (newest, default), Cel-shaded (the v19.87 models), Classic toys. Riot Shield now holds his baton low instead of up by his shoulder."]]},
@@ -24519,6 +24520,342 @@ function musTick(){try{
 function musDuck(){MUS.duck=.35;setTimeout(()=>{MUS.duck=1;},1400);}
 if(typeof window!=='undefined'&&(window.AudioContext||window.webkitAudioContext))setInterval(musTick,250);
 if(typeof window!=='undefined'){window.addEventListener('pagehide',()=>{try{if(S&&!S.over)save();}catch(e){}});document.addEventListener('visibilitychange',()=>{try{if(document.hidden&&S&&!S.over)save();}catch(e){}});}
+// ---- v19.97: rival casts and Reruns fight with full fight-level effects (fastsim/symfight.js, embedded verbatim) ----
+// Side-aware fight core, shared by tournament-page.js (genre tournament) and rivalbench.js (rival benchmark).
+// Runs inside the game (fastsim Engine; eng.ev this file before either tool). Nothing in tropebrawl.html changes.
+//
+// The game's enemy-board path (rvFoes for rival casts, ghFoes for Reruns) builds the enemy board through
+// startBattle on its own side and sends the units across, so per-character bonuses arrive, but every fight-level
+// effect (artillery, Swarm regrowth, Undead rising, jump scares, Guardian damage reduction, Game Ball, Kaiju roar
+// stuns, KO effects, the battle bench ...) is coded for side 'A' only. This module holds side-aware copies of those
+// functions (dealDamage, kill, stunU, bodyLost, outMult, effArm, deploy, fillFromBench, raiseFallen, step):
+//   - fight-level state per side: B holds side A's, B.sdE side E's (same keys, SYMF.PS);
+//   - when a side-E unit acts the world is FLIPPED for that action (side labels and B / B.sdE swapped), so the
+//     game's own act/attack/skill code runs unchanged for it; a fair coin per tick picks which side resolves first.
+//   - setSym(false): every copy reduces to the game's own function (same random draws, same result). The
+//     tournament's validate() and `rivalbench.js --validate` check that bit for bit.
+// When the game's battle functions change (a balance patch), re-run both validations before trusting --sym numbers.
+//
+// API: install(on) swaps the copies in/out of the global scope; setSym / setCoin / setETick; capture(Bn, Sn) builds
+// side E's fight-level state from the B its own startBattle made; attachE(cap) wires it into the current battle;
+// hookRuns(opts) makes the game's in-run rival/Rerun fights symmetric (rivalbench.js).
+// (Factored out of tournament-page.js 2026-10-19. Since v19.97 the game embeds this file verbatim (patch_v19_97.py)
+// and calls SYMF.hookRuns({on: TUNE.symFoes}): rival casts and Reruns fight with full fight-level effects. Tools
+// loading this file on such a build get the game's own SYMF (the guard below) and switch it with SYMF.RUN.on.
+// The game's visual-only lines (hit numbers, shake, hit-stop, step-in) are kept in the copies, gated on B.silent.)
+globalThis.SYMF = globalThis.SYMF || (function () {
+  'use strict';
+  let SYMON = true;
+  const opp = s => s === 'A' ? 'E' : 'A';
+  const ZSYN = { G: {}, T: {}, X: {} };
+  const NOSIDE = { syn: ZSYN, reserve: null, st: null };
+  const P = s => s === 'A' ? B : (B.sdE || NOSIDE);
+  const ON = s => SYMON || s === 'A';                      // does this side get player-side treatment?
+  const syn = s => P(s).syn || ZSYN;
+  const stOf = s => P(s).st || S;
+  const ilvS = (st, t) => st && st.trinkets && st.trinkets.includes(t) ? ((st.tlv && st.tlv[t]) || 1) : 0;
+  const lvlS = (st, t) => TUNE.noItems ? 0 : ilvS(st, t);
+  const H = (s, t) => ON(s) && lvlS(stOf(s), t) > 0;
+  const TV = (s, t) => { if (!ON(s)) return 0; const L = lvlS(stOf(s), t); return L ? parseFloat(TR[t].v[L - 1]) : 0; };
+  const LG = (s, id) => { if (!ON(s)) return false; const st = stOf(s); return !!st && st.legend === id; };
+  // owner tags for capped summons: stable per real side (labels flip during side-E actions)
+  const home = s => B.flipped ? opp(s) : s;
+  const own = (base, s) => home(s) === 'A' ? base : base + '@E';
+  // per-side fight-level state (B fields the game's code reads from side A's point of view)
+  const PS = ['syn', 'artEvery', 'art', 'artMult', 'artBonus', 'broodEvery', 'indie', 'skel', 'ball', 'revive', 'tesla', 'burn', 'reserve', 'underLeft',
+    'firstDown', 'graves', 'robbed', 'avenge', 'cav', 'ghost', 'plot', 'lost', 'stolen', 'ransom', 'train', 'sponsor', 'feed', 'bounty', 'raised',
+    'sgen', 'mother', 'lights', 'qd', 'half', 'gold', 'goldEarned', 'takeovers', 'st'];
+  const CNT = { flips: 0 };
+  const ct = (k, s) => { k += home(s); CNT[k] = (CNT[k] || 0) + 1; };   // fight-level events per real side (fairness check)
+  function relab(o) { if (o.side) o.side = o.side === 'A' ? 'E' : 'A'; if (o.zone) o.zone = o.zone === 'A' ? 'E' : 'A'; }
+  function flip() {
+    const E = B.sdE;
+    for (const k of PS) { const t = B[k], v = E[k]; if (t !== v) { B[k] = v; E[k] = t; } }
+    const d = B.frontDR.A; B.frontDR.A = B.frontDR.E; B.frontDR.E = d;
+    for (const u of B.units) relab(u);
+    if (B.reserve) B.reserve.forEach(relab);
+    if (E.reserve) E.reserve.forEach(relab);
+    B.flipped = !B.flipped; S = B.st; CNT.flips++;
+  }
+  function asE(f) { flip(); try { return f(); } finally { flip(); } }
+
+  // ---------------------------------------------------------------- side-aware copies of the game's functions
+  function dealDamage(src, t, amt, type, aoe) {
+    if (!t.alive || amt <= 0) return 0;
+    if (src && src._casting && (type === 'spell' || type === 'true')) castShot(src, t);
+    if (type === 'attack' && t.catches > 0 && t.crowd) { t.catches--; regrow(t, 1); float(t, 'Caught!', 'heal'); return 0; }
+    const dg = t.dodge + (B.t < 10 && H(t.side, 'smoke') ? TV(t.side, 'smoke') / 100 : 0);
+    if (type === 'attack' && dg && rand() < Math.min(.5, dg)) {
+      float(t, 'Dodge', 'miss');
+      if (t.mirror && src && src.alive) dealDamage(t, src, amt, 'reflect');
+      return 0;
+    }
+    if (aoe && t.crowd) amt *= 2;
+    const os = opp(t.side);
+    if (t.crowd && ON(os) && syn(os).X.bughunt) amt *= TUNE.xBugHunt;
+    if (t.vuln > 0) amt *= 1.25;
+    if (src && src.fearT > B.t) amt *= 1 - TUNE.fear;
+    if (t.fearT > B.t && src && src.side !== t.side && ON(src.side)) { if (LG(src.side, 'scream')) amt *= 1 + TUNE.screamAmp; if (syn(src.side).X.nightpatrol) amt *= TUNE.xNight; }
+    if (t.scareBack > B.t && src && src.alive && type === 'attack') terrify(src, 3);
+    if (t.rage && type === 'attack') t.rageN = Math.min(TUNE.kRageMax, (t.rageN || 0) + 1);
+    if (t.reflectT > B.t && src && src.alive && type === 'attack') dealDamage(t, src, amt * .5, 'reflect');
+    if (src && src.side !== t.side && ON(src.side) && syn(src.side).X.noscream && t.row === 'back') amt *= 1.35;
+    if (src && src.side !== t.side && ON(src.side) && P(src.side).burn && B.t >= TUNE.burnAt) amt *= P(src.side).burn;
+    if (src && src.genre === 'undead' && LG(src.side, 'graveyard')) amt *= 1 + Math.min(TUNE.graveMax, TUNE.gravePer * B.units.reduce((n, x) => n + (x.alive ? 0 : 1), 0));
+    if (t.insideJob && src && src.genre === 'heist') amt *= 1 + TUNE.ijDmg;
+    if (t.pheroT > B.t) amt *= 1 + TUNE.pheroAmp;
+    const amt0 = amt;
+    if (t.row === 'front' && B.frontDR[t.side]) amt *= 1 - B.frontDR[t.side];
+    if (t.row === 'back' && TUNE.coverDR && Z(t) === t.side && B.units.some(g => g.alive && g.side === t.side && Z(g) === g.side && g.row === 'front' && cv(g, t.col) && g.trait === 'guardian')) amt *= 1 - TUNE.coverDR;
+    if (ON(t.side) && P(t.side).skel) amt *= 1 - .1 * P(t.side).skel;
+    if (type === 'attack' || type === 'bounce' || type === 'reflect') amt *= 20 / (20 + effArm(t));
+    if (t.meatShield && t.taunt > 0) { const c = B.units.filter(x => x.side === t.side && x.alive && x.crowd && x !== t).sort((a, b) => bodies(b) - bodies(a))[0]; if (c) { const sh = amt / 3; amt -= sh; dealDamage(src, c, sh, 'true'); } }
+    const dealt = amt;
+    const b0 = t.crowd ? bodies(t) : 0;
+    let sAbs = 0; if (t.shield > 0) { const s = Math.min(t.shield, amt); t.shield -= s; amt -= s; sAbs = s; }
+    t.blocked = (t.blocked || 0) + Math.max(0, amt0 - amt);
+    t.hp -= amt;
+    if (t.crowd) { const lost = b0 - bodies(t); if (lost > 0) bodyLost(t, lost); }
+    if (t.hp > 0 && t.genre === 'heist' && !t.gotAway && t.hp < t.maxHp * TUNE.cgAt && LG(t.side, 'getaway')) { t.gotAway = true; t.untarget = Math.max(t.untarget, TUNE.cgFor); heal(null, t, t.maxHp * TUNE.cgHeal, true); float(t, 'Getaway!', 'heal'); }
+    if (!src && t.side === 'E' && B.envSrc) { B.env = B.env || {}; B.env[B.envSrc] = (B.env[B.envSrc] || 0) + dealt; }
+    if (src) { src.dmgDone += dealt; if (src.side === 'E' && t.side === 'A') { const k = src.key || src.name; B.threat[k] = (B.threat[k] || 0) + dealt; } }
+    if ((type === 'attack' || type === 'spell') && t.manaMax && !B.noMana) t.mana = Math.min(t.manaMax, t.mana + Math.min(8, dealt * .25));
+    if (src && src.alive && src.ls && (type === 'attack' || type === 'spell')) { const lh = heal(null, src, dealt * src.ls, true); if (!B.silent) numFx(src, lh, 'heal2'); }
+    if (!B.silent && t.el) {   // the game's hit effects (numbers, flash, shake), untouched
+      FXN.src = src; numFx(t, dealt - sAbs, B.envSrc === 'overtime' ? 'tick' : type === 'spell' ? 'spell' : type === 'attack' || type === 'bounce' ? 'phys' : 'true', (B.fxCrit && type === 'attack') || (B.fxCritS && type === 'spell')); if (sAbs > 0) { numFx(t, sAbs, 'block'); if (t.shield <= 0) shCrack(t); } t.el.classList.remove('hit'); void t.el.offsetWidth; t.el.classList.add('hit'); hitFx(src, t, dealt, type);
+      if (dealt > t.maxHp * .3) shake();
+    }
+    if (type === 'attack' && src && src.alive && src.range === 'melee' && H(t.side, 'spikes') && t.row === 'front') dealDamage(t, src, dealt * TV(t.side, 'spikes') / 100, 'true');
+    if (ON(os) && syn(os).X.sudden && !t.boss && t.hp > 0 && t.hp < t.maxHp * .15 && src && (src.genre === 'undead' || src.genre === 'ball')) { t.hp = 0; float(t, 'Finished!', 'crit'); }
+    if (type === 'attack' && src && src.alive && t.taunt > 0 && t.drainHit) src.mana = Math.max(0, (src.mana || 0) - t.drainHit);
+    if (type === 'attack' && src && src.alive && t.alive && t.counterUntil > B.t) { B.noMana = 1; try { spell(t, src, 15); } finally { B.noMana = 0; } }
+    if (t.hp <= 0) kill(t, src);
+    return dealt;
+  }
+  function ballOrderS(s) { return B.units.filter(u => u.side === s && u.alive && u.genre === 'ball').sort((a, b) => (a.row === b.row ? 0 : a.row === 'front' ? -1 : 1) || a.col - b.col); }
+  function nextBallHolderS(s, from) {
+    const order = ballOrderS(s); if (!order.length) return null;
+    const i = order.indexOf(from);
+    for (let k = 1; k <= order.length; k++) { const c = order[((i < 0 ? -1 : i) + k) % order.length]; if (c && c !== from && c.id !== from.id) return c; }
+    return order.find(c => c !== from) || order[0];
+  }
+  function kill(t, src) {
+    const ts = t.side, ks = opp(ts), pt = P(ts), pk = P(ks), st = syn(ts), sk = syn(ks);
+    if (ON(ts) && t.behind > 0 && !t.summon && Z(t) === ts) { t.behind--; t.hp = 0; t.alive = false; t.shield = 0; t.taunt = 0; t.lurking = B.t + 2; float(t, 'Vanished…', 'miss'); ct('vanish', ts); return; }
+    if (ON(ts) && t.crowd && st.G.undead >= 2 && !t.rose) { t.rose = true; t.hp = Math.min(t.maxBodies, 3) * t.bodyHp; float(t, 'Rises!', 'heal'); ct('rise', ts); return; }
+    if (ON(ts) && !t.summon && st.X.ghosttown && !pt.ghost) { pt.ghost = true; t.revived = true; t.hp = t.maxHp * TUNE.xGhostHp; float(t, 'Ghost Town!', 'heal'); return; }
+    if (!t.summon && LG(ts, 'plotarmor') && !t.plotSaved) { t.plotSaved = true; pt.plot = true; t.hp = t.maxHp * .2; t.untarget = 1; float(t, 'Main Character!', 'heal'); return; }
+    if (ON(ts) && !t.summon && !t.revived && pt.revive) { pt.revive = false; t.revived = true; t.hp = t.maxHp * TV(ts, 'extralife') / 100; float(t, 'Extra Life!', 'heal'); return; }
+    t.hp = 0; t.alive = false; t.shield = 0; t.taunt = 0;
+    float(t, 'KO', 'ko'); if (!B.silent && !RM && !t.summon && typeof performance !== 'undefined') B.hs = Math.max(B.hs || 0, performance.now() + (home(t.side) === 'E' ? 45 : 70));   // hit-stop (home: real side while flipped)
+    if (t.genre === 'kaiju' && LG(ts, 'finalwars')) sideUnits(ts).filter(a => a !== t && a.genre === 'kaiju').forEach(a => { a.dmgMult *= 1.2; float(a, '+20%', 'sp'); });
+    if (ON(ts) && !t.summon && !pt.firstDown) { pt.firstDown = t; if (st.X.jock) sideUnits(ts).forEach(a => a.hastes.push({ m: .2, t: 5 })); }
+    if (ON(ts) && !t.summon) {
+      if (st.G.undead >= 3 && (pt.graves || 0) < TUNE.graveCap && summonSkeletons(ts, 3, 1 + .2 * B.round, own('undead6', ts), TUNE.graveCap)) { pt.graves = (pt.graves || 0) + 1; ct('graves', ts); }
+      if (st.X.graverob && (pt.robbed || 0) < TUNE.xGraveN) { pt.robbed = (pt.robbed || 0) + 1; pt.goldEarned = (pt.goldEarned || 0) + 1; float(t, '+1🪙', 'heal'); }
+      if (st.X.comrades && (pt.avenge || 0) < 3) { pt.avenge = (pt.avenge || 0) + 1; sideUnits(ts).forEach(a => { a.dmgMult *= 1.15; float(a, '+15%', 'sp'); }); }
+    }
+    if (ts === 'E' && B.efam && B.efam.X.expendable && t.efam === 'extras' && t.crowd) B.units.filter(u => u.side === 'E' && u.alive && u.efam === 'plot' && u.manaMax).forEach(u => { u.mana = Math.min(u.manaMax, u.mana + 25); });
+    if (ON(ks)) {
+      if (sk.X.ants) sideUnits(ks).filter(a => a.crowd).forEach(a => regrow(a, TUNE.antsN));
+      if (LG(ks, 'feeding')) { const bugs = sideUnits(ks).filter(a => a.genre === 'bug'); if ((pk.feed || 0) < TUNE.feedMax) { pk.feed = (pk.feed || 0) + 1; bugs.forEach(a => { a.dmgMult *= 1 + TUNE.feedDmg; }); } bugs.filter(a => a.crowd).forEach(a => regrow(a, TUNE.feedRegrow)); }
+      if (LG(ks, 'wanted') && src && src.side === ks && src.genre === 'west' && (pk.bounty || 0) < TUNE.bountyMax) { pk.bounty = (pk.bounty || 0) + 1; pk.goldEarned = (pk.goldEarned || 0) + 1; float(src, '+1🪙', 'heal'); }
+      B.units.filter(u => u.side === ks && u.alive && u.devour).forEach(u => heal(null, u, u.maxHp * u.devour));
+      if (LG(ks, 'frenzy')) B.units.filter(u => u.side === ks && u.alive && u.genre === 'orc').forEach(u => u.frenzy = (u.frenzy || 0) + .15);
+      if (LG(ks, 'armydead') && (pk.raised || 0) < TUNE.adMax && summonSkeletons(ks, 3, 1 + TUNE.adP * B.round, own('armydead', ks), TUNE.adMax)) pk.raised = (pk.raised || 0) + 1;
+      if (src && src.side === ks && src.genre === 'heist' && sk.G.heist >= 2 && (pk.stolen || 0) < 2) { pk.stolen = (pk.stolen || 0) + 1; pk.goldEarned = (pk.goldEarned || 0) + 1; float(src, '+1🪙', 'heal'); }
+      if (sk.X.ransom && t.fearT > B.t && (pk.ransom || 0) < TUNE.xRansomN) { pk.ransom = (pk.ransom || 0) + 1; pk.goldEarned = (pk.goldEarned || 0) + 1; float(t, '+1🪙', 'heal'); }
+      if (sk.X.trainjob && !pk.train) { pk.train = true; pk.goldEarned = (pk.goldEarned || 0) + TUNE.xTrain; float(t, '+' + TUNE.xTrain + '🪙', 'heal'); }
+      if (sk.G.west >= 3) B.units.filter(u => u.side === ks && u.alive && u.genre === 'west' && u.manaMax).forEach(u => u.mana = Math.min(u.manaMax, u.mana + TUNE.westKoMana));
+      if (src && src.genre === 'ball' && sk.X.sponsor && (pk.sponsor || 0) < 3) { pk.sponsor = (pk.sponsor || 0) + 1; pk.goldEarned = (pk.goldEarned || 0) + 1; float(src, '+1🪙', 'heal'); }
+    }
+    B.fallen = t;
+    if (Z(t) === ts && t.row === 'front' && stepUp(ts, t.col)) { if (ON(ts)) fillFromBenchS(ts, 'back', t.col); }
+    else if (ON(ts) && Z(t) === ts) fillFromBenchS(ts, t.row, t.col);
+    const bl = pt.ball;
+    if (bl && bl.holder === t) { const nx = nextBallHolderS(ts, t); bl.holder = nx; if (nx) nx.timer = Math.min(nx.timer, .4); if (bl.streak) float(nx || t, 'Fumble!', 'ko'); bl.streak = 0; }
+  }
+  function stunU(t, d) {
+    if (!t.alive || t.ccImmune) return; const ks = opp(t.side); if (ON(ks) && syn(ks).X.rodeo) d += TUNE.xRodeo; t.stun = Math.max(t.stun, d);
+    const bl = B && P(t.side).ball; if (bl && bl.holder === t && bl.streak) { bl.streak = 0; float(t, 'Fumble!', 'ko'); }
+  }
+  function bodyLost(t, n) {
+    const s = t.side; if (!ON(s)) return; const p = P(s); p.lost = (p.lost || 0) + n; if (!syn(s).G.undead) return;
+    B.units.forEach(u => { if (u.side === s && u.alive && u.genre === 'undead') u.undeadAtk = Math.min(TUNE.undeadMax, (u.undeadAtk || 0) + TUNE.undeadPer * n); });
+  }
+  function outMult(u, t) {
+    let m = u.dmgMult;
+    if (u.orcPer) m *= 1 + u.orcPer * Math.max(0, allies(u).length - 1);
+    if (u.goldDmg) m *= 1 + u.goldDmg;
+    if (u.lowHpBonus && u.hp < u.maxHp * .5) m *= 1 + u.lowHpBonus;
+    if (H(u.side, 'hollow') && t && t.hp < t.maxHp * .5) m *= 1 + TV(u.side, 'hollow') / 100;
+    return m;
+  }
+  function effArm(u) { return Math.max(0, u.arm + (u.row === 'front' ? TV(u.side, 'plating') : 0) - (u.armDownT > 0 ? u.armDown : 0)); }
+  function deploy(o, owner, cap) {
+    if (owner != null) { if (spawnsOut(owner) >= cap) return false; o.owner = owner; }
+    const sl = emptySlots(o.side);
+    if (sl.length) { o.row = sl[0][0]; o.col = sl[0][1]; B.units.push(mkUnit(o)); return true; }
+    const p = P(o.side);
+    if (ON(o.side) && p.reserve) {
+      let left = o.maxBodies;
+      for (const c of p.reserve) { if (left <= 0) break; if (c.name !== o.name || c.maxBodies >= TUNE.cardMax) continue; const k = Math.min(left, TUNE.cardMax - c.maxBodies);
+        c.bodyHp = Math.max(c.bodyHp, o.bodyHp); c.bodyAtk = Math.max(c.bodyAtk, o.bodyAtk); c.maxBodies += k; c.maxHp = c.bodyHp * c.maxBodies; c.hp = c.maxHp; c.atk = c.bodyAtk; left -= k; }
+      while (left > 0 && p.reserve.length < TUNE.benchCards) { const k = Math.min(left, TUNE.cardMax); p.reserve.push(Object.assign({}, o, { row: 'back', col: 0, maxBodies: k, maxHp: o.bodyHp * k, hp: o.bodyHp * k })); left -= k; }
+      return left < o.maxBodies;
+    }
+    return false;
+  }
+  function fillFromBenchS(s, row, col) {
+    const p = P(s);
+    if (!p.reserve || !p.reserve.length) return; if (B.units.some(u => u.alive && Z(u) === s && u.row === row && cv(u, col))) return;
+    const ft = B.fallen && B.fallen.side === s && B.fallen.tier && !B.fallen.summon ? B.fallen.tier : 0; let i = 0;
+    while (i < p.reserve.length && p.reserve[i].under && (!(p.underLeft > 0) || (p.reserve[i].tier || 1) > ft)) i++; if (i >= p.reserve.length) return;
+    const o = p.reserve.splice(i, 1)[0]; if (o.under) { p.underLeft--; if (p.underLeft <= 0) p.reserve = p.reserve.filter(x => !x.under); }
+    if (o.rise) { o.rise.row = row; o.rise.col = col; riseUnit(o.rise, o.f); return; }
+    o.row = row; o.col = col; const nu = mkUnit(o); nu.subIn = true; if (!B.silent && o.under) nu._stepIn = 1; B.units.push(nu);
+  }
+  function fillFromBench(row, col) { return fillFromBenchS('A', row, col); }
+  function raiseFallen(u, f) {
+    let n = 0; B.units.filter(x => x.side === u.side && !x.alive && !x.summon && !x.raisedOnce && !x.lurking && !x.sat).forEach(x => { x.raisedOnce = true; n++;
+      if (B.units.some(y => y !== x && y.alive && Z(y) === x.side && y.row === x.row && (cv(y, x.col) || (x.wide && cv(y, x.col + 1))))) { const sl = emptySlots(x.side);
+        if (!sl.length) { const p = P(x.side); if (ON(x.side) && p.reserve) { p.reserve.unshift({ rise: x, f, e: x.e, name: 'rise', maxBodies: 1 }); float(u, 'Rises soon', 'heal'); } return; }
+        [x.row, x.col] = sl[0]; }
+      riseUnit(x, f); }); return n;
+  }
+  // one side's fight-level timers, from side A's point of view: the game's own step() lines, verbatim
+  function sideTick(dt) {
+    if (legend('shieldgen') && B.syn.G.space && B.t >= (B.sgen || TUNE.shieldGenEvery)) { B.sgen = (B.sgen || TUNE.shieldGenEvery) + TUNE.shieldGenEvery; sideUnits('A').filter(x => x.genre === 'space').forEach(x => { x.shield += x.maxHp * TUNE.shieldGenPct; }); }
+    if (legend('mothership') && B.syn.G.space && !B.mother && B.t >= TUNE.motherAt) { B.mother = true; sideUnits('E').forEach(x => dealDamage(null, x, x.maxHp * TUNE.motherPct, 'true')); }
+    if (legend('lightsout') && B.syn.G.horror && B.t >= (B.lights || TUNE.lightsEvery)) { B.lights = (B.lights || TUNE.lightsEvery) + TUNE.lightsEvery; sideUnits('E').forEach(x => terrify(x, 2)); sideUnits('A').filter(x => x.genre === 'horror').forEach(x => { x.nextMult = Math.max(x.nextMult || 1, 2); }); }
+    if (B.syn.X.cavalry && !B.cav && B.t >= 10) { B.cav = true; sideUnits('A').forEach(a => a.hastes.push({ m: .25, t: 999 })); }
+    if (legend('quickdraw') && B.syn.G.west && B.t >= (B.qd || 7)) { B.qd = (B.qd || 7) + 7; sideUnits('A').filter(a => a.genre === 'west').forEach(a => { a.timer = Math.min(a.timer, .05); a.nextMult = Math.max(a.nextMult || 1, 2); float(a, 'Draw!', 'sp'); }); }
+    if (legend('halftime') && !B.half && (B.t >= TUNE.halfAt || (() => { const a = B.units.filter(x => x.side === 'A' && !x.summon); return a.reduce((n, x) => n + Math.max(0, x.alive ? x.hp : 0), 0) < .5 * a.reduce((n, x) => n + x.maxHp, 0); })())) { B.half = true; sideUnits('A').forEach(a => { heal(null, a, a.maxHp * TUNE.halfHeal, true); if (a.genre === 'ball') a.hastes.push({ m: TUNE.halfHaste, t: 999 }); float(a, 'Halftime!', 'sp'); }); }
+    if (B.artEvery) {
+      B.art -= dt * (!legend('danger') && B.units.some(x => x.observer && x.alive && x.taunt > 0) ? 2 : 1); if (B.art <= 0) {
+        B.art += legend('shock') ? (B.t < TUNE.shockFor ? TUNE.shockEvery : 1e9) : B.artEvery; const amt = (15 + 4 * B.round + (B.artBonus || 0)) * (B.artMult || 1) * TUNE.artDmg * (B.syn.X.armsdeal ? 1 + Math.min(TUNE.xArmsMax, (B.gold || 0) * TUNE.xArmsPer) : 1); const danger = legend('danger');
+        const f = danger ? B.units.filter(x => x.side === 'E' && targetable(x)) : rowMost({ side: 'A' });
+        B.envSrc = 'artillery'; f.forEach(x => dealDamage(null, x, amt * (danger ? TUNE.dangerMult : 1), 'spell', true)); B.envSrc = null; ct('art', 'A');
+        if (f.length && legend('fieldhosp')) { const w = sideUnits('A').filter(a => a.hp < a.maxHp).sort((a, b) => a.hp / a.maxHp - b.hp / b.maxHp)[0]; if (w) heal(null, w, amt * TUNE.fhHeal); } if (f.length) shake();
+      }
+    }
+    if (has('tesla')) { B.tesla -= dt; if (B.tesla <= 0) { B.tesla += tv('tesla'); const f = B.units.filter(x => x.side === 'E' && targetable(x)); if (f.length) { B.envSrc = 'tesla'; dealDamage(null, pick(f), 8 + 3 * B.round, 'true'); B.envSrc = null; } } }
+  }
+  let TICK = 0, COIN = 1, E_TICK = false;
+  const SIDES_AE = ['A', 'E'], SIDES_EA = ['E', 'A'];
+  function coin() { COIN = COIN + 0x6D2B79F5 | 0; let t = Math.imul(COIN ^ COIN >>> 15, 1 | COIN); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296 < .5; }
+  function unitTick(u, dt) {
+    if (!u.alive) return;
+    if (u.regen) { u.regenT -= dt; if (u.regenT <= 0) { u.regenT = 1; heal(null, u, u.maxHp * u.regen, true); } }
+    if (B.efReg && B.t <= 30 && u.crowd && u.side === 'E' && u.efam === 'extras') { u.ebrood = (u.ebrood ?? 5) - dt; if (u.ebrood <= 0) { u.ebrood = 5; regrow(u, 1); } }
+    const bv = ON(u.side) ? P(u.side).broodEvery : 0;
+    if (bv && B.t <= 30 && u.crowd && u.genre === 'bug') { u.brood = (u.brood ?? bv) - dt; if (u.brood <= 0) { u.brood = bv; regrow(u, 1); ct('brood', u.side); } }
+    u.stun = Math.max(0, u.stun - dt); u.taunt = Math.max(0, u.taunt - dt); u.untarget = Math.max(0, u.untarget - dt); u.vuln = Math.max(0, u.vuln - dt); u.armDownT = Math.max(0, u.armDownT - dt);
+    if (u.hastes.length) { u.hastes.forEach(h => h.t -= dt); u.hastes = u.hastes.filter(h => h.t > 0); }
+    if (u.stun > 0) return;
+    u.timer -= dt * aspd(u);
+    if (u.timer <= 0) { u.timer += u.interval; if (SYMON && u.side === 'E') { flip(); try { act(u); } finally { flip(); } } else act(u); }
+  }
+  function step(dt) {
+    B.t += dt;
+    for (const x of B.units) { if (x.lurking && B.t >= x.lurking) { x.lurking = 0; const fo = x.side === 'A' ? 'E' : 'A', sl = emptySlots(fo).find(q => q[0] === 'back') || emptySlots(fo)[0] || emptySlots(x.side)[0]; if (!sl) continue;
+      const sq = LG(x.side, 'sequel');
+      x.zone = sl === emptySlots(x.side)[0] && !emptySlots(fo).length ? null : fo; x.row = sl[0]; x.col = sl[1]; x.alive = true; x.hp = (x.crowd ? x.bodyHp * Math.max(1, Math.ceil(bodies({ crowd: 1, hp: x.maxHp, bodyHp: x.bodyHp, maxBodies: x.maxBodies }) * (sq ? .7 : TUNE.behindHp) - 1e-9)) : x.maxHp * (sq ? .7 : TUNE.behindHp)); float(x, "It's behind you!", 'sp'); } }
+    // sym: a fair coin per tick decides which side resolves first (the game always resolves side A first, which
+    // decides fights where everyone fires at once, e.g. Wild West's instant first shots); its own stream, so the
+    // game's rand() is untouched
+    const aFirst = SYMON ? coin() : true;
+    if (!SYMON) sideTick(dt);
+    else if (!E_TICK) sideTick(dt);   // side E has no fight-level timer (no artillery, Cavalry, Tesla Coil, timed Legendary): skip its flip
+    else if (aFirst) { sideTick(dt); asE(() => sideTick(dt)); } else { asE(() => sideTick(dt)); sideTick(dt); }
+    if (B.t > 30) { B.ot = (B.ot || .5) - dt; if (B.ot <= 0) { B.ot = .5; const k = .02 * (1 + (B.t - 30) / 8); B.envSrc = 'overtime'; B.units.forEach(u => { if (u.alive) dealDamage(null, u, u.maxHp * k, 'true'); }); B.envSrc = null; } }
+    if (!SYMON) { for (const u of B.units) unitTick(u, dt); }
+    else {
+      const tk = ++TICK;
+      for (const s of (aFirst ? SIDES_AE : SIDES_EA)) for (let i = 0; i < B.units.length; i++) { const u = B.units[i]; if (u.side !== s || u._tk === tk) continue; u._tk = tk; unitTick(u, dt); }
+    }
+    // (one pass instead of the game's filters; same result)
+    let liveA = false, frontA = false, liveE = false, frontE = false, a = false, e = false;
+    for (const u of B.units) { if (u.side === 'A') { if (u.alive) { liveA = true; if (u.row === 'front') frontA = true; } if (u.alive || u.lurking) a = true; }
+      else if (u.side === 'E') { if (u.alive) { liveE = true; if (u.row === 'front') frontE = true; } if (u.alive || u.lurking) e = true; } }
+    if (liveA && !frontA) for (const u of B.units) if (u.side === 'A' && u.alive) u.row = 'front';
+    if (liveE && !frontE) for (const u of B.units) if (u.side === 'E' && u.alive) u.row = 'front';
+    for (const s of SIDES_AE) { const bl = ON(s) ? P(s).ball : null; if (bl && (!bl.holder || !bl.holder.alive)) bl.holder = ballOrderS(s)[0] || null; }
+    if (!a || !e) { B.done = true; B.win = a && !e; if (!a && !e) B.draw = true; }   // both wiped in the same tick: the game calls it a loss; sym scores a draw
+    if (B.t > 120) { B.done = true; B.win = false; B.timeout = true; }
+  }
+  const SYMF = { dealDamage, kill, stunU, bodyLost, outMult, effArm, deploy, fillFromBench, raiseFallen, step };
+  const ORIG = {}; Object.keys(SYMF).forEach(k => { ORIG[k] = globalThis[k]; });
+  function install(sym) { Object.keys(SYMF).forEach(k => { globalThis[k] = sym ? SYMF[k] : ORIG[k]; }); }
+
+  // ---------------------------------------------------------------- shared helpers for the tools
+  // side E's fight-level state, from the B its own startBattle built (on its own side 'A') and its run state
+  function capture(Bn, Sn) {
+    return { syn: Bn.syn, artEvery: Bn.artEvery, art: Bn.art, artMult: Bn.artMult, broodEvery: Bn.broodEvery, indie: Bn.indie, skel: Bn.skel, ball: Bn.ball,
+      revive: Bn.revive, tesla: Bn.tesla, burn: Bn.burn, reserve: Bn.reserve, underLeft: Bn.underLeft, gold: Bn.gold, sponsor: Bn.sponsor, takeovers: Bn.takeovers,
+      goldEarned: 0, st: Sn, frontDR: Bn.frontDR.A };
+  }
+  // wire side E's captured state into the battle startBattle just built (side A = S), plus side E's start-of-fight
+  // effects that reach across (Mega Roar stuns, Inside Job). Use with setSym(true).
+  function attachE(cap) {
+    B.st = S; B.flipped = false;
+    B.sdE = cap; B.frontDR.E = cap.frontDR || 0;
+    for (const k of PS) { if (!(k in B)) B[k] = undefined; if (!(k in cap)) cap[k] = undefined; }   // same keys on both: flips swap values only
+    E_TICK = !!(cap.artEvery || cap.syn.X.cavalry || lvlS(cap.st, 'tesla') || ['shieldgen', 'mothership', 'lightsout', 'quickdraw', 'halftime'].includes(cap.st.legend));
+    // side E's start-of-fight effects that reach across: Mega Roar stuns, Inside Job
+    if (cap.syn.G.kaiju >= 3) { sideUnits('A').forEach(x => stunU(x, TUNE.kRoarStun)); ct('roar', 'E'); }
+    if (B.syn.G.kaiju >= 3) ct('roar', 'A');
+    if (cap.st.legend === 'insidejob') { const e = B.units.filter(x => x.side === 'A').sort((a, b) => b.maxHp - a.maxHp)[0]; if (e) { e.hp *= TUNE.ijHp; e.insideJob = true; } }
+  }
+  // ---------------------------------------------------------------- in-run hook (rivalbench.js)
+  // Wraps startBattle / rvFoes / ghFoes without copying them: the side-E board's nested startBattle is captured as it
+  // returns; once the player's battle is built, that fight-level state is attached when RUN.on and the fight is a
+  // rival cast (RUN.rv) or a Rerun (RUN.gh), whoever side A is (the player, or a rival meeting the same Rerun in its
+  // own run: a game fix would cover both). Every other fight (normal, boss, mini-boss) runs with setSym(false) = the
+  // game's own functions. RUN.mul scales rival-cast units (HP, damage,
+  // shields, healing: the way ghFoes scales Reruns), RUN.ghMul the same for Reruns. RUN.stats counts attachments.
+  const RUN = { on: false, rv: true, gh: true, mul: 1, ghMul: 1, stats: { attach: 0, rv: 0, gh: 0 } };
+  let hooked = false;
+  function hookRuns(o) {
+    Object.assign(RUN, o || {});
+    if (hooked) return RUN; hooked = true;
+    install(true); SYMON = false;
+    const sb0 = globalThis.startBattle, rv0 = globalThis.rvFoes, gh0 = globalThis.ghFoes;
+    let depth = 0, pend = null, lastB = null, lastS = null;
+    const scale = (u, k) => { u.hp *= k; u.maxHp *= k; if (u.crowd) u.bodyHp *= k; u.dmgMult = (u.dmgMult || 1) * k; u.shield = (u.shield || 0) * k; u.healMult = (u.healMult || 1) * k; };
+    function foes(f0, kind, k, args) {
+      lastB = null; lastS = null;
+      const out = f0.apply(null, args);
+      const nb = lastB, ns = lastS; lastB = null; lastS = null;
+      const kg = kind === 'gh' && out.length && out[0]._mh0 ? out[0].maxHp / out[0]._mh0 : 1;   // the game's own Rerun scale (ghFoes), for the battle bench
+      if (k !== 1) out.forEach(u => scale(u, k));
+      if (depth >= 1 && nb && RUN.on && RUN[kind]) {
+        const cap = capture(nb, ns);
+        out.forEach(u => { u.ref = 'E' + u._ref0; });
+        if (cap.reserve) cap.reserve.forEach(u => { u.side = 'E'; u.ref = 'E' + u.ref; if (kg * k !== 1) scale(u, kg * k); });
+        pend = { cap, kind };
+      }
+      return out;
+    }
+    globalThis.rvFoes = function () { return foes(rv0, 'rv', RUN.mul, arguments); };
+    globalThis.ghFoes = function () { return foes(gh0, 'gh', RUN.ghMul, arguments); };
+    globalThis.startBattle = function () {
+      depth++; if (depth === 1) pend = null;
+      let r; try { r = sb0.apply(this, arguments); } finally { depth--; }
+      if (depth >= 1) { lastB = B; lastS = S; for (const u of B.units) { u._ref0 = u.ref; u._mh0 = u.maxHp; } }
+      else if (RUN.on) {   // RUN.on false: leave SYMON to whoever drives it (the tournament's own fights)
+        const p = pend; pend = null;
+        if (p) { SYMON = true; COIN = ((rngState | 0) ^ (FR | 0) ^ 0x5bd1e995) | 0; attachE(p.cap); RUN.stats.attach++; RUN.stats[p.kind]++; }
+        else SYMON = false;
+      }
+      return r;
+    };
+    return RUN;
+  }
+  return { install, setSym: v => { SYMON = !!v; }, sym: () => SYMON, setCoin: seed => { COIN = (seed ^ 0x5bd1e995) | 0; }, setETick: v => { E_TICK = !!v; },
+    PS, ZSYN, lvlS, ct, counters: () => Object.assign({}, CNT), capture, attachE, hookRuns, RUN, COPIES: SYMF, ORIG };
+})();
+SYMF.hookRuns({ on: !!TUNE.symFoes });
 window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
