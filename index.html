@@ -1587,6 +1587,158 @@ h2 svg.gi,h3 svg.gi,h4 svg.gi{width:1.15em;height:1.15em;vertical-align:-.18em;d
 .ghep .fhd small{color:var(--gold)}
 .vs.feat.ghep .fart{top:56px;transform:none}
 .ghep .rvtell{max-width:100%}
+/* v20.4: phone layout. Portrait phones (<=760 px wide) and landscape phones (<=520 px tall), never html.dt */
+.phbar,.phbg{display:none}
+html:not(.dt) .phw,html:not(.dt) .phd{display:contents}
+html:not(.dt) .phd[data-k="it"]{display:none}
+@media (max-width:760px),(max-height:520px){
+  html:not(.dt) #app{padding-inline:8px;padding-block:6px 8px}
+  html:not(.dt) .screen{gap:7px}
+  html:not(.dt) .screen.plan{grid-template-columns:minmax(0,1fr)}
+  html:not(.dt) .screen.plan>*{min-width:0}
+  /* top bar: resources + level chip, then this act's rounds and icon buttons */
+  html:not(.dt) .top{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 8px;padding:5px 8px;align-items:center}
+  html:not(.dt) .top .r1{display:contents}
+  html:not(.dt) .top .res{grid-column:1/-1;gap:4px 10px;flex-wrap:nowrap;min-width:0;overflow:hidden}
+  html:not(.dt) .top .res>span{font-size:1.12rem}
+  html:not(.dt) .top .res .lvb{margin-left:auto;white-space:nowrap;flex:none;min-height:34px}
+  html:not(.dt) .top .r1>.row{grid-column:2;grid-row:2;gap:4px!important}
+  html:not(.dt) .top .r1>.row .btn{min-height:40px;min-width:40px;padding-inline:7px;justify-content:center}
+  html:not(.dt) .top .cxw{display:none}
+  html:not(.dt) .top .strip{grid-column:1;grid-row:2;flex-wrap:nowrap;overflow:hidden;min-width:0}
+  html:not(.dt) .top .strip .act:not(.cur){display:none}
+  html:not(.dt) .top .strip i{width:17px;height:22px}
+  html:not(.dt) .top .strip .act{gap:2px}
+  html:not(.dt) .top .lvb .lvl{display:none}
+  html:not(.dt) .top .lvb .lvs{display:inline}
+  html:not(.dt) .top>.items{display:none}
+  /* the tabs and their panels */
+  html:not(.dt) .phw{display:block;position:relative}
+  html:not(.dt) .phbar{display:flex;gap:5px;position:relative;z-index:32}
+  html:not(.dt) .phtab{appearance:none;font:inherit;color:var(--ink);display:inline-flex;align-items:center;gap:5px;min-height:40px;min-width:40px;padding:3px 9px;border:2px solid var(--inkline);border-radius:3px;background:var(--panel);box-shadow:2px 2px 0 var(--inkline);cursor:pointer;font-size:.8rem;font-weight:800;white-space:nowrap;flex:none}
+  html:not(.dt) .phtab .phi{font-family:var(--f-emoji);font-size:1.05rem;line-height:1}
+  html:not(.dt) .phtab .phc{font-style:normal;font-size:.7rem;color:var(--muted);transition:transform .15s}
+  html:not(.dt) .phtab.on{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 16%,var(--panel))}
+  html:not(.dt) .phtab.on .phc{transform:rotate(180deg)}
+  html:not(.dt) .phtab.ph-vs{flex:1 1 auto;min-width:0;justify-content:flex-start}
+  html:not(.dt) .phtab.ph-vs .phl{min-width:0;overflow:hidden;text-overflow:ellipsis;display:block;text-align:left;line-height:1.1;font-family:var(--f-display);font-weight:400;font-size:.92rem;text-transform:uppercase;letter-spacing:.02em}
+  html:not(.dt) .phtab.ph-vs .phl small{display:block;font-family:var(--f-body);font-weight:800;font-size:11px;letter-spacing:.1em;color:var(--red)}
+  html:not(.dt) .phtab:not(.ph-vs):not(.ph-it) .phl{display:none}
+  html:not(.dt) .phtab:not(.ph-vs){padding-inline:7px;gap:3px}
+  html:not(.dt) .phtab.ph-tip{border-color:var(--gold);color:var(--gold)}
+  html:not(.dt) .phd{display:none;position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:32;max-height:min(70vh,560px);overflow:auto;overscroll-behavior:contain}
+  html:not(.dt) .phd.on{display:block}
+  html:not(.dt) .phd>.vs,html:not(.dt) .phd>.coach{box-shadow:0 14px 30px -8px rgba(0,0,0,.8),4px 4px 0 var(--inkline)}
+  html:not(.dt) .phd>.rvstrip,html:not(.dt) .phd>.phitems{margin:0;padding:10px;background:var(--panel);border:2px solid var(--inkline);border-radius:3px;box-shadow:0 14px 30px -8px rgba(0,0,0,.8);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+  html:not(.dt) .phd .rvc,html:not(.dt) .phitems .ic{min-height:40px;min-width:40px}
+  html:not(.dt) .phw.open .phbg{display:block;position:fixed;inset:0;z-index:31;border:0;padding:0;margin:0;background:rgba(6,5,9,.55);cursor:default}
+  /* board: smaller tiles, less room above each row for the art */
+  html:not(.dt) :is(.plan,.evteam) .board{gap:4px;padding:4px 6px 6px;grid-template-columns:minmax(0,1fr)}
+  html:not(.dt) :is(.plan,.evteam) .board .rowlbl{font-size:11px}
+  html:not(.dt) :is(.plan,.evteam) .board .bfoot{display:none}
+  html:not(.dt) :is(.plan,.evteam) .board .bhead{gap:8px;align-items:center;flex-wrap:nowrap;margin-bottom:0}
+  html:not(.dt) :is(.plan,.evteam) .board .bhead span{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  html:not(.dt) :is(.plan,.evteam) .board .bhead b{flex:none;white-space:nowrap}
+  html:not(.dt) :is(.plan,.evteam) .board .slot{--gh:30px}
+  html:not(.dt) :is(.plan,.evteam) .board .slot[data-v^="n"]{--gh:18px}
+  html:not(.dt) :is(.plan,.evteam) .board .slot,html:not(.dt) :is(.plan,.evteam) .board .slot.hasspr{min-height:var(--ph-t,80px);height:var(--ph-t,80px);padding-top:4px}
+  html:not(.dt) :is(.plan,.evteam) .board .slot[data-v^="n"],html:not(.dt) :is(.plan,.evteam) .board .slot.hasspr[data-v^="n"]{min-height:var(--ph-n,56px);height:var(--ph-n,56px)}
+  html:not(.dt) :is(.plan,.evteam) .board .frow{margin-top:var(--ph-m,22px)}
+  html:not(.dt) :is(.plan,.evteam) .board .bhead+.frow{margin-top:var(--ph-m,22px)}
+  html:not(.dt) :is(.plan,.evteam) .board .frow.bench{margin-top:calc(var(--ph-m,22px) - 2px)}
+  html:not(.dt) :is(.plan,.evteam) .board .slot.hasspr .spr{height:calc(var(--ph-t,80px) + 2px);bottom:calc(var(--gh) - 2px)}
+  html:not(.dt) :is(.plan,.evteam) .board .slot.hasspr[data-v^="n"] .spr{height:calc(var(--ph-n,56px) + 8px);bottom:calc(var(--gh) - 2px)}
+  html:not(.dt) :is(.plan,.evteam) .board .slot.hasspr{--sh:calc(var(--ph-t,80px) + 2px);--sb:calc(var(--gh) + 2px)}
+  html:not(.dt) :is(.plan,.evteam) .board .slot.hasspr[data-v^="n"]{--sh:calc(var(--ph-n,56px) + 6px);--sb:calc(var(--gh) + 2px)}
+  /* synergies: one line that scrolls sideways */
+  html:not(.dt) .plan>.syns{flex-wrap:nowrap;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:none;padding-bottom:1px}
+  html:not(.dt) .plan>.syns::-webkit-scrollbar{display:none}
+  html:not(.dt) .plan>.syns{-webkit-mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,#000 calc(100% - 28px),transparent)}
+  html:not(.dt) .plan>.syns>.syn{flex:none;min-height:40px;white-space:nowrap}
+  /* shop: smaller cards, one action row */
+  html:not(.dt) .plan .shopwrap{gap:5px;padding:5px 6px 6px}
+  html:not(.dt) .plan .holdhint,html:not(.dt) .plan .shopitems,html:not(.dt) .plan .ranksbtn,html:not(.dt) .plan .poolbtn{display:none}
+  html:not(.dt) .plan .shop .scard{padding-top:6px;gap:2px}
+  html:not(.dt) .plan .shop .scard>.sart{height:56px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-10px;width:78px;height:78px}
+  html:not(.dt) .plan .shop .scard .plw{display:none}
+  html:not(.dt) .plan .shop .scard>.pr{position:absolute;left:50%;bottom:8px;transform:translateX(-50%);margin:0;line-height:20px}
+  html:not(.dt) .plan .actions{flex-wrap:nowrap;gap:5px}
+  html:not(.dt) .plan .actions .btn{min-height:44px;white-space:nowrap}
+  html:not(.dt) .plan .actions .btn.big{flex:1 1 auto;padding-inline:10px}
+  html:not(.dt) .plan .actions .grow{display:none}
+  /* details: a bottom sheet */
+  html:not(.dt) .plan>.insp{position:fixed;left:8px;right:8px;bottom:8px;z-index:40;max-height:min(58vh,480px);overflow:auto;overscroll-behavior:contain;box-shadow:0 -12px 40px rgba(0,0,0,.7),4px 4px 0 var(--inkline)}
+  html:not(.dt) .plan>.insp>.x{position:sticky;top:0;z-index:2}
+  html:not(.dt) .plan>.insp>.row:has(>[data-a="sell"]){position:sticky;bottom:-12px;z-index:2;background:var(--panel);margin:0 -12px -12px;padding:8px 12px 10px;border-top:1px solid var(--line)}
+  /* intermissions */
+  html:not(.dt) .evstage{padding:10px 10px 12px;margin-top:7px!important}
+  html:not(.dt) .evart{font-size:34px}
+  html:not(.dt) .evtitle{font-size:1.5rem;margin:4px 0 2px}
+  html:not(.dt) .evflav{font-size:.82rem;margin-bottom:8px}
+  html:not(.dt) .evopt{padding:9px 11px;font-size:.88rem;min-height:44px}
+  html:not(.dt) .evbody .choices{grid-template-columns:minmax(0,1fr);gap:6px}
+  html:not(.dt) .evbody .choice{grid-template-columns:52px minmax(0,1fr);column-gap:10px;row-gap:1px;justify-items:start;text-align:left;padding:7px 10px;align-items:center;min-height:44px}
+  html:not(.dt) .evbody .choice>*{grid-column:2}
+  html:not(.dt) .evbody .choice>.big,html:not(.dt) .evbody .choice>.pt{grid-column:1;grid-row:1/span 4;justify-self:center;align-self:center}
+  html:not(.dt) .evbody .choice>.big{font-size:1.9rem}
+  html:not(.dt) .evbody .choice>span:not(.big):not(.rar){font-size:.78rem;line-height:1.3}
+  html:not(.dt) .evchoices{grid-template-columns:minmax(0,1fr);gap:7px}
+  html:not(.dt) .evchoices .evcard{min-height:0;display:grid;grid-template-columns:44px minmax(0,1fr) auto;column-gap:10px;text-align:left;justify-items:start;align-items:center;padding:9px 11px}
+  html:not(.dt) .evchoices .evcard>.big{grid-row:1/span 2;font-size:1.7rem;justify-self:center}
+  html:not(.dt) .evchoices .evcard>b{grid-column:2}
+  html:not(.dt) .evchoices .evcard>.cost{grid-column:3;grid-row:1}
+  html:not(.dt) .evchoices .evcard>small{grid-column:2/-1}
+  html:not(.dt) .evteam{margin-top:6px}
+  /* end screen: smaller stat tiles (the pinned button bar is unchanged) */
+  html:not(.dt) .endwrap{gap:10px;padding-block:10px}
+  html:not(.dt) .endwrap .kpis{gap:6px}
+  html:not(.dt) .endwrap .kpi{padding:6px 8px}
+  html:not(.dt) .endwrap .kpi b{font-size:1.25rem}
+}
+@media (max-width:380px){html:not(.dt) .top .res .intm{display:none}html:not(.dt) .top .res{gap:4px 8px}}
+/* shorter portrait phones: smaller board tiles and card art */
+@media (max-width:760px) and (max-height:880px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:72px;--ph-n:52px;--ph-m:19px}
+  html:not(.dt) .plan .shop .scard>.sart{height:50px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-12px;width:72px;height:72px}
+}
+@media (max-width:760px) and (max-height:780px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:62px;--ph-n:46px;--ph-m:15px}
+  html:not(.dt) .plan .shop .scard>.sart{height:44px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-12px;width:64px;height:64px}
+  html:not(.dt) .top{padding-block:3px}
+}
+/* landscape phones: the shop in two columns, the fight fits the height */
+@media (max-height:520px) and (min-width:561px){
+  html:not(.dt) #app{max-width:none}
+  html:not(.dt) .screen.plan{grid-template-columns:minmax(0,1fr) minmax(0,1.1fr);grid-auto-flow:row dense;align-items:start;column-gap:10px}
+  html:not(.dt) .screen.plan{row-gap:6px}
+  html:not(.dt) .screen.plan>.top,html:not(.dt) .screen.plan>.board,html:not(.dt) .screen.plan>.syns{grid-column:1}
+  html:not(.dt) .screen.plan>.phw,html:not(.dt) .screen.plan>.shopwrap{grid-column:2}
+  html:not(.dt) .screen.plan>.top{grid-row:1}
+  html:not(.dt) .screen.plan>.board{grid-row:2}
+  html:not(.dt) .screen.plan>.syns{grid-row:3}
+  html:not(.dt) .screen.plan>.phw{grid-row:1}
+  html:not(.dt) .screen.plan>.shopwrap{grid-row:2/span 2}
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:56px;--ph-n:42px;--ph-m:13px}
+  html:not(.dt) #app{padding-block:4px}
+  html:not(.dt) .top{padding-block:3px}
+  html:not(.dt) .plan .shop .scard>.sart{height:46px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-12px;width:66px;height:66px}
+  html:not(.dt) #app>section>.bhead{margin-bottom:4px}
+  html:not(.dt) #app>section>.bhead h2{font-size:1.15rem}
+  html:not(.dt) #field.arena{height:calc(100vh - 64px);min-height:0}
+  html:not(.dt) .evstage{max-width:none}
+  html:not(.dt) #app>.top{grid-template-columns:auto minmax(0,1fr) auto}
+  html:not(.dt) #app>.top .res{grid-column:1;grid-row:1}
+  html:not(.dt) #app>.top .strip{grid-column:2;grid-row:1}
+  html:not(.dt) #app>.top .r1>.row{grid-column:3;grid-row:1}
+  html:not(.dt) .evart,html:not(.dt) .evflav{display:none}
+  html:not(.dt) .evbody .choices{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  html:not(.dt) .evchoices{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+  html:not(.dt) .phtab .phl{display:inline!important}
+}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -22531,7 +22683,7 @@ function topBar(){
   return `<header class="top">
     <div class="r1">
       <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${lvChipHTML(S.lv)}</button></div>
-      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖 Codex</button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
+      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}</div>
     ${items?`<div class="items">${items}</div>`:''}
@@ -22839,7 +22991,9 @@ function tutAct(a){if(!TUT.cur||a==='tut-x')return;const c=COACH.find(x=>x.id===
 function tutPaint(){if(typeof document==='undefined'||!document.body)return;let b=document.getElementById('tut');
   document.querySelectorAll('.tutring').forEach(x=>x.classList.remove('tutring'));
   const sh=document.getElementById('sheet'),c=tutStep(!!(sh&&!sh.hidden));TUT.cur=null;
-  let tg=null;if(c&&c.at){try{const sel=typeof c.at==='function'?c.at():c.at;tg=sel?document.querySelector(sel):null;}catch(e){}}
+  let tg=null;if(c&&c.at){try{const sel=typeof c.at==='function'?c.at():c.at;tg=sel?document.querySelector(sel):null;
+    if(tg&&!tg.getClientRects().length){const all=[...document.querySelectorAll(sel)],vis=all.find(x=>x.getClientRects().length),inT=all.find(x=>x.closest('.phd'));
+      if(vis)tg=vis;else if(inT){phSet(inT.closest('.phd').dataset.k);tg=inT;}}}catch(e){}} // v20.4
   if(!c||c.at&&!tg){if(b)b.hidden=true;return;} // nothing to say, or its target isn't on screen yet: wait
   TUT.cur=c.id;
   if(!b){b=document.createElement('div');b.id='tut';document.body.appendChild(b);}
@@ -22900,9 +23054,26 @@ function shopSyn(o,fieldNow,synNow){try{const g=HERO[o.id].genre,c0=synNow.c.g[g
   const after=activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]),c1=after.c.g[g]||0;if(c1<=c0)return null;
   return {c0,c1,up:(after.G[g]||0)>(synNow.G[g]||0)};}catch(e){return null;}}
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
+// v20.4: phones get the next enemy, rivals, the coach tip and items behind one row of tabs (a tab opens its panel over
+// the board; tap it again or outside to close). On bigger screens CSS hides the tabs and shows the panels in place.
+function phFold(){if(UI.phR!==S.round){UI.phR=S.round;UI.phOpen='';}
+  const e=S.enemy,vs=vsStrip0(),rv=rvStrip(),tip=coachHTML(),it=itemIcons(),T=[];
+  if(vs){const x=e.rival&&RIVAL[e.rival],ld=e.enc&&e.enc[0]&&EN[e.enc[0].key];
+    const ic=x?x.e:e.gh?'📼':e.boss?'💀':e.elite?'🌟':'⚔️',k=x?'Rival':e.gh?'Rerun':e.part?'Boss 2/2':e.boss?'Boss':e.elite?'Mini-boss':e.trial?'Trial':'Next';
+    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+'\'s cast':String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,vs]);}
+  if(rv)T.push(['rv','🏁','<span class="phl">Rivals</span>',rv]);
+  if(tip)T.push(['tip','💡','<span class="phl">Tip</span>',tip]);
+  if(it)T.push(['it','🎒',`<span class="phl">${S.trinkets.length+(S.legend?1:0)}</span>`,`<div class="items phitems">${it}</div>`]);
+  const o=T.some(t=>t[0]===UI.phOpen)?UI.phOpen:'';
+  return `<div class="phw${o?' open':''}"><div class="phbar">${T.map(([k,ic,l])=>`<button type="button" class="phtab ph-${k}${o===k?' on':''}" data-a="phd" data-v="${k}" aria-expanded="${o===k}"><span class="phi" aria-hidden="true">${ic}</span>${l}<i class="phc" aria-hidden="true">▾</i></button>`).join('')}<button type="button" class="phtab ph-pool" data-a="poolview" aria-label="Character pool: copies left of every character"><span class="phi" aria-hidden="true">🃏</span><span class="phl">Pool</span></button></div>${T.map(([k,,,h])=>`<div class="phd${o===k?' on':''}" data-k="${k}">${h}</div>`).join('')}<button type="button" class="phbg" data-a="phd" data-v="" aria-label="Close the panel" tabindex="-1"></button></div>`;}
+// opens one tab's panel (or closes them all with ''), in place: no re-render
+function phSet(k){UI.phOpen=k||'';const w=document.querySelector('.phw');if(!w)return;w.classList.toggle('open',!!UI.phOpen);
+  w.querySelectorAll('.phd').forEach(d=>d.classList.toggle('on',d.dataset.k===UI.phOpen));
+  w.querySelectorAll('.phtab[data-a="phd"]').forEach(b=>{const on=b.dataset.v===UI.phOpen;b.classList.toggle('on',on);b.setAttribute('aria-expanded',on);});}
 SCR.plan=()=>{
   if(DESK)return `<div class="dtl"><div class="dcol l">${vsStrip()}${coachHTML()}${inspHTML()}</div><div class="dcol c">${topBar()}${boardHTML()}${synHTML(fielded(),true)}</div><div class="dcol r">${itemsPanel()}</div><div class="dshop">${shopHTML()}</div></div>`;
   const wide=isWide();
+  if(!wide)return `<div class="screen plan">${topBar()}${phFold()}${boardHTML()}${UI.insp?inspHTML():''}${synHTML(fielded(),true)}${shopHTML()}</div>`; // v20.4
   const main=`${topBar()}${vsStrip()}${boardHTML()}${!wide&&UI.insp?inspHTML():''}${synHTML(fielded(),true)}${coachHTML()}${shopHTML()}`;
   return wide?`<div class="layout">${inspHTML()}<div class="screen">${main}</div>${itemsPanel()}</div>`:`<div class="screen">${main}</div>`;
 };
@@ -23413,6 +23584,7 @@ function onAction0(a,v,el){
     case 'trinket':UI.armItem=null;showInfo({kind:'trinket',id:v});break;
     case 'twin':showInfo({kind:'twin'});break;
     case 'nextfoes':sheet(nextFoesHTML());break;
+    case 'phd':phSet(v&&UI.phOpen!==v?v:'');break;
     case 'nextfoe':sheet(nextFoeDetail(+v));break;
     case 'lv-info':showInfo({kind:'lv'});break;
     case 'lv':{const p=lvLoad();UI.lv=Math.max(lvMin(),Math.min(p.open,+v||0));p.pick=UI.lv;lvStore(p);render();break;}
@@ -23533,10 +23705,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.3',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.4',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.4',items:[["📱", "Phones: a shop round fits on one screen. Your board, bench, the shop and Reroll / Train / Lock / Fight are all in view; the next enemy, rivals, tips, items and the Pool sit behind a row of tabs under the top bar (tap one to open it, tap outside to close)."], ["👆", "On phones, tapping a character opens its details as a sheet at the bottom instead of pushing the shop down, and intermission choices are compact rows, all on the first screen. Turned sideways, the shop splits into two columns and the fight fits the screen."]]},
   {v:'20.3',items:[["🎭", "Rivals are a roster to collect now. Each studio stays a blacked-out silhouette until you beat its cast; beat one and it steps into the spotlight with its own intro, and its Codex card fills in with who they are and how they play."], ["🎬", "Every run opens on a title card for your level, and the label then sits in the top bar the whole run (shop, intermissions and fights), so you always know which Ascension you're on. Clearing a level reveals everything you unlocked, one by one."], ["📺", "Episode bumpers between the shop and fights, intermission cards and a wipe back to the shop. Settings → Transitions: Full, Short or Off. A click or any key skips them."]]},
   {v:'20.2',items:[["🧠", "Every rival studio now thinks with a real algorithm: Rex counts the odds before a reroll, Goldie updates her beliefs like a Bayesian, Sal solves a knapsack, Hugo plans for the worst case and more. Codex → Rivals and the new <b>Algorithm Lab</b> explain each one for kids and teachers."], ["🎲", "Four learning rivals: <b>Kit</b> (a bandit that bets on what beats you) and <b>Echo</b> (counters your favourite genres) from Level 7, <b>Prof. Quill</b> (Markov chains) and <b>Cue</b> (Q-learning) from Level 11. They learn only from your runs on this device."], ["🔍", "After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast, with its real numbers."]]},
   {v:'20.1',items:[["🎨", "Comic is the default look again (Glass is still in Settings -> Look)."]]},
