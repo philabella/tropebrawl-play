@@ -195,6 +195,88 @@ strong.lvon{color:var(--gold);font-weight:800}
 /* codex */
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
 .cgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:8px}
+/* v20.3: level chip, transitions (#tbx: bumpers, title card, rival reveal, level cleared), rival roster */
+.lvb{display:inline-flex;align-items:center;gap:4px}.lvb .lvs{display:none}
+@media (max-width:420px){.lvb .lvl{display:none}.lvb .lvs{display:inline}}
+.lvb.land{animation:tbLand .7s cubic-bezier(.2,.8,.2,1)}
+@keyframes tbLand{0%{box-shadow:0 0 0 0 var(--leg)}35%{box-shadow:0 0 0 6px color-mix(in srgb,var(--leg) 45%,transparent)}100%{box-shadow:0 0 0 12px transparent}}
+.lvchip{display:inline-block;border:1px solid var(--leg);color:var(--leg);background:color-mix(in srgb,var(--leg) 12%,var(--panel));border-radius:6px;padding:0 6px;margin-right:4px;font-family:var(--f-display);letter-spacing:.04em;text-transform:none;font-size:.82rem;line-height:1.45}
+#tbx{position:fixed;inset:0;z-index:200;display:grid;place-items:center;background:#000;color:var(--ink);overflow:hidden;cursor:pointer;-webkit-user-select:none;user-select:none;opacity:0;transition:opacity .35s ease,background-color .6s ease;font-family:var(--f-body)}
+#tbx.on{opacity:1}#tbx.out{opacity:0;pointer-events:none;transition-duration:.4s}
+#tbx .tbskip{position:absolute;right:16px;bottom:max(12px,env(safe-area-inset-bottom));font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;color:var(--dim);font-weight:800}
+#tbx.fast,#tbx.fast *{transition-duration:0s!important;animation-duration:0s!important;animation-delay:0s!important}
+#tbx small{font-weight:800;letter-spacing:.22em;text-transform:uppercase;color:var(--muted);font-size:.72rem}
+/* bumpers: a TV wipe (clip) in from the right and off to the left */
+#tbx.bump{opacity:1;background:#0b0a0d;clip-path:inset(0 0 0 100%);transition:clip-path .22s cubic-bezier(.6,0,.3,1)}
+#tbx.bump.on{clip-path:inset(0 0 0 0)}#tbx.bump.out{clip-path:inset(0 100% 0 0);transition-duration:.28s}
+#tbx.bump.k5{transition-duration:.13s}#tbx.bump.k5.out{transition-duration:.16s}
+#tbx.bump::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px),radial-gradient(ellipse 70% 60% at 50% 50%,rgba(255,204,46,.10),transparent 70%)}
+#tbx.bump::after{content:'';position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-64px;background:var(--gold);box-shadow:0 128px 0 var(--gold);opacity:.85;transform:scaleX(0);transform-origin:0 50%;transition:transform .45s .1s cubic-bezier(.2,.8,.2,1)}
+#tbx.bump.on::after{transform:scaleX(1)}
+#tbx.bump.rm,#tbx.bump.rm.on,#tbx.bump.rm.out{clip-path:none}#tbx.bump.rm{opacity:0;transition:opacity .2s}#tbx.bump.rm.on{opacity:1}#tbx.bump.rm.out{opacity:0}
+.tbep{position:relative;display:grid;justify-items:center;gap:6px;text-align:center;padding:0 16px;max-width:100%}
+.tbep b{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,12vw,5.4rem);line-height:1;color:var(--gold);text-shadow:4px 4px 0 #000;letter-spacing:.02em;text-transform:uppercase}
+.tbep i{font-style:normal;font-size:1.05rem;color:var(--ink);font-weight:800}
+.tbep .ic{font-family:var(--f-emoji);font-size:3.6rem;line-height:1.1}
+.tbep.boss b{color:var(--red)}
+#tbx.on .tbep>*{animation:tbUp .42s cubic-bezier(.2,.8,.2,1) both}#tbx.on .tbep>:nth-child(2){animation-delay:.06s}#tbx.on .tbep>:nth-child(3){animation-delay:.12s}#tbx.on .tbep>:nth-child(4){animation-delay:.16s}
+#tbx.rm *{animation-name:tbFade!important}
+@keyframes tbUp{from{opacity:0;transform:translateY(14px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes tbFade{from{opacity:0}to{opacity:1}}
+/* run-start title card */
+.tbcard{display:grid;justify-items:center;gap:10px;text-align:center;padding:0 16px;max-width:780px}
+.tbbig{display:block;font-family:var(--f-display);font-weight:400;font-size:clamp(3rem,14vw,6.6rem);line-height:1;color:var(--leg);text-shadow:4px 4px 0 #000;letter-spacing:.03em;transform-origin:50% 50%;will-change:transform}
+.tbnm{font-family:var(--f-display);font-weight:400;font-size:clamp(1.35rem,5vw,2.1rem);line-height:1.1;color:var(--ink)}
+.tbrule{margin:0;color:var(--muted);font-size:.98rem;max-width:46ch}
+#tbx.card.on .tbcard>*{animation:tbUp .6s cubic-bezier(.2,.8,.2,1) both}#tbx.card.on .tbcard>:nth-child(2){animation-delay:.18s;animation-duration:.8s}#tbx.card.on .tbcard>:nth-child(3){animation-delay:.45s}#tbx.card.on .tbcard>:nth-child(4){animation-delay:.6s}#tbx.card.on .tbcard>:nth-child(5){animation-delay:.7s}
+#tbx.card.glide{background-color:transparent;pointer-events:none}#tbx.card.glide .tbskip,#tbx.card.glide .tbcard>:not(.tbbig){opacity:0;transition:opacity .25s}
+#tbx.card.glide .tbbig{transition:transform .75s cubic-bezier(.65,0,.25,1),opacity .75s ease-in;text-shadow:none}
+#tbx.card.glide.short .tbbig{transition-duration:.4s}
+/* rival reveal + level cleared */
+.tbrev,.tbclr{display:grid;justify-items:center;gap:10px;text-align:center;padding:24px 16px 48px;width:100%;max-width:700px;max-height:100%;overflow:auto;cursor:default}
+.tbclr{max-width:920px}
+.tbban{font-family:var(--f-display);font-weight:400;font-size:clamp(1.5rem,6.4vw,2.7rem);line-height:1.1;color:#000;background:var(--gold);padding:6px 26px;box-shadow:6px 6px 0 rgba(255,255,255,.08);letter-spacing:.05em;text-transform:uppercase;transform:skewX(-8deg) scaleX(0);opacity:0;transition:transform .55s cubic-bezier(.2,.9,.2,1.2),opacity .3s}
+.tbban.show{transform:skewX(-8deg) scaleX(1);opacity:1}
+.tbfig{position:relative;width:min(56vw,250px);aspect-ratio:1/1;display:grid;place-items:center;opacity:0;transform:scale(.9);transition:opacity .6s,transform .9s cubic-bezier(.2,.8,.2,1)}
+.tbfig.show{opacity:1;transform:none}
+.tbfig::before{content:'';position:absolute;inset:-18%;border-radius:50%;background:radial-gradient(circle,rgba(255,204,46,.30),rgba(255,204,46,.06) 45%,transparent 68%);opacity:0;transform:scale(.6);transition:opacity 1.4s,transform 1.6s}
+.tbfig.fill::before{opacity:1;transform:none}
+.tbfig .rvfig,.tbu .ic .rvfig{width:100%;height:100%;border:0;background:none;border-radius:0}.tbu .ic{background:none;border:0;box-shadow:none;border-radius:0}
+.tbfig .rvfig img,.tbfig .rvfig canvas{position:relative;width:100%;height:100%;object-fit:contain}
+.tbfig .rvfig>*,.tbu .ic>*{filter:brightness(0) drop-shadow(0 0 1px rgba(255,255,255,.9)) drop-shadow(0 0 8px rgba(160,180,255,.45));transition:filter 1.5s ease}
+.tbfig.fill .rvfig>*,.tbu.lit .ic>*{filter:brightness(1) drop-shadow(0 0 0 transparent) drop-shadow(0 0 14px rgba(255,204,46,.35))}
+.tbfig .rvfig.emo{font-size:min(30vw,140px)}
+.tbrev .tbnm{min-height:1.15em;color:var(--gold);font-size:clamp(1.8rem,7vw,3rem)}
+.tbstu{min-height:1.2em;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-size:.78rem}
+.tbin{margin:0;min-height:1.4em;font-size:1.1rem;font-style:italic;color:var(--ink);max-width:38ch}
+.tbtell{margin:0;min-height:1.4em;font-size:.92rem;color:var(--muted);max-width:46ch}.tbtell b{color:var(--ink)}
+.tbtell.dim b{visibility:hidden}
+.tbgo{visibility:hidden;opacity:0;transition:opacity .4s;margin-top:6px}.tbgo.show{visibility:visible;opacity:1}
+.tbclr .tbbig{font-size:clamp(2.2rem,10vw,5rem);color:var(--gold);opacity:0;transform:scale(1.25);transition:opacity .5s,transform .7s cubic-bezier(.2,.8,.2,1)}
+.tbclr .tbbig.show{opacity:1;transform:none}
+.tbclr .tbey2{opacity:0;transition:opacity .4s}.tbclr .tbey2.show{opacity:1}
+.tbul{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;width:100%}
+.tbu{width:112px;display:grid;justify-items:center;align-content:start;gap:5px;padding:10px 6px;border:2px solid #2a2830;background:#141317;border-radius:10px;opacity:0;transform:translateY(10px);transition:opacity .35s,transform .35s,border-color .6s,background-color .6s}
+.tbu.show{opacity:1;transform:none}.tbu.lit{border-color:var(--gold);background:#1b1910}
+.tbu .ic{height:64px;width:64px;display:grid;place-items:center;font-family:var(--f-emoji);font-size:2.5rem;line-height:1}.tbu .ic>*{transition-duration:.8s;font-style:normal}
+.tbu .ic .rvfig{width:64px;height:64px;border:0}.tbu .ic img,.tbu .ic canvas{width:64px;height:64px;object-fit:contain}
+.tbu b{font-size:.82rem;line-height:1.15;color:var(--ink)}.tbu small{font-size:.6rem!important;letter-spacing:.12em!important}
+.tbu.big{width:236px}.tbu.big .ic{width:84px;height:84px;font-size:3.4rem}
+@media (max-width:420px){.tbu{width:100px}.tbu.big{width:210px}}
+#tbx.rm .tbban,#tbx.rm .tbfig,#tbx.rm .tbu,#tbx.rm .tbclr .tbbig{transform:none}#tbx.rm .tbban.show,#tbx.rm .tbban{transform:skewX(-8deg)}
+/* Codex rival roster */
+.rvrh small{font-family:var(--f-body);font-size:.8rem;color:var(--muted);margin-left:6px;letter-spacing:0}
+.rvhd{display:flex;gap:10px;align-items:center;color:var(--ink)}.rvhd h3{margin:0}
+.rvfig{flex:none;display:inline-grid;place-items:center;width:64px;height:64px;border-radius:12px;background:radial-gradient(circle at 50% 40%,color-mix(in srgb,var(--gold) 16%,var(--panel2)),var(--panel) 72%) center/cover no-repeat;border:1px solid var(--line);font-family:var(--f-emoji);font-size:2.2rem;line-height:1}
+.rvfig{position:relative}.rvfig>i{position:absolute;inset:3px;display:grid;place-items:center;font-style:normal;background:center/contain no-repeat}
+.ccard.lock .rvfig>*{filter:brightness(0) drop-shadow(0 0 1px rgba(255,255,255,.8)) drop-shadow(0 0 5px rgba(160,180,255,.35))}
+.rvst{display:block;font-size:.66rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-top:1px}
+.ccard.lock h3{color:var(--dim)}.rvlk{font-size:.8rem;color:var(--dim)}
+.rvtag{margin:2px 0 0;font-style:italic;color:var(--ink);font-size:.86rem}
+.rvflav{color:var(--ink)}.rvwins{font-size:.76rem;margin:0}
+.rvhow{border-top:1px dashed var(--line);padding-top:6px;font-size:.8rem}.rvhow summary{cursor:pointer;font-weight:800;color:var(--ink)}.rvhow code{display:block;font-size:.76rem;white-space:normal;margin-top:4px}
+.rvrules{margin-top:12px;font-size:.88rem}.rvrules summary{cursor:pointer;font-weight:800;color:var(--ink);padding:6px 0}
+.rvlab .rvhd>span:last-child{display:grid;gap:2px}.rvlab .rvhd b{font-size:.8rem;color:var(--gold)}
 .rvwhy{margin:6px 0 10px;padding-left:20px;display:grid;gap:6px;font-size:.88rem}.rvteach code{font-size:.78rem;white-space:normal}.ccard.flash{outline:2px solid var(--gold)}
 .ccard{display:grid;gap:6px;align-content:start;text-align:left;font:inherit;cursor:pointer;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:.84rem;color:var(--muted)}
 .ccard .hd{display:flex;gap:10px;align-items:center;color:var(--ink)}
@@ -19850,7 +19932,7 @@ const R=n=>Math.round(n);const R1d=n=>Math.round(n*10)/10; /* v19.89: one decima
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl,trans:['full','short','off'].includes(d.trans)?d.trans:'full'};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=false; // v19.62: animations are always on
 function applyMotion(){RM=false;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -21969,7 +22051,7 @@ function rvFoes(id){const R=S.lobby&&S.lobby.rv.find(x=>x.id===id);if(!R)return 
 // v19.98: rival casts grow with the Game Level like Reruns (1.0 at Level 14), LADDER rvK, "full strength" from Level 15
 function rvStrength(){if(!TUNE.rvP2||!S)return 1;const d=lvDef(S.lv|0);return (d.rvK||1)*(rule('rvFull')?TUNE.rvFull:1)*(1+(S.curse||0))*(1+foeStep(S.lv))/(1+foeStep(14));}
 function rvChip(R){const x=RIVAL[R.id];return `<span class="rvc${R.out?' out':''}" title="${esc(x.name)}, ${esc(x.style)}: ${esc(x.d)}${R.out?' Out of the season.':''}">${x.e} ${esc(x.name)} <b>${R.out?'out':'❤️'+Math.max(0,R.st.lives)}</b></span>`;}
-function rvStrip(){if(!S||!S.lobby)return '';return `<div class="rvstrip" aria-label="Rival studios"><small>Rivals</small>${S.lobby.rv.map(rvChip).join('')}</div>`;}
+function rvStrip(){if(!S||!S.lobby)return '';return `<div class="rvstrip" aria-label="Rival studios"><small>Rivals</small>${S.lobby.rv.map(rvChip).join('')}<button type="button" class="rvc rvscout" data-a="scout" aria-label="Scouting: every rival's team at the start of this round" title="Scouting: every rival's team as it stood at the start of this round (O)">📸 Scout${DESK?'<kbd class="kh">O</kbd>':''}</button></div>`;}
 function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL[e.rival],f=R?R.st.units.filter(u=>u.slot[0]!=='n'):[];
   const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1;
   const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
@@ -22243,11 +22325,12 @@ function foeDetailHTML(k){const T=UI.foeTeam,u=T&&T.list[k];if(!u)return foeTeam
   return body+`<p class="ftline">This fight: 💥 ${R(u.dmg)} damage to your team, ${u.alive?'still standing at the end':'knocked out'}.</p><div class="row"><button class="btn sm" data-a="foeteam">← Their team</button></div>`;}
 function rvWhySheet(o){const x=RIVAL[o.id],c=RB.CARDS[o.id]||{};
   return `<div class="eyebrow">Rival studio · ${esc(c.algo||x.style)}</div><h3 style="color:var(--gold)">${x.e} What was ${esc(x.name)} thinking?</h3>
-    ${c.kid?`<p class="muted">${esc(c.kid)}</p>`:''}<ol class="rvwhy">${o.w.map(w=>`<li><b>Ep ${w.r}:</b> ${esc(w.t)}</li>`).join('')}${o.pl?`<li><b>Line-up:</b> ${esc(o.pl)}</li>`:''}</ol>
+    ${(RVX[o.id]||{}).flav?`<p class="muted">${esc(RVX[o.id].flav)}</p>`:''}<ol class="rvwhy">${o.w.map(w=>`<li><b>Ep ${w.r}:</b> ${esc(w.t)}</li>`).join('')}${o.pl?`<li><b>Line-up:</b> ${esc(o.pl)}</li>`:''}</ol>
     <p class="muted" style="font-size:.8rem">Rivals only know what you could know in their seat: their own shops, the pool counts and your board. Codex → Algorithm Lab explains every method.</p>
-    ${c.algo?`<p class="rvteach" style="font-size:.82rem"><b>How ${esc(x.name)} thinks:</b> <i>${esc(c.algo)}.</i> ${esc(c.teach)}<br><code>${esc(c.code)}</code></p>`:''}`;}
+    ${c.algo?`<details class="rvhow"><summary>How ${esc(x.name)} thinks</summary><p><b>${esc(c.algo)}.</b> ${esc(c.teach)}</p><code>${esc(c.code)}</code></details>`:''}`;}
 function showResult(){
   FR=null;if(S)delete S.inFight;
+  const rvBeat=S&&S.enemy&&S.enemy.rival; // v20.3: for the rival reveal (read only)
   // v20.2: the fought rival's reasoning, taken before settle (its next shop turn runs inside settle)
   {const id=S&&S.enemy&&S.enemy.rival,R=id&&S.lobby&&S.lobby.rv.find(x=>x.id===id);UI.rvWhy=R&&(R.whys||R.whyPlace)?{id,w:(R.whys||[]).slice(-3),pl:R.whyPlace||''}:null;}
   const res=settle();UI.lastRes=res;UI.foeTeam=foeSnap(res);
@@ -22267,7 +22350,165 @@ function showResult(){
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
   f.insertAdjacentHTML('beforeend',`<div class="overlay"><div class="ov${res.win?'':' lose'}">${body}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}${UI.rvWhy?`<button class="btn ghost" data-a="rvwhy">🧠 What was it thinking?</button>`:''}</div></div></div>`);
   const b=f.querySelector('.overlay [data-a="after-fight"]');if(b)b.focus();
+  try{if(res.win&&rvBeat&&RIVAL[rvBeat])rvuWon(rvBeat);}catch(e){}
 }
+
+// ================= v20.3: rival roster, level chip, transitions (presentation only) =================
+// Personality-first rival cards. m = the studio's mascot figure (a character's 3D toy); the method lives in RB.CARDS.
+const RVX={
+  penny:{studio:'Piggy Bank Pictures',m:'prospector',intro:'Saving up for something big. Something with your name on it.',tease:'A quiet studio that never seems to spend a thing.',
+    who:"Penny pinches every coin until her vault hits 50, then cashes out for a monster late-game cast. Early on she looks harmless. She isn't.",
+    flav:"Penny does the sums on every coin: if she'll be around long enough to cash it in, it stays in the vault (a payback period)."},
+  rex:{studio:'Lucky Seven Studios',m:'smuggler',intro:'Feeling lucky? He already did the maths.',tease:'Somebody keeps rerolling the shop. A lot.',
+    who:'Rex lives for the reroll. He hammers the shop for doubles of cheap characters, then jumps to rarer ones once his luck is in.',
+    flav:'Rex counts cards. Literally: before every reroll he works out the expected value of the next shop, and only rolls when the odds pay.'},
+  ivy:{studio:'Patchwork Productions',m:'giantmoth',intro:'Why pick one genre when you can have all of them?',tease:'A studio that never films the same show twice.',
+    who:"Ivy can't pick a favourite genre, so she runs three or four at once and lives on crossovers. Her board is never the same twice.",
+    flav:'Ivy hill-climbs: she swaps characters around one at a time and keeps every swap that switches on more bonuses.'},
+  duke:{studio:'Blaze Broadcasting',m:'pitcher',intro:"Next fight. That's the plan. That's the whole plan.",tease:"Someone is burning through gold like it's on fire.",
+    who:'Duke spends every coin, every round, to win right now and stack streak gold. Brutal in Acts 1 and 2, running on fumes by the finale.',
+    flav:'Duke is greedy on purpose: he only asks what wins the very next fight, and a hot streak makes him spend even harder.'},
+  goldie:{studio:'Gilded Frame Films',m:'mastermind',intro:"Only the finest for my collection. You'd make a lovely piece.",tease:'The top of the pool keeps thinning out.',
+    who:"Goldie won't touch a Common. She hunts Rares, Epics and Mythics, and keeps a little black book of every one she has seen.",
+    flav:'Her little black book is Bayesian: every shop she sees updates her odds on which rare will show up again, and she chases the best bet.'},
+  sal:{studio:'Bargain Bin Studios',m:'zombies',intro:'Why pay for one star when you can get five extras?',tease:'Cheap characters are vanishing from the pool.',
+    who:'Sal shops like a bargain hunter: cheap bodies, maxed to ★★, flooding the board. Strong early, fading late, never paying full price.',
+    flav:'Sal solves a knapsack every shop: of all the bundles he can afford, he buys the one with the most muscle per coin.'},
+  hugo:{studio:'Backlot Storage Co.',m:'mule',intro:'Plan B. Plan C. Plan D. He has a plan for your plan.',tease:'A studio with a very, very full bench.',
+    who:'Hugo keeps a full bench of spares and backups. Knock out his best fighter and someone just as good walks on.',
+    flav:'Hugo plans for the worst case: every buy is judged by how his board holds up if his best character falls (the N-1 rule).'},
+  ace:{studio:'Full Deck Entertainment',m:'captain',intro:'No tell. No weakness. Just a very good poker face.',tease:'The steadiest studio in the business. Nobody knows its tell.',
+    who:'Ace adapts to whatever the shop gives and has no fixed tell. The steadiest rival in the business.',
+    flav:"Ace runs a committee: the other rivals' methods vote on every buy, and when he is your next opponent a neural network checks his line-up."},
+  kit:{studio:'Wildcard Pictures',m:'driver',intro:"Let's try something new. Then the thing that worked.",tease:'Plays a different way every time. Then less so.',
+    who:'Kit tries a new plan every run and keeps score of which ones beat you. The longer you play, the more Kit leans on what works.',
+    flav:'A gambler with a system: Thompson sampling, betting each run on the plan with the best odds against you so far.'},
+  echo:{studio:'Mirror Lake Media',m:'telepath',intro:"I know what you're going to play. Do you?",tease:'Somebody has been watching your favourite genres.',
+    who:'Echo watches what you like to field and brings the counter. Love Horror? Expect whatever beats Horror.',
+    flav:'Echo plays the game-theory way (fictitious play): it tracks your favourite genres and drafts the best answer to your mix.'},
+  quill:{studio:'Inkwell Studios',m:'headcoach',intro:'Patience now. Fireworks later. Everything is going to plan.',tease:'Calm and saving, until suddenly not.',
+    who:"Quill weighs every lost life. While lives are cheap he invests, levelling up and saving; when they get dear, he floods the board all at once.",
+    flav:'Quill plays with a model: a Markov chain prices each of his lives, and his win odds get re-fit after every fight.'},
+  cue:{studio:'Feedback Loop Films',m:'droids',intro:'Learning. Learning. Learned.',tease:'Experiments at first. Then it remembers.',
+    who:'Cue learns from its own wins and losses in your games. It experiments early, then settles into habits: same situation, same move.',
+    flav:'Cue is pure trial and error (Q-learning): every fight nudges its score for each habit in each situation, and it keeps what pays.'},
+};
+// which rivals you have beaten (their cast, in a fight you won). Its own key next to the settings one, so the demo's
+// remapped SET_KEY gives it a demo key too.
+const RVU_KEY=SET_KEY.replace(/settings$/,'rivals');
+function rvuLoad(){let j=null;try{j=JSON.parse(localStorage.getItem(RVU_KEY)||'null');}catch(e){}return j&&typeof j==='object'&&j.won&&typeof j.won==='object'?j:{v:1,won:{}};}
+function rvuStore(j){try{localStorage.setItem(RVU_KEY,JSON.stringify(j));}catch(e){}}
+function rvWins(id){return rvuLoad().won[id]|0;}
+function rvKnown(id){return rvWins(id)>0||epsAll();}
+function rvuWon(id){const j=rvuLoad(),first=!j.won[id];j.won[id]=(j.won[id]|0)+1;rvuStore(j);if(!first)return;
+  if(!UI.rvNew||UI.rvNew.S!==S)UI.rvNew={S,ids:[]};if(!UI.rvNew.ids.includes(id))UI.rvNew.ids.push(id);
+  // shown a moment after the result; if Continue is pressed first, Continue shows it instead
+  UI.rvPend=id;setTimeout(()=>{if(UI.rvPend===id&&UI.screen==='battle'&&!tbxBusy()){UI.rvPend=null;tbxReveal(id);}},650);}
+// the studio mascot: live = an <img> the live-toy layer can swap for its 3D toy; else a still picture
+function rvFigHTML(id,live){const m=(RVX[id]||{}).m,src=m&&typeof SPRITES!=='undefined'&&(SPRITES[m+'_f']||SPRITES[m]);
+  if(!src)return `<span class="rvfig emo" aria-hidden="true"><i>${RIVAL[id]?RIVAL[id].e:'❔'}</i></span>`;
+  return live?`<span class="rvfig" aria-hidden="true"><img src="${src}" alt="" draggable="false"></span>`:`<span class="rvfig" aria-hidden="true"><i style="background-image:url(${src})"></i></span>`;}
+function rvCardHTML(x){const v=RVX[x.id]||{},c=(typeof RB!=='undefined'&&RB.CARDS&&RB.CARDS[x.id])||{},w=rvWins(x.id);
+  if(!rvKnown(x.id))return `<div class="ccard rvcd lock" id="rv-${x.id}"><div class="rvhd">${rvFigHTML(x.id)}<div><h3>❔ ???</h3><small class="rvst">Rival studio${x.lv?` · from ${esc(lvLong(x.lv))}`:''}</small><p class="rvtag">${esc(v.tease||'A rival studio you have not beaten yet.')}</p></div></div><p class="rvlk">🔒 Beat this studio's cast to unlock its card.</p></div>`;
+  return `<div class="ccard rvcd" id="rv-${x.id}"><div class="rvhd">${rvFigHTML(x.id)}<div><h3>${x.e} ${esc(x.name)}</h3><small class="rvst">${esc(v.studio||'Rival studio')} · ${esc(x.style)}</small><p class="rvtag">“${esc(v.intro||x.d)}”</p></div></div>`
+    +`<p>${esc(v.who||x.d)}</p>${v.flav?`<p class="rvflav">${esc(v.flav)}</p>`:''}<p><b>Tell:</b> ${esc(x.tell)}</p>${w?`<p class="muted rvwins">Beaten ${w} time${w===1?'':'s'}</p>`:''}`
+    +`${c.algo?`<details class="rvhow"><summary>How it thinks</summary><p><b>${esc(c.algo)}.</b> ${esc(c.teach)}</p><code>${esc(c.code)}</code></details>`:''}</div>`;}
+// the Game Level as the game names it: Level 1-3 (the Pilot), the Season (4), Ascension 1-14 (Levels 5-18)
+function lvLong(n){n=n|0;return n<=3?'Level '+n:n===4?'The Season':'Ascension '+(n-4);}
+function lvShort(n){n=n|0;return n<=3?'L'+n:n===4?'Season':'Asc '+(n-4);}
+function lvChipHTML(n){return `<span class="lvl">${esc(lvLong(n))}</span><span class="lvs">${esc(lvShort(n))}</span>`;}
+
+// ---------------- #tbx: one full-screen layer for every transition and reveal. Timed steps; a click, Space or Enter
+// runs the remaining steps at once (skip), Esc closes a reveal. Never touches the game's random numbers or the run.
+const TBX={el:null,kind:'',steps:[],fin:null,iv:[]};
+function tbxMode(){if(RM)return 'off';const m=SET.trans;return m==='short'||m==='off'?m:'full';}
+function tbxK(){const m=tbxMode();return m==='off'?0:m==='short'?.5:(RM_SYS?.7:1);}
+function tbxBusy(){return !!TBX.el;}
+function tbxKill(){TBX.steps.forEach(x=>{x.d=true;clearTimeout(x.h);});TBX.steps=[];TBX.iv.forEach(clearInterval);TBX.iv=[];if(TBX.el){TBX.el.remove();TBX.el=null;}TBX.fin=null;}
+function tbxOpen(kind,html,label,skipTxt){tbxKill();const el=document.createElement('div');el.id='tbx';el.className=kind+(RM_SYS?' rm':'')+(tbxMode()==='short'?' short':'');
+  el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');el.setAttribute('aria-label',label||'');
+  el.innerHTML=html+(skipTxt?`<span class="tbskip" aria-hidden="true">${skipTxt}</span>`:'');
+  el.addEventListener('click',e=>{e.stopPropagation();if(e.target.closest&&e.target.closest('.tbgo')){tbxClose();return;}tbxSkip();});
+  document.body.appendChild(el);TBX.el=el;TBX.kind=kind;void el.offsetWidth;return el;}
+function tbxRun(steps){TBX.steps=steps.map(([t,f])=>{const x={f,d:false};x.h=setTimeout(()=>tbxStep(x),Math.max(0,t));return x;});}
+function tbxStep(x){if(x.d)return;x.d=true;clearTimeout(x.h);try{x.f();}catch(e){}}
+function tbxSkip(){const el=TBX.el;if(!el)return;const pend=TBX.steps.filter(x=>!x.d);
+  if(!pend.length){if(TBX.fin)tbxClose();return;}
+  el.classList.add('fast');el.querySelectorAll('[data-t]').forEach(t=>{t.textContent=t.dataset.t;});TBX.iv.forEach(clearInterval);TBX.iv=[];
+  pend.forEach(tbxStep);}
+// fade (or wipe) the layer away; it stops taking input at once
+function tbxOut(ms){const el=TBX.el;if(!el)return;const f=TBX.fin;TBX.fin=null;TBX.steps.forEach(x=>{x.d=true;clearTimeout(x.h);});TBX.steps=[];TBX.el=null;
+  el.classList.remove('fast');el.classList.add('out');setTimeout(()=>el.remove(),ms==null?450:ms);if(f)try{f();}catch(e){}}
+function tbxClose(){if(TBX.el)tbxOut();}
+function tbxType(el,ms){if(!el)return;const t=el.dataset.t||'';if(!TBX.el||TBX.el.classList.contains('fast')||!ms){el.textContent=t;return;}
+  let i=0;const h=setInterval(()=>{i+=1;el.textContent=t.slice(0,i);if(i>=t.length)clearInterval(h);},ms);TBX.iv.push(h);}
+// keys: while the layer is up it eats every key but Tab and F-keys (fullscreen, dev tools)
+if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener('keydown',e=>{try{if(!TBX.el)return;
+  if(e.key==='Tab'||/^F\d+$/.test(e.key||''))return;e.stopImmediatePropagation();e.preventDefault();if(e.repeat)return;
+  if(e.key==='Escape'&&TBX.fin)tbxClose();else if(TBX.fin&&!TBX.steps.some(x=>!x.d)&&(e.key===' '||e.key==='Enter'))tbxClose();else tbxSkip();}catch(err){}},true);
+
+// shop -> fight: an "Episode 12" bumper (the fight starts under it, then it wipes away)
+function tbxFight(go){if(tbxMode()==='off'||TBX.el||!S){go();return;}
+  const k=tbxK(),e=S.enemy||{},act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,boss=!!e.boss,rv=e.rival&&RIVAL[e.rival];
+  const tag=e.part?'Boss · part 2':boss?'Boss episode':e.elite?'Mini-boss':rv?'Rival episode':e.gh?'Rerun':'';
+  tbxOpen('bump'+(k<1?' k5':''),`<div class="tbep${boss?' boss':''}"><small>${esc(lvLong(S.lv))} · Act ${act}${tag?' · '+tag:''}</small><b>Episode ${S.round}</b><i>${boss?'💀 ':rv?rv.e+' ':'⚔️ '}${esc(e.title||'')}</i></div>`,'Episode '+S.round);
+  tbxRun([[16,()=>TBX.el.classList.add('on')],[(boss?980:760)*k,go],[(boss?980:760)*k+40,()=>tbxOut(320*k+40)]]);}
+// fight -> shop / intermission / end: a wipe; an intermission gets a card with its icon and title; a level clear or a
+// new unlock goes straight on into the level-cleared sequence
+function tbxAfter(go){if(tbxMode()==='off'||TBX.el){go();tbxEnd(true);return;}const k=tbxK();
+  tbxOpen('bump wipe'+(k<1?' k5':''),'<div class="tbep"></div>','');
+  tbxRun([[16,()=>TBX.el.classList.add('on')],[250*k+20,()=>{go();
+    if(UI.screen==='end'){if(!tbxEnd(true))tbxOut(320*k+40);return;}
+    if(UI.screen==='event'&&TBX.el){const a=$('#app .evart'),t=$('#app .evtitle'),w=TBX.el.querySelector('.tbep');
+      if(w&&t){w.innerHTML=`<span class="ic">${esc(a?a.textContent:'🎬')}</span><small>${esc(lvLong(S.lv))} · Episode ${S.round}</small><b>${esc(t.textContent)}</b><i>${/^intermission$/i.test(t.textContent.trim())?'Between scenes: your call':'Intermission'}</i>`;
+        TBX.el.classList.remove('on');void TBX.el.offsetWidth;TBX.el.classList.add('on');TBX.el.setAttribute('aria-label',t.textContent);
+        TBX.steps.push(...[[700*k,()=>tbxOut(320*k+40)]].map(([t2,f])=>{const x={f,d:false};x.h=setTimeout(()=>tbxStep(x),t2);return x;}));return;}}
+    tbxOut(320*k+40);}]]);}
+
+// run start: black, the level's title card, then the label glides into the top-bar chip
+function tbxCard(){if(!S||tbxMode()==='off'||UI.screen==='battle')return;const n=S.lv|0,x=LADDER[n]||{},k=tbxK();
+  const ey=n<=3?'The Pilot':n===4?'Now airing':'The Season · Ascension',rule=n>4?lvText(n):'';
+  const el=tbxOpen('card on',`<div class="tbcard"><small>${ey}</small><b class="tbbig">${esc(lvLong(n))}</b><span class="tbnm">${x.e||''} ${esc(x.name||'')}</span>${rule?`<p class="tbrule">${esc(rule)}</p>`:''}<small>Game Level ${n}${S.round>1?' · Episode '+S.round:''}</small></div>`,lvTitle(n),'Click to skip');
+  const glide=()=>{const big=el.querySelector('.tbbig'),tg=document.querySelector('#app .lvb');
+      if(!big||!tg||!tg.offsetParent||RM_SYS){el.classList.add('glide');big&&(big.style.opacity='0');return;}
+      const a=big.getBoundingClientRect(),b=tg.getBoundingClientRect(),sc=Math.max(.08,b.height/Math.max(1,a.height))*1.15;
+      big.style.transform=`translate(${(b.left+b.width/2-(a.left+a.width/2)).toFixed(1)}px,${(b.top+b.height/2-(a.top+a.height/2)).toFixed(1)}px) scale(${sc.toFixed(3)})`;
+      big.style.opacity='0.15';tg.style.visibility='hidden';el.classList.add('glide');},
+    land=()=>{const tg=document.querySelector('#app .lvb');if(tg){tg.style.visibility='';tg.classList.remove('land');void tg.offsetWidth;tg.classList.add('land');}tbxOut(200);};
+  tbxRun([[16,()=>el.classList.add('on')],[1900*k,glide],[1900*k+(k<1?420:780),land]]);}
+
+// a rival's first defeat: fade to black, banner, the silhouette fills in, name / studio / intro / tell type on
+function tbxReveal(id,then){const x=RIVAL[id],v=RVX[id]||{};if(!x)return;const k=tbxK(),ty=k?22:0;
+  const el=tbxOpen('rev',`<div class="tbrev"><div class="tbban">New rival unlocked</div><div class="tbfig">${rvFigHTML(id,true)}</div>
+    <b class="tbnm" data-t="${esc(x.e+' '+x.name)}"></b><span class="tbstu" data-t="${esc((v.studio||'Rival studio')+' · '+x.style)}"></span>
+    <p class="tbin" data-t="${esc('“'+(v.intro||x.d)+'”')}"></p><p class="tbtell dim"><b>Tell:</b> <span data-t="${esc(x.tell)}"></span></p>
+    <button class="btn primary big tbgo">Continue</button></div>`,'New rival unlocked: '+x.name,'Click or Space to skip · Esc to close');
+  TBX.fin=()=>{const b=document.querySelector('#field .overlay [data-a="after-fight"]');if(b)b.focus();if(then)then();};
+  const q=s=>el.querySelector(s);
+  tbxRun([[16,()=>el.classList.add('on')],[420*k,()=>{q('.tbban').classList.add('show');sfx('reward');}],[800*k,()=>q('.tbfig').classList.add('show')],
+    [1400*k,()=>{q('.tbfig').classList.add('fill');sfx('legend');}],[2500*k,()=>tbxType(q('.tbnm'),ty*1.4)],[2800*k,()=>tbxType(q('.tbstu'),ty*.6)],
+    [3150*k,()=>tbxType(q('.tbin'),ty)],[3900*k,()=>{q('.tbtell').classList.remove('dim');tbxType(q('.tbtell [data-t]'),ty*.7);}],
+    [4300*k,()=>{const b=q('.tbgo');b.classList.add('show');b.focus();}]]);}
+
+// the end screen's unlocks (whatever it lists: next level, genres, items, Legendaries, events) + rivals first beaten
+function tbxUnlocks(){const W=document.querySelector('#app .endwrap');if(!W||!S)return [];const out=[],seen=new Set(),add=o=>{if(o.t&&!seen.has(o.t)){seen.add(o.t);out.push(o);}};
+  if(S.newLv&&LADDER[S.newLv])add({ic:LADDER[S.newLv].e,t:lvLong(S.newLv)+': '+LADDER[S.newLv].name,k:'New level',big:1});
+  W.querySelectorAll('.lvnew .endchip').forEach(c=>{const e=c.querySelector('.emo'),ic=e?e.textContent:'✨',t=c.textContent.replace(ic,'').trim(),rw=c.closest('.lvnrow'),lb=rw&&rw.querySelector(':scope>b');
+    add({ic,t,k:lb?lb.textContent.replace(/ies$/,'y').replace(/s$/,''):'Unlocked'});});
+  if(UI.rvNew&&UI.rvNew.S===S)UI.rvNew.ids.forEach(id=>RIVAL[id]&&add({rv:id,t:RIVAL[id].name,k:'Rival'}));
+  return out;}
+function tbxEnd(instant){if(UI.screen!=='end')return false;const items=tbxUnlocks();if(!items.length)return false;tbxCleared(items,instant);return true;}
+function tbxCleared(items,instant){const n=S.lv|0,win=S.result==='win',k=tbxK(),ty=k?1:0;
+  const head=win?lvLong(n)+' cleared':`+${S.epsAdd|0} episodes aired`;
+  const el=tbxOpen('clr'+(instant?' on':''),`<div class="tbclr"><small>${win?'Victory':'Run over'} · Game Level ${n}</small><b class="tbbig">${esc(head)}</b><small class="tbey2">${items.length===1?'Unlocked':'Unlocked · '+items.length}</small>
+    <div class="tbul">${items.map(it=>`<div class="tbu${it.big?' big':''}"><span class="ic">${it.rv?rvFigHTML(it.rv,true):`<i>${esc(it.ic)}</i>`}</span><b data-n="${esc(it.t)}">???</b><small>${esc(it.k)}</small></div>`).join('')}</div>
+    <button class="btn primary big tbgo">Continue</button></div>`,head,'Click or Space to skip · Esc to close');
+  TBX.fin=()=>{window.scrollTo(0,0);};
+  const q=s=>el.querySelector(s),us=[...el.querySelectorAll('.tbu')],st=Math.min(700,Math.max(320,4200/Math.max(1,us.length)))*k,t0=1100*k;
+  const steps=[[16,()=>el.classList.add('on')],[350*k,()=>{q('.tbbig').classList.add('show');sfx('win');}],[800*k,()=>q('.tbey2').classList.add('show')]];
+  us.forEach((u,i)=>{steps.push([t0+i*st,()=>u.classList.add('show')]);steps.push([t0+i*st+480*k,()=>{u.classList.add('lit');const b=u.querySelector('b');b.textContent=b.dataset.n;if(ty)sfx('reward',{vol:.7});}]);});
+  steps.push([t0+us.length*st+400*k,()=>{const b=q('.tbgo');b.classList.add('show');b.focus();}]);
+  tbxRun(steps);}
 
 // ================= screens =================
 const SCR={};
@@ -22289,7 +22530,7 @@ function topBar(){
   const items=itemIcons();
   return `<header class="top">
     <div class="r1">
-      <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${(S.lv|0)<=3?'L'+(S.lv|0):(S.lv|0)===4?'Season':'A'+((S.lv|0)-4)}</button></div>
+      <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${lvChipHTML(S.lv)}</button></div>
       <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖 Codex</button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}</div>
@@ -22408,6 +22649,7 @@ function shopHTML(){
       <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop" title="${S.locked?'Locked: these cards stay until your next shop, through any intermission. Click to unlock.':'Lock: keep these cards for your next shop.'}">${S.locked?'🔒':'🔓'}<span class="blbl">${S.locked?'Locked':'Lock'}</span></button>
       <button class="btn sm rankbtn" data-a="rank" ${noTrain()?'hidden ':''}${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}${rc==null?'':'<span class="blbl">Train</span>'}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
+      <button class="btn sm poolbtn" data-a="poolview" aria-label="Character pool: copies left of every character" title="Character pool: how many copies of each character are left (P)">🃏<span class="rbl"> Pool</span>${DESK?'<kbd class="kh">P</kbd>':''}</button>
       <span class="grow"></span>
       <button class="btn primary big" data-a="fight" ${fielded().length?'':'disabled'}>Fight!</button>
     </div></section>`;
@@ -22667,7 +22909,7 @@ SCR.plan=()=>{
 SCR.battle=()=>{
   const row=(side,r)=>`<div class="frow">${[0,1,2,3].map(i=>`<div class="bslot" data-k="${side}${r[0]}${i}"></div>`).join('')}</div>`;
   return `<section>
-    <div class="bhead"><div><div class="eyebrow">Round ${S.round} · ${S.enemy.part?'Boss · part 2':S.enemy.boss?'Boss':S.enemy.elite?'Mini-boss':S.enemy.trial?'Trial by Fire':'Fight'}</div><h2>${esc(S.enemy.title)}</h2></div>
+    <div class="bhead"><div><div class="eyebrow"><span class="lvchip" title="${esc(lvTitle(S.lv))}">${esc(lvLong(S.lv))}</span> Round ${S.round} · ${S.enemy.part?'Boss · part 2':S.enemy.boss?'Boss':S.enemy.elite?'Mini-boss':S.enemy.trial?'Trial by Fire':'Fight'}</div><h2>${esc(S.enemy.title)}</h2></div>
       <div class="row"><span class="streak" id="streak" hidden></span><span id="bbench" hidden></span><span class="clock" id="clock">0.0s</span><div class="speed" role="group" aria-label="Battle speed">
       <button class="btn sm sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>
       <button class="btn sm" data-a="pause" aria-label="Pause">⏸</button>
@@ -23060,8 +23302,8 @@ SCR.codex=()=>{
     ${tlPrivacy()}
 </div>`;
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard${cxLk('l',id)}" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p>${cxLkP('l',id)}</div>`;}).join('')}</div>`;
-  if(tab==='rivals')body=`<p>From Game Level 3, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Their casts fight with everything yours has: genre and trait bonuses, items, their Legendary and battlefield-wide effects like Army barrages. When a rival's cast is coming, it lines up against your board. Higher Game Levels add more rivals, up to 7; rival casts also grow with the Game Level like Reruns, turn up more often from Level 13, fight at full strength from Level 15, and Sweeps Week and Series Finale put them on the schedule. Rival casts are matched to the level: when one is due, the show looks at a few rival studios and sends the one whose cast best fits the level's difficulty against your current board (it never changes their stats). Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><p>Every rival thinks with a real algorithm from maths, statistics or AI, and the learning rivals (🎲 Kit and 🪞 Echo from Level 7, 🎓 Prof. Quill and 🧠 Cue from Level 11) get better against <i>you</i> from your own runs on this device (nothing is sent). After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast.</p><div class="cgrid">${RIVALS.map(x=>{const c=RB.CARDS[x.id]||{};return `<div class="ccard" id="rv-${x.id}"><h3>${x.e} ${esc(x.name)} <small>${esc(x.style)}${x.lv?` · from Level ${x.lv}`:''}</small></h3><p>${esc(c.kid||x.d)}</p>${c.algo?`<p class="rvteach"><b>For teachers:</b> <i>${esc(c.algo)}.</i> ${esc(c.teach)}<br><code>${esc(c.code)}</code></p>`:''}<p><b>Tell:</b> ${esc(x.tell)}</p></div>`;}).join('')}</div>`;
-  if(tab==='lab')body=`<p>The <b>Algorithm Lab</b>: every rival studio plays by a real method from maths, statistics or AI. Beat one, then open <b>🧠 What was it thinking?</b> after the fight to see its numbers. Grouped by family:</p>${RB.FAM.map(([k,n,d])=>{const xs=RIVALS.filter(x=>(RB.CARDS[x.id]||{}).fam===k);return xs.length?`<h3>${n}</h3><p class="muted">${esc(d)}</p><div class="cgrid">${xs.map(x=>{const c=RB.CARDS[x.id];return `<button class="ccard" data-a="rvcard" data-v="${x.id}"><h3>${x.e} ${esc(x.name)}</h3><p><b>${esc(c.algo)}</b></p><p>${esc(c.kid)}</p><p class="rvteach"><code>${esc(c.code)}</code></p></button>`;}).join('')}</div>`:'';}).join('')}`;
+  if(tab==='rivals')body=`<div class="rvroster"><h3 class="rvrh">Rival roster <small>${RIVALS.filter(x=>rvKnown(x.id)).length} of ${RIVALS.length} unlocked</small></h3><p class="muted">Rival studios share your character pool and fight some of your episodes. Each one stays a silhouette until you beat its cast; then it steps out of the shadows.${epsAll()?' <i>Every level is unlocked in Settings, so the whole roster is showing.</i>':''}</p><div class="cgrid">${RIVALS.map(rvCardHTML).join('')}</div></div><details class="rvrules"><summary>How rival studios work</summary><p>From Game Level 3, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Their casts fight with everything yours has: genre and trait bonuses, items, their Legendary and battlefield-wide effects like Army barrages. When a rival's cast is coming, it lines up against your board. Higher Game Levels add more rivals, up to 7; rival casts also grow with the Game Level like Reruns, turn up more often from Level 13, fight at full strength from Level 15, and Sweeps Week and Series Finale put them on the schedule. Rival casts are matched to the level: when one is due, the show looks at a few rival studios and sends the one whose cast best fits the level's difficulty against your current board (it never changes their stats). Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><p>Every rival has its own head for the game, built on a real method from maths, statistics or AI (open <b>How it thinks</b> on an unlocked card). Four of them learn from your runs on this device and nothing is sent. After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast.</p></details>`;
+  if(tab==='lab')body=`<p>The <b>Algorithm Lab</b>: every rival studio plays by a real method from maths, statistics or AI. Beat one, then open <b>🧠 What was it thinking?</b> after the fight to see its numbers. Grouped by family:</p>${RB.FAM.map(([k,n,d])=>{const xs=RIVALS.filter(x=>(RB.CARDS[x.id]||{}).fam===k);return xs.length?`<h3>${n}</h3><p class="muted">${esc(d)}</p><div class="cgrid">${xs.map(x=>{const c=RB.CARDS[x.id],v=RVX[x.id]||{};return rvKnown(x.id)?`<button class="ccard rvlab" data-a="rvcard" data-v="${x.id}"><span class="rvhd">${rvFigHTML(x.id)}<span><h3>${x.e} ${esc(x.name)}</h3><b>${esc(c.algo)}</b></span></span><p>${esc(v.flav||c.kid)}</p><p class="rvteach"><code>${esc(c.code)}</code></p></button>`:`<button class="ccard rvlab lock" data-a="rvcard" data-v="${x.id}"><span class="rvhd">${rvFigHTML(x.id)}<span><h3>❔ ???</h3><b>Method hidden</b></span></span><p class="rvlk">🔒 Beat this rival's cast to see how it thinks.</p></button>`;}).join('')}</div>`:'';}).join('')}`;
   if(tab==='enemies')body=(TUNE.genOn?`<div class="rules"><p><b>Every fight is new.</b> Normal fights are put together each time from the act's monsters below, from 3 to about 5 enemies, sometimes a pack of one kind. Bosses stay, and from Act 2 a boss can be elite.</p>${TUNE.ghOn?`<p><b>📼 Reruns.</b> From Act 2, some normal fights are another studio's cast: a real team our test bots built at that same episode, with its items and Legendary, scaled to the episode. They fight with everything a player's cast has: genre and trait bonuses and battlefield-wide effects like Army barrages, Swarm regrowth and the Game Ball.</p>`:''}<p><b>Elite traits:</b> ${AFF_KEYS.map(k=>AFF[k].e+' <b>'+AFF[k].n+'</b>: '+AFF[k].d).join(' · ')}.</p>${TUNE.efamOn?`<p><b>Enemy families</b> (bonuses switch on with 2 and 3 on the field, like your genres):</p><ul>${Object.values(EFAM).map(x=>`<li>${x.e} <b>${x.n}</b> (${x.m.filter(k=>EN[k]).map(k=>EN[k].name).join(', ')}): 2: ${x.d2}. 3: ${x.d3}.</li>`).join('')}</ul><p><b>Enemy crossovers</b> (two families with 2+ each):</p><ul>${EXO.map(x=>`<li>🔗 <b>${x.n}</b> (${EFAM[x.a].n} + ${EFAM[x.b].n}): ${x.d}</li>`).join('')}</ul>`:''}</div>`:'')+Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...(ENC[a].codex||ENC[a].normal),...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
   return `<section class="screen codex"><div class="row" style="justify-content:space-between"><h2>📖 Codex</h2><button class="btn" data-a="codex-back">Back</button></div>
     <div class="cxs${UI.codexQ?' has':''}"><span class="cxi" aria-hidden="true">🔎</span><input id="cxq" type="search" inputmode="search" enterkeyhint="search" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Search this tab (press /)" aria-label="Search this Codex tab" value="${esc(UI.codexQ||'')}"><button class="cxx" data-a="codex-clear" aria-label="Clear search" title="Clear search">✕</button></div>
@@ -23116,9 +23358,9 @@ function onAction0(a,v,el){
   switch(a){
     case 'pend-hide':if(!UI.pendOpen)break;UI.legPeek=true;UI.swap=null;closeSheet();render();break;
     case 'pend-show':UI.legPeek=false;closeSheet();render();break;
-    case 'new':UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();break;
+    case 'new':UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();tbxCard();break;
     case 'renew':UI.renew=!UI.renew;render();break;
-    case 'continue':{const sv=loadSave();if(sv){restore(sv);if(S.inFight)resumeFight();else go();}break;}
+    case 'continue':{const sv=loadSave();if(sv){restore(sv);if(S.inFight)resumeFight();else{go();tbxCard();}}break;}
     case 'pick':{hoverCard(null);if(!canHover&&S.shop[+v]){sheet(shopPreview(+v));break;}if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
     case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
     case 'reroll':if(reroll())go();break;
@@ -23135,11 +23377,11 @@ function onAction0(a,v,el){
     case 'codex-clear':{UI.codexQ='';const i=document.getElementById('cxq');if(i){i.value='';i.focus();}cxFilter();break;}
     case 'codex-back':UI.screen=UI.codexBack&&UI.codexBack!=='codex'?UI.codexBack:(S?'plan':'title');render();break;
     case 'quit':if(!UI.armQuit){UI.armQuit=true;render();setTimeout(()=>{if(UI.armQuit){UI.armQuit=false;if(UI.screen!=='battle')render();}},3000);}else{UI.armQuit=false;if(S&&S.round>1)tlEnd(true);clearSave();S=null;UI.screen='title';render();}break;
-    case 'fight':if(!fielded().length)return;UI.screen='battle';UI.sel=null;render();startBattle(false);drawBattle();requestAnimationFrame(battleLoop);break;
+    case 'fight':if(!fielded().length||tbxBusy())return;tbxFight(()=>{if(!S||S.over||UI.screen!=='plan'||!fielded().length)return;UI.screen='battle';UI.sel=null;render();startBattle(false);drawBattle();requestAnimationFrame(battleLoop);});break;
     case 'speed':UI.speed=+v;if(B)B.speed=UI.speed;document.querySelectorAll('.speed [data-a="speed"]').forEach(b=>b.classList.toggle('on',+b.dataset.v===UI.speed));break;
     case 'pause':if(B){B.paused=!B.paused;el.textContent=B.paused?'▶':'⏸';}break;
     case 'skip':skipBattle();break;
-    case 'after-fight':delete S.toAdvance;if(S.over){UI.screen='end';clearSave();render();window.scrollTo(0,0);break;}advanceAfterFight(UI.lastRes);go();window.scrollTo(0,0);break;
+    case 'after-fight':if(tbxBusy())return;if(UI.rvPend){const id=UI.rvPend;UI.rvPend=null;if(RIVAL[id]){tbxReveal(id);return;}}tbxAfter(()=>{if(!S||UI.screen!=='battle')return;delete S.toAdvance;if(S.over){UI.screen='end';clearSave();render();window.scrollTo(0,0);return;}advanceAfterFight(UI.lastRes);go();window.scrollTo(0,0);});break;
     case 'event':eventPick(v);UI.freshAt=Date.now();go();break;
     case 'cut-mode':UI.cutMode=v||null;render();break;
     case 'event-sub':eventSub(v||null);UI.cutMode=null;go();break;
@@ -23162,6 +23404,7 @@ function onAction0(a,v,el){
     case 'appquit':if(window.tbApp)window.tbApp.quit();break;
     case 'privacy':sheet(tlPrivacySheet());break;
     case 'rvwhy':if(UI.rvWhy)sheet(rvWhySheet(UI.rvWhy));break;
+    case 'trans':if(['full','short','off'].includes(v)){SET.trans=v;setSave();}sheet(settingsHTML());break;
     case 'rvforget':RB.forget();toast('Rivals forgot what they learned about your play.');break;
     case 'set':if(v==='anim'){if(RM){SET.anim=true;if(RM_SYS)SET.animOver=true;}else{SET.anim=false;SET.animOver=false;}applyMotion();}if(v==='allLv'){SET.allLv=!SET.allLv;SET.allLvPick=true;}if(v==='fs')fsToggle();if(v==='sound'){SET.sound=!SET.sound;sndPaint();}if(v==='music'){SET.music=!SET.music;}if(v==='share'){SET.share=!SET.share;if(!SET.share){TL=null;try{localStorage.removeItem(TL_KEY);}catch(e){}}}if(v==='coach')SET.coach=!SET.coach;if(v==='arena')SET.arena=!SET.arena;if(v==='live')SET.live=!SET.live;setSave();sheet(settingsHTML());if(UI.screen==='title'||v==='coach'&&UI.screen==='plan')render();break;
     case 'endleg':if(!isWide()||!canHover)sheet(legendDetail(v));break;
@@ -23290,10 +23533,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.2',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.3',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.3',items:[["🎭", "Rivals are a roster to collect now. Each studio stays a blacked-out silhouette until you beat its cast; beat one and it steps into the spotlight with its own intro, and its Codex card fills in with who they are and how they play."], ["🎬", "Every run opens on a title card for your level, and the label then sits in the top bar the whole run (shop, intermissions and fights), so you always know which Ascension you're on. Clearing a level reveals everything you unlocked, one by one."], ["📺", "Episode bumpers between the shop and fights, intermission cards and a wipe back to the shop. Settings → Transitions: Full, Short or Off. A click or any key skips them."]]},
   {v:'20.2',items:[["🧠", "Every rival studio now thinks with a real algorithm: Rex counts the odds before a reroll, Goldie updates her beliefs like a Bayesian, Sal solves a knapsack, Hugo plans for the worst case and more. Codex → Rivals and the new <b>Algorithm Lab</b> explain each one for kids and teachers."], ["🎲", "Four learning rivals: <b>Kit</b> (a bandit that bets on what beats you) and <b>Echo</b> (counters your favourite genres) from Level 7, <b>Prof. Quill</b> (Markov chains) and <b>Cue</b> (Q-learning) from Level 11. They learn only from your runs on this device."], ["🔍", "After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast, with its real numbers."]]},
   {v:'20.1',items:[["🎨", "Comic is the default look again (Glass is still in Settings -> Look)."]]},
   {v:'20.0',items:[["🔒", "Runs are recorded anonymously to train the AI rivals (no names, no personal info). <b>Settings → Share anonymous run data</b> turns it off; Codex → Credits → Privacy says exactly what is sent."], ["🔧", "The level line on the start menu reads as one line again, and the Credits carry the three.js copyright line."]]},
@@ -23470,6 +23714,7 @@ function settingsHTML(){
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎭</span><span><b>Look</b><small>Comic is the original style. Glass: frosted panels on a colourful backdrop (new).</small></span><span class="seg" role="radiogroup" aria-label="Look">${[['comic','Comic'],['glass','Glass']].map(([k,t])=>`<button class="btn sm${SET.look===k?' on':''}" data-a="look" data-v="${k}" role="radio" aria-checked="${SET.look===k}"><i class="lsw ${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🧍</span><span><b>Characters</b><small>Polygon: chunky low-poly, the newest (default). Cel-shaded: the v19.87 models. Classic toys: the originals.</small></span><span class="seg" role="radiogroup" aria-label="Characters">${[['poly','Polygon'],['new','Cel-shaded'],['classic','Classic toys']].map(([k,t])=>`<button class="btn sm${SET.models===k?' on':''}" data-a="models" data-v="${k}" role="radio" aria-checked="${SET.models===k}">${t}</button>`).join('')}</span></div>
     <div class="setrow lookrow bdrow"><span class="lkic" aria-hidden="true">🎬</span><span><b>Backdrop</b><small>Behind the shop and title (Comic look).</small></span><span class="seg" role="radiogroup" aria-label="Backdrop">${[['sun','Sunburst'],['swirl','Swirl'],['curt','Curtains'],['violet','Violet']].map(([k,t])=>`<button class="btn sm${SET.bd===k?' on':''}" data-a="bd" data-v="${k}" role="radio" aria-checked="${SET.bd===k}"><i class="lsw bd-${k}" aria-hidden="true"></i>${t}</button>`).join('')}</span></div>
+    <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎞️</span><span><b>Transitions</b><small>Episode cards between the shop and fights, intermission cards, the run's title card. Short plays them quicker; a click or any key skips them.</small></span><span class="seg" role="radiogroup" aria-label="Transitions">${[['full','Full'],['short','Short'],['off','Off']].map(([k,t])=>`<button class="btn sm${tbxMode()===k?' on':''}" data-a="trans" data-v="${k}" role="radio" aria-checked="${tbxMode()===k}"${RM?' disabled':''}>${t}</button>`).join('')}</span></div>
     <p class="muted" style="margin:-4px 0 6px;font-size:.8rem" id="tbastat">${tbaStatus()}</p>
     ${sw('live',SET.live!==false,'Live 3D toys','Toys in the shop, on the board and bench are drawn live, as smooth as in fights. Switch off for pre-drawn animation (lighter on older phones). '+tlStatus())}
     ${sw('arena',SET.arena!==false,'3D battle arena','Fights play out live on a 3D tabletop. Switch off for the flat board (lighter on older phones). '+arStatus())}
@@ -25569,6 +25814,150 @@ function rvBrainPlace(R){
   RB.install();
 })();
 
+// ================= v20.3 Pool viewer + Scouting (balance/v19/patch_v20_3b.py) =================
+// Scouting snapshot: rivals only act inside rivalsTurn (after your fight, from settle). A plain JSON copy taken right
+// after that turn (and when the lobby is set up) is therefore exactly every rival's state at the start of your next
+// round, until your next fight. Read-only: no random numbers, nothing written but S.lobby.scout.
+const SCOUT_KEYS=['lv','rules','ladder','part','round','lives','maxLives','rank','trinkets','tlv','legend','cut','lvG','cap'];
+function scoutTake(r){if(!S||!S.lobby)return;
+  const rv=S.lobby.rv.map(R=>{const st=R.st||{},o={};SCOUT_KEYS.forEach(k=>{if(st[k]!==undefined&&st[k]!==null)o[k]=st[k];});
+    o.units=(st.units||[]).map(u=>({id:u.id,level:u.level,slot:u.slot}));
+    return {id:R.id,out:!!R.out,done:!!R.done,place:R.place|0,last:R.last?{w:R.last.win?1:0,r:R.last.round|0}:null,st:JSON.parse(JSON.stringify(o))};});
+  S.lobby.scout={r:r|0,rv};}
+(function(){const li0=lobbyInit,rt0=rivalsTurn;
+  globalThis.lobbyInit=function(){const x=li0.apply(this,arguments);try{if(S&&S.lobby)scoutTake(0);}catch(e){}return x;};
+  globalThis.rivalsTurn=function(){const x=rt0.apply(this,arguments);try{if(S&&S.lobby&&!LOBBY.busy)scoutTake(S.round);}catch(e){}return x;};
+  // rival chips open Scouting on that rival (only if the chip is the plain v20.2 <span>)
+  const ch0=rvChip;globalThis.rvChip=function(R){const h=ch0.apply(this,arguments);
+    return typeof h==='string'&&h.startsWith('<span class="rvc')&&h.endsWith('</span>')&&!/<span/.test(h.slice(5))?'<button type="button" data-a="scout" data-v="'+R.id+'" class="rvc'+h.slice(16,-7)+'</button>':h;};})();
+function scoutSnap(){return S&&S.lobby&&S.lobby.scout||null;}
+// a rival's name and face; a later build can supply rvLook(id) -> {e,name,style} (e.g. silhouettes)
+function scoutWho(id){const x=RIVAL[id]||{e:'❔',name:id,style:''};let L=null;try{if(typeof rvLook==='function')L=rvLook(id);}catch(e){}return L||{e:x.e,name:x.name,style:x.style};}
+// run f with S set to a snapshot (synergy helpers read S); always restored
+function scoutWith(st,f){const pS=S;try{S=st;return f();}finally{S=pS;}}
+function scoutUnit(u,cls){const d=HERO[u.id];if(!d)return '';
+  return `<div class="scu g-${d.genre}${cls||''}" title="${esc(d.name)} ${'★'.repeat(u.level)} · ${RARITY[d.tier-1]} · ${esc(GENRES[d.genre]?GENRES[d.genre].name:'')} · ${esc(TRAITS[d.trait]?TRAITS[d.trait].name:'')}">${heroPt(u.id,'sm')}<span class="scun"><b>${esc(d.name)}</b><small><span class="scst">${'★'.repeat(u.level)}</span><span class="scr"> ${RARITY[d.tier-1]}</span></small></span></div>`;}
+function scoutBody(x){const n=scoutWho(x.id);
+  if(x.out)return `<p class="scout-out">${n.e} <b>${esc(n.name)}</b> is out of the season${x.place?` (finished #${x.place})`:''}. Their characters went back to the pool.</p>`;
+  const st=Object.assign({rules:[],units:[],trinkets:[],tlv:{},legend:null,lives:0,rank:1},x.st);
+  return scoutWith(st,()=>{const f=fielded(),bn=benched(),s=activeSyn(f),c=s.c,bs=boardSize();
+    const row=p=>{let h='';for(let k=0;k<4;k++){const u=f.find(v=>v.slot===p+k);
+        if(u){const w=twoSlot(u.id)&&k<3;h+=scoutUnit(u,w?' w2':'');if(w)k++;}
+        else if(!f.some(v=>v.slot===p+(k-1)&&twoSlot(v.id)))h+='<div class="scu empty" aria-hidden="true"></div>';}return h;};
+    const gs=Object.keys(c.g||{}).filter(k=>c.g[k]>0&&GENRES[k]).sort((a,b)=>(s.G[b]||0)-(s.G[a]||0)||c.g[b]-c.g[a]);
+    const ts=Object.keys(c.t||{}).filter(k=>c.t[k]>0&&TRAITS[k]).sort((a,b)=>(s.T[b]||0)-(s.T[a]||0)||c.t[b]-c.t[a]);
+    const chip=(on,cls,ttl,html)=>`<span class="scch${on?' on':''} ${cls}" title="${esc(ttl)}">${html}</span>`;
+    const gh=gs.map(k=>{const on=s.G[k]||0,t=GENRES[k].tiers;return chip(on,'g-'+k,`${GENRES[k].name}: ${c.g[k]} counted${on?`, bonus at ${t[on-1]} on`:`, first bonus at ${t[0]}`}`,`${GENRES[k].e} ${esc(GENRES[k].name)} <b>${c.g[k]}</b>${on?` <small>✓ ${t[on-1]}</small>`:` <small>/ ${t[0]}</small>`}`);}).join('');
+    const th=ts.map(k=>{const on=s.T[k]||0,t=TRAITS[k].tiers;return chip(on,'',`${TRAITS[k].name}: ${c.t[k]}${on?`, bonus at ${t[on-1]} on`:`, first bonus at ${t[0]}`}`,`${tsvg(k)} ${esc(TRAITS[k].name)} <b>${c.t[k]}</b>${on?` <small>✓ ${t[on-1]}</small>`:` <small>/ ${t[0]}</small>`}`);}).join('');
+    const xh=CROSSOVERS.filter(o=>s.X[o.id]).map(o=>chip(1,'',o.d,`🔗 ${esc(o.name)} <small>${GENRES[o.a]?GENRES[o.a].e:''}${GENRES[o.b]?GENRES[o.b].e:''}</small>`)).join('');
+    const it=[st.legend&&LEGENDS[st.legend]?chip(1,'',LEGENDS[st.legend].name,`${LEGENDS[st.legend].e} ${esc(LEGENDS[st.legend].name)} <small>Legendary</small>`):'',
+      ...(st.trinkets||[]).filter(t=>TR[t]).map(t=>chip(0,'',TR[t].d,`${TR[t].e} ${esc(TR[t].name)} <small>${'★'.repeat(ilv(t)||1)}</small>`))].join('');
+    const fs=f.reduce((t,u)=>t+(twoSlot(u.id)?2:1),0);
+    return `<p class="scmeta"><span>❤️ <b>${Math.max(0,st.lives|0)}</b>${st.maxLives?'/'+st.maxLives:''} lives</span><span>📊 Shop rank <b>${st.rank}</b></span><span>Board <b>${fs}/${bs}</b></span>${x.last?`<span>Last episode (Ep ${x.last.r}): <b class="${x.last.w?'scw':'scl'}">${x.last.w?'won':'lost'}</b></span>`:''}${x.done?'<span><b class="scw">Finished the season</b></span>':''}</p>
+      <div class="scgrid" aria-label="Board"><div class="scrl">Back row</div>${row('b')}<div class="scrl">Front row</div>${row('f')}</div>
+      <div class="scsec"><h4>Bench <small>${bn.length}</small></h4><div class="scbench">${bn.map(u=>scoutUnit(u)).join('')||'<span class="muted">Empty</span>'}</div></div>
+      <div class="scsec"><h4>Genres</h4><div class="scchips">${gh||'<span class="muted">None</span>'}</div></div>
+      <div class="scsec"><h4>Roles</h4><div class="scchips">${th||'<span class="muted">None</span>'}</div></div>
+      <div class="scsec"><h4>Crossovers</h4><div class="scchips">${xh||'<span class="muted">None switched on</span>'}</div></div>
+      ${it?`<div class="scsec"><h4>Items</h4><div class="scchips">${it}</div></div>`:''}`;});}
+function scoutHTML(sel){const sc=scoutSnap();
+  if(!sc)return `<div class="scoutsh"><div class="eyebrow">Scouting</div><h3 style="color:var(--gold);margin:0">📸 No rivals this run</h3><p class="muted">Rival studios join from the Game Level that turns them on.</p></div>`;
+  const rv=sc.rv,cur=rv.find(x=>x.id===sel)||rv.find(x=>!x.out&&!x.done)||rv[0];UI.scoutSel=cur.id;
+  const when=UI.screen==='plan'||UI.screen==='event'?`the start of Ep ${S.round}`:sc.r?`the end of the rivals' Ep ${sc.r} turn`:'the start of the season';
+  const tabs=rv.map(x=>{const n=scoutWho(x.id);return `<button type="button" class="sctab${x.id===cur.id?' on':''}${x.out?' out':''}" data-a="scoutrv" data-v="${x.id}" aria-pressed="${x.id===cur.id}">${n.e} ${esc(n.name)} <b>${x.out?'out':x.done?'done':'❤️'+Math.max(0,x.st.lives|0)}</b></button>`;}).join('');
+  const n=scoutWho(cur.id);
+  return `<div class="scoutsh"><div class="eyebrow">Scouting · a snapshot, not a live view</div><h3 style="color:var(--gold);margin:0">📸 Rival studios at ${when}</h3>
+    <p class="muted scnote">Rivals shop and fight after your fight, so this is their team before they act this round. It never updates mid-round and never shows their gold, their shop or what they pick next.</p>
+    <div class="sctabs" role="group" aria-label="Rivals">${tabs}</div>
+    <h4 class="scwho">${n.e} ${esc(n.name)}${n.style?` <small>${esc(n.style)}</small>`:''}</h4>${scoutBody(cur)}</div>`;}
+// ---- the pool viewer
+function poolHTML(){const od=shopOdds(),cap=S.cap||5,all=!!UI.poolAll,mx=maxedIds(),sc=scoutSnap();
+  const hold={};if(sc)sc.rv.forEach(x=>{if(x.out)return;new Set((x.st.units||[]).map(u=>u.id)).forEach(id=>{hold[id]=(hold[id]||0)+1;});});
+  const own={};S.units.forEach(u=>{(own[u.id]=own[u.id]||[]).push(u.level);});
+  const hs=HEROES.map(h=>h[0]).filter(id=>HERO[id]&&!gOut(HERO[id].genre));
+  const tiers=[1,2,3,4,5].filter(t=>hs.some(id=>HERO[id].tier===t)&&(all||(od[t-1]>0&&t<=cap)));
+  const gs=[...new Set(hs.filter(id=>tiers.includes(HERO[id].tier)).map(id=>HERO[id].genre))].filter(g=>GENRES[g]);
+  if(UI.poolG&&!gs.includes(UI.poolG))UI.poolG='';
+  const row=id=>{const d=HERO[id],left=poolLeft(id),max=poolMax(id),o=own[id]||[],cp=o.reduce((t,l)=>t+COPIES[l-1],0),h=hold[id]||0,G=GENRES[d.genre],T=TRAITS[d.trait];
+    return `<div class="plr g-${d.genre}${left?'':' gone'}" data-g="${d.genre}" data-n="${esc((d.name+' '+(G?G.name:'')+' '+(T?T.name:'')).toLowerCase())}">${heroPt(id,'sm')}<span class="pln"><b>${esc(d.name)}</b><small>${G?G.e+' '+esc(G.name):''} · ${T?esc(T.name):''}</small></span>
+      <span class="plc" title="${left} of ${max} copies left in the pool"><b>${left}</b>/${max}<i class="plbar" aria-hidden="true"><i style="width:${max?Math.round(100*left/max):0}%"></i></i></span>
+      <span class="plx">${o.length?`<span class="plo" title="Yours: ${cp} cop${cp===1?'y':'ies'}">You ${o.sort((a,b)=>b-a).map(l=>'★'.repeat(l)).join(' ')}</span>`:''}${h?`<span class="plv" title="${h} rival${h>1?'s':''} held at least one copy at the start of this round">${h} rival${h>1?'s':''}</span>`:''}${mx.has(id)?'<span class="plm" title="Your copy is maxed: it no longer shows in your shop">Maxed</span>':''}</span></div>`;};
+  const sec=tiers.map(t=>{const ids=hs.filter(id=>HERO[id].tier===t).sort((a,b)=>HERO[a].genre.localeCompare(HERO[b].genre)||HERO[a].name.localeCompare(HERO[b].name));
+    const left=ids.reduce((n,id)=>n+poolLeft(id),0);
+    return `<section class="plsec"><h4 class="plh"><span class="tier${t}" style="color:var(--tc)">${RARITY[t-1]}</span> <small>${od[t-1]?od[t-1]+'% per shop card at Rank '+S.rank:'not at Rank '+S.rank}${t>cap?' (above this level\'s cap)':''} · ${left} copies left</small></h4><div class="plgrid">${ids.map(row).join('')}</div></section>`;}).join('');
+  const chips=`<button type="button" class="plg${UI.poolG?'':' on'}" data-a="poolg" data-v="" aria-pressed="${!UI.poolG}">All genres</button>`+gs.map(g=>`<button type="button" class="plg g-${g}${UI.poolG===g?' on':''}" data-a="poolg" data-v="${g}" aria-pressed="${UI.poolG===g}" title="${esc(GENRES[g].name)}">${GENRES[g].e}<span class="plgn"> ${esc(GENRES[g].name)}</span></button>`).join('');
+  return `<div class="poolsh"><div class="eyebrow">Character pool${lobbyN()?` · shared with ${lobbyN()} rival${lobbyN()>1?'s':''}`:''}</div><h3 style="color:var(--gold);margin:0">🃏 Copies left per character</h3>
+    <p class="muted plnote">Everyone buys from one pool: buying takes copies out, selling puts them back. ★★ takes 3 copies, ★★★ takes 6.${sc?' "2 rivals" = how many rivals held a copy at the start of this round (see 📸 Scouting).':''}</p>
+    <div class="plbar0"><input id="poolq" type="search" autocomplete="off" placeholder="Search a name, genre or role" aria-label="Search characters" value="${esc(UI.poolQ||'')}">
+      <button type="button" class="btn sm" data-a="poolall" aria-pressed="${all}">${all?'Only my shop\'s rarities':'All rarities'}</button>${S.lobby?'<button type="button" class="btn sm" data-a="scout">📸 Scouting</button>':''}</div>
+    <div class="plgs" role="group" aria-label="Filter by genre">${chips}</div>${sec}<p class="muted plnone" hidden>No character matches.</p></div>`;}
+function poolFilter(){try{const q=(UI.poolQ||'').trim().toLowerCase(),g=UI.poolG||'';let any=0;
+  document.querySelectorAll('#sheet .plsec').forEach(sec=>{let n=0;sec.querySelectorAll('.plr').forEach(e=>{const ok=(!g||e.dataset.g===g)&&(!q||e.dataset.n.includes(q));e.hidden=!ok;if(ok)n++;});sec.hidden=!n;any+=n;});
+  const no=document.querySelector('#sheet .plnone');if(no)no.hidden=!!any;}catch(e){}}
+const SCOUT_ACT={
+  poolview:()=>{if(!S)return;sheet(poolHTML());poolFilter();if(typeof DESK!=='undefined'&&DESK){const q=document.getElementById('poolq');if(q)q.focus();}},
+  poolg:v=>{UI.poolG=v||'';document.querySelectorAll('#sheet [data-a="poolg"]').forEach(b=>{const on=(b.dataset.v||'')===UI.poolG;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});poolFilter();},
+  poolall:()=>{UI.poolAll=!UI.poolAll;sheet(poolHTML());poolFilter();const b=document.querySelector('#sheet [data-a="poolall"]');if(b)b.focus();},
+  scout:v=>{if(!S)return;sheet(scoutHTML(v||UI.scoutSel));const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
+  scoutrv:v=>{const h=document.querySelector('#sheet .sh'),y=h?h.scrollTop:0;sheet(scoutHTML(v));const h2=document.querySelector('#sheet .sh');if(h2)h2.scrollTop=Math.min(y,140);
+    const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
+};
+(function(){const oa0=onAction0;globalThis.onAction0=function(a,v,el){if(SCOUT_ACT[a]&&UI.sheetOpen!=='modal'){try{SCOUT_ACT[a](v,el);}catch(e){}return;}return oa0.apply(this,arguments);};})();
+(function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
+  document.addEventListener('input',e=>{if(e.target&&e.target.id==='poolq'){UI.poolQ=e.target.value;poolFilter();}});
+  // P = pool, O = Scouting (shop screen); the same key closes the panel, the other key switches
+  document.addEventListener('keydown',e=>{try{if(e.ctrlKey||e.metaKey||e.altKey||e.repeat||!S||UI.screen!=='plan')return;
+    if(/INPUT|TEXTAREA|SELECT/.test((e.target&&e.target.tagName)||''))return;const k=(e.key||'').toLowerCase();if(k!=='p'&&k!=='o')return;
+    const mine=UI.sheetOpen==='info'&&document.querySelector('#sheet .poolsh,#sheet .scoutsh'),same=mine&&document.querySelector(k==='p'?'#sheet .poolsh':'#sheet .scoutsh');
+    if(same){closeSheet();e.preventDefault();return;}if(UI.sheetOpen&&!mine)return;
+    if(k==='o'&&!S.lobby)return;e.preventDefault();onAction(k==='p'?'poolview':'scout');}catch(err){}});
+  const st=document.createElement('style');st.id='scoutcss';st.textContent=`
+#sheet .shw:has(.poolsh),#sheet .shw:has(.scoutsh){width:min(880px,100%)}
+#sheet .shw:has(.poolsh)>.sh,#sheet .shw:has(.scoutsh)>.sh{width:100%}
+.poolsh,.scoutsh{display:grid;gap:8px;min-width:0}
+.poolsh .pt,.scoutsh .pt,#sheet .poolsh .pt,#sheet .scoutsh .pt{width:30px;height:30px;font-size:.95rem;flex:none}
+.plnote,.scnote{font-size:.8rem;margin:0}
+.plbar0{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.plbar0 input{flex:1 1 180px;min-width:0;font:inherit;font-size:.9rem;padding:6px 10px;border-radius:3px;border:2px solid var(--line);background:var(--bg2,#111);color:var(--ink,#fff)}
+.plbar0 input:focus{outline:2px solid var(--gold);outline-offset:1px}
+.plgs,.sctabs{display:flex;flex-wrap:wrap;gap:4px}
+.plg,.sctab{font:inherit;font-size:.74rem;line-height:1.4;padding:3px 8px;border:1px solid var(--line);border-radius:3px;background:var(--panel2);color:var(--ink,#fff);cursor:pointer;white-space:nowrap;min-height:30px}
+.plg.on,.sctab.on{border-color:var(--gold);box-shadow:inset 0 -3px 0 var(--gold);font-weight:800}
+.sctab.out{opacity:.55}
+.plg:focus-visible,.sctab:focus-visible,button.rvc:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+@media (max-width:560px){.plgn{display:none}}
+.plsec{display:grid;gap:5px;min-width:0}
+.plh{margin:6px 0 0;font-size:.95rem}.plh small{font-weight:400;color:var(--muted);font-size:.74rem}
+.plgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:5px;min-width:0}
+.plr{display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"pt n c" "pt x x";align-items:center;column-gap:8px;row-gap:1px;padding:4px 8px;border:1px solid var(--line);border-left:4px solid var(--gc,var(--line));border-radius:3px;background:var(--panel2);min-width:0}
+.plr>.pt{grid-area:pt}.plr .pln{grid-area:n;min-width:0;display:grid}.plr .plc{grid-area:c;text-align:right;font-size:.8rem;white-space:nowrap}
+.plr .plx{grid-area:x;display:flex;flex-wrap:wrap;gap:4px;min-height:0}.plr .plx:empty{display:none}
+.plr .pln b{font-size:.86rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.plr .pln small{font-size:.7rem;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.plr .plc b{font-size:1rem;color:var(--gold)}.plr.gone{opacity:.5}.plr.gone .plc b{color:var(--muted)}
+.plbar{display:block;width:56px;height:4px;margin:2px 0 0 auto;background:var(--bg2,#000);border-radius:2px;overflow:hidden}.plbar>i{display:block;height:100%;background:var(--gold)}
+.plo,.plv,.plm{font-size:.68rem;font-weight:800;padding:0 5px;border-radius:3px;line-height:1.5}
+.plo{background:var(--gold);color:#0b0a0e}.plv{border:1px solid var(--line)}.plm{border:1px solid var(--muted);color:var(--muted)}
+.scwho{margin:4px 0 0;font-size:1.05rem}.scwho small{color:var(--muted);font-weight:400;font-size:.78rem}
+.scmeta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.82rem;margin:0}.scw{color:#7ee081}.scl{color:#ff7a7a}
+.scgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;min-width:0}
+.scrl{grid-column:1/-1;font-size:.68rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--muted);margin-top:2px}
+.scu{display:flex;align-items:center;gap:5px;min-width:0;padding:3px 5px;border:1px solid var(--line);border-left:3px solid var(--gc,var(--line));border-radius:3px;background:var(--panel2)}
+.scu.w2{grid-column:span 2}.scu.empty{border-style:dashed;border-left-width:1px;background:none;min-height:38px;opacity:.5}
+.scun{display:grid;min-width:0}.scun b{font-size:.76rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.scun small{font-size:.64rem;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.scst{color:var(--gold);letter-spacing:-1px}
+.scbench{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px}
+.scsec h4{margin:4px 0 3px;font-size:.78rem;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}.scsec h4 small{font-weight:400}
+.scchips{display:flex;flex-wrap:wrap;gap:4px}
+.scch{display:inline-flex;align-items:center;gap:4px;font-size:.74rem;padding:2px 7px;border:1px solid var(--line);border-radius:3px;background:var(--panel2);white-space:nowrap}
+.scch.on{border-color:var(--gc,var(--gold));box-shadow:inset 0 -2px 0 var(--gc,var(--gold))}.scch small{color:var(--muted)}.scch svg{width:14px;height:14px}
+.scout-out{font-size:.9rem}
+button.rvc{font:inherit;font-size:.72rem;color:inherit;cursor:pointer}button.rvc:hover{border-color:var(--gold)}
+.rvc.rvscout{border-color:var(--gold);font-weight:800}
+.rvc .kh{margin-left:4px}
+@media (max-width:560px){.scgrid{gap:3px}.scgrid .scu{flex-direction:column;justify-content:flex-start;text-align:center;padding:4px 2px;gap:2px;border-left-width:1px;border-top:3px solid var(--gc,var(--line))}
+  .scgrid .scu.empty{border-top-width:1px;min-height:64px}.scgrid .scun{justify-items:center;width:100%}
+  .scgrid .scun b{white-space:normal;font-size:.66rem;line-height:1.15;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;overflow-wrap:anywhere}
+  .scgrid .scun .scr{display:none}}
+`;document.head.appendChild(st);}catch(e){}})();
 window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
