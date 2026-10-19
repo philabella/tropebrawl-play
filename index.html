@@ -22578,10 +22578,10 @@ function tutSkip(){const p=lvLoad();if(!p.dev)p.open=Math.max(p.open,4);p.pick=4
   UI.screen='title';closeSheet();render();window.scrollTo(0,0);toast('Season 1 is open. Levels 1-3 stay in the level list.');}
 function tutTitleBtns(){const p=lvLoad(),n=UI.lv|0;
   return `<button class="btn primary big" data-a="new">${n===1?'🎬 Start the Pilot':n>=2&&n<=3?'▶ Play '+esc(LADDER[n].name):'New run'}</button>${p.open<4&&!p.dev?'<button class="btn" data-a="tut-skip">I know auto-battlers</button>':''}`;}
-function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primary big" data-a="new">New run</button>';
-  if(!win)return '<button class="btn primary big" data-a="new">↻ Try again</button>';
+function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primary big" data-a="title">🏠 Main menu</button><button class="btn" data-a="new">New run</button>';
+  if(!win)return '<button class="btn primary big" data-a="new">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start Season 1'}[S.newLv]||'New run';
-  return `<button class="btn primary big" data-a="new">${lbl}</button>${n===3?'<button class="btn" data-a="title">Back to the title</button>':''}`;}
+  return `<button class="btn primary big" data-a="new">${lbl}</button><button class="btn" data-a="title">🏠 Main menu</button>`;}
 function tutWrapHTML(){return `<div class="lvwin tutwrap"><p>📺 <b>That's a wrap on the Pilot.</b> You can hire, merge, line up, save and pick a Legendary. The network ordered a full season.</p>
   <p><b>The Season is open:</b> four acts, Mythic characters, more items and events${TUNE.rivalsOn?', and a rival studio in your episodes':''}. Every run airs episodes, won or lost: they unlock Space Opera, Kaiju and more.</p>
   <p class="muted" style="font-size:.8rem"><i>Coach tips are done. Replay them any time in Settings.</i></p></div>`;}
@@ -23100,6 +23100,8 @@ function onAction0(a,v,el){
     case 'endhero':if(!isWide()||!canHover)sheet(heroDetail(v,+(el&&el.dataset.l)||1));break;
     case 'enditem':if(!isWide()||!canHover){const b=infoBody({kind:'trinket',id:v});if(b)sheet(b);}break;
     case 'settings':sheet(settingsHTML());break;
+    case 'devpanel':closeSheet();DEV.on=true;DEV.open=true;devSave();devPaint();break;
+    case 'devstudio':closeSheet();DEV.on=true;devSave();devPaint();devAct('anstu');break;
     case 'mute':sndToggle();break;
     case 'fs':fsToggle();break;
     case 'tut-x':tutSee(v);TUT.shown=null;break;
@@ -23236,10 +23238,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='19.92',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='19.93',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'19.93',items:[["🏠", "The end screen now has a Main menu button (New run is beside it)."], ["🛠", "Settings -> Developer opens the Test panel and the Animation Studio."]]},
   {v:'19.92',items:[["🕺", "New animations: characters flinch when hit (harder on crits), wobble with stars when stunned, drop onto the board when a fight starts, slump when nearly dead, Guardians brace their shields, and dodges sidestep. Summons and risers climb out of the ground."], ["💃", "11 new dances and poses (robot, shuffle, disco, slide, chicken, sprinkler and more): every winner strikes its own victory pose, and characters dance now and then in the shop."], ["🛒", "Shop: bought characters hop onto the bench, sold ones sink away, and a star-up spins with a burst."], ["✖️", "Settings and other popups now have a gold Close button pinned at the top, so you never scroll down to close."], ["🎬", "Test panel -> Animation Studio: preview any character's animations, ability effects, projectiles and banners in any look, with notes on each."]]},
   {v:'19.91',items:[["🧊", "Polygon is now the default character look (Settings -> Characters still has New and Classic)."], ["📣", "Ability banners are back as full-width, see-through banners along the bottom of the battle at every speed, and they stack: the newest fades in at the bottom and pushes the others up."], ["🖱️", "No more scrolling to the bottom to close: popups close when you click outside them and have a close button pinned at the top (item swaps go back, Legendary and item picks hide so you can see your team). The Codex keeps its Back button on screen."], ["✨", "Abilities now show on the characters themselves: auras, flashes and rings, so you can see who just used theirs (and how long a shield or rage lasts)."]]},
   {v:'19.90',items:[["🧊", "New character look: Polygon. Every character, enemy and summon rebuilt chunky and low-poly, with brighter colours and its own lighting. Try it in Settings -> Characters (New stays the default)."]]},
@@ -23407,6 +23410,7 @@ function settingsHTML(){
     <div class="row" style="margin:-2px 0 8px;gap:6px"><button class="btn sm ghost" data-a="tut-reset">↺ Replay the tutorial tips</button>${S&&!S.over&&S.ladder&&(S.lv|0)<=3?'<button class="btn sm ghost" data-a="tut-skip">⏭ Skip the tutorial</button>':''}</div>
     ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
     ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from '+lvMin()+' to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
+    <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🛠</span><span><b>Developer</b><small>Test panel (jump to any level, event or round) and the Animation Studio (every animation, with notes).</small></span><span class="seg"><button class="btn sm" data-a="devpanel">Test panel</button><button class="btn sm" data-a="devstudio">🎬 Animation Studio</button></span></div>
     <div class="setver"><span>Tropebrawl v${TB_VERSION}</span><button class="btn sm ghost" data-a="news">📜 What's new</button></div>
 `;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
