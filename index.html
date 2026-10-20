@@ -1288,6 +1288,12 @@ html.noanim .scard.tier5::after{animation:none}
 .board .slot.empty[data-v^="f"]::after,.board .slot.empty[data-v^="b"]::after{position:absolute;inset:0;display:grid;place-items:center;font-size:.6rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800;color:rgba(243,238,228,.22)}
 .board .slot.empty[data-v^="f"]::after{content:"Front"}
 .board .slot.empty[data-v^="b"]::after{content:"Back"}
+html[data-dragrow=front] .board .frow.rf .slot,html[data-dragrow=back] .board .frow.rb .slot{--rg:#ffb547;border-color:var(--rg);box-shadow:0 0 0 2px var(--rg),0 0 16px color-mix(in srgb,var(--rg) 50%,transparent),inset 0 0 14px color-mix(in srgb,var(--rg) 28%,transparent);animation:rowglow 1.1s ease-in-out infinite alternate}
+html[data-dragrow=back] .board .frow.rb .slot{--rg:#6fb7ff}
+html[data-dragrow=front] .board .frow.rf .slot.empty,html[data-dragrow=back] .board .frow.rb .slot.empty{background:color-mix(in srgb,var(--rg) 16%,rgba(0,0,0,.25));border-style:dashed}
+html[data-dragrow=front] .board .frow.rf .slot.empty::after,html[data-dragrow=back] .board .frow.rb .slot.empty::after{content:"Prefers\A front row";white-space:pre;line-height:1.35;letter-spacing:.06em;text-align:center;color:var(--rg)}
+html[data-dragrow=back] .board .frow.rb .slot.empty::after{content:"Prefers\A back row"}
+@keyframes rowglow{from{box-shadow:0 0 0 2px var(--rg),0 0 6px color-mix(in srgb,var(--rg) 35%,transparent),inset 0 0 8px color-mix(in srgb,var(--rg) 18%,transparent)}to{box-shadow:0 0 0 2px var(--rg),0 0 18px color-mix(in srgb,var(--rg) 60%,transparent),inset 0 0 16px color-mix(in srgb,var(--rg) 32%,transparent)}}
 @media (max-width:560px){.board .slot.hasspr{--sx:.62}.board .slot.hasspr[data-v^="n"]{--sx:.4}.field .unit.hasspr{--sx:.62}}
 .board .rowlbl{position:relative;z-index:6}
 /* the ground shadow is baked into each image (under the bottom of the sprite), so no extra CSS shadows */
@@ -1399,6 +1405,26 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .overlay.resbar .ov>p{flex:1 1 100%;margin:0;text-align:center}
 .overlay.resbar .ovbtns{margin-left:auto}
 .overlay.resbar .ovbtns .btn{min-height:40px}
+.rcap{flex:1 1 100%;min-width:0;margin:0;contain:inline-size}
+.rch{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:center;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:0 0 9px}
+.rch span{display:inline-flex;align-items:center;gap:4px;letter-spacing:.02em;text-transform:none;font-weight:700;color:var(--muted)}
+.rch span:before{content:'';width:8px;height:8px;border-radius:2px;background:var(--c)}
+.rcg{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:6px}
+.rc{position:relative;display:flex;align-items:center;gap:7px;min-width:0;padding:5px 7px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);animation:resin .3s ease-out both;animation-delay:calc(var(--i)*60ms)}
+.rc.mvp{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 12px color-mix(in srgb,var(--gold) 35%,transparent)}
+.rc .pt{width:34px;height:34px;flex:none}
+.rc.ko .pt{filter:grayscale(.85) brightness(.65)}.rc.ko .rcn{text-decoration:line-through;text-decoration-color:var(--red)}
+.rc .crown{position:absolute;left:3px;top:-10px;font:1rem/1 var(--f-emoji);filter:drop-shadow(0 1px 1px #000)}
+.rcb{flex:1;min-width:0;display:grid;gap:2px}
+.rcn{font-size:.74rem;font-weight:800;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;line-height:1.1}
+.rcl{display:grid;grid-template-columns:1fr 2.6em;align-items:center;gap:5px;font-size:.68rem;line-height:1;color:var(--c)}
+.rcl s{display:block;height:6px;border-radius:3px;background:rgba(255,255,255,.07);overflow:hidden;text-decoration:none}
+.rcl i{display:block;height:100%;width:var(--w);min-width:2px;border-radius:3px;background:var(--c);transform-origin:left;animation:rcgrow .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*60ms + .15s)}
+.rcl b{text-align:right;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
+.rcl.z{opacity:.35}.rcl.z i{visibility:hidden}
+.rcd{--c:#ff9f43}.rct{--c:var(--red)}.rch2{--c:var(--good)}
+@keyframes rcgrow{from{transform:scaleX(0)}to{transform:none}}
+@media (max-width:700px){.rcg{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:118px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:2px}.rc{scroll-snap-align:start}.rch{margin-bottom:8px}.rcn{font-size:.68rem}.rcl{font-size:.62rem}}
 @keyframes resin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
 @media (max-width:700px){.overlay.resbar{padding:4px}.overlay.resbar .ov{gap:6px 10px;padding:8px 10px}.overlay.resbar .ov h2{font-size:1.35rem}.overlay.resbar .ov .why,.overlay.resbar .ov .tip{flex-basis:100%;font-size:.8rem;padding:5px 8px}.overlay.resbar .ov .why .emo{font-size:1.2rem!important}.overlay.resbar .ovbtns{margin:0;width:100%}.overlay.resbar .ovbtns .btn{min-height:44px;flex:1 1 auto}}
 /* v20.11 P12: the gold number pops when it changes */
@@ -21982,7 +22008,7 @@ function dealDamage(src,t,amt,type,aoe){
   const b0=t.crowd?bodies(t):0;
   let sAbs=0;if(t.shield>0&&!B.wsk){const k=shK(src,t);const s=Math.min(t.shield,amt*k);t.shield-=s;amt-=s/k;sAbs=s/k;}if(TUNE.bugOverkill&&t.crowd&&t.genre==='bug'&&!aoe&&(type==='attack'||type==='spell'))amt=Math.min(amt,TUNE.bugOverkill*t.bodyHp);
   t.blocked=(t.blocked||0)+Math.max(0,amt0-amt);
-  t.hp-=amt;
+  t.taken=(t.taken||0)+Math.max(0,Math.min(amt,t.hp));t.hp-=amt;
   if(t.crowd){const lost=b0-bodies(t);if(lost>0)bodyLost(t,lost);}
   if(t.hp>0&&t.side==='A'&&t.genre==='heist'&&!t.gotAway&&t.hp<t.maxHp*TUNE.cgAt&&legend('getaway')){t.gotAway=true;t.untarget=Math.max(t.untarget,TUNE.cgFor);heal(null,t,t.maxHp*TUNE.cgHeal,true);float(t,'Getaway!','heal');}
   if(!src&&t.side==='E'&&B.envSrc){B.env=B.env||{};B.env[B.envSrc]=(B.env[B.envSrc]||0)+dealt;}
@@ -22820,18 +22846,31 @@ function rvWhySheet(o){const x=RIVAL[o.id],c=RB.CARDS[o.id]||{};
     ${(RVX[o.id]||{}).flav?`<p class="muted">${esc(RVX[o.id].flav)}</p>`:''}<ol class="rvwhy">${o.w.map(w=>`<li><b>Ep ${w.r}:</b> ${esc(w.t)}</li>`).join('')}${o.pl?`<li><b>Line-up:</b> ${esc(o.pl)}</li>`:''}</ol>
     <p class="muted" style="font-size:.8rem">Rivals only know what you could know in their seat: their own shops, the pool counts and your board. Codex → Algorithm Lab explains every method.</p>
     ${c.algo?`<details class="rvhow"><summary>How ${esc(x.name)} thinks</summary><p><b>${esc(c.algo)}.</b> ${esc(c.teach)}</p><code>${esc(c.code)}</code></details>`:''}`;}
+function rcPt(u){const f=SPRITES[u.id+'_f']||SPRITES[u.id];
+  return f?`<span class="pt g-${u.genre||'foe'} tp" aria-hidden="true"><img src="${f}" alt="" draggable="false"></span>`:pt({e:u.e,genre:u.genre});}
+// TRO-147: end-of-fight recap, one chip per fielded character (damage dealt / HP lost / healed + shielded, one scale)
+function recapHTML(){if(!B||!B.units)return '';
+  const rows=B.units.filter(u=>u.side==='A'&&!u.summon).map(u=>({u,d:u.dmgDone||0,t:u.taken||0,h:u.healDone||0}));
+  if(!rows.length)return '';
+  rows.sort((a,b)=>b.d-a.d||b.h-a.h||b.t-a.t);
+  const sd=B.units.filter(u=>u.side==='A'&&u.summon).reduce((a,u)=>a+(u.dmgDone||0),0);
+  if(sd>=1)rows.push({u:{e:'✨',name:'Summons',genre:'foe',alive:true},d:sd,t:0,h:0,sum:1});
+  const mx=Math.max(1,...rows.map(o=>Math.max(o.d,o.t,o.h))),top=rows[0].d>=1?rows[0]:null;
+  const ln=(c,v)=>`<div class="rcl ${c}${v<1?' z':''}"><s><i style="--w:${(v/mx*100).toFixed(1)}%"></i></s><b>${v<1?'–':R(v)}</b></div>`;
+  return `<div class="rcap"><div class="rch">Fight recap <span class="rcd">dealt</span><span class="rct">taken</span><span class="rch2">healed + shielded</span></div><div class="rcg">${rows.map((o,i)=>{const u=o.u;
+    return `<div class="rc${o===top?' mvp':''}${u.alive===false?' ko':''}" style="--i:${i}" title="${esc(u.name)}: ${R(o.d)} damage dealt, ${R(o.t)} taken, ${R(o.h)} healed + shielded${u.alive===false?' (knocked out)':''}">${o===top?'<span class="crown" aria-label="MVP">👑</span>':''}${o.sum?pt({e:u.e,genre:'foe'}):rcPt(u)}<div class="rcb"><div class="rcn">${esc(u.name)}${u.level>1?' '+'★'.repeat(u.level):''}</div>${ln('rcd',o.d)}${ln('rct',o.t)}${ln('rch2',o.h)}</div></div>`;}).join('')}</div></div>`;}
 function showResult(){
   FR=null;if(S)delete S.inFight;
   const rvBeat=S&&S.enemy&&S.enemy.rival; // v20.3: for the rival reveal (read only)
   // v20.2: the fought rival's reasoning, taken before settle (its next shop turn runs inside settle)
   {const id=S&&S.enemy&&S.enemy.rival,R=id&&S.lobby&&S.lobby.rv.find(x=>x.id===id);UI.rvWhy=R&&(R.whys||R.whyPlace)?{id,w:(R.whys||[]).slice(-3),pl:R.whyPlace||''}:null;}
-  const res=settle();UI.lastRes=res;UI.foeTeam=foeSnap(res);
+  const res=settle();UI.lastRes=res;UI.foeTeam=foeSnap(res);const rcap=recapHTML();
   if(S.over){clearSave();lvRecord();}else{S.toAdvance=res;save();}
   const f=$('#field');if(!f)return;
   let body;
   if(res.win){
     body=`<h2>Victory</h2><div class="rw"><span class="goldv">+${res.gold} 🪙</span>${res.sgold?`<span class="stk w" title="Win streak gold">🔥${res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
-      ${res.mvp?`<div class="why"><span class="emo" style="font-size:1.6rem">${res.mvp.e}</span><span><b>MVP: ${esc(res.mvp.name)}</b><br><span class="muted">${res.mvp.dmg} damage</span></span></div>`:''}${res.part2?'<p class="muted" style="font-size:.85rem">Part 2 next: the first two bosses return together.</p>':''}`;
+      ${res.mvp&&!rcap?`<div class="why"><span class="emo" style="font-size:1.6rem">${res.mvp.e}</span><span><b>MVP: ${esc(res.mvp.name)}</b><br><span class="muted">${res.mvp.dmg} damage</span></span></div>`:''}${res.part2?'<p class="muted" style="font-size:.85rem">Part 2 next: the first two bosses return together.</p>':''}`;
   }else{
     const finalBoss=res.boss&&res.act===runActs()&&!S.over;
     body=`<h2>Defeat</h2><div class="rw"><span style="color:var(--red)">−${res.lives} ❤️</span><span class="goldv">+${res.gold} 🪙</span>${res.sgold&&!res.win?`<span class="stk l" title="Losing streak gold">🧊${-res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
@@ -22841,7 +22880,7 @@ function showResult(){
   }
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
   const rvA=rvBeat&&RIVAL[rvBeat]&&(res.win||rvKnown(rvBeat))&&typeof RB!=='undefined'&&RB.CARDS&&RB.CARDS[rvBeat]?RB.CARDS[rvBeat].algo:'';
-  f.insertAdjacentHTML('beforeend',`<div class="overlay resbar"><div class="ov${res.win?'':' lose'}" role="status">${body}${rvA?`<p class="muted rvalgo">${RIVAL[rvBeat].e} ${esc(RIVAL[rvBeat].name)} plays by: <b>${esc(rvA)}</b></p>`:''}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}</div></div></div>`);
+  f.insertAdjacentHTML('beforeend',`<div class="overlay resbar"><div class="ov${res.win?'':' lose'}" role="status">${body}${rvA?`<p class="muted rvalgo">${RIVAL[rvBeat].e} ${esc(RIVAL[rvBeat].name)} plays by: <b>${esc(rvA)}</b></p>`:''}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}</div>${rcap}</div></div>`);
   const b=f.querySelector('.overlay [data-a="after-fight"]');if(b)b.focus();
   try{if(res.win&&rvBeat&&RIVAL[rvBeat])rvuWon(rvBeat);}catch(e){}
 }
@@ -23075,8 +23114,8 @@ function boardHTML(){
   const full=fieldCount()>=bs;
   return `<section class="board" aria-label="Your board">
       <div class="rowlbl bhead"><span>Your board<span class="bh2"> · front row faces the enemy</span></span><b style="${full?'color:var(--gold)':''}">${fieldCount()}/${bs} on board</b></div>
-      <div class="frow" aria-label="Front row">${['f0','f1','f2','f3'].map(s=>wcell(cell,s)).join('')}</div>
-      <div class="frow" aria-label="Back row">${['b0','b1','b2','b3'].map(s=>wcell(cell,s)).join('')}</div>
+      <div class="frow rf" aria-label="Front row">${['f0','f1','f2','f3'].map(s=>wcell(cell,s)).join('')}</div>
+      <div class="frow rb" aria-label="Back row">${['b0','b1','b2','b3'].map(s=>wcell(cell,s)).join('')}</div>
       <div class="frow bench" aria-label="Bench">${benchSlots.map(cell).join('')}</div>
       <div class="rowlbl bfoot"><span>Bench · doesn't fight</span></div>
     </section>`;
@@ -24107,6 +24146,9 @@ function holdView(src){
   if(src.kind==='shop'){const o=S.shop[src.i];if(!o)return;if(isWide())showInfo({kind:'hero',id:o.id,level:o.level,shop:src.i});else sheet(shopPreview(src.i));}
   else{const u=unitAt(src.slot);if(!u)return;if(isWide())showInfo({kind:'unit',uid:u.uid});else{const b=infoBody({kind:'unit',uid:u.uid});if(b)sheet(b);}}
 }
+// TRO-144: while a character is dragged, the board row it prefers (rowPref: front or back) glows; no preference, no glow
+function dragRow(src){try{const r=document.documentElement;if(!src){delete r.dataset.dragrow;return;}
+  const id=src.kind==='shop'?(S.shop[src.i]||{}).id:(unitAt(src.slot)||{}).id,p=id&&HERO[id]?rowPref(id):null;if(p)r.dataset.dragrow=p;else delete r.dataset.dragrow;}catch(e){}}
 document.addEventListener('pointerdown',e=>{
   PT.suppress=0; // a new gesture: the guard only covers the click of the drag/hold that set it
   if(UI.screen!=='plan'||UI.sheetOpen||(e.button||0)>0)return;
@@ -24120,14 +24162,14 @@ document.addEventListener('pointermove',e=>{
   if(!PT.src||PT.held)return;
   if(!PT.drag){if(Math.hypot(e.clientX-PT.x,e.clientY-PT.y)<10)return;
     if(PT.src.kind==='shop'&&PT.src.el.disabled){PT.src=null;clearTimeout(PT.t);return;}
-    PT.drag=true;clearTimeout(PT.t);hoverCard(null);const g=PT.src.el.cloneNode(true);g.classList.add('dragghost');g.removeAttribute('data-a');document.body.appendChild(g);PT.ghost=g;}
+    PT.drag=true;clearTimeout(PT.t);hoverCard(null);dragRow(PT.src);const g=PT.src.el.cloneNode(true);g.classList.add('dragghost');g.removeAttribute('data-a');document.body.appendChild(g);PT.ghost=g;}
   PT.ghost.style.left=e.clientX+'px';PT.ghost.style.top=e.clientY+'px';
   document.querySelectorAll('.slot.dropok').forEach(x=>x.classList.remove('dropok'));
   const t=document.elementFromPoint(e.clientX,e.clientY);const sl=t&&t.closest&&t.closest('[data-a="slot"]');if(sl)sl.classList.add('dropok');
   const sw=document.querySelector('.shopwrap');if(sw&&PT.src.kind==='unit'){const over=!!(t&&t.closest&&t.closest('.shopwrap'));const u=unitAt(PT.src.slot);sw.classList.toggle('sellzone',over);if(u)sw.dataset.sell=`Drop to sell · 🪙${sellValue(u)}`;}
 });
 function ptEnd(e){
-  clearTimeout(PT.t);const src=PT.src;PT.src=null;if(!src)return;
+  clearTimeout(PT.t);dragRow(null);const src=PT.src;PT.src=null;if(!src)return;
   if(PT.held){PT.suppress=Date.now();return;}
   if(!PT.drag)return;
   PT.suppress=Date.now();if(PT.ghost){PT.ghost.remove();PT.ghost=null;}
@@ -24143,7 +24185,7 @@ function ptEnd(e){
   if(buy(src.i)){const nu=S.units.find(u=>!before.has(u.uid));if(nu&&nu.slot!==to)move(nu.slot,to);go();}else render();
 }
 document.addEventListener('pointerup',ptEnd);
-document.addEventListener('pointercancel',()=>{clearTimeout(PT.t);if(PT.ghost){PT.ghost.remove();PT.ghost=null;}PT.src=null;});
+document.addEventListener('pointercancel',()=>{clearTimeout(PT.t);dragRow(null);if(PT.ghost){PT.ghost.remove();PT.ghost=null;}PT.src=null;});
 document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.scard,.slot'))e.preventDefault();});
 document.addEventListener('click',e=>{
   if(PT.suppress&&Date.now()-PT.suppress<600){PT.suppress=0;e.preventDefault();e.stopPropagation();return;}
@@ -24186,10 +24228,12 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.31',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.33',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.33',items:[["📊", "After every fight, a recap shows what each of your characters did: damage dealt, damage taken, and healing + shields. The crown marks your top damage dealer."]]},
+  {v:'20.32',items:[["✨", "While you drag a character, the board row it prefers now glows: amber for the front row, blue for the back row. You can still drop it anywhere."]]},
   {v:'20.31',items:[["🎲", "Behind the scenes: a run can now start from a seed, so the same seed and the same choices replay the same shops, events, rivals and fights. This is the base for the Daily Episode, coming next."]]},
   {v:'20.30',items:[["🥊","The title screen is now a real brawl: four pairs of fighters clash, with a POW at every hit, and a thief slips past in the middle."]]},
   {v:'20.29',items:[["🎬", "A real title screen: a toy brawl with one fighter from every genre fills the screen, with the menu beside it (above it on phones)."], ["🔥", "Clearer level line: your next level sits in a clean badge under Play, instead of tiny text inside the button."]]},
