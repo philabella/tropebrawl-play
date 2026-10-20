@@ -1063,6 +1063,48 @@ html.dt .unit .pt{width:calc(var(--tb,150px)*.5);height:calc(var(--tb,150px)*.5)
 html.dt .unit.hasspr .spr{height:calc(var(--tb,150px)*1.08);bottom:23px}
 html.dt .unit.hasspr{--sh:calc(var(--tb,150px)*1.04)}
 html.dt #app>section.screen:has(.title-word){max-width:1180px;margin-inline:auto}
+
+/* ---- TRO-145: title screen = menu + toy brawl scene ---- */
+.tst{position:relative;padding-block:12px 18px;overflow-x:clip}
+.tscene{position:relative;width:100%;aspect-ratio:1.5;max-height:46vh;margin:0 auto;pointer-events:none;user-select:none}
+.tscene .tlight{position:absolute;left:-6%;right:-6%;top:-26%;bottom:6%;background:radial-gradient(ellipse 52% 62% at 50% 42%,rgba(255,206,90,.34),rgba(255,160,50,.10) 48%,transparent 72%)}
+.tscene .ttable{position:absolute;left:0;right:0;bottom:-3%;height:46%;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#6a4470 0,#3d2646 55%,#22152a 100%);}
+.tfig{position:absolute;display:block;aspect-ratio:1;transform:translateX(-50%);will-change:transform}
+.tfig img{position:relative;display:block;width:100%;height:100%;object-fit:contain;transform-origin:50% 92%;transform:rotate(var(--rot,0));animation:tbob 2.6s ease-in-out var(--d,0s) infinite;filter:drop-shadow(0 3px 0 rgba(0,0,0,.55))}
+.tfig .tsh{position:absolute;left:14%;right:14%;bottom:2%;height:11%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(3px)}
+@keyframes tbob{0%,100%{transform:rotate(var(--rot,0)) translateY(0) scaleY(1)}50%{transform:rotate(calc(var(--rot,0) * -.4)) translateY(-3.2%) scaleY(1.025)}}
+.tburst{position:absolute;left:52%;top:57%;width:17%;transform:translate(-50%,-50%);z-index:2;fill:#ffcc2e;stroke:#141012;stroke-width:3.5;stroke-linejoin:round;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45));animation:tpow 1.6s ease-in-out infinite}
+@keyframes tpow{0%,100%{transform:translate(-50%,-50%) scale(.92) rotate(-4deg)}50%{transform:translate(-50%,-50%) scale(1.08) rotate(5deg)}}
+.tspark{position:absolute;z-index:6;width:2.2%;aspect-ratio:1;background:#ffe9a6;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:tspk 1.9s ease-in-out infinite}
+.tspark.a{left:41%;top:20%}.tspark.b{left:57%;top:14%;animation-delay:-.6s;width:3%}.tspark.c{left:47%;top:58%;animation-delay:-1.2s}
+@keyframes tspk{0%,100%{opacity:.25;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(45deg)}}
+.tmenu{display:grid;gap:12px;align-content:center;justify-items:start;min-width:0}
+.tmenu>*{margin:0}
+.tmenu .title-word{font-size:clamp(3.3rem,15vw,6.2rem)}
+.tmenu .tplay{margin:6px 0 0}
+.tmenu .tbig{font-size:1.7rem}
+.tlv{justify-self:start;margin-top:-2px;display:inline-flex;align-items:center;gap:.4em;padding:.32em .9em;border-radius:999px;background:rgba(10,8,14,.72);border:1px solid color-mix(in srgb,var(--gold) 55%,var(--line));color:var(--ink);font:700 .88rem/1.2 var(--f-body);letter-spacing:.01em;text-transform:none;text-shadow:none}
+.tmenu .tsmall{margin:2px 0 0}
+.tmenu .news{margin-top:0}
+.tmenu .steps{width:100%;max-width:440px}
+html.dt #app>section.screen.tst{max-width:none;min-height:calc(100vh - 24px);grid-template-columns:minmax(380px,.8fr) minmax(0,1.25fr);grid-template-areas:"menu scene";align-items:center;column-gap:clamp(12px,2vw,40px)}
+html.dt .tst .tmenu{grid-area:menu;padding-left:clamp(8px,2.4vw,48px)}
+html.dt .tst .tscene{grid-area:scene;max-height:none;aspect-ratio:1.18}
+html.dt .tmenu .title-word{font-size:clamp(4.6rem,min(11vw,17vh),9.6rem)}
+html.dt .tmenu .tbig{font-size:2rem;padding:.5em 1.8em;min-width:min(380px,100%)}
+html.dt .tlv{font-size:1rem}
+@media (max-width:899px){.tscene{max-height:36vh}}
+@media (max-width:899px){.tscene{aspect-ratio:1.6}}
+@media (max-width:560px){.tst .tgo{display:grid}.tst .tgo .tbig{width:100%}}
+@media (max-width:560px){.tst{gap:6px;padding-block:6px 14px}.tscene{max-height:34vh;aspect-ratio:1.5}.tmenu{gap:9px}.tmenu .tbig{font-size:1.5rem}.tlv{justify-self:center}.tmenu .tplay{justify-items:stretch}}
+@media (max-width:560px){.tst .steps{gap:6px}.tst .steps div{padding:5px;gap:1px;font-size:.74rem}.tst .steps .emo{font-size:1.25rem}}
+@media (max-width:560px) and (max-height:900px){.tscene{aspect-ratio:1.75}.tmenu{gap:7px}}
+.tmenu .tgo{width:min(380px,100%);margin:6px 0 0}.tmenu .tgo .tbig{width:100%}
+/* the title backdrop: ink, a stage light, a vignette; no swirl */
+html.ontitle:not(.glass) #tbg{background:radial-gradient(ellipse 90% 75% at 66% 48%,transparent 40%,rgba(0,0,0,.72) 100%),radial-gradient(ellipse 46% 60% at 66% 46%,rgba(255,176,60,.16),transparent 70%),linear-gradient(180deg,#171220 0,#0f0b15 60%,#120c14 100%)}
+html.ontitle:not(.glass) #tbg canvas.bdsw{display:none}
+html.ontitle:not(.glass) #tbg::before{opacity:.10}
+@media (max-width:899px){html.ontitle:not(.glass) #tbg{background:radial-gradient(ellipse 100% 60% at 50% 22%,rgba(255,176,60,.16),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 40%,transparent 50%,rgba(0,0,0,.65) 100%),linear-gradient(180deg,#171220 0,#0f0b15 100%)}}
 .tplay{display:grid;justify-items:start;gap:8px;margin:18px 0 12px}
 .tbig{display:grid;justify-items:center;min-width:min(340px,100%);font-size:1.55rem;padding:.55em 1.6em}
 .tbig small{display:block;font-size:.78rem;font-weight:600;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px}
@@ -23123,7 +23165,7 @@ function lvPicker(){
 function titleFresh(sv){try{if(sv||DEV.on)return false;const g=k=>localStorage.getItem(k);if(g('tropebrawl-all'))return false;
   return !g('tropebrawl-played')&&!g('tropebrawl-pid')&&!tutLoad().length&&!(lvLoad().won||[]).length;}catch(e){return false;}}
 function titleFreshHTML(){UI.lv=lvMin();const ns=newsFresh();
-  return `<section class="screen tfresh" style="padding-block:28px 0">
+  return `<section class="screen tfresh tst">${titleScene()}<div class="tmenu">
     <div class="eyebrow">Shop · Level up · Brawl</div>
     <h1 class="title-word">${TITLE}</h1>
     <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
@@ -23139,7 +23181,7 @@ function titleFreshHTML(){UI.lv=lvMin();const ns=newsFresh();
     ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 New in v${esc(ns[0].v)}: see what changed</button></section>`:''}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION}</p>
-  </section>`;}
+  </div></section>`;}
 // v20.13: the Gym Circuit, a badge case. Back returns to the title without touching a saved run.
 SCR.gyms=()=>{const G1=GYMS[0];
   return `<section class="screen gyms" style="padding-block:24px 0">
@@ -23149,21 +23191,30 @@ SCR.gyms=()=>{const G1=GYMS[0];
     <div class="gympins" aria-label="Elite Four and Champion"><span>🪞</span><span>🎲</span><span>🎓</span><span>🧠</span><span class="cup">🏆</span><small class="muted">The Elite Four and the Champion wait behind all 8 badges (a later update).</small></div>
     <div class="row"><button class="btn" data-a="gyms-back">← Back</button><button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;};
+// TRO-145: the title screen's toy brawl. One figure per genre (the game's own front-view sprites), two crews closing in
+// on a tabletop. [sprite id, left %, bottom %, width %, lean deg, row (z), bob delay s]
+const TITLE_CAST=[['starknight',20,40,27,3,1,-.6],['kingmonster',50,41,35,0,1,-1.3],['queen',80,40,28,-3,1,-.2],
+  ['commando',10,6,25,5,3,-.9],['gunslinger',29,5,25,4,3,-1.7],['mascot',45,3,23,2,4,-.4],
+  ['safecracker',60,3,22,-2,4,-1.1],['necro',74,5,25,-4,3,-.7],['chainsaw',91,6,25,-5,3,-1.5]];
+function titleScene(){const f=TITLE_CAST.filter(c=>SPRITES[c[0]+'_f']);if(!f.length)return '';
+  return `<div class="tscene" aria-hidden="true"><i class="tlight"></i><i class="ttable"></i>`
+    +f.map(([id,x,b,w,rot,z,d])=>`<span class="tfig" style="left:${x}%;bottom:${b}%;width:${w}%;z-index:${z};--rot:${rot}deg;--d:${d}s"><i class="tsh"></i><img src="${SPRITES[id+'_f']}" alt="" draggable="false"></span>`).join('')
+    +`<svg class="tburst" viewBox="-50 -50 100 100"><polygon points="0,-46 9,-20 34,-32 22,-8 48,0 22,8 34,32 9,20 0,46 -9,20 -34,32 -22,8 -48,0 -22,-8 -34,-32 -9,-20"/></svg><i class="tspark a"></i><i class="tspark b"></i><i class="tspark c"></i></div>`;}
 SCR.title=()=>{
   const sv=loadSave();if(titleFresh(sv))return titleFreshHTML();
-  return `<section class="screen" style="padding-block:28px 0">
+  return `<section class="screen tst">${titleScene()}<div class="tmenu">
     <div class="eyebrow">Shop · Level up · Brawl</div>
     <h1 class="title-word">${TITLE}</h1>
     <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
     ${UI.pick?`${lvPicker()}<div class="row tgo">${tutTitleBtns()}<button class="btn" data-a="pick-back">← Back</button></div>`:titleMenuHTML(sv)}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION}</p>
-  </section>`;
+  </div></section>`;
 };
 // TRO-65: the menu = one big Continue / Play (Play opens the level picker), then Codex, Settings, What's New
 function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh();
-  return `<div class="tplay">${sv?`<button class="btn primary big tbig" data-a="continue"><span>▶ Continue</span><small>${esc(lvNmC(sv.S.lv|0))} · round ${sv.S.round}</small></button><button class="lnk tnew" data-a="play">Start a different run</button>`
-      :`<button class="btn primary big tbig" data-a="play"><span>▶ Play</span><small>${esc(lvTitle(UI.lv))}</small></button>`}</div>
+  return `<div class="tplay">${sv?`<button class="btn primary big tbig" data-a="continue"><span>▶ Continue</span></button><div class="tlv">${esc(lvNmC(sv.S.lv|0))} · round ${sv.S.round}</div><button class="lnk tnew" data-a="play">Start a different run</button>`
+      :`<button class="btn primary big tbig" data-a="play"><span>▶ Play</span></button><div class="tlv">${esc(lvTitle(UI.lv))}</div>`}</div>
     <div class="row tsmall">
       <button class="btn sm" data-a="codex">📖 Codex</button>
       <button class="btn sm" data-a="settings">⚙️ Settings</button>
@@ -23174,7 +23225,7 @@ function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.mi
     </div>
     ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 New in v${esc(ns[0].v)}: see what changed</button></section>`:''}`;}
 // the start menu's texture (#tbg, outside #app so re-renders don't touch it)
-function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;const pl=!on&&typeof UI!=='undefined'&&UI.screen==='plan';document.documentElement.classList.toggle('ontitle',!!on);document.documentElement.classList.toggle('onplan',pl);el.hidden=!(on||pl);if(!el.hidden)bdSwirl();}catch(e){}}
+function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;const pl=!on&&typeof UI!=='undefined'&&UI.screen==='plan';document.documentElement.classList.toggle('ontitle',!!on);document.documentElement.classList.toggle('onplan',pl);el.hidden=!(on||pl);if(on){if(typeof BDS!=='undefined'&&BDS.raf){cancelAnimationFrame(BDS.raf);BDS.raf=0;}}else if(!el.hidden)bdSwirl();}catch(e){}}
 // ================= desktop (v19.11): big screens with a mouse, and the Windows app =================
 let DESK=false;
 function dtWant(){try{return !!window.tbApp||matchMedia('(min-width:1200px) and (min-height:700px) and (hover:hover) and (pointer:fine)').matches;}catch(e){return false;}}
@@ -24124,10 +24175,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.28',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.29',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.29',items:[["🎬", "A real title screen: a toy brawl with one fighter from every genre fills the screen, with the menu beside it (above it on phones)."], ["🔥", "Clearer level line: your next level sits in a clean badge under Play, instead of tiny text inside the button."]]},
   {v:'20.28',items:[["💥", "Hits land: the struck fighter flashes, gets knocked back and squashed, and a puff flies off, all when the shot arrives (not when it is fired)."], ["🎯", "Crits, big hits and KOs get a tiny freeze and screen shake; normal hits stay snappy."]]},
   {v:'20.27',items:[["🕸️", "Counter web, part 2: every genre now has its counter rules on its card (open a genre, or the Codex). Heist Crew crack shields, Kaiju shrug off artillery, Slasher scares stop Sportsball bounces, and more."], ["🚀", "Space Opera starts strong: a big shield (60% of max HP) in Act 1, none after."], ["🧬", "Typecast (only one genre on your board) is bigger for Undead, Heist Crew, Kaiju and Sportsball."]]},
   {v:'20.26',items:[["🎬", "Cleaner main menu: one big Play (or Continue) button, then Codex, Settings and What's New. Play opens the level list."], ["🖥️", "On wide screens the game now stays in one centred area instead of stretching edge to edge."], ["⏩", "Fights run at 1× or 2× (4× is gone, so you can follow what your team does). Rivals now just say which method they play by."]]},
