@@ -1817,6 +1817,26 @@ html.dt .dcol.l>:not(.coach):not(:has(>.x)):is(:hover,:focus-within),html.dt .dc
 html.dt .dshop .shopwrap{box-shadow:0 -14px 30px -18px rgba(0,0,0,.9)}
 html.dt .dshop .actions .btn{min-height:44px}
 html.dt .dshop .actions [data-a="fight"]{min-height:min(84px,9vh)}
+/* v20.15: Fight! with an empty board is a dashed yellow outline (was the yellow fill at 40%: a dull olive block) */
+.actions .btn.primary[data-a="fight"]:disabled{opacity:1;background:rgba(255,204,46,.06);border:2px dashed rgba(255,204,46,.6);color:rgba(255,214,90,.85);box-shadow:none;filter:none}
+.actions .btn.primary[data-a="fight"]:disabled .kh{opacity:.5}
+/* v20.15: the shop portrait shows the whole toy, fitted to the portrait height (same framing at every screen size) */
+html.dt .dshop .shop .scard>.sart img,html.dt .dshop .shop .scard.w2>.sart img,html.dt .dshop .shop .scard>.sart.crowd img{top:auto;bottom:0;height:100%;transform:translateX(-50%)}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(2){z-index:1}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(1),html.dt .dshop .shop .scard>.sart.crowd>:nth-child(3){height:86%;transform:translateX(-50%);opacity:1}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(1){left:26%}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(3){left:74%}
+/* v20.15: attack / HP as the board tiles' stat chips, price as the gold pill (no glossy pills, no coin) */
+html.dt .dshop .shop .scard .sst{gap:4px}
+html.dt .dshop .shop .scard .sst>span,html.dt .dshop .shop .scard .sst>.s-a,html.dt .dshop .shop .scard .sst>.s-h{height:auto;gap:4px;padding:3px 7px 3px 5px;border:0;border-radius:4px;box-shadow:none;
+  background:rgba(8,7,10,.7);font:700 max(12px,calc(var(--sah)*.075))/1 var(--f-body);font-variant-numeric:tabular-nums;letter-spacing:0;color:#f3eee4;-webkit-text-stroke:0}
+html.dt .dshop .shop .scard .sst svg{width:1em;height:1em}
+html.dt .dshop .shop .scard .sst .s-a svg{fill:#f4a64a;stroke:none}
+html.dt .dshop .shop .scard .sst .s-h svg{fill:#f2596b;stroke:none}
+html.dt .dshop .shop .scard .pr,html.dt:not(.glass) .dshop .shop .scard .pr{display:inline-flex;align-items:center;gap:2px;width:auto;height:auto;padding:3px 8px 3px 6px;border-radius:6px;
+  font:400 max(1.05rem,calc(var(--sah)*.1))/1 var(--f-display);color:var(--gold);-webkit-text-stroke:0;background:rgba(8,7,10,.72);border:1px solid color-mix(in srgb,var(--gold) 40%,transparent);box-shadow:none}
+html.dt .dshop .shop .scard .pr .prc{display:inline}
+html.dt .dshop .shop .scard.poor .pr,html.dt:not(.glass) .dshop .shop .scard.poor .pr{color:#ff6b6b;-webkit-text-stroke:0;background:rgba(8,7,10,.72);border-color:color-mix(in srgb,#ff6b6b 40%,transparent);box-shadow:none}
 /* Fight! is the only filled yellow control; Lock, Train, Ranks and Pool are outline-only */
 .shopwrap .actions .btn:not(.primary):not([data-a="reroll"]){background:transparent;box-shadow:none;border:1.5px solid rgba(255,255,255,.24);color:var(--ink)}
 .shopwrap .actions .btn:not(.primary):not([data-a="reroll"]):hover:not(:disabled){border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.04)}
@@ -22987,7 +23007,7 @@ function shopHTML(){
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
       <button class="btn sm poolbtn" data-a="poolview" aria-label="Character pool: copies left of every character" title="Character pool: how many copies of each character are left (P)">🃏<span class="rbl"> Pool</span>${DESK?'<kbd class="kh">P</kbd>':''}</button>
       <span class="grow"></span>
-      <button class="btn primary big" data-a="fight" ${fielded().length?'':'disabled'}>Fight!</button>
+      <button class="btn primary big" data-a="fight" ${fielded().length?'':'disabled title="Put a character on your board first"'}>Fight!</button>
     </div></section>`;
 }
 // Game Level picker: one chip per level; the newest rule in one line, the dials below, the earlier rules folded away
@@ -23996,10 +24016,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.14',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.15',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.15',items:[["🛒", "<b>Shop cards show the whole character</b> now, framed the same on every screen, with attack, HP and price in the same style as your board."], ["⚔️", "Fight! with nobody on your board is a dashed outline; it turns solid yellow when you are ready."]]},
   {v:'20.14',items:[["🧠", "Three rival studios play their own method more sharply: <b>Sal</b> now pairs copies and never pays for a reroll, <b>Echo</b> commits harder to the genres that counter yours, and <b>Prof. Quill</b> saves all the way to the interest cap while his lives are safe."], ["📖", "The Algorithm Lab card for Sal explains the new rule."]]},
   {v:'20.13',items:[["🏟️", "<b>The Gym Circuit</b> (title screen, from Ascension 3): a full season against one rival studio as Gym Leader. It fights you once in each of Acts 1-3 and its whole cast is the final boss. Gym 1: Sal's Clearance Aisle."], ["🎭", "Rivals now join one at a time, simplest first: Sal from the start, then one new studio per Ascension. Each one gets a seat on its first tier."], ["🔍", "Beating a rival's cast now <b>scouts</b> it: its card opens but its figure stays in shadow until you win its Gym badge. Rivals you already revealed stay revealed."]]},
   {v:'20.12',items:[["🛒", "<b>Bigger shop cards</b> on computers: a large portrait, attack and HP as bold badges, the price as a gold coin."], ["👉", "The shop reads in one look: Fight! is the only yellow button, the other shop buttons are outlines, and the side panels step back until you point at them."]]},
@@ -25275,7 +25296,7 @@ function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
   const drawn=[];list.forEach((c,i)=>{const f=tlFig(c._k);if(!f)return;const x=(i%cols)*C,y=HH-(Math.floor(i/cols)+1)*C;
     const hov=c.parentNode&&c.closest('button,.scard,.unit,.slot,.bslot,[data-a]');const wave=hov&&hov.matches(':hover');
     anLvPose(c,f,wave,now); // v19.92: buy / star-up / sell moves, idle dances
-    LV3.root.add(f.g);R.setViewport(x,y,C,C);R.setScissor(x,y,C,C);LV3.E.render(LV3.scene,c._pt?(f.pc||(f.pc=tlPortCam(f))):f.cam);LV3.root.remove(f.g);anLvUndo(f);drawn.push([c,x,HH-y-C]);});
+    LV3.root.add(f.g);R.setViewport(x,y,C,C);R.setScissor(x,y,C,C);LV3.E.render(LV3.scene,f.cam);LV3.root.remove(f.g);anLvUndo(f);drawn.push([c,x,HH-y-C]);});
   const src=R.domElement;drawn.forEach(([c,x,y])=>{const g=c._g||(c._g=c.getContext('2d'));g.clearRect(0,0,C,C);g.drawImage(src,x,y,C,C,0,0,C,C);});
   // too slow here: draw less often, then give the toys back their pre-drawn pictures
   if(!LV3.keep){const cost=performance.now()-t0;LV3.ema=LV3.nf?LV3.ema*.93+cost*.07:cost;
