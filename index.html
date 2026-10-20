@@ -24030,10 +24030,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.16',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.17',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.17',items:[["🔒", "Test browsers run by scripts no longer send run data, so the run log only holds real players."]]},
   {v:'20.16',items:[["🔍", "Wide screens: the characters on your board and bench are about a third bigger and stand on their tiles, with the name beside them."], ["✨", "Board toys are drawn at the size you see them, so they stay sharp instead of grainy."]]},
   {v:'20.15',items:[["🛒", "<b>Shop cards show the whole character</b> now, framed the same on every screen, with attack, HP and price in the same style as your board."], ["⚔️", "Fight! with nobody on your board is a dashed outline; it turns solid yellow when you are ready."]]},
   {v:'20.14',items:[["🧠", "Three rival studios play their own method more sharply: <b>Sal</b> now pairs copies and never pays for a reroll, <b>Echo</b> commits harder to the genres that counter yours, and <b>Prof. Quill</b> saves all the way to the interest cap while his lives are safe."], ["📖", "The Algorithm Lab card for Sal explains the new rule."]]},
@@ -24186,7 +24187,7 @@ async function tlSend(rec,beacon){try{const p=beacon?{enc:'j',data:JSON.stringif
   return true;}catch(e){return false;}}
 function tlSnap(res){return Object.assign({},TL,{res,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString(),pid:tlPid(),src:(typeof window!=='undefined'&&window.tbApp)?'app':'pages'});}
 // globalThis.__tlForce (sims only): record bot runs in the same format, into globalThis.__tlOut, to compare bots with people
-function tlOn(){try{return !!globalThis.__tlForce||(SET.share!==false&&!seeded&&typeof window!=='undefined'&&(tlDb()||tlRelay()||tlForm()));}catch(e){return false;}}
+function tlOn(){try{return !!globalThis.__tlForce||(SET.share!==false&&!seeded&&typeof window!=='undefined'&&!navigator.webdriver&&(tlDb()||tlRelay()||tlForm()));}catch(e){return false;}}
 function tlCur(){if(!S||!tlOn())return null;
   if(!S.rid)S.rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   if(!TL){try{const j=JSON.parse(localStorage.getItem(TL_KEY)||'null');if(j&&j.rid===S.rid)TL=j;}catch(e){}}
