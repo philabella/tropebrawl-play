@@ -403,6 +403,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 #field.arena{height:max(360px,calc(100vh - 300px));grid-template-rows:1fr 1fr auto 1fr 1fr}
 #field.arena .bslot{min-height:0}.bbq .slot.bq{cursor:default}
 .foe.lineup{font-size:1.15rem;line-height:1;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:44px}.foe.lineup small{font:800 .58rem/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase}
+.nearmiss{margin:6px 0 2px;font-size:1rem}.nearmiss p{margin:2px 0}.nearmiss .nm2{font-size:.86rem;opacity:.88}
 .lvnext{margin:8px 0;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;font-size:.88rem}
 .endchip.synon{border-color:var(--gold)}.endchip small{color:var(--muted);font-weight:700}
 .bqlbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 2px}
@@ -20707,7 +20708,17 @@ function lvRecord(){
   lvStore(p);
   if(S.real&&!epsAll()){const pf=profLoad();S.epsBefore=pf.eps;S.epsAdd=Math.max(0,Math.min(lvRounds(n),S.round|0));pf.eps+=S.epsAdd;S.epsAfter=pf.eps;
     if(n===4)pf.ls=S.result==='win'?0:pf.ls+1;profStore(pf);}
+  if(S.real){const pf=profLoad(),b=pf.best&&typeof pf.best==='object'?pf.best:{},got=S.result==='win'?SCHEDULE.length:S.round|0; // v20.5
+    S.bestBefore=b[n]|0;if(got>S.bestBefore){b[n]=got;pf.best=b;profStore(pf);}}
 }
+// v20.5: one true line under the result (how far this run got, your best at this level) and the next unlock with what
+// is missing. The best is kept per Game Level in the profile, real runs only; no line about a best on the first run.
+function nearHTML(){if(!S||!S.over)return '';const N=SCHEDULE.length,win=S.result==='win',got=win?N:S.round|0,left=N-got,b=S.bestBefore|0,n=S.lv|0;
+  const a=win?`All ${N} rounds cleared.`:left>0?`Out in round ${got}/${N}, ${left} from the finale.`:`Out in the finale, round ${got}/${N}.`;
+  const best=!S.real||!b?'':got>b?` <b>New best</b> (was ${b}).`:` Your best: ${b}.`;
+  const nx=[];if(n<LV_MAX&&!S.newLv&&lvLoad().open<=n)nx.push(`🔒 <b>${lvNm(n+1).replace(/^the S/,'The S')}</b>: win one run at this level`);
+  if(S.real&&S.epsAfter!=null){const e=epsNext(S.epsAfter);if(e){const k=e.at-S.epsAfter;nx.push(`📺 <b>${esc(epsName(e))}</b>: ${k} more episode${k===1?'':'s'}`);}}
+  return `<div class="nearmiss"><p>${a}${best}</p>${nx.length?`<p class="nm2">Next unlock: ${nx.join(' · ')}</p>`:''}</div>`;}
 
 // ================= skills =================
 // p = power (tier x level for singles; tier x bodies/3 for crowds). Spells ignore armor.
@@ -23019,10 +23030,10 @@ function tutSkip(){const p=lvLoad();if(!p.dev)p.open=Math.max(p.open,4);p.pick=4
 function tutTitleBtns(){const p=lvLoad(),n=UI.lv|0;
   return `<button class="btn primary big" data-a="new">${n===1?'🎬 Start the Pilot':n>=2&&n<=3?'▶ Play '+esc(LADDER[n].name):'New run'}</button>${p.open<4&&!p.dev?'<button class="btn" data-a="tut-skip">I know auto-battlers</button>':''}`;}
 if(window.top!==window)addEventListener('wheel',e=>{if(e.defaultPrevented||e.ctrlKey||!e.deltaY)return;for(let el=e.target;el&&el!==document.body&&el.nodeType===1;el=el.parentElement){const c=getComputedStyle(el).overflowY;if((c==='auto'||c==='scroll')&&el.scrollHeight>el.clientHeight+1)return;}const se=document.scrollingElement,y=se.scrollTop;requestAnimationFrame(()=>{if(se.scrollTop===y)se.scrollBy(0,e.deltaMode===1?e.deltaY*40:e.deltaY);});},{passive:true});
-function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primary big" data-a="title">🏠 Main menu</button><button class="btn" data-a="new">New run</button>';
-  if(!win)return '<button class="btn primary big" data-a="new">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
+function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primary big" data-a="nextep">▶ Next episode</button><button class="btn" data-a="title">🏠 Main menu</button>'; // v20.5
+  if(!win)return '<button class="btn primary big" data-a="nextep">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start Season 1'}[S.newLv]||'New run';
-  return `<button class="btn primary big" data-a="new">${lbl}</button><button class="btn" data-a="title">🏠 Main menu</button>`;}
+  return `<button class="btn primary big" data-a="nextep">${lbl}</button><button class="btn" data-a="title">🏠 Main menu</button>`;}
 function tutWrapHTML(){return `<div class="lvwin tutwrap"><p>📺 <b>That's a wrap on the Pilot.</b> You can hire, merge, line up, save and pick a Legendary. The network ordered a full season.</p>
   <p><b>The Season is open:</b> four acts, Mythic characters, more items and events${TUNE.rivalsOn?', and a rival studio in your episodes':''}. Every run airs episodes, won or lost: they unlock Space Opera, Kaiju and more.</p>
   <p class="muted" style="font-size:.8rem"><i>Coach tips are done. Replay them any time in Settings.</i></p></div>`;}
@@ -23166,7 +23177,7 @@ SCR.end=()=>{
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
-    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1></div>
+    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${nearHTML()}</div>
     ${S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
@@ -23530,6 +23541,8 @@ function onAction0(a,v,el){
     case 'pend-hide':if(!UI.pendOpen)break;UI.legPeek=true;UI.swap=null;closeSheet();render();break;
     case 'pend-show':UI.legPeek=false;closeSheet();render();break;
     case 'new':UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();tbxCard();break;
+case 'nextep':{const k=S&&!S.newLv?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().open)UI.lv=k; // v20.5: ▶ Next episode on the end screen
+  UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);tlAct('n');go();tbxCard();break;}
     case 'renew':UI.renew=!UI.renew;render();break;
     case 'continue':{const sv=loadSave();if(sv){restore(sv);if(S.inFight)resumeFight();else{go();tbxCard();}}break;}
     case 'pick':{hoverCard(null);if(!canHover&&S.shop[+v]){sheet(shopPreview(+v));break;}if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
@@ -23705,10 +23718,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.4',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.5',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.5',items:[["▶", "The end screen's main button is now <b>Next episode</b>: one tap starts a new run at the same Game Level. Main menu is right next to it."], ["📏", "Under Victory or Defeat, one line says how far the run got (\"Out in round 31/36, 5 from the finale\"), your best round at that level, and what the next unlock still needs."]]},
   {v:'20.4',items:[["📱", "Phones: a shop round fits on one screen. Your board, bench, the shop and Reroll / Train / Lock / Fight are all in view; the next enemy, rivals, tips, items and the Pool sit behind a row of tabs under the top bar (tap one to open it, tap outside to close)."], ["👆", "On phones, tapping a character opens its details as a sheet at the bottom instead of pushing the shop down, and intermission choices are compact rows, all on the first screen. Turned sideways, the shop splits into two columns and the fight fits the screen."]]},
   {v:'20.3',items:[["🎭", "Rivals are a roster to collect now. Each studio stays a blacked-out silhouette until you beat its cast; beat one and it steps into the spotlight with its own intro, and its Codex card fills in with who they are and how they play."], ["🎬", "Every run opens on a title card for your level, and the label then sits in the top bar the whole run (shop, intermissions and fights), so you always know which Ascension you're on. Clearing a level reveals everything you unlocked, one by one."], ["📺", "Episode bumpers between the shop and fights, intermission cards and a wipe back to the shop. Settings → Transitions: Full, Short or Off. A click or any key skips them."]]},
   {v:'20.2',items:[["🧠", "Every rival studio now thinks with a real algorithm: Rex counts the odds before a reroll, Goldie updates her beliefs like a Bayesian, Sal solves a knapsack, Hugo plans for the worst case and more. Codex → Rivals and the new <b>Algorithm Lab</b> explain each one for kids and teachers."], ["🎲", "Four learning rivals: <b>Kit</b> (a bandit that bets on what beats you) and <b>Echo</b> (counters your favourite genres) from Level 7, <b>Prof. Quill</b> (Markov chains) and <b>Cue</b> (Q-learning) from Level 11. They learn only from your runs on this device."], ["🔍", "After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast, with its real numbers."]]},
