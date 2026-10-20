@@ -5989,7 +5989,7 @@ const CAST = [
 { id: 'spitters', name: 'Acid Spitters', genre: 'bug', crowd: true, build({ variant: v = 0, pose = 'idle' } = {}) {
   const g = G(), c = [BUG.mid, '#7a4cc4', '#9564d8'][v], up = pose === 'atk';
   const segs = up ? [[0, .25, -.5, .36], [0, .52, -.18, .34], [0, .86, .02, .32], [0, 1.22, .12, .3], [0, 1.56, .14, .29]] : [[0, .26, -.62, .36], [0, .44, -.3, .35], [0, .7, -.06, .33], [0, 1.0, .08, .31], [0, 1.3, .14, .3]];
-  segs.forEach(([x, y, z, r], i) => { g.add(P(sphere(r), i % 2 ? c : BUG.shell, { p: [x, y, z], s: [1.05, .85, 1] })); g.add(P(torus(r * .9, .028), BUG.light, { p: [x, y - r * .15, z], r: [PI / 2 + (up ? -.4 : -.2), 0, 0] })); });
+  segs.forEach(([x, y, z, r], i) => { g.add(P(sphere(r), i % 2 ? c : BUG.shell, { p: [x, y, z], s: [1.05, .85, 1] })); g.add(P(torus(r * .9, .028), BUG.light, { p: [x, y - r * .15, z], r: [PI / 2 + (up ? -.4 : -.2), 0, 0] })); if (i % 2 === 0) g.add(P(box(.07, r * .9, .03, .01), BUG.acid, { p: [x, y + .02, z - r * .78], noOutline: 1 })); });
   for (let i = 0; i < 4; i++) for (const s of [-1, 1]) { const [, y, z, r] = segs[i]; limb(g, [s * r * .7, y - r * .3, z], [s * (r + .12), .03, z + .08], .04, BUG.leg); }
   const [, hy, hz] = segs[4]; const head = at(g, [0, hy + .28, hz + .14], [up ? -.5 : -.1, 0, 0]); head.userData.joint = 'neck'; head.add(P(sphere(.3), BUG.shell));
   bugEyes(head, .3, BUG.leg, { size: .36, y: .3, x: .55 });
@@ -6013,8 +6013,8 @@ const CAST = [
   return g; } },
 { id: 'lurker', name: 'Burrow Lurker', genre: 'bug', build({ pose = 'idle' } = {}) {
   const g = G(), up = pose === 'up';
-  g.add(P(dome(.78, .5), '#8a6a44', { s: [1, .38, 1] }));
-  for (let i = 0; i < 9; i++) { const a = i / 9 * PI * 2; g.add(P(sphere(.12 + (i % 3) * .04), i % 2 ? '#6e5236' : '#9a7a52', { p: [Math.sin(a) * .74, .08, Math.cos(a) * .74] })); }
+  g.add(P(dome(.66, .5), '#8a6a44', { s: [1, .38, 1] }));
+  for (let i = 0; i < 9; i++) { const a = i / 9 * PI * 2; g.add(P(sphere((.12 + (i % 3) * .04) * .85), i % 2 ? '#6e5236' : '#9a7a52', { p: [Math.sin(a) * .63, .08, Math.cos(a) * .63] })); }
   const pts = []; for (let i = 0; i <= 7; i++) { const t = i / 7; pts.push([Math.sin(t * 2.2) * .18, .1 + t * 1.75, -Math.sin(t * PI) * .15 + t * .1]); }
   pts.forEach(([x, y, z], i) => { if (i === 7) return; const r = .36 - i * .015; g.add(P(sphere(r), i % 2 ? '#9a6ed8' : '#b48ae6', { p: [x, y, z], s: [1, .7, 1] })); g.add(P(torus(r * .92, .03), '#e3b4f0', { p: [x, y, z], r: [PI / 2, 0, 0] })); });
   const [hx, hy, hz] = pts[7]; const head = at(g, [hx, hy, hz]); head.userData.joint = 'neck'; head.add(P(sphere(.34), '#c69cf0', { s: [1, .9, 1] }));
@@ -6052,7 +6052,7 @@ const CAST = [
   for (const s of [-1, 1]) { const pts = [[s * .1, .24, .14], [s * .22, .55, .24], [s * .42, .74, .1]]; tube(head, pts, .022, leg); head.add(P(sphere(.05), '#ffcc2e', { p: pts[2] })); }
   bugLegs(g, 3, .9, leg, { kx: .74, kh: .22, fx: .94, z0: .12, dz: .2, kz: .2, kdz: .22, fz: .38, fdz: .44 });
   wings(g, 1.24, -.5, '#efe6ff');
-  for (const [x, z] of [[-.3, -1.45], [0, -1.62], [.3, -1.43]]) g.add(P(sphere(.12), '#f3ecff', { p: [x, .13, z], s: [1, 1.25, 1] }));
+  for (const [x, z] of [[-.3, -1.45], [0, -1.62], [.3, -1.43]]) g.add(P(sphere(.12), '#f3ecff', { p: [x, .17, z], s: [1, 1.25, 1] }));
   g.scale.setScalar(.92); return g; } },
 { id: 'scorpion', name: 'Emperor Scorpion', genre: 'bug', build() {
   const g = G(), c = '#4a2a86', c2 = '#6d3fb0', leg = '#2e1a52';
@@ -6107,7 +6107,7 @@ const CAST = [
   h.g.rotation.z = .04 * (v - 1);
   return g; } },
 { id: 'vampbat', name: 'Vampire Bat', genre: 'undead', build() {
-  const g = G(), fur = '#4a3346', mem = '#6a3a5a';
+  const g = G(), fur = '#6a4a62', mem = '#a85a88';
   const b = at(g, [0, 1.2, 0]);
   b.add(P(sphere(.38), fur, { s: [1, 1.05, .9] }));
   for (const s of [-1, 1]) { b.add(P(cone(.14, .38), fur, { p: [s * .2, .45, 0], r: [0, 0, s * -.3] })); b.add(P(cone(.08, .24), '#b07a9a', { p: [s * .2, .43, .05], r: [0, 0, s * -.3] })); }
@@ -6174,8 +6174,8 @@ const CAST = [
   for (let i = 0; i < 5; i++) g.add(P(torus(.32 - Math.abs(i - 2) * .04, .035), b, { p: [0, .8, .3 - i * .2], s: [1, 1.15, 1], r: [0, 0, 0] }));
   const neck = []; for (let i = 0; i < 6; i++) { const t = i / 5; neck.push([0, .95 + Math.sin(t * PI * .55) * 1.05, .5 + t * .45 - t * t * .15]); }
   neck.forEach(p => g.add(P(sphere(.09), b, { p })));
-  const tl = []; for (let i = 0; i < 7; i++) { const t = i / 6; tl.push([Math.sin(t * 2.4) * .35, .8 - t * .65, -.75 - t * .95]); } tl.forEach((p, i) => g.add(P(sphere(.08 - i * .008), b, { p })));
-  g.add(P(cone(.08, .25), b, { p: [Math.sin(2.4) * .35, .14, -1.75], r: [-PI / 2 - .3, 0, 0] }));
+  const tl = []; for (let i = 0; i < 7; i++) { const t = i / 6; tl.push([Math.sin(t * 2.4) * .35, .85 - t * .5, -.75 - t * .95]); } tl.forEach((p, i) => g.add(P(sphere(.08 - i * .008), b, { p })));
+  g.add(P(cone(.08, .25), b, { p: [Math.sin(2.4) * .35, .3, -1.75], r: [-PI / 2 - .3, 0, 0] }));
   const head = at(g, neck[5], [.25, 0, 0]); head.userData.joint = 'neck'; head.add(P(sphere(.24), b, { s: [1, .85, 1.1] })); head.add(P(box(.24, .14, .42, .06), b, { p: [0, -.06, .3] }));
   head.add(P(box(.2, .06, .34, .03), b, { p: [0, -.2, .26], r: [.25, 0, 0] }));
   for (const s of [-1, 1]) { head.add(P(sphere(.075), '#0c1a0c', { p: [s * .12, .04, .17], s: [1, 1, .5], noOutline: 1 })); head.add(P(sphere(.035), '#a6ff7a', { glow: 1, p: [s * .12, .04, .2] }));
@@ -6277,7 +6277,7 @@ const CAST = [
   return g; } },
 // ===== Heist Crew =====
 { id: 'muscle', name: 'The Muscle', genre: 'heist', build() {
-  const h = humanoid({ skin: SKIN[3], shirt: '#3b3b48', pants: '#2e2e3a', shoes: '#111114', sleeves: SKIN[3], dims: { tr: .48, tl: .38, hr: .4, ar: .17, al: .3, lr: .19, ll: .24 } }), { g, head } = h;
+  const h = humanoid({ skin: SKIN[3], shirt: '#5e5e74', pants: '#4a4a5e', shoes: '#2a2a30', sleeves: SKIN[3], dims: { tr: .48, tl: .38, hr: .4, ar: .17, al: .3, lr: .19, ll: .24 } }), { g, head } = h;
   sunglasses(head, .4, '#0e0e12', .05);
   tube(head, [[.36, -.02, .12], [.42, -.15, .0], [.36, -.3, -.1]], .012, '#e8e2d0', { noOutline: 1 }); head.add(P(sphere(.03), '#e8e2d0', { p: [.38, 0, .12], noOutline: 1 }));
   const ch = at(g, [0, h.shy - .05, 0]); ch.add(P(torus(.32, .025), '#ffcc2e', { r: [PI / 2 - .5, 0, 0], p: [0, -.05, .1], noOutline: 1 }));
@@ -6314,9 +6314,9 @@ const CAST = [
   h.armL.rotation.set(-.9, 0, .45); const sc = at(h.handL, [0, 0, .08]); sc.add(P(cyl(.06, .06, .03), '#c8ccd2', { r: [PI / 2, 0, 0] })); tube(g, [[.25, 1.45, .2], [.42, 1.3, .35], [.48, .95, .45]], .014, '#2a2a2e', { noOutline: 1 });
   return g; } },
 { id: 'hacker', name: 'The Hacker', genre: 'heist', build() {
-  const h = humanoid({ skin: SKIN[2], shirt: '#3d4d6b', pants: '#2c3346', shoes: '#18181b', sleeves: '#3d4d6b' }), { g, head } = h;
+  const h = humanoid({ skin: SKIN[2], shirt: '#5a70a0', pants: '#46547a', shoes: '#18181b', sleeves: '#5a70a0' }), { g, head } = h;
   eyes(head, { y: -.02, color: '#0e1a10' });
-  head.add(P(sphere(.48), '#3d4d6b', { s: [1, 1.04, 1], p: [0, .02, -.08] })); head.add(P(torus(.42, .06), '#2f3c55', { p: [0, .02, .14], s: [1, 1.08, 1], r: [0, 0, 0] }));
+  head.add(P(sphere(.48), '#5a70a0', { s: [1, 1.04, 1], p: [0, .02, -.08] })); head.add(P(box(.03, .8, .04, .01), '#8fa4d0', { p: [0, .02, -.56], noOutline: 1 })); head.add(P(torus(.5, .03, PI), '#8fa4d0', { p: [0, .1, -.1], r: [0, PI / 2, 0], noOutline: 1 })); head.add(P(torus(.42, .06), '#44557c', { p: [0, .02, .14], s: [1, 1.08, 1], r: [0, 0, 0] }));
   const hp = at(head, [0, .02, 0]); hp.add(P(torus(.5, .035, PI), '#1a1a1e', { r: [0, 0, 0], p: [0, .06, -.02] })); for (const s of [-1, 1]) hp.add(P(cyl(.13, .13, .1), '#1a1a1e', { p: [s * .5, 0, -.02], r: [0, 0, PI / 2] }));
   for (const [arm, s] of [[h.armR, -1], [h.armL, 1]]) arm.rotation.set(-1.15, 0, s * .2);
   const lp = at(g, [0, 1.0, .58], [-.1, 0, 0]); lp.add(P(box(.6, .04, .4, .015), '#8d929c'));
@@ -6412,7 +6412,7 @@ const CAST = [
   return g; } },
 { id: 'sheriff', name: 'The Sheriff', genre: 'west', build() {
   const h = humanoid({ skin: SKIN[1], shirt: '#f0e6d0', pants: '#3a3a42', shoes: '#2a1a10', dims: { tr: .4, tl: .32, hr: .44 } }), { g, head } = h;
-  boot(h, '#2a1a10'); coat(h, '#2a2a2e', .35, h.tc, { r1: .52 }); g.add(P(capsule(h.d.tr + .03, h.d.tl * .7), '#2a2a2e', { p: [0, h.tc + .02, -.03] }));
+  boot(h, '#2a1a10'); coat(h, '#56565f', .35, h.tc, { r1: .52 }); g.add(P(capsule(h.d.tr + .03, h.d.tl * .7), '#56565f', { p: [0, h.tc + .02, -.03] }));
   g.add(P(box(.22, .48, .03), '#f0e6d0', { p: [0, h.tc + .1, h.d.tr + .02] })); g.add(P(box(.06, .3, .03), '#2a2a2e', { p: [0, h.tc + .08, h.d.tr + .035] }));
   badge(g, [-.2, h.tc + .2, h.d.tr + .04], '#ffcc2e', .15);
   eyes(head, { y: .03 }); brows(head, { y: .18, ang: .15, color: '#e8e2d8' }); mustache(head, .44, '#e8e2d8');
@@ -6458,8 +6458,8 @@ const CAST = [
   h.armR.rotation.set(-2.2, 0, -.55); h.handR.add(P(box(.1, .28, .06, .02), '#2a2a33', { p: [0, .05, .05] }));
   h.armL.rotation.set(-.3, 0, .25); return g; } },
 { id: 'exorcist', name: 'The Priest', genre: 'horror', build() {
-  const h = humanoid({ skin: SKIN[0], shirt: '#1d1d22', pants: '#1d1d22', shoes: '#121014', dims: { hr: .43 } }), { g, head } = h;
-  coat(h, '#1d1d22', .08, h.tc + .02, { r1: .5 });
+  const h = humanoid({ skin: SKIN[0], shirt: '#4a4a5a', pants: '#44444f', shoes: '#2a2830', dims: { hr: .43 } }), { g, head } = h;
+  coat(h, '#4a4a5a', .08, h.tc + .02, { r1: .5 });
   g.add(P(box(.12, .07, .04, .015), '#f3eee4', { p: [0, h.shy + .05, h.d.tr + .03] }));
   for (const s of [-1, 1]) g.add(P(box(.1, .95, .03, .02), '#6a3a8a', { p: [s * .12, h.tc - .1, h.d.tr + .04], r: [0, 0, s * .06] }));
   eyes(head, { r: .43, y: .02, squint: true }); brows(head, { r: .43, y: .2, ang: .35 }); hair(head, .43, '#9a9aa2', { k: .3 }); glasses(head, .43, '#2a2620');
@@ -6485,7 +6485,7 @@ const CAST = [
   h.armR.rotation.set(-1.2, 0, -.05); rifle(h.handR, { p: [0, -.02, .05], r: [1.2, 0, 0], color: '#3a3a42', wood: '#5a3a22' });
   h.armL.rotation.set(-1.0, 0, .45); return g; } },
 { id: 'brute', name: 'The Brute', genre: 'horror', build() {
-  const h = humanoid({ skin: '#cfc6b8', shirt: '#3a4048', pants: '#3a4048', shoes: '#18181b', dims: { tr: .5, tl: .38, hr: .44, lr: .19, ll: .3, ar: .15, al: .34 } }), { g, head } = h;
+  const h = humanoid({ skin: '#cfc6b8', shirt: '#5c6672', pants: '#525b66', shoes: '#2a2a30', dims: { tr: .5, tl: .38, hr: .44, lr: .19, ll: .3, ar: .15, al: .34 } }), { g, head } = h;
   boot(h, '#18181b', .3); belt(h, '#1d1d22', h.tc - .42, '#5a5a62');
   head.add(P(sphere(.455), '#f3f0ea', { s: [.95, 1.05, .9], p: [0, 0, .04] }));
   if (S.eyes !== 'none') for (const s of [-1, 1]) { const e = face(G(), onSphere(.46, s * .15, .06)); head.add(e); e.add(P(sphere(.07), '#0c0a10', { s: [1.3, .8, .4] })); }
@@ -6518,7 +6518,7 @@ const CAST = [
   g.add(P(sphere(.04), '#ff5a4a', { glow: 1, p: [.18, 1.05, .28] }));
   for (const s of [-1, 1]) { g.add(P(box(.12, .62, .16, .04), body, { p: [s * .44, .5, 0] })); g.add(P(box(.2, .1, .3, .03), '#5a5a62', { p: [s * .44, .16, 0] })); }
   g.add(P(box(.14, .08, .3, .02), '#5a5a62', { p: [.2, .7, .4] })); g.add(P(cyl(.025, .025, .2), '#c9ccd4', { p: [.2, .7, .6], r: [PI / 2, 0, 0] }));
-  g.rotation.y = (v - 1) * .2; return g; } },
+  g.rotation.y = (v - 1) * .2; g.scale.setScalar(1.3); return g; } },
 { id: 'pilot', name: 'Hotshot Pilot', genre: 'space', build() {
   const h = humanoid({ skin: SKIN[1], shirt: '#e8722c', pants: '#e8722c', shoes: '#2a2a33' }), { g, head } = h;
   g.add(P(box(.32, .3, .14, .04), '#e8ecf2', { p: [0, h.tc + .05, h.d.tr - .02] })); for (let i = 0; i < 3; i++) g.add(P(box(.05, .05, .02), ['#c8352b', '#4ab86a', '#3a7ad8'][i], { p: [-.08 + i * .08, h.tc + .12, h.d.tr + .06], noOutline: 1 }));
@@ -6559,8 +6559,9 @@ const CAST = [
   h.armR.rotation.set(-1.0, 0, -.3); const sw = at(h.handR, [0, 0, .06], [1.0, 0, 0]); sw.add(P(cyl(.04, .04, .22), '#9aa0aa')); sw.add(P(cyl(.035, .035, 1.0), '#5af0ff', { glow: 1, p: [0, .6, 0] }));
   h.armL.rotation.set(-.6, 0, .4); return g; } },
 { id: 'darklord', name: 'The Dark Lord', genre: 'space', build() {
-  const h = humanoid({ skin: '#16141c', shirt: '#1d1d22', pants: '#1d1d22', shoes: '#121014', dims: { tr: .4, tl: .36, hr: .46 } }), { g, head } = h;
-  g.add(P(box(.9, 1.3, .05, .02), '#121014', { p: [0, h.tc - .1, -h.d.tr - .05], r: [.1, 0, 0] }));
+  const h = humanoid({ skin: '#16141c', shirt: '#4a5470', pants: '#3e4660', shoes: '#2a2c38', dims: { tr: .4, tl: .36, hr: .46 } }), { g, head } = h;
+  g.add(P(box(.9, 1.3, .05, .02), '#3a4260', { p: [0, h.tc - .1, -h.d.tr - .05], r: [.1, 0, 0] }));
+  for (const s of [-1, 1]) g.add(P(box(.05, 1.3, .06, .02), '#c8352b', { p: [s * .44, h.tc - .1, -h.d.tr - .05], r: [.1, 0, 0], noOutline: 1 }));
   g.add(P(box(.3, .24, .08, .03), '#3a3a46', { p: [0, h.tc + .1, h.d.tr] })); for (let i = 0; i < 3; i++) g.add(P(box(.05, .04, .02), ['#ff3a3a', '#4ab86a', '#4ab8e8'][i], { glow: 1, p: [-.08 + i * .08, h.tc + .12, h.d.tr + .05], noOutline: 1 }));
   head.add(P(dome(.5, .55), '#121014', { p: [0, .04, 0] })); head.add(P(cyl(.52, .6, .2, 0, PI * 2, true), '#121014', { p: [0, -.1, 0] }));
   head.add(P(box(.36, .12, .1, .04), '#2a2a33', { p: [0, .06, .42] })); head.add(P(cone(.14, .26), '#2a2a33', { p: [0, -.16, .42], r: [PI, 0, 0] }));
@@ -6596,7 +6597,7 @@ const CAST = [
     a.add(P(capsule(.11, .18), sk, { p: [0, -.13, .06], r: [-.5, 0, 0] })); for (let i = -1; i <= 1; i++) a.add(P(cone(.025, .07), '#f6f2e6', { p: [i * .05, -.3, .18], r: [-.3, 0, 0] }));
     const f = at(g, [s * .25, .13, .05]); f.add(P(sphere(.17), sk, { s: [1, .7, 1.25] })); for (let i = -1; i <= 1; i++) f.add(P(sphere(.05), dk, { p: [i * .08, -.03, .19], s: [1, .8, 1] })); }
   // tail: overlapping spheres that taper, with plates running down it
-  const tl = []; for (let i = 0; i < 8; i++) { const t = i / 7; tl.push([Math.sin(t * 2) * .18, .42 - t * .32, -.4 - t * .75]); }
+  const tl = []; for (let i = 0; i < 8; i++) { const t = i / 7; tl.push([Math.sin(t * 2) * .18, .45 - t * .26, -.4 - t * .75]); }
   tl.forEach((p, i) => g.add(P(sphere(.24 - i * .022), sk, { p })));
   const back = [[0, 1.12, -.34, .26, .3], [0, .86, -.46, .3, .34], [0, .6, -.5, .26, .3], [tl[2][0], .5, -.72, .2, .24], [tl[4][0], .36, -.95, .15, .18]];
   back.forEach(([x, y, z, w, h], i) => { extrude(g, plate(w, h), .08, pl, { p: [x, y, z], r: [-.55 - i * .25, PI / 2 + (i % 2 ? .45 : -.45), 0] }); if (i < 3) for (const s of [-1, 1]) extrude(g, plate(w * .6, h * .6), .06, pl, { p: [x + s * .16, y - .06, z + .06], r: [-.55 - i * .25, PI / 2, s * .5] }); });
@@ -24101,10 +24102,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.23',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.24',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.24',items:[["🎨", "Classic look: the Dark Lord, Priest, Brute, Sheriff, Muscle and Hacker are lighter and the Vampire Bat's wings stand out, so they no longer vanish on the dark board."]]},
   {v:'20.23',items:[["⚔️", "Every genre now has one job, and its genre chip says which 2 genres it beats and which 2 it fears."], ["🕸️", "New Codex page, Counter web: the 9 genres in a circle, with an arrow and a reason for every counter."], ["🔭", "Before a rival or Rerun fight, the next-fight panel shows their main genres and who counters whom. Shop cards that beat their main genre show ⚔."]]},
   {v:'20.22',items:[["✏️", "Clearer texts: Free Agent, Stolen Props, Residuals, Trial by Fire, Field Promotion and Casting Call now say exactly what they do."], ["📱", "Phones: the Crossovers button is always in view, and Codex tables say they scroll sideways."]]},
   {v:'20.21',items:[["⚖️", "Genre balance: Space Opera shields 14% (was 19%), Wild West crit +20% (was +25%), and neither gets a Typecast bonus any more."], ["🧬", "Typecast (only one genre on your board) is bigger for the genres that lagged: Sportsball +34%, Swarm +28%, Undead +28%, Heist Crew +24%, Army +7% (new), Kaiju +10%; Slasher +7%."]]},
