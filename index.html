@@ -21942,7 +21942,7 @@ function dealDamage(src,t,amt,type,aoe){
   if((type==='attack'||type==='spell')&&t.manaMax&&!B.noMana)t.mana=Math.min(t.manaMax,t.mana+Math.min(8,dealt*.25));
   if(src&&src.alive&&src.ls&&(type==='attack'||type==='spell')){const lh=heal(null,src,dealt*src.ls,true);if(!B.silent)numFx(src,lh,'heal2');}
   if(!B.silent&&t.el){
-    FXN.src=src;numFx(t,dealt-sAbs,B.envSrc==='overtime'?'tick':type==='spell'?'spell':type==='attack'||type==='bounce'?'phys':'true',(B.fxCrit&&type==='attack')||(B.fxCritS&&type==='spell'));if(sAbs>0){numFx(t,sAbs,'block');if(t.shield<=0)shCrack(t);}t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');hitFx(src,t,dealt,type);
+    FXN.src=src;numFx(t,dealt-sAbs,B.envSrc==='overtime'?'tick':type==='spell'?'spell':type==='attack'||type==='bounce'?'phys':'true',(B.fxCrit&&type==='attack')||(B.fxCritS&&type==='spell'));if(sAbs>0){numFx(t,sAbs,'block');if(t.shield<=0)shCrack(t);}hitFx(src,t,dealt,type);
     if(dealt>t.maxHp*.3)shake();
   }
   if(type==='attack'&&src&&src.alive&&src.range==='melee'&&has('spikes')&&t.side==='A'&&t.row==='front')dealDamage(t,src,dealt*tv('spikes')/100,'true');
@@ -24124,10 +24124,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.27',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.28',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.28',items:[["💥", "Hits land: the struck fighter flashes, gets knocked back and squashed, and a puff flies off, all when the shot arrives (not when it is fired)."], ["🎯", "Crits, big hits and KOs get a tiny freeze and screen shake; normal hits stay snappy."]]},
   {v:'20.27',items:[["🕸️", "Counter web, part 2: every genre now has its counter rules on its card (open a genre, or the Codex). Heist Crew crack shields, Kaiju shrug off artillery, Slasher scares stop Sportsball bounces, and more."], ["🚀", "Space Opera starts strong: a big shield (60% of max HP) in Act 1, none after."], ["🧬", "Typecast (only one genre on your board) is bigger for Undead, Heist Crew, Kaiju and Sportsball."]]},
   {v:'20.26',items:[["🎬", "Cleaner main menu: one big Play (or Continue) button, then Codex, Settings and What's New. Play opens the level list."], ["🖥️", "On wide screens the game now stays in one centred area instead of stretching edge to edge."], ["⏩", "Fights run at 1× or 2× (4× is gone, so you can follow what your team does). Rivals now just say which method they play by."]]},
   {v:'20.25',items:[["🔧", "Small fix behind the scenes."]]},
@@ -24524,9 +24525,64 @@ function sfxUnlock(){sfxInit();try{if(SFX.ctx&&SFX.ctx.state==='suspended')SFX.c
   wrap('levelUp',o=>function(u){const l=u&&u.level,r=o.apply(this,arguments);if(u&&u.level>l){if(SFX.hold)SFX.merged=true;else sfx('merge');}return r;});
   wrap('resolvePending',o=>function(v){const p=S&&S.pending[0],r=o.apply(this,arguments);if(p)sfx(p.kind==='legend'&&v&&!String(v).startsWith('t:')?'legend':'reward');return r;});
   wrap('startBattle',o=>function(silent){const r=o.apply(this,arguments);if(!silent)sfx(S.enemy&&S.enemy.boss?'boss':'fight');return r;});
-  wrap('dealDamage',o=>function(src,t,amt,type){const d=o.apply(this,arguments);if(d>0&&B&&!B.silent&&t)sfx(d>=t.maxHp*.25?'big':'hit');return d;});
-  wrap('kill',o=>function(t){const was=t&&t.alive,r=o.apply(this,arguments);if(was&&!t.alive&&B&&!B.silent)sfx('ko');return r;});
+  wrap('dealDamage',o=>function(src,t,amt,type){const d=o.apply(this,arguments);if(d>0&&B&&!B.silent&&t){const k=d>=t.maxHp*.25?'big':'hit';hfLater(()=>sfx(k));}return d;});
+  wrap('kill',o=>function(t){const was=t&&t.alive,r=o.apply(this,arguments);if(was&&!t.alive&&B&&!B.silent)hfLater(()=>sfx('ko'));return r;});
   wrap('throwBall',o=>function(){const r=o.apply(this,arguments);if(B&&!B.silent)sfx('ball');return r;});
+}catch(e){}})();
+// ===== v20.28 (TRO-146): hits you can feel. Visual only: nothing here writes the battle or calls rand().
+// The sim deals damage the moment a unit attacks, but the shot or lunge needs a moment to arrive. B._lag (ms) is set
+// around attack(); numbers, sparks, flashes, sounds and the KO wait that long, so the hit shows when the shot lands.
+// 3D arena: white body flash (~110 ms), knockback away from the attacker + squash, particle puff by damage type.
+// Hit-stop (2-4 frames, at most one per 220 ms) + small camera shake only on crits, big hits (25% of max HP) and KOs.
+function hfLater(fn){const b=typeof B!=='undefined'?B:null,ms=b&&b._lag;if(!(ms>0)||RM){fn();return;}setTimeout(()=>{if(B===b&&!b.silent)fn();},ms);}
+const HF={list:[],fl:new Set(),hs:0,B:null};
+function hfFlash(T,col,a,now,sp){try{skcMats(T);const c=new TBA.THREE.Color(col);T._hf={t0:now,dur:Math.max(90,120/sp),r:c.r,g:c.g,b:c.b,a};HF.fl.add(T);}catch(e){}}
+function hfPuff(T,dx,dz,type,lv,crit){try{if(HF.list.length>40||!skcInit())return;const o=skcGet('pts');if(!o)return;const sp=B.speed||1,m=o.material;
+  m.map=crit||lv?FXA.tx.star:FXA.tx.dot;m.color.set(crit?'#ffd23f':type==='spell'?'#d9a3ff':type==='true'?'#ffb347':'#fff1cc');m.userData.sz=lv===2?.75:lv?.58:.42;
+  HF.list.push({o,T,t0:performance.now(),dur:Math.max(170,320/sp),dx,dz,n:lv===2?24:lv?16:9,sz:m.userData.sz});}catch(e){}}
+function hfHit(src,t,type,crit,ko,big,dealt){const T=AR.f&&t._ar;
+  if(!T||!T.root.visible){const mv=t.el&&t.el.querySelector('.spr,.crowdspr');if(mv&&mv.animate){const m=crit||ko?1.6:big?1.25:.6;mv.animate([{scale:'1 1'},{scale:`${(1+.08*m).toFixed(2)} ${(1-.14*m).toFixed(2)}`,offset:.22},{scale:'1 1'}],{duration:Math.max(120,200/(B.speed||1)),easing:'ease-out'});}return;}
+  const now=performance.now(),sp=B.speed||1,m=crit||ko?1.6:big?1.25:.6;let dx=0,dz=t.side==='A'?1:-1;const S=src&&src._ar;
+  if(S&&S!==T){dx=T.home.x-S.home.x;dz=T.home.z-S.home.z;const d=Math.hypot(dx,dz)||1;dx/=d;dz/=d;}
+  T._rc={t0:now,dur:Math.max(120,(m>1?240:170)/sp),dx:dx*.6,dz:dz*.6,m};
+  hfFlash(T,crit?'#ffd23f':type==='spell'?'#e6c2ff':type==='true'?'#ffb347':'#ffffff',m>1?.95:.8,now,sp);
+  hfPuff(T,dx,dz,type,crit||ko?2:big?1:0,crit);}
+function hfFrame(now){
+  if(HF.B!==B){HF.B=B;HF.list.forEach(f=>{f.o.visible=false;});HF.list.length=0;HF.fl.clear();return;}
+  for(const T of HF.fl){const F=T._hf,L=T._fxM;if(!F||!L||!T.root.parent){HF.fl.delete(T);continue;}const k=(now-F.t0)/F.dur;
+    if(k>=1){if(!FXA.fl.has(T))for(let i=0;i<L.length;i++){const q=L[i];q.m.emissive.setRGB(q.r,q.g,q.b);q.m.emissiveIntensity=q.i;}HF.fl.delete(T);T._hf=null;continue;}
+    const w=(k<.2?k/.2:1-(k-.2)/.8)*F.a;for(let i=0;i<L.length;i++){const q=L[i];q.m.emissive.setRGB(q.r+(F.r-q.r)*w,q.g+(F.g-q.g)*w,q.b+(F.b-q.b)*w);q.m.emissiveIntensity=q.i+(1-q.i)*w;}}
+  if(!HF.list.length||!AR.cam)return;let j=0;const e=AR.cam.matrixWorld.elements,S=FXA.sd;
+  for(let i=0;i<HF.list.length;i++){const f=HF.list[i],T=f.T,k=(now-f.t0)/f.dur;
+    if(k>=1||!T.root.parent||!f.o.parent){skcPut(f.o);continue;}HF.list[j++]=f;skcDim(T);
+    const R=T._fxR,H=T._fxH,o=f.o,P=o.geometry.attributes.position,a=P.array,sz=f.sz*(1-.55*k)/2,rx=e[0]*sz,ry=e[1]*sz,rz=e[2]*sz,ux=e[4]*sz,uy=e[5]*sz,uz=e[6]*sz;
+    o.position.set(T.root.position.x-f.dx*R*.35,T.root.position.y,T.root.position.z-f.dz*R*.35);
+    for(let p=0;p<f.n;p++){const s1=S[p*4],s2=S[p*4+1],s3=S[p*4+2],s4=S[p*4+3],an=s1*6.2832,r=R*(.12+k*(.35+.7*s2)),cx=Math.cos(an)*r+f.dx*k*R*(.3+.9*s3),cz=Math.sin(an)*r+f.dz*k*R*(.3+.9*s3),y=H*(.45+.25*s3)+k*H*.35*(s4-.3)-k*k*H*.25,q=p*12;
+      a[q]=cx-rx-ux;a[q+1]=y-ry-uy;a[q+2]=cz-rz-uz;a[q+3]=cx+rx-ux;a[q+4]=y+ry-uy;a[q+5]=cz+rz-uz;a[q+6]=cx+rx+ux;a[q+7]=y+ry+uy;a[q+8]=cz+rz+uz;a[q+9]=cx-rx+ux;a[q+10]=y-ry+uy;a[q+11]=cz-rz+uz;}
+    o.geometry.setDrawRange(0,f.n*6);P.needsUpdate=true;o.material.opacity=k<.1?1:1-(k-.1)/.9;}
+  HF.list.length=j;}
+(()=>{try{
+  const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
+  const lag=()=>!RM&&typeof B!=='undefined'&&B&&B._lag>0;
+  wrap('animAttack',o=>function(u,t){const r=o.apply(this,arguments);
+    if(B&&!B.silent&&!RM&&u&&t&&u.el&&t.el){const sp=B.speed||1,st=atkStyle(u),a3=!!(AR.f&&u._ar&&t._ar);let ms;
+      if(st==='melee'){if(a3){const em=u.atkK&&TBA.lib&&TBA.lib.EMOTES&&TBA.lib.EMOTES[u.atkK];ms=(em?em.dur*1000:600)*.45/sp;}
+        else{const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect(),d=Math.hypot(rb.left-ra.left,rb.top-ra.top);ms=Math.max(180,Math.min(420,d*1.3))/sp*.47;}}
+      else ms=a3?Math.max(260,364/sp):260/sp;
+      B._lag=Math.round(ms);t._koWait=performance.now()+ms;}
+    return r;});
+  wrap('attack',o=>function(){try{return o.apply(this,arguments);}finally{if(B&&B._lag)B._lag=0;}});
+  wrap('numFx',o=>function(){if(!lag())return o.apply(this,arguments);const a=arguments,s=FXN.src;hfLater(()=>{FXN.src=s;o.apply(null,a);});});
+  wrap('float',o=>function(){if(!lag())return o.apply(this,arguments);const a=arguments;hfLater(()=>o.apply(null,a));});
+  wrap('shake',o=>function(){if(!lag())return o.apply(this,arguments);hfLater(()=>o());});
+  wrap('hitFx',o=>function(src,t,dealt,type){
+    if(!B||B.silent||RM||!t||!t.el||B.envSrc==='overtime')return o.apply(this,arguments);
+    const fc=B.fxCrit,fs=B.fxCritS,es=B.envSrc,crit=!!((fc&&type==='attack')||(fs&&type==='spell')),ko=!t.alive,big=dealt>=t.maxHp*.25;
+    hfLater(()=>{if(!t.el||!B||B.silent)return;const p=[B.fxCrit,B.fxCritS,B.envSrc];B.fxCrit=fc;B.fxCritS=fs;B.envSrc=es;
+      try{o.call(null,src,t,dealt,type);}finally{B.fxCrit=p[0];B.fxCritS=p[1];B.envSrc=p[2];}
+      t.el.classList.remove('hit');void t.el.offsetWidth;t.el.classList.add('hit');
+      hfHit(src,t,type,crit,ko,big,dealt);
+      if(crit||big||ko){const now=performance.now();if((B.speed||1)<=2&&now-HF.hs>220){HF.hs=now;B.hs=Math.max(B.hs||0,now+(ko?58:crit?50:42));}if(!t.summon||crit)shake();}});});
 }catch(e){}})();
 function start(data){
   UI.lv=lvLoad().pick;
@@ -24992,7 +25048,7 @@ function tbaTick(){
     if(!k||!img.isConnected||!img.offsetParent||img.closest('#field.arena .t3d'))return;
     const u=img.closest('.unit'),foe=!!(u&&u.classList.contains('foe')),uu=u&&u._u;let anim='idle',t0=0,sp=1;
     if(end&&u&&end.win!==foe){anim=tbaPick(k,foe?TBA_FOE:TBA_WIN);t0=end.t0;}
-    if(uu&&!uu.alive){if(!uu._dt)uu._dt=now;anim='death';t0=uu._dt;sp=Math.min(2,(B&&B.speed)||1);}
+    if(uu&&!uu.alive&&!(uu._koWait>now)){if(!uu._dt)uu._dt=now;anim='death';t0=uu._dt;sp=Math.min(2,(B&&B.speed)||1);}
     else if(uu&&uu.atkT&&anim==='idle'&&now-uu.atkT<TBA.lib.EMOTES[uu.atkK].dur*1000/((B&&B.speed)||1)){anim=uu.atkK;t0=uu.atkT;sp=(B&&B.speed)||1;}
     if(fight&&u){const inF=!!u.closest('#field');tbaAsk(k,tbaPick(k,foe?TBA_FOE:TBA_WIN),inF?2.8:1);if(uu&&inF){tbaAsk(k,uu.atkK||tbaAtkKind(uu),3.6);tbaAsk(k,'death',3.2);}}
     tbaAsk(k,'idle',anim==='idle'?3.4:2);if(anim!=='idle')tbaAsk(k,anim,4);
@@ -25135,7 +25191,7 @@ function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.un
     if(!u.el.classList.contains('t3d'))u.el.classList.add('t3d');
     const w=arWorld(arKey(u));T.home.x+=(w.x+(u.wide?AR_X/2:0)-T.home.x)*a;T.home.z+=(w.z-T.home.z)*a;
     let anim='idle',t0=0,s=1;
-    if(!u.alive){if(!T.dt)T.dt=now;anim='death';t0=T.dt;s=Math.min(2,sp);}
+    if(!u.alive&&!(u._koWait>now)){if(!T.dt)T.dt=now;anim='death';t0=T.dt;s=Math.min(2,sp);}
     else{T.dt=0;if(end&&end.win===(u.side==='A')){anim=anWin(u);t0=end.t0;}
       else if(u.atkT&&u.atkK&&now-u.atkT<lib.EMOTES[u.atkK].dur*1000/sp){anim=u.atkK;t0=u.atkT;s=sp;}
       else{const q=anState(u,T,now,sp);if(q){anim=q;t0=ANM.t0;s=ANM.s;}}}
@@ -25147,9 +25203,9 @@ function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.un
       let f=0;if(u.atkK==='atkMelee'){const kk=Math.max(0,(d-1.7)/d);f=kk*(q<.45?arEase(q/.45):q<.6?1-.08*(q-.45)/.15:.92*(1-arEase((q-.6)/.4)));}
       else f=-(q<.13?q/.13:Math.max(0,1-(q-.13)/.5))*.32/d;ox=dx*f;oz=dz*f;}
     let dyw=yaw-T.yaw;dyw=Math.atan2(Math.sin(dyw),Math.cos(dyw));T.yaw+=dyw*Math.min(1,AR.dt*14);T.root.rotation.y=T.yaw;
-    const hit=u._hitT&&now-u._hitT<170?1-(now-u._hitT)/170:0,pop=Math.min(1,(now-T.born)/320),ghost=u.alive&&!targetable(u);
-    T.root.position.set(T.home.x+ox+(hit?Math.sin(now*.09)*.08*hit:0),.05+(ghost?.25+Math.sin(now/160)*.12:0),T.home.z+oz);
-    const sq=1-.1*hit;T.root.scale.set(pop*(1+.05*hit),pop*sq,pop*(1+.05*hit));
+    const rc=T._rc,rk=rc?(now-rc.t0)/rc.dur:2,hit=rk<1?(rk<.22?rk/.22:1-arEase((rk-.22)/.78))*rc.m:0,pop=Math.min(1,(now-T.born)/320),ghost=u.alive&&!targetable(u);
+    T.root.position.set(T.home.x+ox+(hit?rc.dx*hit:0),.05+(ghost?.25+Math.sin(now/160)*.12:0),T.home.z+oz+(hit?rc.dz*hit:0));
+    const sq=1-.14*hit;T.root.scale.set(pop*(1+.07*hit),pop*sq,pop*(1+.07*hit));
     const gone=anim==='death'?Math.max(0,(now-t0)/1000*s-e.dur-.35):0;T.body.position.y=-gone*1.6;T.root.visible=gone<1.2;anPost(u,T,now,sp,anim);}}
 function arGbClear(){if(AR.proj.some(P=>P.gb))AR.proj=AR.proj.filter(P=>{if(P.gb){arDispose(P.g);return false;}return true;});}
 function arShot(u,t,glyph,size,ms){const pk=tbaProjFor(u,glyph),A=u._ar,Bt=t._ar;if(!pk||!A||!Bt)return false;const gb=glyph==='⚽';if(gb)arGbClear();
@@ -25169,7 +25225,7 @@ function arFrame(){AR.raf=0;const f=document.getElementById('field');
     // too slow (under ~20 frames a second): sharper pixels go first, then the ink outlines, then back to the flat board
     if(!AR.keep&&!document.hidden&&gap<1000){AR.ema=AR.nf?AR.ema*.92+gap*.08:gap;if(++AR.nf>45&&AR.ema>50){AR.nf=0;AR.q++;
       if(AR.q===1&&AR.R.getPixelRatio()>1){AR.R.setPixelRatio(1);AR.W=-1;}else if(AR.q<=2)AR.q=2;else{AR.dead=true;AR.why='too slow on this device';arOff();return;}}}
-    arUpdate(now);arProj(now);skcFrame(now);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
+    arUpdate(now);arProj(now);hfFrame(now);skcFrame(now);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
   catch(e){AR.dead=true;AR.why=String(e&&e.message||e).slice(0,80);arOff();return;}
   AR.raf=requestAnimationFrame(arFrame);}
 (()=>{try{document.head.insertAdjacentHTML('beforeend',`<style>
@@ -25189,8 +25245,7 @@ html.ar3d .bbq .board{background:rgba(10,9,14,.55)!important;-webkit-backdrop-fi
   const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
   wrap('drawBattle',o=>function(){const r=o.apply(this,arguments);if(!AR.raf&&SET.arena!==false&&!RM&&!AR.dead)AR.raf=requestAnimationFrame(arFrame);return r;});
   wrap('animAttack',o=>function(u,t){if(u)u.atkTgt=t;return o.apply(this,arguments);});
-  wrap('dealDamage',o=>function(src,t){const d=o.apply(this,arguments);if(d>0&&t&&AR.f)t._hitT=performance.now();return d;});
-  wrap('projectile',o=>function(u,t,cls,glyph,size){if(AR.f&&B&&!B.silent&&!RM&&u&&t&&arShot(u,t,glyph,size,(arguments[5]||260)/(B.speed||1)))return;return o.apply(this,arguments);});
+    wrap('projectile',o=>function(u,t,cls,glyph,size){if(AR.f&&B&&!B.silent&&!RM&&u&&t&&arShot(u,t,glyph,size,(arguments[5]||260)/(B.speed||1)))return;return o.apply(this,arguments);});
 }catch(e){}})();
 
 // ===== v19.91: ability cues. A cast flashes the caster and draws one cue from a small library (SKC); lasting auras
@@ -25580,7 +25635,7 @@ globalThis.SYMF = globalThis.SYMF || (function () {
     if ((type === 'attack' || type === 'spell') && t.manaMax && !B.noMana) t.mana = Math.min(t.manaMax, t.mana + Math.min(8, dealt * .25));
     if (src && src.alive && src.ls && (type === 'attack' || type === 'spell')) { const lh = heal(null, src, dealt * src.ls, true); if (!B.silent) numFx(src, lh, 'heal2'); }
     if (!B.silent && t.el) {   // the game's hit effects (numbers, flash, shake), untouched
-      FXN.src = src; numFx(t, dealt - sAbs, B.envSrc === 'overtime' ? 'tick' : type === 'spell' ? 'spell' : type === 'attack' || type === 'bounce' ? 'phys' : 'true', (B.fxCrit && type === 'attack') || (B.fxCritS && type === 'spell')); if (sAbs > 0) { numFx(t, sAbs, 'block'); if (t.shield <= 0) shCrack(t); } t.el.classList.remove('hit'); void t.el.offsetWidth; t.el.classList.add('hit'); hitFx(src, t, dealt, type);
+      FXN.src = src; numFx(t, dealt - sAbs, B.envSrc === 'overtime' ? 'tick' : type === 'spell' ? 'spell' : type === 'attack' || type === 'bounce' ? 'phys' : 'true', (B.fxCrit && type === 'attack') || (B.fxCritS && type === 'spell')); if (sAbs > 0) { numFx(t, sAbs, 'block'); if (t.shield <= 0) shCrack(t); } hitFx(src, t, dealt, type);
       if (dealt > t.maxHp * .3) shake();
     }
     if (type === 'attack' && src && src.alive && src.range === 'melee' && H(t.side, 'spikes') && t.row === 'front') dealDamage(t, src, dealt * TV(t.side, 'spikes') / 100, 'true');
