@@ -1069,12 +1069,12 @@ html.dt #app>section.screen:has(.title-word){max-width:1180px;margin-inline:auto
 .tscene{position:relative;width:100%;aspect-ratio:1.5;max-height:46vh;margin:0 auto;pointer-events:none;user-select:none}
 .tscene .tlight{position:absolute;left:-6%;right:-6%;top:-26%;bottom:6%;background:radial-gradient(ellipse 52% 62% at 50% 42%,rgba(255,206,90,.34),rgba(255,160,50,.10) 48%,transparent 72%)}
 .tscene .ttable{position:absolute;left:0;right:0;bottom:-3%;height:46%;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#6a4470 0,#3d2646 55%,#22152a 100%);}
-.tfig{position:absolute;display:block;aspect-ratio:1;transform:translateX(-50%);will-change:transform}
-.tfig img{position:relative;display:block;width:100%;height:100%;object-fit:contain;transform-origin:50% 92%;transform:rotate(var(--rot,0));animation:tbob 2.6s ease-in-out var(--d,0s) infinite;filter:drop-shadow(0 3px 0 rgba(0,0,0,.55))}
+.tfig{position:absolute;display:block;aspect-ratio:1;width:calc(var(--w)*var(--k,1)*1%);transform:translateX(-50%)}
+.tfig img{position:relative;display:block;width:100%;height:100%;object-fit:contain;transform-origin:50% 92%;scale:calc(var(--dir,1)*-1) 1;animation:tclash 1.8s ease-in-out var(--d,0s) infinite;filter:drop-shadow(0 3px 0 rgba(0,0,0,.55))}
 .tfig .tsh{position:absolute;left:14%;right:14%;bottom:2%;height:11%;border-radius:50%;background:rgba(0,0,0,.5);filter:blur(3px)}
-@keyframes tbob{0%,100%{transform:rotate(var(--rot,0)) translateY(0) scaleY(1)}50%{transform:rotate(calc(var(--rot,0) * -.4)) translateY(-3.2%) scaleY(1.025)}}
-.tburst{position:absolute;left:52%;top:57%;width:17%;transform:translate(-50%,-50%);z-index:2;fill:#ffcc2e;stroke:#141012;stroke-width:3.5;stroke-linejoin:round;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45));animation:tpow 1.6s ease-in-out infinite}
-@keyframes tpow{0%,100%{transform:translate(-50%,-50%) scale(.92) rotate(-4deg)}50%{transform:translate(-50%,-50%) scale(1.08) rotate(5deg)}}
+@keyframes tclash{0%,100%{transform:rotate(var(--rot)) translate(0,0)}18%{transform:rotate(calc(var(--rot)*-.5)) translate(calc(var(--dir)*-1.5%),-3%)}38%{transform:rotate(calc(var(--rot)*2.6)) translate(calc(var(--dir)*7%),0)}48%{transform:rotate(calc(var(--rot)*3)) translate(calc(var(--dir)*7.5%),1%) scaleY(.96)}66%{transform:rotate(var(--rot)) translate(calc(var(--dir)*-1%),-1.5%)}}
+.tburst{position:absolute;transform:translate(-50%,50%) scale(.2);z-index:7;fill:#ffcc2e;stroke:#141012;stroke-width:3.5;stroke-linejoin:round;filter:drop-shadow(0 4px 0 rgba(0,0,0,.45));animation:tpow 1.8s ease-out var(--d,0s) infinite;aspect-ratio:1;height:auto}
+@keyframes tpow{0%,30%{transform:translate(-50%,50%) scale(.2) rotate(-8deg);opacity:0}38%{opacity:1;transform:translate(-50%,50%) scale(1.25) rotate(4deg)}50%{transform:translate(-50%,50%) scale(1) rotate(-3deg);opacity:1}72%{transform:translate(-50%,50%) scale(.85) rotate(2deg);opacity:.9}86%,100%{transform:translate(-50%,50%) scale(.3) rotate(0);opacity:0}}
 .tspark{position:absolute;z-index:6;width:2.2%;aspect-ratio:1;background:#ffe9a6;clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%);animation:tspk 1.9s ease-in-out infinite}
 .tspark.a{left:41%;top:20%}.tspark.b{left:57%;top:14%;animation-delay:-.6s;width:3%}.tspark.c{left:47%;top:58%;animation-delay:-1.2s}
 @keyframes tspk{0%,100%{opacity:.25;transform:scale(.6) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(45deg)}}
@@ -1093,6 +1093,7 @@ html.dt .tst .tscene{grid-area:scene;max-height:none;aspect-ratio:1.18}
 html.dt .tmenu .title-word{font-size:clamp(4.6rem,min(11vw,17vh),9.6rem)}
 html.dt .tmenu .tbig{font-size:2rem;padding:.5em 1.8em;min-width:min(380px,100%)}
 html.dt .tlv{font-size:1rem}
+@media (min-aspect-ratio:21/10) and (min-width:900px){html.dt #app>section.screen.tst{grid-template-columns:minmax(640px,.7fr) minmax(0,1.5fr);column-gap:0}html.dt .tst .tscene{aspect-ratio:1.3;--k:.92;margin-left:2vw}}
 @media (max-width:899px){.tscene{max-height:36vh}}
 @media (max-width:899px){.tscene{aspect-ratio:1.6}}
 @media (max-width:560px){.tst .tgo{display:grid}.tst .tgo .tbig{width:100%}}
@@ -23191,15 +23192,19 @@ SCR.gyms=()=>{const G1=GYMS[0];
     <div class="gympins" aria-label="Elite Four and Champion"><span>🪞</span><span>🎲</span><span>🎓</span><span>🧠</span><span class="cup">🏆</span><small class="muted">The Elite Four and the Champion wait behind all 8 badges (a later update).</small></div>
     <div class="row"><button class="btn" data-a="gyms-back">← Back</button><button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;};
-// TRO-145: the title screen's toy brawl. One figure per genre (the game's own front-view sprites), two crews closing in
-// on a tabletop. [sprite id, left %, bottom %, width %, lean deg, row (z), bob delay s]
-const TITLE_CAST=[['starknight',20,40,27,3,1,-.6],['kingmonster',50,41,35,0,1,-1.3],['queen',80,40,28,-3,1,-.2],
-  ['commando',10,6,25,5,3,-.9],['gunslinger',29,5,25,4,3,-1.7],['mascot',45,3,23,2,4,-.4],
-  ['safecracker',60,3,22,-2,4,-1.1],['necro',74,5,25,-4,3,-.7],['chainsaw',91,6,25,-5,3,-1.5]];
+// TRO-149: the title screen's toy brawl = 4 clashes + a thief slipping past. Front-view sprites; the left fighter of each pair is
+// mirrored so both face in. [sprite id, centre x %, bottom %, width %, lean deg, z, dir (+1 = left side), pair delay s]
+const TITLE_CAST=[['starknight',17,40,24,4,1,1,0],['kingmonster',40,41,34,-3,1,-1,0],
+  ['commando',62,40,22,4,1,1,-.6],['queen',85,40,26,-3,1,-1,-.6],
+  ['gunslinger',15,4,25,4,3,1,-1.2],['chainsaw',36,3,25,-4,3,-1,-1.2],
+  ['necro',67,4,25,4,3,1,-1.8],['mascot',87,4,22,-3,3,-1,-1.8],
+  ['safecracker',50,0,19,-2,5,-1,-.3]];
+const TITLE_HITS=[[29,57,15,0],[75,53,13,-.6],[26,19,13,-1.2],[78,19,13,-1.8]];
 function titleScene(){const f=TITLE_CAST.filter(c=>SPRITES[c[0]+'_f']);if(!f.length)return '';
   return `<div class="tscene" aria-hidden="true"><i class="tlight"></i><i class="ttable"></i>`
-    +f.map(([id,x,b,w,rot,z,d])=>`<span class="tfig" style="left:${x}%;bottom:${b}%;width:${w}%;z-index:${z};--rot:${rot}deg;--d:${d}s"><i class="tsh"></i><img src="${SPRITES[id+'_f']}" alt="" draggable="false"></span>`).join('')
-    +`<svg class="tburst" viewBox="-50 -50 100 100"><polygon points="0,-46 9,-20 34,-32 22,-8 48,0 22,8 34,32 9,20 0,46 -9,20 -34,32 -22,8 -48,0 -22,-8 -34,-32 -9,-20"/></svg><i class="tspark a"></i><i class="tspark b"></i><i class="tspark c"></i></div>`;}
+    +f.map(([id,x,b,w,rot,z,dir,d])=>`<span class="tfig" style="left:${x}%;bottom:${b}%;--w:${w};z-index:${z};--rot:${rot}deg;--dir:${dir};--d:${d}s"><i class="tsh"></i><img src="${SPRITES[id+'_f']}" alt="" draggable="false"></span>`).join('')
+    +TITLE_HITS.map(([x,b,w,d])=>`<svg class="tburst" style="left:${x}%;bottom:${b}%;width:${w}%;--d:${d}s" viewBox="-50 -50 100 100"><polygon points="0,-46 9,-20 34,-32 22,-8 48,0 22,8 34,32 9,20 0,46 -9,20 -34,32 -22,8 -48,0 -22,-8 -34,-32 -9,-20"/></svg>`).join('')
+    +`<i class="tspark a"></i><i class="tspark b"></i><i class="tspark c"></i></div>`;}
 SCR.title=()=>{
   const sv=loadSave();if(titleFresh(sv))return titleFreshHTML();
   return `<section class="screen tst">${titleScene()}<div class="tmenu">
@@ -24175,10 +24180,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.29',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.30',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.30',items:[["🥊","The title screen is now a real brawl: four pairs of fighters clash, with a POW at every hit, and a thief slips past in the middle."]]},
   {v:'20.29',items:[["🎬", "A real title screen: a toy brawl with one fighter from every genre fills the screen, with the menu beside it (above it on phones)."], ["🔥", "Clearer level line: your next level sits in a clean badge under Play, instead of tiny text inside the button."]]},
   {v:'20.28',items:[["💥", "Hits land: the struck fighter flashes, gets knocked back and squashed, and a puff flies off, all when the shot arrives (not when it is fired)."], ["🎯", "Crits, big hits and KOs get a tiny freeze and screen shake; normal hits stay snappy."]]},
   {v:'20.27',items:[["🕸️", "Counter web, part 2: every genre now has its counter rules on its card (open a genre, or the Codex). Heist Crew crack shields, Kaiju shrug off artillery, Slasher scares stop Sportsball bounces, and more."], ["🚀", "Space Opera starts strong: a big shield (60% of max HP) in Act 1, none after."], ["🧬", "Typecast (only one genre on your board) is bigger for Undead, Heist Crew, Kaiju and Sportsball."]]},
