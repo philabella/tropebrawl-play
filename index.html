@@ -1013,6 +1013,17 @@ html.dt .board .slot.hasspr .spr{height:calc(var(--t,150px)*1.17);bottom:calc(va
 html.dt .board .slot.hasspr[data-v^="n"] .spr{height:calc(var(--t,150px)*.8);bottom:calc(var(--gh,22px) - 3.5px)}
 html.dt .board .slot.hasspr{--sh:calc(var(--t,150px)*1.12)}
 html.dt .board .slot.hasspr[data-v^="n"]{--sh:calc(var(--t,150px)*.75)}
+/* v20.16: wide board tiles (2560x1080 and similar): the toy is 1.6x the tile height and stands lower (a 24 px stat strip instead of
+   a 41 px name block); name and stars sit on the left above the ATK chip (was: toy on top of a 41 px name block, ~80 px tall in a 440 px wide tile) */
+html.dt.bwide .board .slot.hasspr{--gh:24px;--sh:max(calc(var(--t,150px)*1.12),min(calc(var(--t,150px)*1.53),245px));--sb:calc(var(--gh) + 10px - var(--t,150px)*.06)}
+html.dt.bwide .board .slot.hasspr .spr{height:max(calc(var(--t,150px)*1.17),min(calc(var(--t,150px)*1.6),256px));bottom:calc(var(--gh) - 5px - var(--t,150px)*.06)}
+html.dt.bwide .board .slot.hasspr::after{bottom:calc(var(--gh) - 2px);width:96px;margin-left:-48px}
+html.dt.bwide .board .slot.hasspr .nm{position:absolute;left:8px;bottom:calc(var(--gh) + 21px);max-width:calc(50% - var(--t,150px)*.45 - 10px);text-align:left;font-size:.9rem}
+html.dt.bwide .board .slot.hasspr .row{position:absolute;left:8px;bottom:calc(var(--gh) + 3px);justify-content:flex-start!important}
+html.dt.bwide .board .slot.hasspr[data-v^="n"]{--gh:22px;--sh:calc(var(--t,150px)*1.05);--sb:calc(var(--gh) + 8px - var(--t,150px)*.05)}
+html.dt.bwide .board .slot.hasspr[data-v^="n"] .spr{height:calc(var(--t,150px)*1.1);bottom:calc(var(--gh) - 3.5px - var(--t,150px)*.05)}
+html.dt.bwide .board .slot.hasspr[data-v^="n"]::after{bottom:calc(var(--gh) - 1px)}
+html.dt.bwide .board .slot.hasspr[data-v^="n"] .row{bottom:calc(var(--gh) + 2px)}
 html.dt .board .slot .pt{width:calc(var(--t,150px)*.5);height:calc(var(--t,150px)*.5);font-size:calc(var(--t,150px)*.27)}
 html.dt .board .slot[data-v^="n"] .pt{width:calc(var(--t,150px)*.34);height:calc(var(--t,150px)*.34);font-size:calc(var(--t,150px)*.18)}
 html.dt .board .slot .nm{font-size:.86rem}
@@ -23087,8 +23098,11 @@ function dtFit(){try{
   if(!DESK)return;const root=document.documentElement;
   const fit=(free,v,per,lo,hi)=>{let t=parseFloat(root.style.getPropertyValue(v))||150;
     for(let k=0;k<3;k++){const nt=Math.max(lo,Math.min(hi,t+free()/per));if(Math.abs(nt-t)<1)break;t=nt;root.style.setProperty(v,t.toFixed(1)+'px');}};
+  if(UI.screen!=='plan')root.classList.remove('bwide');
   if(UI.screen==='plan'){const c=document.querySelector('.dcol.c');if(!c||!c.children.length)return;
-    fit(()=>{const k=c.children;return c.clientHeight-(k[k.length-1].getBoundingClientRect().bottom-k[0].getBoundingClientRect().top);},'--t',4.1,48,250);}
+    fit(()=>{const k=c.children;return c.clientHeight-(k[k.length-1].getBoundingClientRect().bottom-k[0].getBoundingClientRect().top);},'--t',4.1,48,250);
+    const t=parseFloat(root.style.getPropertyValue('--t'))||150,b=document.querySelector('.board .frow:not(.bench) .slot:not(.wide2)');
+    root.classList.toggle('bwide',!!b&&t>=80&&b.getBoundingClientRect().width>=t*3.2);}
   else if(UI.screen==='battle'){const f=document.getElementById('field');if(!f)return;const sec=f.parentElement;
     fit(()=>innerHeight-26-sec.getBoundingClientRect().height,'--tb',4.6,80,260);}
 }catch(e){}}
@@ -24016,10 +24030,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.15',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.16',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.16',items:[["🔍", "Wide screens: the characters on your board and bench are about a third bigger and stand on their tiles, with the name beside them."], ["✨", "Board toys are drawn at the size you see them, so they stay sharp instead of grainy."]]},
   {v:'20.15',items:[["🛒", "<b>Shop cards show the whole character</b> now, framed the same on every screen, with attack, HP and price in the same style as your board."], ["⚔️", "Fight! with nobody on your board is a dashed outline; it turns solid yellow when you are ready."]]},
   {v:'20.14',items:[["🧠", "Three rival studios play their own method more sharply: <b>Sal</b> now pairs copies and never pays for a reroll, <b>Echo</b> commits harder to the genres that counter yours, and <b>Prof. Quill</b> saves all the way to the interest cap while his lives are safe."], ["📖", "The Algorithm Lab card for Sal explains the new rule."]]},
   {v:'20.13',items:[["🏟️", "<b>The Gym Circuit</b> (title screen, from Ascension 3): a full season against one rival studio as Gym Leader. It fights you once in each of Acts 1-3 and its whole cast is the final boss. Gym 1: Sal's Clearance Aisle."], ["🎭", "Rivals now join one at a time, simplest first: Sal from the start, then one new studio per Ascension. Each one gets a seat on its first tier."], ["🔍", "Beating a rival's cast now <b>scouts</b> it: its card opens but its figure stays in shadow until you win its Gym badge. Rivals you already revealed stay revealed."]]},
@@ -25297,7 +25312,8 @@ function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
     const hov=c.parentNode&&c.closest('button,.scard,.unit,.slot,.bslot,[data-a]');const wave=hov&&hov.matches(':hover');
     anLvPose(c,f,wave,now); // v19.92: buy / star-up / sell moves, idle dances
     LV3.root.add(f.g);R.setViewport(x,y,C,C);R.setScissor(x,y,C,C);LV3.E.render(LV3.scene,f.cam);LV3.root.remove(f.g);anLvUndo(f);drawn.push([c,x,HH-y-C]);});
-  const src=R.domElement;drawn.forEach(([c,x,y])=>{const g=c._g||(c._g=c.getContext('2d'));g.clearRect(0,0,C,C);g.drawImage(src,x,y,C,C,0,0,C,C);});
+  const src=R.domElement;drawn.forEach(([c,x,y])=>{const g=c._g||(c._g=c.getContext('2d')),w=Math.min(C,Math.max(32,Math.ceil(c.getBoundingClientRect().height*(devicePixelRatio||1)/8)*8));
+    if(c.width!==w)c.width=c.height=w;g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.clearRect(0,0,w,w);g.drawImage(src,x,y,C,C,0,0,w,w);});
   // too slow here: draw less often, then give the toys back their pre-drawn pictures
   if(!LV3.keep){const cost=performance.now()-t0;LV3.ema=LV3.nf?LV3.ema*.93+cost*.07:cost;
     if(++LV3.nf>60&&LV3.ema>14){LV3.nf=0;if(LV3.fps>20)LV3.fps=20;else tlFail('too slow on this device');}}}
