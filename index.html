@@ -24102,10 +24102,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.24',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.25',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.25',items:[["🔧", "Small fix behind the scenes."]]},
   {v:'20.24',items:[["🎨", "Classic look: the Dark Lord, Priest, Brute, Sheriff, Muscle and Hacker are lighter and the Vampire Bat's wings stand out, so they no longer vanish on the dark board."]]},
   {v:'20.23',items:[["⚔️", "Every genre now has one job, and its genre chip says which 2 genres it beats and which 2 it fears."], ["🕸️", "New Codex page, Counter web: the 9 genres in a circle, with an arrow and a reason for every counter."], ["🔭", "Before a rival or Rerun fight, the next-fight panel shows their main genres and who counters whom. Shop cards that beat their main genre show ⚔."]]},
   {v:'20.22',items:[["✏️", "Clearer texts: Free Agent, Stolen Props, Residuals, Trial by Fire, Field Promotion and Casting Call now say exactly what they do."], ["📱", "Phones: the Crossovers button is always in view, and Codex tables say they scroll sideways."]]},
@@ -24256,7 +24257,7 @@ function tlFormPost(rec){try{let js=JSON.stringify(rec);if(js.length>45000){rec=
 function tlDb(){try{return typeof window!=='undefined'&&!!(window.claude&&window.claude.use);}catch(e){return false;}}
 function tlPid(){try{let p=localStorage.getItem('tropebrawl-pid');if(!p){p='p_'+Math.random().toString(36).slice(2,10);localStorage.setItem('tropebrawl-pid',p);}return p;}catch(e){return 'p_anon';}}
 // v20.18 (TRO-92): tester mark, three coarse source fields, sharer id, page opens. No fingerprint: no user agent, no screen size.
-const TL_TESTER='21d633aa98ef20d67abc903aeb537dcb38a7cda723e07dd3a7582831dfc81fb6';
+const TL_TESTER='2744ccd10c7533bd736ad890f9dd5cab2adb27b07d500b9493f29cdc420cb2e0';
 function tlLs(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){}return null;}
 function tlTester(){return tlLs('tropebrawl-tst')==='1';}
 function tlFrom(){try{let f=tlLs('tropebrawl-from');if(f)return f;
@@ -24272,7 +24273,7 @@ function tlVisit(){try{if(SET.share===false||seeded||navigator.webdriver||tlDb()
   tlSend(Object.assign({rid:'v'+now.toString(36)+Math.random().toString(36).slice(2,6),v:TB_VERSION,build:TB_BUILD,fmt:2,res:'visit',at:new Date().toISOString(),ms:0,pid:tlPid(),src:window.tbApp?'app':'pages',r:[]},tlMeta()));}catch(e){}}
 function tlShareQ(){return SET.share!==false?'?f='+tlPid():'';}
 function tlCodeHTML(){return `<h3 style="color:var(--gold)">Code</h3><input id="tcode" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="64" style="width:100%;padding:8px;font:inherit"><div class="row" style="margin-top:8px"><button class="btn sm" data-a="tcode">OK</button></div>`;}
-async function tlCodeCheck(){try{const i=$('#tcode'),v=i?i.value.trim():'';closeSheet();if(v.length<16||!(window.crypto&&crypto.subtle))return;
+async function tlCodeCheck(){try{const i=$('#tcode'),v=i?i.value.trim().toLowerCase():'';closeSheet();if(!v||!(window.crypto&&crypto.subtle))return;
   const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)))).map(b=>b.toString(16).padStart(2,'0')).join('');
   if(h!==TL_TESTER)return;tlLs('tropebrawl-tst','1');if(TL){TL.t=1;tlSave();}toast('Marked as tester');}catch(e){}}
 let TAPV={n:0,t:0};
