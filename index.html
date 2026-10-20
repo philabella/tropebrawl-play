@@ -20281,7 +20281,12 @@ const $=s=>document.querySelector(s);
 let rngState=0, seeded=false;
 // v19.32: a live fight draws from its own stream (FR), seeded and saved when the fight starts, so a reload replays it
 let FR=null;
-function rand(){ if(!seeded&&FR===null) return Math.random(); let st=(seeded?rngState:FR)|0; st=st+0x6D2B79F5|0; if(seeded)rngState=st;else FR=st; let t=Math.imul(st^st>>>15,1|st); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
+// TRO-86 step 2: a seeded run (S.seed) draws outside fights from RS, re-keyed by rsKey(tag) at the start of every
+// consumer (shop, round, enemy, offers, events, rival seats); its fights use FR in sims too, so a sim run = the live run
+let RS=null,SEED_NEXT=null;
+function rsHash(...k){let h=((S&&S.seed)|0)^0x9E3779B9;const t=k.join('|');for(let i=0;i<t.length;i++)h=Math.imul(h^t.charCodeAt(i),0x01000193);h^=h>>>16;h=Math.imul(h,0x85EBCA6B);h^=h>>>13;h=Math.imul(h,0xC2B2AE35);return (h^h>>>16)|0;}
+function rsKey(tag){if(!S||S.seed==null)return;const rk=S.rk=S.rk||{},q=tag+':'+(S.round|0)+':'+(S.part|0),n=rk[q]=(rk[q]|0)+1;RS=rsHash(tag,S.round|0,S.part|0,n);}
+function rand(){ let st; if(FR!==null&&(!seeded||RS!==null)){st=FR=(FR|0)+0x6D2B79F5|0;} else if(RS!==null){st=RS=(RS|0)+0x6D2B79F5|0;} else if(seeded){st=rngState=(rngState|0)+0x6D2B79F5|0;} else return Math.random(); let t=Math.imul(st^st>>>15,1|st); t=t+Math.imul(t^t>>>7,61|t)^t; return ((t^t>>>14)>>>0)/4294967296; }
 const rnd=(a,b)=>a+rand()*(b-a);
 const pick=a=>a[Math.floor(rand()*a.length)];
 const shuffle=a=>{a=[...a];for(let i=a.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
@@ -21154,6 +21159,7 @@ function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=UI._ng=UI._np=null;try
   const gy=gymPick(),lvD=lvDef(lvClamp(gy?gy.lv:lv)); // v20.13: a Gym plays at its own fixed tier
   S={lv:lvD.n,ladder:2,rules:lvD.rules.slice(),part:1,round:1,lives:10,gold:6,streak:0,rank:1,xp:0,wins:0,units:[],trinkets:[],tlv:{},legend:null,shop:[],locked:false,uid:1,paid:{},pending:[],freeRerolls:0,
      bossTries:0,lastWin:null,stats:{fights:0,won:0,merges:0,gold:0,lost:0},over:false,enemy:null,event:null};
+  if(SEED_NEXT!=null){S.seed=SEED_NEXT|0;SEED_NEXT=null;}RS=S.seed!=null?0:null; // TRO-86: seeded run
   S.maxLives=lvD.lives;S.lives=S.maxLives;S.cap=lvD.cap;if(gy)S.gym={n:gy.n,id:gy.id};
   // the level's genres (null = all of them): locked genres never show up, like a genre that got The Cut
   S.lvG=Object.keys(GENRES).every(g=>lvD.g.includes(g))?null:lvD.g.filter(g=>GENRES[g]);
@@ -21178,7 +21184,7 @@ function poolTake(id,n){S.pool=S.pool||{};S.pool[id]=Math.max(0,poolLeft(id)-n);
 function poolGive(id,n){S.pool=S.pool||{};S.pool[id]=Math.min(poolMax(id),poolLeft(id)+n);}
 function poolOpen(id){const sh=LOBBY.busy?(S.shop||[]).concat(LOBBY.hold||[]):(S.shop||[]);const shown=sh.filter(o=>o&&o.id===id).reduce((t,o)=>t+COPIES[o.level-1],0);return poolLeft(id)-shown>0;}
 function heroOf(rar){const maxed=maxedIds();const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!gOut(h[2])).map(h=>h[0]);return pool.length?pick(pool):null;}
-function rollShop(rr){
+function rollShop(rr){rsKey('s');
   if(typeof UI!=='undefined'){UI.pick=null;UI.deal=1;} // a new shop: no card stays half-selected
   const maxed=maxedIds();
   S.shop=[];let nudged=0;const tc=typecast(),tcK=tc?TUNE.tcSlots*(rr?TUNE.tcRoll:1):0,tcN=tc?Math.floor(tcK)+(tcK%1&&rand()<tcK%1?1:0):0;
@@ -21315,7 +21321,7 @@ function itemUseful(t){
 }
 // 3 offers: one levels up an item you hold (if any is below ★★★), the others are new items
 // (rare = the boss's bonus Rare item: a new item when there is one)
-function trinketChoices(level,rare){
+function trinketChoices(level,rare){rsKey('i');
   const up=S.trinkets.filter(t=>ilv(t)<ITEM_MAX&&itemUseful(t));
   const pool=TRINKETS.map(a=>a[0]).filter(t=>!S.trinkets.includes(t)&&itemUseful(t)&&lvOK('i',t));
   const wR=rare?0.75:level>=3?0.6:0.2;const out=[];
@@ -21352,7 +21358,7 @@ function genreCounts(units){const g={};[...new Set(units.map(u=>u.id))].forEach(
 function legendClash(id){if(id==='wallet'&&S.trinkets.includes('battery'))return 'Your 🔋 Battery Pack does nothing with this: you already start at full energy.';return '';}
 // v19.89: the Game Ball needs 2+ different Sportsball characters on the board, so it isn't offered without them
 function legOffer(id){return id!=='gameball'||new Set(fielded().filter(u=>HERO[u.id].genre==='ball').map(u=>u.id)).size>=2;}
-function legendChoices(n){n=n||2;
+function legendChoices(n){rsKey('l');n=n||2;
   const g=genreCounts(fielded());
   const ranked=Object.keys(g).filter(k=>g[k]>=2).sort((a,b)=>g[b]-g[a]);
   const out=[];
@@ -21446,7 +21452,7 @@ function ghMaybe(ev){const L=GHOSTS[S.round];
   if(!TUNE.ghOn||!L||!L.length||ev.type!=='fight'||S.round<TUNE.ghFrom||S.enemy.elite||S.enemy.trial||S.part===2||(TUNE.rvP2&&ev.rv&&S.lobby))return;
   if(rand()>=(TUNE.ghP[ev.act-1]||0))return;
   const i=Math.floor(rand()*L.length),g=L[i];Object.assign(S.enemy,{gh:g.slice(),tpl:'ghost:'+S.round+':'+i,title:ghTitle(g),enc:[]});}
-function prepareFight(){
+function prepareFight(){rsKey('e');
   const ev=curRound();
   const p2=ev.type==='boss'&&ev.act===runActs()&&S.part===2;
   let tpl=null;
@@ -21490,7 +21496,7 @@ function enemyStats(e){
   if(d.x.crowd)return {crowd:d.x.crowd,bodyHp:d.x.bodyHp*m,bodyAtk:d.x.bodyAtk*m,hp:d.x.crowd*d.x.bodyHp*m,atk:d.x.bodyAtk*m,p:m};
   return {hp:d.hp*m,atk:d.atk*m,p:m};
 }
-function startRound(){
+function startRound(){rsKey('r');
   const ev=curRound();
   S.event=null;S.enemy=null;
   // special event on this round (rolled at the start of the run); if it can't happen now, it's a normal event
@@ -21527,7 +21533,7 @@ function castTarget(){
   for(const u of cand){const d=HERO[u.id],to=low.length?3:4,fits=id=>!twoSlot(id)||twoSlot(u.id)||fieldCount()+1<=boardSize(),pool=HEROES.filter(h=>h[2]===d.genre&&h[4]===to&&!maxed.has(h[0])&&fits(h[0])).map(h=>h[0]);if(pool.length)return {u,to,pool};}
   return null;}
 function dealOK(e){return S.lives>2||!(e||S.event||{opts:[]}).opts.some(k=>k!=='deal');}
-function eventPick(key){
+function eventPick(key){rsKey('v');
   const e=S.event;if(!e||e.picked)return;if(key==='deal'&&!dealOK(e))return;
   e.picked=key;tlAct('e',key);
   if(key==='payday'){S.gold+=8;S.stats.gold+=8;e.msg='+8 gold.';}
@@ -21568,7 +21574,7 @@ function eventPick(key){
 function ownedIn(g){return S.units.filter(u=>HERO[u.id].genre===g);}
 // The Cut always goes after your biggest genre (counted in copies, so ★★ and ★★★ weigh more; ties broken at random).
 // No picking a genre you barely use: keep the cast (gold), lose it (half refund), or fight it (lives).
-function cutChoices(){const cw=g=>ownedIn(g).reduce((t,u)=>t+COPIES[u.level-1],0);
+function cutChoices(){rsKey('c');const cw=g=>ownedIn(g).reduce((t,u)=>t+COPIES[u.level-1],0);
   const own=Object.keys(GENRES).filter(g=>!gOut(g)&&ownedIn(g).length).map(g=>({g,w:cw(g)+rand()*.5})).sort((a,b)=>b.w-a.w);
   return own.slice(0,1).map(o=>o.g);}
 function cutRound(){return null;} // random events are a surprise: no LEAVING SOON warning
@@ -21590,16 +21596,16 @@ function reChance(L){return Math.min(1,TUNE.rePBase+TUNE.rePStep*L);}
 function reMix(L){const g=Math.max(0,TUNE.reGood[0]+TUNE.reGood[1]*L),b=Math.min(1,TUNE.reBad[0]+TUNE.reBad[1]*L);return {good:g,bad:b,trade:Math.max(0,1-g-b)};}
 // the run decides at the start which round of each window (if any) gets a random event, and of which kind; the
 // exact event is drawn when it happens (from the ones that make sense right then)
-function rollSpecials(){S.specials={};S.preDone={};if(lvGated()&&!lvList('e').some(k=>SPECIAL_KEYS.includes(k)))return;const L=Math.max(0,Math.min(10,(S.lv|0)-4)),mix=reMix(L);
+function rollSpecials(){rsKey('init');S.specials={};S.preDone={};if(lvGated()&&!lvList('e').some(k=>SPECIAL_KEYS.includes(k)))return;const L=Math.max(0,Math.min(10,(S.lv|0)-4)),mix=reMix(L);
   reWindows().forEach(w=>{if(rand()>=reChance(L))return;const n=w[Math.floor(rand()*w.length)];const x=rand();
     S.specials[n]=x<mix.good?'good':x<mix.good+mix.bad?'bad':'trade';});}
 function specialAt(n){return S&&S.specials?S.specials[n]||null:null;}
-function drawRandomEvent(kind){const used=S.usedEvents||[];let pool=SPECIAL_KEYS.filter(k=>EV_KIND[k]===kind&&!used.includes(k)&&SPECIALS[k].ok()&&lvOK('e',k));
+function drawRandomEvent(kind){rsKey('d');const used=S.usedEvents||[];let pool=SPECIAL_KEYS.filter(k=>EV_KIND[k]===kind&&!used.includes(k)&&SPECIALS[k].ok()&&lvOK('e',k));
   if(!pool.length)pool=SPECIAL_KEYS.filter(k=>!used.includes(k)&&SPECIALS[k].ok()&&lvOK('e',k));if(!pool.length)return null;const k=pick(pool);S.usedEvents=[...used,k];return k;}
 function bestToTrain(){return fielded().filter(u=>u.level<maxLv(u.id)).sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0]||null;}
 function bestOnBoard(){return fielded().slice().sort((a,b)=>sellValue(b)-sellValue(a)||HERO[b.id].tier-HERO[a.id].tier)[0]||null;}
 function weakestOnBoard(){return fielded().slice().sort((a,b)=>HERO[a.id].tier-HERO[b.id].tier||a.level-b.level)[0]||null;}
-function startSpecial(k){
+function startSpecial(k){rsKey('x');
   if(k==='cut'){S.event={opts:['cut'],picked:'cut',sub:{kind:'cut',ids:cutChoices()},cut:true,special:true};return;}
   if(k==='wheel'){S.event={opts:['wheel'],picked:null,sub:null,special:true};return;}
   const data={};
@@ -21677,7 +21683,7 @@ const CHOICES={
 function cutCost(g){return Math.max(TUNE.cutMin,TUNE.cutPer*ownedIn(g).length);}
 // v19.21: cards of the cut genre already in the shop (rolled before the event, or locked) are recast from the genres
 // still in the show, at the same rarity odds
-function recastShop(g){if(!S.shop)return [];const maxed=maxedIds(),ok=h=>!maxed.has(h[0])&&!gOut(h[2])&&poolOpen(h[0]);let n=0;const swaps=[];
+function recastShop(g){rsKey('rc');if(!S.shop)return [];const maxed=maxedIds(),ok=h=>!maxed.has(h[0])&&!gOut(h[2])&&poolOpen(h[0]);let n=0;const swaps=[];
   S.shop=S.shop.map(o=>{if(!o||HERO[o.id].genre!==g)return o;n++;const was=o.id;const tier=rollTier();let pool=HEROES.filter(h=>h[4]===tier&&ok(h)).map(h=>h[0]);
     if(!pool.length)pool=HEROES.filter(ok).map(h=>h[0]);if(!pool.length){swaps.push([was,null]);return null;}const id=pick(pool),c={id,level:1,rc:1};S.seen=S.seen||{};if(!S.seen[id]){c.nw=1;S.seen[id]=1;}swaps.push([was,id]);return c;});
   if(n){if(typeof UI!=='undefined')UI.pick=null;tlAct('o',S.shop.map(o=>o?o.id+(o.level>1?'*'+o.level:''):'-').join(','));}return swaps;}
@@ -21779,7 +21785,7 @@ function twinUnit(){
 }
 function foeInfo(k){const m=/^rv:(\w+):(\w+)$/.exec(k||'');if(m&&RIVAL[m[1]]&&HERO[m[2]])return {e:HERO[m[2]].e,name:RIVAL[m[1]].name+"'s "+HERO[m[2]].name};return EN[k]||(k==='twin'?{e:'😈',name:'Evil Twin'}:{e:'❓',name:k});}
 function startBattle(silent,seed){if(!silent){gbClear();tlFight();}
-  if(!silent&&!seeded&&S){if(!S.inFight)S.inFight={seed:seed!=null?seed:(Math.random()*2147483647)|0};FR=S.inFight.seed;tlSeed(FR);save();}
+  if(!silent&&S&&(!seeded||RS!==null)){if(!S.inFight)S.inFight={seed:seed!=null?seed:S.seed!=null?rsHash('f',S.round|0,S.part|0,S.bossTries|0):(Math.random()*2147483647)|0};FR=S.inFight.seed;tlSeed(FR);save();}
   const syn=activeSyn(fielded());
   B={t:0,acc:0,last:null,speed:UI.speed,paused:false,units:[],done:false,win:null,silent:!!silent,startDelay:silent?0:.6,
      syn,reserve:[],frontDR:{A:0,E:0},art:0,tesla:tv('tesla')||4,takeovers:0,sponsor:0,goldEarned:0,gold:S.gold,revive:has('extralife'),ended:false,round:S.round,
@@ -22412,7 +22418,7 @@ function lobbyWanted(){const n=TUNE.rivals!=null?TUNE.rivals|0:TUNE.rivalsOn?(S.
 // set up the lobby for a new run: the rivals are drawn from the roster with the run's own seed
 // v20.13: every rival unlocks with the Game Level (RIVALS[].lv, docs/gyms-design.md ladder order); no lv = from the start
 function rvOpen(x){return !x.lv||(S.lv|0)>=x.lv;}
-function lobbyInit(){const RO=RIVALS.filter(rvOpen),n=Math.min(RO.length,lobbyWanted());if(!n){S.lobby=null;return;}
+function lobbyInit(){rsKey('lb');const RO=RIVALS.filter(rvOpen),n=Math.min(RO.length,lobbyWanted());if(!n){S.lobby=null;return;}
   // v20.13: the Gym Leader, else a rival on its first tier, always has a seat; the other seats are drawn as before
   const lead=S.gym?[S.gym.id]:RO.filter(x=>(x.lv|0)===(S.lv|0)).map(x=>x.id);
   S.pool=S.pool||{};const ids=lead.concat(shuffle(RO.map(x=>x.id).filter(id=>!lead.includes(id)))).slice(0,n);
@@ -22464,7 +22470,7 @@ function rvEvent(P){const e=S.event,pref=P.ev||['recruit','promotion','supply','
     else eventSub(sub.ids.slice().sort((a,b)=>rvScore(b,P)-rvScore(a,P))[0]);}
   rvPend();}
 function rvTrain(target,bank){const c=trainCost(),g=S.gold-(bank||0);if(S.rank>=target||c==null||g<c)return false;return Math.floor(g/c)*RANK.trainXp>=xpNeed()-(S.xp||0);}
-function rvPend(){let g=0;while(S.pending.length&&g++<10){const p=S.pending.shift();
+function rvPend(){rsKey('p');let g=0;while(S.pending.length&&g++<10){const p=S.pending.shift();
   if(p.kind==='legend'){const ch=legendChoices();if(ch.length)S.legend=pick(ch);continue;}
   const ch=trinketChoices(p.level,false);const up=ch.find(t=>ilv(t)&&ilv(t)<ITEM_MAX),nw=ch.find(t=>!ilv(t));
   takeTrinket(up||(nw&&S.trinkets.length<TRINKET_CAP?nw:null));}}
@@ -22512,11 +22518,11 @@ function rvFeat(R,sched){const fl=st=>st.units.filter(u=>u.slot&&u.slot[0]!=='n'
   return [1,Math.log((1+bv(S))/(1+bv(R.st))),fl(S).length-fl(R.st).length,(S.trinkets||[]).length-(R.st.trinkets||[]).length,Math.log(k)];}
 function rvQ(R,sched){const c=TUNE.rvCal||{},w=c.w||[],x=rvFeat(R,sched),lv=S.lv|0;let z=((c.st||{})[R.id]||0),b=-1;
   x.forEach((v,i)=>{z+=(w[i]||0)*v;});Object.keys(c.lv||{}).forEach(k=>{if(+k<=lv&&+k>b)b=+k;});if(b>0)z+=c.lv[b];return 1/(1+Math.exp(-z));}
-function rvPickRival(live,sched){const T=lvDef(S.lv|0).rvT;
+function rvPickRival(live,sched){rsKey('rp');const T=lvDef(S.lv|0).rvT;
   if(!TUNE.rvMatch||!T||live.length<2)return pick(live);
   const c=live.slice();for(let i=c.length-1;i>0;i--){const j=Math.floor(rand()*(i+1));[c[i],c[j]]=[c[j],c[i]];}
   let best=c[0],bd=1e9;c.slice(0,TUNE.rvMatchN||3).forEach(R=>{const d=Math.abs(rvQ(R,sched)-T);if(d<bd){bd=d;best=R;}});return best;}
-function rvMaybeEpisode(ev){
+function rvMaybeEpisode(ev){rsKey('rm');
   if(ev.gym&&S.gym&&!LOBBY.busy&&S.part!==2&&gymEp(ev))return; // v20.13: the Gym Leader's fights
   const sched=!!(TUNE.rvP2&&ev.rv);
   if(!S.lobby||LOBBY.busy||ev.type!=='fight'||S.round<3||S.enemy.trial||S.part===2)return;
@@ -24180,10 +24186,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.30',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.31',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.31',items:[["🎲", "Behind the scenes: a run can now start from a seed, so the same seed and the same choices replay the same shops, events, rivals and fights. This is the base for the Daily Episode, coming next."]]},
   {v:'20.30',items:[["🥊","The title screen is now a real brawl: four pairs of fighters clash, with a POW at every hit, and a thief slips past in the middle."]]},
   {v:'20.29',items:[["🎬", "A real title screen: a toy brawl with one fighter from every genre fills the screen, with the menu beside it (above it on phones)."], ["🔥", "Clearer level line: your next level sits in a clean badge under Play, instead of tiny text inside the button."]]},
   {v:'20.28',items:[["💥", "Hits land: the struck fighter flashes, gets knocked back and squashed, and a puff flies off, all when the shot arrives (not when it is fired)."], ["🎯", "Crits, big hits and KOs get a tiny freeze and screen shake; normal hits stay snappy."]]},
@@ -24349,7 +24356,7 @@ function tlFrom(){try{let f=tlLs('tropebrawl-from');if(f)return f;
   else if(document.referrer){const h=new URL(document.referrer).hostname.replace(/^www\./,'').toLowerCase().replace(/[^a-z0-9.-]/g,'');if(h&&h!==location.hostname)f=h.slice(0,60);}
   if(f)tlLs('tropebrawl-from',f);return f||'';}catch(e){return '';}}
 function tlSharer(){try{let f=tlLs('tropebrawl-f');if(!f){const q=new URLSearchParams(location.search).get('f');if(q&&/^p_[a-z0-9]{3,12}$/.test(q)&&q!==tlPid()){f=q;tlLs('tropebrawl-f',f);}}return f||'';}catch(e){return '';}}
-function tlMeta(){const o={tz:-new Date().getTimezoneOffset(),dev:(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches)?'phone':'desktop'};
+function tlMeta(){const o={tz:-new Date().getTimezoneOffset(),...(S&&S.seed!=null?{seed:S.seed}:{}),dev:(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches)?'phone':'desktop'};
   const f=tlFrom(),sh=tlSharer();if(f)o.from=f;if(sh)o.f=sh;if(tlTester())o.t=1;return o;}
 function tlVisit(){try{if(SET.share===false||seeded||navigator.webdriver||tlDb()||!tlRelay()||globalThis.__tlForce||/dev/.test(location.hash))return;
   const now=Date.now();if(now-(+tlLs('tropebrawl-vis')||0)<18e5)return;tlLs('tropebrawl-vis',String(now));
@@ -24475,7 +24482,7 @@ function loadSave(){try{const j=localStorage.getItem(SAVE_KEY)||localStorage.get
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem(OLD_SAVE_KEY);}catch(e){}}
 function snapshot(){return S?{v:SAVE_KEY,S,screen:UI.screen==='battle'?'plan':UI.screen,speed:UI.speed}:{};}
 // restore a saved run; a fight that was already settled on the result screen is advanced, never replayed
-function restore(sv){S=sv.S;if(!S.ladder){S.lv=Math.min(LV_MAX,(S.lv|0)+4);S.ladder=2;}if(!S.cap)S.cap=5;buildSchedule(S.lv);S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=Math.min(2,sv.speed||1);UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
+function restore(sv){S=sv.S;RS=S.seed!=null?0:null;if(!S.ladder){S.lv=Math.min(LV_MAX,(S.lv|0)+4);S.ladder=2;}if(!S.cap)S.cap=5;buildSchedule(S.lv);S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=Math.min(2,sv.speed||1);UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
 
 // ================= test panel (for Philippe; playtesters never see it) =================
 // Open: add #dev to the link, or press the ` key. Lets you pick any Game Level and open any event screen.
@@ -24535,6 +24542,7 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 document.addEventListener('change',e=>{const t=e.target.closest&&e.target.closest('#dev [data-d]');if(t&&(t.tagName==='SELECT'))devAct(t.dataset.d,t.value,t);});
 document.addEventListener('keydown',e=>{if(e.key==='`'&&!/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))){DEV.on=true;DEV.open=!DEV.open;devSave();devPaint();}});
 if(typeof location!=='undefined'&&location.hash==='#dev'){DEV.on=true;devSave();}
+if(typeof location!=='undefined'){const sm=/^#seed=(\d{1,10})$/.exec(location.hash);if(sm)SEED_NEXT=(+sm[1])%2147483647;} // TRO-86: seeded run link
 if(typeof location!=='undefined'&&location.hash==='#all'){try{localStorage.setItem('tropebrawl-all','1');}catch(e){}} // TRO-86: testers keep the full menu
 
 // ================= sound (v19.10): Kenney sound effects (CC0); quick mute: speaker button, M key, Settings =================
@@ -25916,7 +25924,7 @@ globalThis.SYMF = globalThis.SYMF || (function () {
       if (depth >= 1) { lastB = B; lastS = S; for (const u of B.units) { u._ref0 = u.ref; u._mh0 = u.maxHp; } }
       else if (RUN.on) {   // RUN.on false: leave SYMON to whoever drives it (the tournament's own fights)
         const p = pend; pend = null;
-        if (p) { SYMON = true; COIN = ((rngState | 0) ^ (FR | 0) ^ 0x5bd1e995) | 0; attachE(p.cap); RUN.stats.attach++; RUN.stats[p.kind]++; }
+        if (p) { SYMON = true; COIN = ((RS !== null ? 0 : rngState | 0) ^ (FR | 0) ^ 0x5bd1e995) | 0; attachE(p.cap); RUN.stats.attach++; RUN.stats[p.kind]++; }
         else SYMON = false;
       }
       return r;
