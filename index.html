@@ -23996,10 +23996,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.13',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.14',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.14',items:[["🧠", "Three rival studios play their own method more sharply: <b>Sal</b> now pairs copies and never pays for a reroll, <b>Echo</b> commits harder to the genres that counter yours, and <b>Prof. Quill</b> saves all the way to the interest cap while his lives are safe."], ["📖", "The Algorithm Lab card for Sal explains the new rule."]]},
   {v:'20.13',items:[["🏟️", "<b>The Gym Circuit</b> (title screen, from Ascension 3): a full season against one rival studio as Gym Leader. It fights you once in each of Acts 1-3 and its whole cast is the final boss. Gym 1: Sal's Clearance Aisle."], ["🎭", "Rivals now join one at a time, simplest first: Sal from the start, then one new studio per Ascension. Each one gets a seat on its first tier."], ["🔍", "Beating a rival's cast now <b>scouts</b> it: its card opens but its figure stays in shadow until you win its Gym badge. Rivals you already revealed stay revealed."]]},
   {v:'20.12',items:[["🛒", "<b>Bigger shop cards</b> on computers: a large portrait, attack and HP as bold badges, the price as a gold coin."], ["👉", "The shop reads in one look: Fight! is the only yellow button, the other shop buttons are outlines, and the side panels step back until you point at them."]]},
   {v:'20.11',items:[["🎬", "<b>New players</b> see one big Start the Pilot button; the level row and the menus join after your first episode."], ["⚔️", "Fights fit a 1080p screen again (the bench below the board was cut off), and the result is a bar at the bottom: the board stays in view."], ["🪙", "Your gold number pops green when it goes up and red when it goes down."]]},
@@ -25745,7 +25746,7 @@ function rvBrainPlace(R){
       if(S.units.some(u=>u.slot==='gone'))return;const p=score();ps.push(p);if(p>best.p+1e-6)best={p,m};}));
     apply(best.m);if(S.units.some(u=>u.slot==='gone'))apply(keep);rvPeekPlace(R,ps,best.p);});
   const d=now()-t0;RVBP.n++;RVBP.ms+=d;RVBP.max=Math.max(RVBP.max,d);}
-// ================= v20.2 Rival Brains (fastsim/rivals/brains/brains.js) =================
+// ================= v20.2 Rival Brains (fastsim/rivals/brains/brains.js; v20.14: pasted whole, TRO-50) =================
 // Rival Brains (prototype, 2026-10-19): every rival studio thinks with its own named, real maths/science method.
 // Game code: loaded after tropebrawl.html (fastsim Engine scripts, like fastsim/rivals/brain.js), so the same source can
 // later be pasted into the game. It wraps the game's rival functions by name (rvShop, rvSwap, rivalsTurn, rvBrainPlace,
@@ -25881,6 +25882,7 @@ function rvBrainPlace(R){
     const bank = H.bank ? H.bank(bank0, r, cr, P) : bank0;
     const own = id => S.units.filter(u => u.id === id).reduce((t, u) => t + COPIES[u.level - 1], 0); let guard = 0;
     const SC = H.score || rvScore0;
+    // Gym runs (docs/gyms-design.md): only the Gym Leader drafts its signature genre (GYMS[].g), card value x TUNE.gymGenreW
     const sigG = RB.cur && S.gym && S.gym.id === RB.cur.id && TUNE.gymGenreW > 1 ? gymSig(RB.cur.id) : null; // v20.13 Gym Leader
     while (guard++ < 60) {
       rvPend(); if (H.onShop) H.onShop();
@@ -26014,14 +26016,19 @@ function rvBrainPlace(R){
     // would push off a full board (board slots are part of the price)
     const gain = (o) => { const after = afterBuy(o.id, o.level), made = after[after.length - 1];
       if (made.level > o.level) return pw(made) - pw({ id: o.id, level: made.level - 1 }) * 2;
-      const f = fielded(), w = width(f), cap = boardSize(); if (w + (twoSlot(o.id) ? 2 : 1) <= cap) return pw(made);
-      const weak = f.slice().sort((a, b) => pw(a) - pw(b))[0]; return Math.max(0, pw(made) - (weak ? pw(weak) : 0)); };
+      // TRO-8: a second copy is half-way to the next star, so it also carries half of that star's uplift (pairs of
+      // cheap characters are how a bargain hunter gets ★★)
+      const pair = o.level < maxLv(o.id) && S.units.some(u => u.id === o.id && u.level === o.level) ? 0.5 * Math.max(0, pw({ id: o.id, level: o.level + 1 }) - pw(made)) : 0;
+      const f = fielded(), w = width(f), cap = boardSize(); if (w + (twoSlot(o.id) ? 2 : 1) <= cap) return pw(made) + pair;
+      const weak = f.slice().sort((a, b) => pw(a) - pw(b))[0]; return Math.max(0, pw(made) - (weak ? pw(weak) : 0)) + pair; };
     const knap = (budget) => { const c = S.shop.map((o, i) => o && (canBuy(i).ok) ? { i, p: shopPrice(o), g: gain(o) } : null).filter(o => o && o.g > 0);
       let best = { g: 0, set: [] }; const n = c.length;
       for (let m = 1; m < (1 << n); m++) { let p = 0, g = 0; const set = []; for (let j = 0; j < n; j++) if (m & (1 << j)) { p += c[j].p; g += c[j].g; set.push(c[j]); } if (p <= budget && g > best.g) best = { g, set }; }
       best.budget = budget; return best; };
-    return { why: () => bought.length ? `Knapsack: with 🪙${plan ? Math.round(plan.budget) : S.gold} to spend, Sal checked every bundle of shop cards he could afford; the most power per gold was ${bought.slice(0, 4).map(id => HERO[id].name).join(' + ')} (${plan && plan.set.length ? (plan.g / Math.max(1, plan.set.reduce((t, x) => t + x.p, 0))).toFixed(2) : '?'} power per gold).` : `Knapsack: Sal checked every bundle of the ${S.shop.filter(Boolean).length} cards in his shop, and none added enough power for its price, so he kept his 🪙${S.gold}.`,
+    return { why: () => bought.length ? `Knapsack: with 🪙${plan ? Math.round(plan.budget) : S.gold} to spend, Sal checked every bundle of shop cards he could afford; the most power per gold was ${bought.slice(0, 4).map(id => HERO[id].name).join(' + ')} (${plan && plan.set.length ? (plan.g / Math.max(1, plan.set.reduce((t, x) => t + x.p, 0))).toFixed(2) : '?'} power per gold).` : `Knapsack: Sal checked every bundle of the ${S.shop.filter(Boolean).length} cards in his shop, and none added enough power for its price, so he kept his 🪙${S.gold} (and a reroll buys nothing for sure, so he never pays for one).`,
       pol: P,
+      // TRO-8: a reroll is not an item in any bundle (it buys nothing for sure), so Sal never pays for one; free ones he takes
+      reroll: c => S.freeRerolls > 0,
       score: (id, P2, o) => { const k = S.gold + ':' + S.shop.map(x => x ? x.id + x.level : '-').join(); if (k !== pk) { pk = k; const b0 = S.round >= 3 ? ((typeof P.econ === 'function' ? P.econ(S.round) : P.econ) || 0) : 0; plan = knap(Math.max(0, S.gold - b0)); }
         const it = o && plan.set.find(x => S.shop[x.i] === o); if (it && !bought.includes(id)) bought.push(id); return it ? 8 + 10 * it.g / it.p : rvScore0(id, P) - 4; } };
   } };
@@ -26062,6 +26069,67 @@ function rvBrainPlace(R){
       reroll: c => { const v = hs.map(h => h.reroll ? !!h.reroll(c) : !!defReroll(c)); return v.filter(Boolean).length * 2 > v.length; } };   // majority vote
   } };
 
+  // ---- TRO-8 prototypes from the design table (brains.md §6): Bettina (Kelly criterion), Mel (simulated annealing) ----
+  // the characters a rival is chasing (short of the next star) and what one more copy is worth (Rex's rule)
+  const chaseIds = () => [...new Set(S.units.map(u => u.id))].filter(id => { const c = ownCopies(id), nx = c < 3 ? 3 : 6; return c < nx && S.units.some(u => u.id === id && u.level < maxLv(id)) && (c < 3 || HERO[id].tier >= 3); });
+  const copyVal = id => { const need = (ownCopies(id) < 3 ? 3 : 6) - ownCopies(id); return PRICE[HERO[id].tier - 1] * (need <= 1 ? 3 : need <= 2 ? 1.6 : 1); };
+  // Bettina: the Kelly criterion. A reroll is a bet: it costs 🪙2 and "wins" when the next shop shows a copy she chases.
+  // p = chance of a hit (the printed odds as a prior, updated by her own hits and misses this run), b = net odds (what a
+  // hit is worth / 🪙2 - 1). Kelly's growth-optimal stake is f* = p - (1-p)/b of her gold; she puts exactly that much
+  // on rerolls each round (nothing when f* <= 0). Rich after wins = big bets; broke after losses = tiny ones.
+  BRAINS.bettina = { method: 'Kelly criterion', mk: (P, R) => {
+    const kb = R.kb = R.kb || { n: 0, hit: 0, r: -1, left: 0, used: 0, f: 0, p: 0, b: 0, v: 0, pend: null };
+    const look = () => { if (!kb.pend) return; kb.n++; if (S.shop.some(o => o && kb.pend.includes(o.id))) kb.hit++; kb.pend = null; };
+    const plan = () => { const ids = chaseIds(); kb.f = 0; kb.p = 0; kb.b = 0; if (!ids.length) return 0;
+      let q = 0, qv = 0; ids.forEach(id => { const s = slotChance(id); q += s; qv += s * copyVal(id); });
+      const pm = 1 - Math.pow(Math.max(0, 1 - Math.min(1, q)), SHOP_SLOTS), v = q > 0 ? qv / q : 0;
+      const p = (kb.hit + 3 * pm) / (kb.n + 3), b = v / rerollCost() - 1, f = b > 0 ? Math.max(0, Math.min(1, p - (1 - p) / b)) : 0;
+      Object.assign(kb, { p, b, f, v }); return Math.floor(f * S.gold / rerollCost()); };
+    return { onShop: look,
+      why: () => kb.r === S.round && kb.p ? `Kelly criterion: a reroll is a bet that wins ${Math.round(100 * kb.p)}% of the time (${kb.hit} hits in her ${kb.n} rerolls this run, the printed odds as a prior) and pays ${kb.b.toFixed(1)} to 1 (a copy worth 🪙${kb.v.toFixed(1)} for 🪙${rerollCost()}). Kelly says stake ${Math.round(100 * kb.f)}% of her gold, so she ${kb.used ? `rerolled ${kb.used === 1 ? 'once' : kb.used + ' times'}` : 'did not reroll'}.` : `Kelly criterion: no character to chase, so no bet worth making (🪙${S.gold} kept).`,
+      reroll: c => {
+        if (kb.r !== S.round) { kb.r = S.round; kb.left = plan(); kb.used = 0; }
+        const free = S.freeRerolls > 0; if (!free && (kb.left <= 0 || S.gold < rerollCost())) return false;
+        if (!free) { kb.left--; kb.used++; } kb.pend = chaseIds(); return true; } };
+  } };
+  // Mel: simulated annealing. Each shop she searches over boards: which of her characters to field and which shop cards
+  // to buy (shop cards cost gold, a coin is worth 1.5% of her board). A move adds, drops or swaps one character; a better
+  // board is always kept, a worse one with chance exp(Δ/T). The temperature T follows the season: hot in Act 1 (she
+  // tries odd boards), cold by the finale (she settles on the best one). She plays the board she ends on, like real annealing.
+  // As your next opponent she anneals her line-up the same way with the battle predictor (melPlace).
+  const melT = () => 0.06 * Math.pow(Math.max(0, 1 - S.round / SCHEDULE.length), 1.5) + 0.004;
+  BRAINS.mel = { method: 'Simulated annealing', mk: (P, R) => {
+    let plan = null, pk = '';
+    const anneal = (withShop) => {
+      const cap = boardSize(), budget = Math.max(0, S.gold - (S.round >= 3 ? ((typeof P.econ === 'function' ? P.econ(S.round) : P.econ) || 0) : 0));
+      const items = S.units.map(u => ({ u })).concat(withShop ? S.shop.map((o, i) => o && canBuy(i).ok ? { i, o, p: shopPrice(o) } : null).filter(Boolean) : []);
+      if (!items.length) return null;
+      const build = sel => { const us = S.units.map(u => ({ id: u.id, level: u.level, uid: u.uid, on: false })); let cost = 0;
+        sel.forEach(k => { const it = items[k]; if (it.u) { const x = us.find(y => y.uid === it.u.uid); if (x) x.on = true; } });
+        sel.forEach(k => { const it = items[k]; if (!it.o) return; cost += it.p; let cur = { id: it.o.id, level: it.o.level, uid: -1, on: true };
+          for (let m = 0; m < 2; m++) { const same = us.filter(u => u.id === cur.id && u.level === cur.level); if (same.length >= 2 && cur.level < maxLv(cur.id)) { same.slice(0, 2).forEach(u => us.splice(us.indexOf(u), 1)); cur = { id: cur.id, level: cur.level + 1, uid: -1, on: true }; } else break; }
+          us.push(cur); });
+        const f = us.filter(u => u.on); return { f, cost }; };
+      const p0 = Math.max(1e-6, powNow());
+      const J = sel => { const b = build(sel); if (b.cost > budget || width(b.f) > cap) return null; return boardPow(b.f) / p0 - 0.015 * b.cost; };
+      let cur = fielded().map(u => S.units.indexOf(u)).filter(k => k >= 0), jc = J(cur); if (jc == null) { cur = []; jc = J(cur) || 0; }
+      let best = cur.slice(), jb = jc, T = melT(), tries = 0, acc = 0, worse = 0;
+      for (let step = 0; step < 48; step++, T *= 0.95) {
+        const k = Math.floor(rand() * items.length), at = cur.indexOf(k); let nx = cur.slice();
+        if (at >= 0) nx.splice(at, 1); else { nx.push(k); if (J(nx) == null && cur.length) nx.splice(Math.floor(rand() * cur.length), 1); }
+        const jn = J(nx); tries++; if (jn == null) continue;
+        if (jn >= jc || rand() < Math.exp((jn - jc) / T)) { if (jn < jc) worse++; acc++; cur = nx; jc = jn; if (jc > jb) { jb = jc; best = cur.slice(); } }
+      }
+      return { sel: cur, items, j: jc, jb, T0: melT(), tries, acc, worse, buy: new Set(cur.filter(k => items[k].o).map(k => items[k].i)), field: cur.filter(k => items[k].u).map(k => items[k].u) };
+    };
+    const get = () => { const k = S.gold + ':' + S.round + ':' + S.shop.map(x => x ? x.id + x.level : '-').join() + ':' + S.units.map(u => u.uid + u.level).join(); if (k !== pk) { pk = k; plan = anneal(true); } return plan; };
+    let last = null;
+    return {
+      score: (id, P2, o) => { const pl = get(), i = S.shop.indexOf(o); if (pl && pl.buy.has(i)) { last = pl; return 30; } return rvScore0(id, P) - 6; },
+      arrange: P2 => { if (!S.units.length) return; const pl = anneal(false); if (pl && pl.field.length) { last = last || pl; layChosen(pl.field, P2, false); } else rvArrange0(P2); },
+      why: () => { const pl = last; last = null; return pl ? `Simulated annealing at temperature ${pl.T0.toFixed(3)} (hot early in the season, cold late): Mel tried ${pl.tries} board changes and accepted ${pl.acc}, ${pl.worse} of them worse ones; she ended on a board scored ${Math.round(100 * pl.j)}% of today's power after its price (the best she saw: ${Math.round(100 * pl.jb)}%).` : `Simulated annealing: nothing in the shop improved her board (🪙${S.gold} kept).`; } };
+  } };
+
   // ---- learning rivals (new) ----
   // Kit "The Gambler": Thompson sampling over the eight classic methods. Each run Kit draws a win rate for every method
   // from its Beta posterior (wins/losses Kit had with it in YOUR earlier runs) and plays the best draw. Methods that
@@ -26098,13 +26166,13 @@ function rvBrainPlace(R){
     return { why: () => top ? `Fictitious play: you've mostly played ${top.q.map(([g, f]) => GENRES[g].name + ' ' + Math.round(100 * f) + '%').join(', ')}; the genre table says ${GENRES[top.b[0][0]].name} wins ${Math.round(100 * top.b[0][1])}% against that mix, so Echo drafts it.` : `Echo has seen 0 of your boards yet, so it drafted for power (🪙${S.gold} left).`,
       onShop: () => { if (pk !== S.round) { pk = S.round; const b = br(); pick = b ? b.slice(0, 2).map(x => x[0]) : null;
         if (b) { const q = Object.assign({}, store().echo.g); Object.entries(R.seen || {}).forEach(([g, n]) => { q[g] = (q[g] || 0) + n; }); const tot = Object.values(q).reduce((t, x) => t + x, 0); top = { b, q: Object.entries(q).sort((a, c) => c[1] - a[1]).slice(0, 2).map(([g, n]) => [g, n / tot]) }; } } },
-      score: (id, P2, o) => { let s = rvScore0(id, P); if (pick) { const g = HERO[id].genre; if (g === pick[0]) s += 8; else if (g === pick[1]) s += 5; else if (S.round >= 8) s -= 3; } return s; } };
+      score: (id, P2, o) => { let s = rvScore0(id, P); if (pick) { const g = HERO[id].genre; if (g === pick[0]) s += 12; else if (g === pick[1]) s += 8; else if (S.round >= 5) s -= 5; } return s; } };   // TRO-8: commits harder (was +8/+5, -3 from Ep 8)
   }, observe: (R, gen) => { R.seen = R.seen || {}; Object.entries(gen).forEach(([g, n]) => { R.seen[g] = (R.seen[g] || 0) + n; }); },
   credit: R => { if (R.cred) return; R.cred = 1; const e = store().echo.g; Object.keys(e).forEach(g => { e[g] *= 0.6; }); Object.entries(R.seen || {}).forEach(([g, n]) => { e[g] = (e[g] || 0) + n / Math.max(1, R.seenN || 1); }); persist(); } };
   // Professor Quill "The Planner": an absorbing Markov chain (the value of a life). Lives are the chain's states (0 lives
   // absorbs); each round's win chance comes from his projected board power through a logistic curve he fits to his own
   // fights in your runs (online logistic regression, 3 numbers in your save). He compares his expected future wins with
-  // his lives now and with one loss fewer: while a lost life is cheap (under 22% of his future) he INVESTS (saves 🪙30
+  // his lives now and with one loss fewer: while a lost life is cheap (under 22% of his future) he INVESTS (banks to the 🪙50 cap
   // for interest, levels up 2 ranks early, buys rarer cards); when a loss would really cost him he goes ALL-IN on power.
   BRAINS.quill = { method: 'Absorbing Markov chain + online logistic regression', learns: true, mk: (P, R) => {
     const w = store().quill.w;
@@ -26127,7 +26195,7 @@ function rvBrainPlace(R){
     return { why: () => info ? `Markov chain over his lives: with ${info.L0} lives he expects ${info.ew.toFixed(1)} more wins, with ${Math.max(0, info.L0 - lossCost())} only ${info.ew2.toFixed(1)}. A lost life costs ${Math.round(100 * info.pr)}% of his future, so he ${mode === 'invest' ? 'invested: saved for interest and levelled up' : 'went all-in on this fight'}.` : '',
       onShop: () => { if (kp !== S.round) { kp = S.round; decide(); } },
       target: r => { if (kp !== S.round) { kp = S.round; decide(); } return Math.max(P.target(mode === 'invest' ? r + 2 : r), r >= 31 ? 9 : r >= 26 ? 8 : 0); },
-      bank: (b0, r, cr) => cr.type === 'boss' || mode !== 'invest' ? 0 : 30,
+      bank: (b0, r, cr) => cr.type === 'boss' || mode !== 'invest' ? 0 : goldCap(),   // TRO-8: invest = bank to the interest cap (was 🪙30)
       score: (id, P2, o) => mode === 'invest' ? rvScore0(id, P) + 2 * HERO[id].tier : 2 + 120 * (boardPow(topSet(afterBuy(id, o ? o.level : 1), boardSize())) - now()) / Math.max(1, now()) / Math.max(1, shopPrice(o || { id, level: 1 })) + HERO[id].tier,
       reroll: c => S.freeRerolls > 0 || (mode === 'invest' ? false : S.gold >= rerollCost() + 2 && !(S.rank < c.tg && trainCost() != null)) };
   } };
@@ -26170,6 +26238,14 @@ function rvBrainPlace(R){
     { id: 'cue', lv: 15, style: 'Learner', name: 'Cue', e: '🧠', d: "Learns from its own wins and losses in your games which shop habit works in which situation.", tell: "Experiments in your first runs, then settles into habits: same situation, same move.",
       pol: { target: r => r >= 17 ? 7 : r >= 14 ? 6 : r >= 10 ? 5 : r >= 7 ? 4 : r >= 4 ? 3 : r >= 2 ? 2 : 1, keep: 4, tierW: 2, ownW: 8, econ: 20 } },
   ];
+  // TRO-8 prototypes, not in the game yet (Gyms phase 3): RB.addProto() adds them to RIVALS and the Codex (benchmarks only);
+  // lv 99 = never in the lobby draw (benchmarks force them in)
+  const PROTO = [
+    { id: 'bettina', lv: 99, style: 'Bettor', name: 'Bettina', e: '🏇', d: "Treats every reroll as a bet and stakes exactly the share of her gold that the Kelly formula allows.", tell: "Big reroll bursts when she is rich and a chase looks likely; none at all when the odds are poor.",
+      pol: { target: r => r >= 17 ? 7 : r >= 14 ? 6 : r >= 10 ? 5 : r >= 7 ? 4 : r >= 4 ? 3 : r >= 2 ? 2 : 1, keep: 4, tierW: 2, ownW: 8, econ: 20 } },
+    { id: 'mel', lv: 99, style: 'Annealer', name: 'Mel', e: '🔥', d: "Searches for her board by simulated annealing: bold, odd boards early in the season, settled ones by the finale.", tell: "Strange line-ups in Act 1 that tighten up act by act.",
+      pol: { target: r => r >= 17 ? 7 : r >= 14 ? 6 : r >= 10 ? 5 : r >= 7 ? 4 : r >= 4 ? 3 : r >= 2 ? 2 : 1, keep: 6, tierW: 2, ownW: 8, econ: 20 } },
+  ];
 
   // Codex cards (Rivals tab + Algorithm Lab): family, the algorithm's proper name, a sentence for kids, one for teachers
   // with one line of pseudo-code. Every line is true to the code above.
@@ -26187,7 +26263,7 @@ function rvBrainPlace(R){
     goldie: { fam: 'prob', algo: 'Bayesian updating (Beta-binomial)', kid: 'Goldie keeps a notebook of which rare characters she has seen, and bets on the one most likely to show up again.',
       teach: "Prior = the shop's printed odds; data = her own shops. The posterior gives each rare's chance of reaching ★★ before Ep 20 (Poisson), and she chases the best one.", code: 'θ ~ Beta(4m + seen, 4(1−m) + unseen); P(★★) = P(Poisson(θ·shopsLeft) ≥ need)' },
     sal: { fam: 'opt', algo: '0/1 knapsack', kid: 'Sal shops like a bargain hunter: the most muscle for the least money.',
-      teach: 'Of every bundle of shop cards he can afford (keeping his savings), he buys the one that adds the most power; a full board makes a slot part of the price.', code: 'max Σ power  subject to  Σ price ≤ gold − savings' },
+      teach: 'Of every bundle of shop cards he can afford (keeping his savings), he buys the one that adds the most power; a full board makes a slot part of the price, and a second copy counts half of the next star. A reroll buys nothing for sure, so he never pays for one.', code: 'max Σ power  subject to  Σ price ≤ gold − savings' },
     hugo: { fam: 'greedy', algo: 'N-1 contingency (worst case)', kid: 'Hugo always has a backup, so losing his best fighter never ruins him.',
       teach: 'The reliability rule of power grids: the system must survive losing any one part. A card is worth how much it raises his board when one of his two best characters falls.', code: 'value(card) = min over k of power(board − best_k + understudy)' },
     ace: { fam: 'learn', algo: 'Committee vote (Borda count) + neural network', kid: 'Ace asks the other rivals for advice and goes with the vote, then checks line-ups with a neural network.',
@@ -26201,6 +26277,13 @@ function rvBrainPlace(R){
     cue: { fam: 'learn', algo: 'Q-learning (reinforcement learning)', kid: 'Cue learns from its own wins and losses which habit works best in each situation.',
       teach: 'State = (act, gold band, streak); actions = save / steady / roll / level. After each fight it nudges the value of what it did toward the reward plus the best value of where it landed; 10% of the time it experiments. It starts from a table learned in 240 test runs, then learns from yours.', code: 'Q[s,a] += 0.1·(r + 0.8·max Q[s′] − Q[s,a])' },
   };
+  const PROTO_CARDS = {
+    bettina: { fam: 'prob', algo: 'Kelly criterion', kid: 'Bettina treats every reroll like a bet: she bets more when the odds are good and she has gold to spare.',
+      teach: "A reroll costs 🪙2 and wins if the next shop shows a copy she is chasing. p = chance of a hit (printed odds as a prior, her own hits and misses this run as data), b = what a hit is worth ÷ 🪙2 − 1. Kelly's growth-optimal stake is f* = p − (1−p)/b of her gold.", code: 'f = p − (1 − p) / b; rerolls = floor(max(0, f) · gold / 2)' },
+    mel: { fam: 'opt', algo: 'Simulated annealing', kid: 'Mel tries lots of boards and sometimes keeps a worse one on purpose, early in the season, so she does not get stuck; later she settles down.',
+      teach: 'State = which characters she fields and which shop cards she buys; score = board power minus 1.5% per coin. A random change is kept if better, or with chance e^(Δ/T) if worse. T is high in Act 1 and near zero by the finale. As your next opponent she anneals her line-up with the battle predictor.', code: 'if Δ > 0 or rand() < exp(Δ / T): accept; T ← 0.95·T' },
+  };
+  RB.addProto = function () { PROTO.forEach(x => { if (!RIVAL[x.id]) { RIVALS.push(x); RIVAL[x.id] = x; } }); Object.assign(RB.CARDS, PROTO_CARDS); };
   RB.install = function () {
     if (RB.installed) return; RB.installed = true;
     NEW.forEach(x => { if (!RIVAL[x.id]) { RIVALS.push(x); RIVAL[x.id] = x; } });
@@ -26238,7 +26321,7 @@ function rvBrainPlace(R){
     };
     // Ace's deeper neural line-up search, only as the rival you're about to fight (the game's own phone budget x2)
     const place0 = globalThis.rvBrainPlace;
-    if (place0) globalThis.rvBrainPlace = function (R) { if (!(RB.on && TUNE.rvBrains !== 0 && R && R.id === 'ace')) return place0.apply(this, arguments); return acePlace(R); };
+    if (place0) globalThis.rvBrainPlace = function (R) { if (!(RB.on && !RB.identity && TUNE.rvBrains !== 0 && R && (R.id === 'ace' || R.id === 'mel'))) return place0.apply(this, arguments); return R.id === 'mel' ? melPlace(R) : acePlace(R); };
     // forced lobby (benchmarks only): RB.force = [ids] puts these rivals first; RB.focus = id makes only it eligible for casts
     const init0 = globalThis.lobbyInit;
     globalThis.lobbyInit = function () { RB.live = !seeded; RB.tmp = null; const r = init0.apply(this, arguments); if (!RB.force || !S.lobby) return r;
@@ -26292,7 +26375,42 @@ function rvBrainPlace(R){
     });
     const d = now() - t0; RVBP.n++; RVBP.ms += d; RVBP.max = Math.max(RVBP.max, d);
   }
-  RB.BRAINS = BRAINS; RB.NEW = NEW; RB.shopLoop = shopLoop; RB.helpers = { pw, boardPow, synPts, slotChance, shopChance, afterBuy, topSet, powNow };
+  // Mel's line-up (TRO-8): simulated annealing on the battle predictor's score against your board, 12 predictions (the
+  // game's own search makes ~7, Ace's ~10). A move swaps two seats or a bench character with a fielded one; a worse
+  // line-up is kept with chance exp(Δz / T), T cooling 0.8 per step from a start that follows the season. She keeps
+  // the line-up she ends on.
+  function melPlace(R) {
+    if (!TUNE.rvBrain || !globalThis.PRED || !PRED.ready) return;
+    const now = clock, t0 = now();
+    const pB = B, pFR = FR, pR = rngState, oE = S.enemy; let pv = null;
+    try { S.enemy = { enc: [] }; startBattle(true); pv = B.units.filter(u => u.side === 'A' && !u.summon).map(u => Object.assign({}, u, { side: 'E', foe: true, el: null })); } catch (e) { pv = null; }
+    finally { S.enemy = oE; B = pB; FR = pFR; rngState = pR; }
+    if (pv && pv.length) rvSwap(R, () => {
+      if (!fielded().length) return;
+      const score = () => { const oB = B, oF = FR, oRn = rngState, oe = S.enemy; RVBP.evals++; try { S.enemy = { enc: [] }; startBattle(true); pv.forEach(u => B.units.push(u)); const o = PRED.predict(PRED.feat()); return o.z != null ? o.z : o.p; } catch (e) { return -1e9; } finally { S.enemy = oe; B = oB; FR = oF; rngState = oRn; } };
+      const SEATS = ['f0', 'f1', 'f2', 'f3', 'b0', 'b1', 'b2', 'b3'], cap = boardSize(), onB = u => u.slot && (u.slot[0] === 'f' || u.slot[0] === 'b') && SEATS.includes(u.slot);
+      const snap = () => S.units.map(u => u.slot), put = m => S.units.forEach((u, i) => { u.slot = m[i]; });
+      let cur = snap(), zc = score(), best = { m: cur, z: zc }; const z0 = zc, ps = [zc];
+      let T = 0.6 * Math.pow(Math.max(0, 1 - S.round / SCHEDULE.length), 1.5) + 0.05, acc = 0;
+      for (let step = 0; step < 11; step++, T *= 0.8) {
+        put(cur); const on = S.units.filter(onB), off = S.units.filter(u => !onB(u)), free = SEATS.filter(s => !S.units.some(u => u.slot === s));
+        const a = on[Math.floor(rand() * on.length)]; if (!a) break;
+        const r = rand(); let b = null;
+        if (r < 0.35 && off.length) b = off[Math.floor(rand() * off.length)];
+        else if (r < 0.55 && free.length) { a.slot = free[Math.floor(rand() * free.length)]; }
+        else b = on[Math.floor(rand() * on.length)];
+        if (b && b !== a) { const s = a.slot; a.slot = b.slot; b.slot = s; }
+        if (width(S.units.filter(onB)) > cap) continue;
+        const nx = snap(), zn = score(); ps.push(zn);
+        if (zn >= zc || rand() < Math.exp((zn - zc) / T)) { cur = nx; zc = zn; acc++; if (zc > best.z) best = { m: nx, z: zc }; }
+      }
+      put(cur);
+      if (typeof rvPeekPlace === 'function') rvPeekPlace(R, ps, zc);
+      R.whyPlace = (R.whyPlace ? R.whyPlace + ' ' : '') + `Mel annealed her line-up: ${ps.length} line-ups rated, ${acc} moves accepted; she kept where she ended (${zc >= z0 ? 'at least as good as' : 'a little worse than'} her starting line-up${best.z > zc + 1e-6 ? ', not the best one she saw' : ''}).`;
+    });
+    const d = now() - t0; RVBP.n++; RVBP.ms += d; RVBP.max = Math.max(RVBP.max, d);
+  }
+  RB.BRAINS = BRAINS; RB.NEW = NEW; RB.PROTO = PROTO; RB.shopLoop = shopLoop; RB.helpers = { pw, boardPow, synPts, slotChance, shopChance, afterBuy, topSet, powNow };
   RB.install();
 })();
 
