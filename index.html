@@ -23631,7 +23631,7 @@ function rankDetail(){
   return `<div class="eyebrow">Shop rank</div><h3 style="color:var(--gold)">⬆️ ${S?'Rank '+cur:'Shop ranks'}</h3>
     <p>Ranks unlock rarities (${[2,3,4,5,6,7,8,9].filter(r=>r<=RMAX&&topTier(r)>topTier(r-1)).map(r=>r+': '+RARITY[topTier(r)-1]).join(', ')}) and better odds; ranks ${[2,3,4,5,6,7,8,9].filter(r=>r<=RMAX&&RANK.board[r-1]>RANK.board[r-2]).join(', ')} add a board slot. Commons and Uncommons max out at ★★. A ★ Mythic is about as strong as a ★★★ Rare. Maxed characters stop appearing.</p>
     <div style="overflow-x:auto"><table class="oddtbl"><tr><th style="text-align:left">Rank</th><th title="Board slots">👥</th>${RARITY.map((n,i)=>`<th class="tier${i+1}" title="${n}">${n[0]}</th>`).join('')}<th title="Shop XP to reach this rank">XP</th></tr>${RANK.odds.map((_,i)=>row(i+1,i+1===cur)).join('')}</table></div>
-    <p>⬆️ <b>Train</b>: 🪙${RANK.train} for +${RANK.trainXp} shop XP. The shop also gets +${RANK.freeXp} XP free every round. A full gauge ranks up; extra XP carries over.</p>
+    <p>⬆️ ${noTrain()?`The shop gets +${RANK.freeXp} shop XP free every round`:`<b>Train</b>: 🪙${RANK.train} for +${RANK.trainXp} shop XP. The shop also gets +${RANK.freeXp} XP free every round`}. A full gauge ranks up; extra XP carries over.</p>
     
     <p class="muted" style="font-size:.8rem">👥 board slots · XP needed to reach that rank from the one before. Character prices: ${RARITY.map((n,i)=>`<span class="tier${i+1}" style="color:var(--tc)">${n} 🪙${PRICE[i]}</span>`).join(' · ')}</p>`;
 }
@@ -23640,7 +23640,7 @@ function infoBody(I){
   if(I.kind==='rank')return rankDetail();
   if(I.kind==='unit'){const u=S.units.find(x=>x.uid===I.uid);if(!u)return '';
     const note=u.level>=maxLv(u.id)?`${'★'.repeat(maxLv(u.id))} is the top star for ${RARITY[HERO[u.id].tier-1]} characters, so the shop stops offering this one.`:maxedIds().has(u.id)?`Spare copy: your other ${esc(HERO[u.id].name)} is already maxed, so the shop won't sell more. Sell it, or field it as a second copy (copies don't count twice for genre bonuses).`:'';
-    return heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'')+`<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell for ':'Sell for '}🪙${sellValue(u)}</button><span class="muted" style="font-size:.78rem">Drag it to move it.</span></div>`;}
+    return `<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell for ':'Sell for '}🪙${sellValue(u)}</button><span class="muted" style="font-size:.78rem">Drag it to move it.</span></div>`+heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'');}
   if(I.kind==='hero'){const o=I.shop!=null&&S&&S.shop[I.shop];return heroDetail(I.id,I.level||1)+(o&&o.id===I.id?`<div class="row"><button class="btn primary" data-a="buy" data-v="${I.shop}" ${canBuy(I.shop).ok?'':'disabled'}>Buy · 🪙${shopPrice(o)}</button></div>`:'');}
   if(I.kind==='trinket')return trinketDetail(I.id);
   if(I.kind==='legend')return legendDetail(I.id);
@@ -24008,7 +24008,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.sheetOpen==='inf
 // hover card: on devices with a mouse, hovering a shop card or a board character shows its details next to it
 function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
   let html='';if(el.dataset.a==='pick'){const o=S.shop[+el.dataset.v];if(o)html=heroDetail(o.id,o.level||1);}
-  else if(el.dataset.a==='slot'){const u=unitAt(el.dataset.v);if(u)html=infoBody({kind:'unit',uid:u.uid});}
+  else if(el.dataset.a==='slot'){const u=unitAt(el.dataset.v);if(u)html=heroDetail(u.id,u.level);}
   else if(el.dataset.a==='endhero')html=(el.dataset.x?`<p class="poolln" style="margin:0 0 6px">${esc(el.dataset.x)}</p>`:'')+heroDetail(el.dataset.v,+el.dataset.l||1);
   else if(el.dataset.a==='enditem')html=infoBody({kind:'trinket',id:el.dataset.v});
   else if(el.dataset.a==='endleg')html=legendDetail(el.dataset.v);
@@ -24032,10 +24032,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.19',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.20',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.20',items:[["🪙", "Sell is now at the top of a character's details, so you can always reach it, even with a full bench."], ["⬆️", "Level 1's Ranks panel no longer talks about Train (there is no Train button at Level 1)."]]},
   {v:'20.19',items:[["📺", "Season 1 is a little gentler: its enemies hit a bit softer and its final boss is lighter. Ascensions are unchanged."]]},
   {v:'20.18',items:[["🔒", "Anonymous run data now also holds three rough facts: where you came from, your time zone and phone or computer. Settings → What is sent lists everything."]]},
   {v:'20.17',items:[["🔒", "Test browsers run by scripts no longer send run data, so the run log only holds real players."]]},
