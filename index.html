@@ -1312,6 +1312,24 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .lnk{background:none;border:0;padding:0;color:var(--gold);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .ovbtns{display:flex;flex-direction:row-reverse;gap:8px;flex-wrap:wrap;justify-content:center} /* Continue first: on top when they wrap */
 .ov:has(.ovbtns){max-width:400px}
+/* v20.11 P6: the fight result is a bar at the bottom of the arena, the board stays visible */
+.overlay.resbar{inset:auto 0 0 0;place-items:end center;background:none;padding:8px;pointer-events:none}
+.overlay.resbar .ov{pointer-events:auto;max-width:min(1000px,100%);display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:8px 16px;padding:10px 16px;text-align:left;background:color-mix(in srgb,var(--panel) 94%,transparent);box-shadow:0 10px 30px rgba(0,0,0,.6);animation:resin .25s ease-out both}
+.overlay.resbar .ov h2{font-size:1.7rem;line-height:1}
+.overlay.resbar .ov .why,.overlay.resbar .ov .tip{width:auto;flex:1 1 220px;padding:6px 10px}
+.overlay.resbar .ov>p{flex:1 1 100%;margin:0;text-align:center}
+.overlay.resbar .ovbtns{margin-left:auto}
+.overlay.resbar .ovbtns .btn{min-height:40px}
+@keyframes resin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
+@media (max-width:700px){.overlay.resbar{padding:4px}.overlay.resbar .ov{gap:6px 10px;padding:8px 10px}.overlay.resbar .ov h2{font-size:1.35rem}.overlay.resbar .ov .why,.overlay.resbar .ov .tip{flex-basis:100%;font-size:.8rem;padding:5px 8px}.overlay.resbar .ov .why .emo{font-size:1.2rem!important}.overlay.resbar .ovbtns{margin:0;width:100%}.overlay.resbar .ovbtns .btn{min-height:44px;flex:1 1 auto}}
+/* v20.11 P12: the gold number pops when it changes */
+.gnum{display:inline-block;font:inherit;color:inherit}
+.gnum.pop{animation:gpop .38s cubic-bezier(.2,1.6,.4,1) both}.gnum.pop.up{--gc:var(--r2)}.gnum.pop.dn{--gc:var(--red)}
+@keyframes gpop{0%{transform:scale(1.5);color:var(--gc);text-shadow:0 0 12px var(--gc)}100%{transform:none}}
+/* v20.11 P9: first visit title */
+.tfresh .tgo{margin-top:6px}.tfresh .tgo .btn.primary.big{font-size:1.5rem;padding:16px 34px}
+.tfresh .ticons{gap:6px}.tfresh .ticons .btn{min-width:44px;min-height:44px}
+.news.nw1{padding:8px 12px}.news.nw1 .lnk{font-size:.9rem}
 .ftc .pt.ftp{width:52px;height:52px;font-size:1.6rem}
 .ftsub{font-size:.82rem;margin:0}
 .ftgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
@@ -20899,7 +20917,7 @@ function runActs(){return (SCHEDULE[SCHEDULE.length-1]||{act:TUNE.acts}).act;}
 function curRound(){return S?SCHEDULE[S.round-1]:undefined;}
 
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
-function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=null;UI._bk=null;}
+function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=UI._ng=UI._np=null;try{localStorage.setItem('tropebrawl-played','1');}catch(e){}UI._bk=null;}
   const lv=Math.max(0,Math.min(LV_MAX,UI.lv|0));
   const lvD=lvDef(lvClamp(lv));
   S={lv:lvD.n,ladder:2,rules:lvD.rules.slice(),part:1,round:1,lives:10,gold:6,streak:0,rank:1,xp:0,wins:0,units:[],trinkets:[],tlv:{},legend:null,shop:[],locked:false,uid:1,paid:{},pending:[],freeRerolls:0,
@@ -22462,6 +22480,8 @@ function bbqDraw(){const el=$('#bbq');if(!el||!B||!S)return;const q=B.reserve||[
     const tag=w?'<span class="bqtag under" title="Steps in when a character falls">🎟️<i> STEPS IN</i></span>':f?'<span class="bqtag join" title="Stepped in and is fighting">⚔️<i> IN THE FIGHT</i></span>':'';
     return `<div data-v="${s}" class="slot bq g-${d.genre} tier${d.tier}${SPRITES[u.id]?' hasspr':''}${f?' bqgone':''}" title="${esc(d.name)}">${tag}${SPRITES[u.id]?(d.crowd?crowdSpr(u.id,BODIES[u.level-1]):sprImg(u.id)):heroPt(u.id)}<span class="rgem" title="${RARITY[d.tier-1]}"><b>${RARITY[d.tier-1][0]}</b><i>${RARITY[d.tier-1]}</i></span><span class="bstat">${statChips(heroStatsAt(u.id,u.level),d.crowd)}</span><span class="nm">${esc(d.name)}</span><span class="row" style="gap:4px;justify-content:center">${stars(u.level)}</span></div>`;};
   el.innerHTML=`<section class="board bqboard">${extra.length?`<div class="rowlbl bqlbl">Up next · joins as soon as a square opens</div><div class="frow bench bqrow">${extra.slice(0,5).map((c,i)=>bbqCard(c,i)).join('')}</div>`:''}<div class="rowlbl bqlbl">${und?`Up next · Understudy: ${B.underLeft||0} step-in${(B.underLeft||0)===1?'':'s'} left, the best one takes the square of a fallen character`:'Bench · doesn\'t fight'}</div><div class="frow bench bqrow">${benchSlots.map(card).join('')}</div></section>`;}
+// v20.11: the desktop fit measured the battle before its bench strip existed; fit again when the strip changes height
+{const bq0=bbqDraw;bbqDraw=function(){const el=$('#bbq'),h0=el&&!el.hidden?el.offsetHeight:0;bq0();if(DESK&&el&&!el.hidden&&el.offsetHeight!==h0)dtFit();};}
 function battleEndFx(){try{if(RM||B.silent)return false;const win=!!B.win;banner(win?'Victory!':'Defeat','',win?'win':'lose');
   B.units.filter(u=>u.alive&&u.el&&u.side===(win?'A':'E')).forEach((u,i)=>{u.el.style.setProperty('--cd',(i*70)+'ms');u.el.classList.add('cheer');});return true;}catch(e){return false;}}
 function battleLoop(ts){
@@ -22530,7 +22550,7 @@ function showResult(){
       ${finalBoss?'<p class="muted" style="font-size:.85rem">Rehearsal round: +4 gold and 2 free rerolls. The boss returns 10% weaker.</p>':(res.boss&&!S.over?'<p class="muted" style="font-size:.85rem">The show goes on: on to the next act.</p>':'')}`;
   }
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
-  f.insertAdjacentHTML('beforeend',`<div class="overlay"><div class="ov${res.win?'':' lose'}">${body}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}${UI.rvWhy?`<button class="btn ghost" data-a="rvwhy">🧠 What was it thinking?</button>`:''}</div></div></div>`);
+  f.insertAdjacentHTML('beforeend',`<div class="overlay resbar"><div class="ov${res.win?'':' lose'}" role="status">${body}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}${UI.rvWhy?`<button class="btn ghost" data-a="rvwhy">🧠 What was it thinking?</button>`:''}</div></div></div>`);
   const b=f.querySelector('.overlay [data-a="after-fight"]');if(b)b.focus();
   try{if(res.win&&rvBeat&&RIVAL[rvBeat])rvuWon(rvBeat);}catch(e){}
 }
@@ -22712,7 +22732,7 @@ function topBar(){
   const items=itemIcons();
   return `<header class="top">
     <div class="r1">
-      <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${S.gold}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${lvChipHTML(S.lv)}</button></div>
+      <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${gnum('g',S.gold)}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${lvChipHTML(S.lv)}</button></div>
       <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}</div>
@@ -22826,7 +22846,7 @@ function shopHTML(){
     <p class="holdhint">${canHover?'Click a card to buy it; hover to see details.':'Tap a card to see what it does, then Buy.'} Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
-      <span class="goldpill" title="Your gold">🪙 ${S.gold}</span>
+      <span class="goldpill" title="Your gold">🪙 ${gnum('p',S.gold)}</span>
       <button class="btn sm" data-a="reroll" ${S.freeRerolls>0||S.gold>=rerollCost()?'':'disabled'} aria-label="Reroll the shop" title="Reroll the shop: 🪙${TUNE.reroll}">🔄<span class="blbl">Reroll</span> ${S.freeRerolls>0?`Free ×${S.freeRerolls}`:'🪙'+rerollCost()}</button>
       <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop" title="${S.locked?'Locked: these cards stay until your next shop, through any intermission. Click to unlock.':'Lock: keep these cards for your next shop.'}">${S.locked?'🔒':'🔓'}<span class="blbl">${S.locked?'Locked':'Lock'}</span></button>
       <button class="btn sm rankbtn" data-a="rank" ${noTrain()?'hidden ':''}${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${RANK.trainXp} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${RANK.trainXp} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}${rc==null?'':'<span class="blbl">Train</span>'}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
@@ -22848,8 +22868,30 @@ function lvPicker(){
     <p class="lvdial">${lvDials(cur)}</p>
     ${older?`<details class="lvold"><summary>Plus ${cur-lo4} earlier rule${cur-lo4>1?'s':''}</summary><ul>${older}</ul></details>`:''}${epsTitleHTML(cur)}</div>`;
 }
+// v20.11 P9: nobody has aired an episode, won a level or saved a run yet: one big Start, the rest waits
+// (not the profile's episode count: with every level unlocked, the profile credits old-ladder episodes on its first load)
+function titleFresh(sv){try{if(sv||DEV.on)return false;const g=k=>localStorage.getItem(k);
+  return !g('tropebrawl-played')&&!g('tropebrawl-pid')&&!tutLoad().length&&!(lvLoad().won||[]).length;}catch(e){return false;}}
+function titleFreshHTML(){UI.lv=lvMin();const ns=newsFresh();
+  return `<section class="screen tfresh" style="padding-block:28px 0">
+    <div class="eyebrow">Shop · Level up · Brawl</div>
+    <h1 class="title-word">${TITLE}</h1>
+    <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
+    <div class="steps"><div><span class="emo">🛒</span><b>Buy</b>characters</div><div><span class="emo">✨</span><b>Combine</b>3 → ★★</div><div><span class="emo">⚔️</span><b>Brawl</b>${lvRounds(UI.lv|0)} rounds</div></div>
+    <div class="row tgo">${tutTitleBtns()}</div>
+    <div class="row ticons">
+      <button class="btn sm ghost" data-a="codex" aria-label="Codex" title="Codex: every rule and character">📖</button>
+      <button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button>
+      <button class="btn sm ghost" data-a="devstudio" aria-label="Animation Studio" title="Animation Studio">🎬</button>
+      ${typeof window!=='undefined'&&window.tbApp?'<button class="btn sm ghost" data-a="appquit">Quit game</button>':''}
+      <button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('sm ghost')}
+    </div>
+    ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 New in v${esc(ns[0].v)}: see what changed</button></section>`:''}
+    <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
+    <p class="verl">v${TB_VERSION}</p>
+  </section>`;}
 SCR.title=()=>{
-  const sv=loadSave();
+  const sv=loadSave();if(titleFresh(sv))return titleFreshHTML();
   return `<section class="screen" style="padding-block:28px 0">
     <div class="eyebrow">Shop · Level up · Brawl</div>
     <h1 class="title-word">${TITLE}</h1>
@@ -23807,10 +23849,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.10',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.11',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.11',items:[["🎬", "<b>New players</b> see one big Start the Pilot button; the level row and the menus join after your first episode."], ["⚔️", "Fights fit a 1080p screen again (the bench below the board was cut off), and the result is a bar at the bottom: the board stays in view."], ["🪙", "Your gold number pops green when it goes up and red when it goes down."]]},
   {v:'20.10',items:[["📖", "<b>One name per thing:</b> levels are the Pilot (1-3), the Season and Ascension 1-14 everywhere (Codex, locks, Settings, title card)."], ["✏️", "Clearer texts: stars (not \"levels\") for characters and items, 🪙 gold (not coins), Legendary choices, the Wheel's ALL slice, Crossover Crest, Catch! and the Skip the Pilot dialog (seven genres at the start; Space Opera and Kaiju arrive as episodes air)."]]},
   {v:'20.9',items:[["⚙️", "Deus Ex Machina is a real final boss now: it brings a full cast of six, and its Divine Intervention calls in a CGI Army."]]},
   {v:'20.8',items:[["🎬", "<b>Episode banner fixed:</b> the gold band at the start of each round now fits its text on every screen size. The level line and the enemy name no longer sit on the gold lines."]]},
@@ -24037,6 +24080,7 @@ function feel(){try{
 function banner(t,sub,kind){try{let b=document.getElementById('banner');if(b)b.remove();b=document.createElement('div');b.id='banner';b.className='bn-'+kind;b.setAttribute('aria-hidden','true');
   b.innerHTML=`<b>${esc(t)}</b>${sub?`<span>${esc(sub)}</span>`:''}`;document.body.appendChild(b);setTimeout(()=>{if(b.parentNode)b.remove();},kind==='fight'||kind==='win'||kind==='lose'?950:1700);}catch(e){}}
 // floating +/- next to gold and lives when they change between two renders
+function gnum(k,v){const o=UI['_n'+k];UI['_n'+k]=v;const c=RM||o==null||o===v?'':v>o?' pop up':' pop dn';return `<b class="gnum${c}">${v}</b>`;}
 function dfl(k,v){const o=UI['_'+k];UI['_'+k]=v;if(RM||o==null||o===v)return '';const d=v-o;return `<i class="dlt ${d>0?'up':'dn'}" aria-hidden="true">${d>0?'+':'−'}${Math.abs(d)}</i>`;}
 function render(){
   if(typeof UI!=='undefined'&&UI.screen!=='plan'&&UI.screen!=='end'&&typeof hoverCard==='function')hoverCard(null);
