@@ -1762,6 +1762,66 @@ html:not(.dt) .phd[data-k="it"]{display:none}
   html:not(.dt) .evchoices{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
   html:not(.dt) .phtab .phl{display:inline!important}
 }
+/* v20.12 P3: desktop shop cards stand up. Portrait window on top (full card width), attack/HP badge pair on it,
+   price as a coin in its top-right corner; text below: rarity, name + copies left, genre | trait, the why/crossover line. */
+html.dt .dshop{--sah:clamp(104px,17vh,240px)}
+.scard .prc{font-style:normal}
+html.dt .dshop .shop .scard{grid-template-columns:auto minmax(0,1fr) auto;grid-template-rows:auto auto auto auto;grid-template-areas:"rar rar rar" "nm nm st" "gen tr tr" "sx sx sx";
+  align-content:start;gap:3px 6px;padding:calc(var(--pad) + var(--sah) + 7px) 9px 9px 9px;min-height:calc(var(--sah) + 92px)}
+html.dt .dshop .shop .scard>.sart{left:var(--pad);right:var(--pad);top:var(--pad);bottom:auto;width:auto;height:var(--sah)}
+html.dt .dshop .shop .scard>.sart img{height:196%;top:1%}
+html.dt .dshop .shop .scard.w2>.sart img{height:132%;top:6%}
+html.dt .dshop .shop .scard>.sart.crowd img{height:150%;top:6%}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(1),html.dt .dshop .shop .scard>.sart.crowd>:nth-child(3){display:block}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(1){transform:translateX(-128%);opacity:.95}
+html.dt .dshop .shop .scard>.sart.crowd>:nth-child(3){transform:translateX(28%);opacity:.95}
+html.dt .dshop .shop .scard>.pt{left:50%;top:calc(var(--pad) + var(--sah)/2);bottom:auto;margin:0;transform:translate(-50%,-50%);width:calc(var(--sah)*.62);height:calc(var(--sah)*.62);font-size:calc(var(--sah)*.3)}
+html.dt .dshop .shop .scard .rctag{left:50%;transform:translateX(-50%)}
+html.dt .dshop .shop .scard .own{left:calc(var(--pad) + 6px);right:auto;transform:none;top:calc(var(--pad) + 6px)}
+html.dt .dshop .shop .scard:has(.lv2) .own,html.dt .dshop .shop .scard:has(.mk) .own{top:calc(var(--pad) + 30px)}
+html.dt .dshop .shop .scard .mk,html.dt .dshop .shop .scard .lv2{top:calc(var(--pad) + 6px);left:calc(var(--pad) + 6px)}
+html.dt .dshop .shop .scard .kh{left:auto;right:calc(var(--pad) + 6px);top:calc(var(--pad) + var(--sah) - 6px);bottom:auto;transform:translateY(-100%)}
+/* attack / HP: a bold badge pair on the bottom-left of the portrait */
+html.dt .dshop .shop .scard .sst{left:calc(var(--pad) + 6px);top:calc(var(--pad) + var(--sah) - 6px);bottom:auto;transform:translateY(-100%);flex-direction:row;gap:5px}
+html.dt .dshop .shop .scard .sst>span{gap:4px;height:max(26px,calc(var(--sah)*.2));padding:0 9px 0 6px;border-radius:999px;font:400 max(1.05rem,calc(var(--sah)*.12))/1 var(--f-display);letter-spacing:.02em;color:#fff;
+  -webkit-text-stroke:3px #0b0a0e;paint-order:stroke fill;border:2px solid #0b0a0e;box-shadow:0 2px 0 #0b0a0e,0 4px 10px rgba(0,0,0,.45)}
+html.dt .dshop .shop .scard .sst>.s-a{background:linear-gradient(#ffb43a,#d9701a)}
+html.dt .dshop .shop .scard .sst>.s-h{background:linear-gradient(#ff5c6c,#c21e3a)}
+html.dt .dshop .shop .scard .sst svg{width:.82em;height:.82em}
+html.dt .dshop .shop .scard .sst .s-a svg,html.dt .dshop .shop .scard .sst .s-h svg{fill:#fff;stroke:#0b0a0e;stroke-width:1.5px;paint-order:stroke fill}
+/* the price: a gold coin, top-right of the portrait */
+html.dt .dshop .shop .scard .pr,html.dt:not(.glass) .dshop .shop .scard .pr{position:absolute;top:calc(var(--pad) + 6px);right:calc(var(--pad) + 6px);z-index:4;display:grid;place-items:center;
+  width:max(38px,calc(var(--sah)*.27));height:max(38px,calc(var(--sah)*.27));padding:0;border-radius:50%;margin:0;
+  font:400 max(1.25rem,calc(var(--sah)*.15))/1 var(--f-display);color:#2a1a04;-webkit-text-stroke:0;
+  background:radial-gradient(circle at 34% 30%,#fff3b0 0 12%,#ffd23f 34%,#e0a312 72%,#a8710a 100%);
+  border:2px solid #0b0a0e;box-shadow:inset 0 0 0 3px rgba(255,236,150,.55),inset 0 -3px 0 rgba(120,70,0,.45),0 3px 0 #0b0a0e,0 5px 12px rgba(0,0,0,.5)}
+html.dt .dshop .shop .scard .pr .prc{display:none}
+html.dt .dshop .shop .scard.poor .pr,html.dt:not(.glass) .dshop .shop .scard.poor .pr{color:#fff;-webkit-text-stroke:2.5px #3a0710;paint-order:stroke fill;
+  background:radial-gradient(circle at 34% 30%,#ffd0d0 0 10%,#e0525e 40%,#9e1f2c 100%);box-shadow:inset 0 0 0 3px rgba(255,200,200,.35),0 3px 0 #0b0a0e}
+/* text below the portrait */
+html.dt .dshop .shop .scard .rarl{padding-right:24px}
+html.dt .dshop .shop .scard .nm{font-size:max(1rem,calc(.86rem*var(--az)))}
+html.dt .dshop .shop .scard .pleft{grid-area:st;align-self:center;justify-self:end;margin:0;padding:0}
+html.dt .dshop .shop .scard .gch,html.dt .dshop .shop .scard .tgr{min-height:max(22px,calc(16px*var(--az)))}
+html.dt .dshop .shop .scard .tgr{grid-area:tr}
+html.dt .dshop .shop .scard .sx:empty{display:none}
+html.dt .dshop .shop>[data-hov]>.info{top:calc(var(--sah) + 13px)}
+html.dt .dshop .shop .scard.sold{min-height:calc(var(--sah) + 92px)}
+/* short screens: the board needs the height, so the portrait stays smaller there */
+@media (max-height:900px){html.dt .dshop{--sah:clamp(80px,12vh,130px)}html.dt .dshop .shop .scard>.sart img{top:-13%}html.dt .dshop .shop .scard .pr,html.dt:not(.glass) .dshop .shop .scard .pr{width:34px;height:34px;font-size:1.1rem}html.dt .dshop .shop .scard{min-height:calc(var(--sah) + 80px)}}
+/* v20.12 P1: three zones by weight. The side panels and the menu buttons step back until you point at them;
+   the tutorial tip and a details card you opened stay bright. */
+html.dt .dcol.l>*,html.dt .dcol.r>*,html.dt .top .r1>.row{transition:opacity .18s ease-out,filter .18s ease-out}
+html.dt .dcol.l>:not(.coach):not(:has(>.x)),html.dt .dcol.r>*,html.dt .top .r1>.row{opacity:.58;filter:saturate(.55)}
+html.dt .dcol.l>:not(.coach):not(:has(>.x)):is(:hover,:focus-within),html.dt .dcol.r>:is(:hover,:focus-within),html.dt .top .r1>.row:is(:hover,:focus-within){opacity:1;filter:none}
+html.dt .dshop .shopwrap{box-shadow:0 -14px 30px -18px rgba(0,0,0,.9)}
+html.dt .dshop .actions .btn{min-height:44px}
+html.dt .dshop .actions [data-a="fight"]{min-height:min(84px,9vh)}
+/* Fight! is the only filled yellow control; Lock, Train, Ranks and Pool are outline-only */
+.shopwrap .actions .btn:not(.primary):not([data-a="reroll"]){background:transparent;box-shadow:none;border:1.5px solid rgba(255,255,255,.24);color:var(--ink)}
+.shopwrap .actions .btn:not(.primary):not([data-a="reroll"]):hover:not(:disabled){border-color:rgba(255,255,255,.6);background:rgba(255,255,255,.04)}
+.shopwrap .actions .btn.on:not(.primary){border-color:var(--gold);color:var(--gold)}
+.shopwrap .actions .btn:not(.primary):active{transform:translateY(1px)}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -22828,7 +22888,7 @@ function shopHTML(){
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
     return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${twoSlot(o.id)?' w2':''}${ready?' ready':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.rc?'<span class="rctag" title="Recast: this card replaced a card of the genre The Cut removed">Recast</span>':''}${o.tc&&!o.rc?'<span class="rctag tctag" title="Typecast: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it">Typecast</span>':''}${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`:''}${mk?`<span class="mk${mkTo===3?' mk3':''}" title="${mkTo===3?'You own two ★ and a ★★: this third copy makes a second ★★, and the two ★★ combine into a ★★★':'You own two: this third copy combines them into a ★★'}"><span class="mkl">Makes </span><span class="mka">→</span>${'★'.repeat(mkTo)}</span>`:''}
-      ${heroArt(o.id)}<span class="sst">${statChips(heroStatsAt(o.id,o.level||1),d.crowd)}</span><span class="nm" title="${esc(d.name)}">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}${d.tier>=3?'<i class="rx" title="Counts as 2 for its genre from ★★"> · ×2</i>':''}${d.crowd?'<i class="rx" title="Crowd: one card, several bodies sharing one HP bar. It hits harder with more bodies left; more stars, more bodies."> · Crowd</i>':''}${twoSlot(o.id)?'<i class="rx" title="Takes 2 board squares"> · 2 squares</i>':''}</span><span class="tags">${(()=>{const cs=cardSyn(o,fieldNow,synNow),sy=cs.g,ty=cs.t,gn=GENRES[d.genre].name,tn=TRAITS[d.trait].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}><i class="ge">${GENRES[d.genre].e}</i>${sy?`<b class="gcn">${sy.c1}</b>`:''}<span class="gnm">${esc(gn)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span><span class="tgr${ty?' up':''}${ty&&ty.up?' tierup':''}" title="${esc(tn)}${ty?` on your board: ${ty.c0} → ${ty.c1}${ty.up?', the next bonus switches on':''}`:` trait: bonuses with ${TRAITS[d.trait].tiers.join(' / ')} on your board`}">${tsvg(d.trait)}${ty?`<b class="gcn">${ty.c1}</b>`:''}<span class="tnm">${esc(tn)}</span>${ty?`<b class="gct">${ty.c0}→${ty.c1}${ty.up?' ✓':''}</b>`:''}<span class="tx"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${d.crowd?'<i class="crwg" title="Crowd: one card, several bodies sharing one HP bar. It hits harder with more bodies left; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span></span>`;})()}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr">🪙${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span><span class="pls"> left</span></span></button>
+      ${heroArt(o.id)}<span class="sst">${statChips(heroStatsAt(o.id,o.level||1),d.crowd)}</span><span class="nm" title="${esc(d.name)}">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}${d.tier>=3?'<i class="rx" title="Counts as 2 for its genre from ★★"> · ×2</i>':''}${d.crowd?'<i class="rx" title="Crowd: one card, several bodies sharing one HP bar. It hits harder with more bodies left; more stars, more bodies."> · Crowd</i>':''}${twoSlot(o.id)?'<i class="rx" title="Takes 2 board squares"> · 2 squares</i>':''}</span><span class="tags">${(()=>{const cs=cardSyn(o,fieldNow,synNow),sy=cs.g,ty=cs.t,gn=GENRES[d.genre].name,tn=TRAITS[d.trait].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}><i class="ge">${GENRES[d.genre].e}</i>${sy?`<b class="gcn">${sy.c1}</b>`:''}<span class="gnm">${esc(gn)}</span>${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span><span class="tgr${ty?' up':''}${ty&&ty.up?' tierup':''}" title="${esc(tn)}${ty?` on your board: ${ty.c0} → ${ty.c1}${ty.up?', the next bonus switches on':''}`:` trait: bonuses with ${TRAITS[d.trait].tiers.join(' / ')} on your board`}">${tsvg(d.trait)}${ty?`<b class="gcn">${ty.c1}</b>`:''}<span class="tnm">${esc(tn)}</span>${ty?`<b class="gct">${ty.c0}→${ty.c1}${ty.up?' ✓':''}</b>`:''}<span class="tx"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${d.crowd?'<i class="crwg" title="Crowd: one card, several bodies sharing one HP bar. It hits harder with more bodies left; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span></span>`;})()}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr"><i class="prc">🪙</i>${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span><span class="pls"> left</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
   }).join('');
   UI.freshSlot=null;
@@ -23849,10 +23909,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.11',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.12',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.12',items:[["🛒", "<b>Bigger shop cards</b> on computers: a large portrait, attack and HP as bold badges, the price as a gold coin."], ["👉", "The shop reads in one look: Fight! is the only yellow button, the other shop buttons are outlines, and the side panels step back until you point at them."]]},
   {v:'20.11',items:[["🎬", "<b>New players</b> see one big Start the Pilot button; the level row and the menus join after your first episode."], ["⚔️", "Fights fit a 1080p screen again (the bench below the board was cut off), and the result is a bar at the bottom: the board stays in view."], ["🪙", "Your gold number pops green when it goes up and red when it goes down."]]},
   {v:'20.10',items:[["📖", "<b>One name per thing:</b> levels are the Pilot (1-3), the Season and Ascension 1-14 everywhere (Codex, locks, Settings, title card)."], ["✏️", "Clearer texts: stars (not \"levels\") for characters and items, 🪙 gold (not coins), Legendary choices, the Wheel's ALL slice, Crossover Crest, Catch! and the Skip the Pilot dialog (seven genres at the start; Space Opera and Kaiju arrive as episodes air)."]]},
   {v:'20.9',items:[["⚙️", "Deus Ex Machina is a real final boss now: it brings a full cast of six, and its Divine Intervention calls in a CGI Army."]]},
