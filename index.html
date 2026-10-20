@@ -20349,7 +20349,7 @@ const TRINKETS=[
  ['overclock','Overclock Chip','R','💾','All your characters\' skills hit {v} harder.',['70%','100%','130%']],
  ['tesla','Tesla Coil','R','🌩️','Every {v}, lightning hits a random enemy.',['4s','3s','2s']],
  ['extralife','Extra Life','R','💖','Your first character to fall each fight revives at {v} HP (summons don\'t count). If another save catches that fall first, it waits for the next one.',['50%','75%','100%']],
- ['crest','Crossover Crest','R','🔗','Counts one extra character in {v} for genre bonuses (not crossovers), where it helps most.',['1 genre','2 genres','3 genres']],
+ ['crest','Crossover Crest','R','🔗','Adds +1 character to {v} for genre bonuses (not crossovers), picked where it helps most.',['1 genre','2 genres','3 genres']],
  ['glass','Glass Cannon','R','🧨','All your characters deal {v} more damage but have 10% less HP.',['35%','50%','65%']],
  ['scope','Sniper Scope','R','🔭','Your ranged characters deal {v} more damage.',['40%','60%','80%']],
  ['banner','War Banner','R','🚩','Your melee characters deal {v} more damage.',['40%','60%','80%']],
@@ -20482,12 +20482,12 @@ const EVENTS={
   payday:{name:'Payday',e:'💵',d:'+8 gold.'},
   supply:{name:'Supply Drop',e:'📦',d:'Pick 1 of 3 items, and +🪙3.'},
   deal:{name:'Risky Deal',e:'🎲',d:'+15 gold, −2 lives (needs 3 or more lives).'},
-  promotion:{name:'Field Promotion',e:'⭐',d:'Your lowest-level character on the board levels up (not Epic or Mythic).'},
+  promotion:{name:'Field Promotion',e:'⭐',d:'Your character with the fewest stars on the board gets +★ (not Epic or Mythic).'},
   reinforce:{name:'Reinforcements',e:'❤️',d:'+2 lives, up to your max lives. Already full: +🪙5.'},
   // Plot Twists (Game Level 2+): one of these risky choices replaces a normal one
   trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +8 gold and pick 1 of 3 items.'},
   casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, keeping its stars. None? Your best Rare becomes an Epic.'},
-  fanmail:{name:'Fan Mail',e:'💌',d:'The fans love you. Take the cash, or take heart.'},
+  fanmail:{name:'Fan Mail',e:'💌',d:'The fans love you. Take the gold, or take heart.'},
   craft:{name:'Craft Services',e:'🍩',d:'Free snacks and a favor from the crew.'},
   review:{name:'Bad Review',e:'🍅',d:'A critic tore the last episode apart. It will cost you something.'},
   props:{name:'Stolen Props',e:'🦝',d:'Someone raided the prop room overnight.'},
@@ -20498,8 +20498,8 @@ const EVENTS={
   insurance:{name:'Stunt Insurance',e:'🛡️',d:'Pay now and your next lost fight costs no lives.'},
   reboot:{name:'Reboot',e:'🔁',d:'Your lowest-rarity character on the board is recast as a random character one rarity higher, back at ★.'},
   cut:{name:'The Cut',e:'✂️',d:'The studio is over budget and goes after your biggest genre: it leaves the shop for the rest of the run. Pay to keep the cast, let them go, or fight it with lives.'},
-  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin the wheel. If it lands on a rarity you own, those characters sell back at full price for the rest of the run. Rarities you don\'t own are Duds; a thin ALL sliver covers every rarity but Mythic.'},
-  merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙3-6 (more each act). It comes one level higher (★★ when new). Or pass.'},
+  wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin the wheel. If it lands on a rarity you own, those characters sell back at full price for the rest of the run. Rarities you don\'t own are Duds (no effect). A small ALL slice wins for every rarity except Mythic.'},
+  merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙3-6 (more each act). It arrives one ★ higher (★★ when new). Or pass.'},
 };
 const PLOT=['trial','casting','merchant'];
 const SPECIAL_KEYS=['cut','wheel','montage','strike','cameo','cursed','insurance','reboot','fanmail','craft','review','props'];
@@ -20542,8 +20542,8 @@ function evDesc(k){
   if(k==='recruit')return `Pick 1 of 3 ${RARITY[Math.min(topTier(S.rank)+1,4,S.cap||5)-1]} characters, free.`;
   if(k==='reinforce')return `+2 lives (up to ${maxLives()}). Already full: +🪙5.`;
   if(k==='trial')return `Your next fight is tougher: enemies get +${Math.round(100*(TUNE.lvTrial-1))}% HP and damage. Win it: +${TUNE.lvTrialGold} gold and pick 1 of 3 items.`;
-  if(k==='merchant')return `Buy 1 of 3 items for 🪙${EVC.merchant()}. It comes one level higher (★★ when new). Or pass.`;
-  if(S&&k==='promotion'){const u=promoTarget();return u?`Your lowest-level character on the board levels up: <b>${esc(HERO[u.id].name)}</b> ${'★'.repeat(u.level)} → ${'★'.repeat(u.level+1)}.`:'Nobody on the board can level up (Epics and Mythics can\'t): +🪙5 instead.';}
+  if(k==='merchant')return `Buy 1 of 3 items for 🪙${EVC.merchant()}. It arrives one ★ higher (★★ when new). Or pass.`;
+  if(S&&k==='promotion'){const u=promoTarget();return u?`Your character with the fewest stars gets +★: <b>${esc(HERO[u.id].name)}</b> ${'★'.repeat(u.level)} → ${'★'.repeat(u.level+1)}.`:'Nobody on the board can gain a ★ (Epics and Mythics can\'t): +🪙5 instead.';}
   if(S&&k==='casting'){const c=castTarget();return c?`<b>${esc(HERO[c.u.id].name)}</b> (${RARITY[HERO[c.u.id].tier-1]} ${'★'.repeat(c.u.level)}) is recast as a random ${GENRES[HERO[c.u.id].genre].name} ${RARITY[c.to-1]}, keeping its stars.`:'Nobody on the board to recast: +🪙5 instead.';}
   if(S&&k==='wheel'){const own=WHEEL.filter(t=>S.units.some(u=>HERO[u.id].tier===t)).map(t=>`${RARITY[t-1]} ×${S.units.filter(u=>HERO[u.id].tier===t).length}`);return EVENTS[k].d+(own.length?` You own: ${own.join(' · ')}.`:'');}
   return EVENTS[k].d;
@@ -20585,7 +20585,7 @@ const LADDER=[null,
   {n:5,e:'🎲',name:'Plot Twists',rules:['plot'],events:['trial','casting','merchant','wheel','montage','cursed','insurance','reboot'],d:()=>'Every event swaps one choice for a risky one: Trial by Fire, Casting Call or Traveling Merchant. '+lvGtA('New random events: trade-offs.')},
   {n:6,e:'📉',name:'Limited Run',rules:['limited'],legends:['danger','feeding','graveyard','insidejob','quickdraw','press','scream','shieldgen','atomic','crossep','cult','plotarmor'],d:()=>`Every character pool holds ${TUNE.poolCut} fewer copies (never fewer than the 6 a ★★★ needs), so ★★★ characters are harder to finish. `+lvGtA('A second Legendary for every genre.')},
   {n:7,e:'🎭',name:'Second Studio',rvT:0.82,rv:2,rules:['rv2'],items:['smoke','tesla','teamup','residuals','slowburn'],d:()=>lvRv('2 rival studios share your pool and your episodes. ')+lvGtA('5 new items.')},
-  {n:8,e:'🐢',name:'Slow Promotions',rules:['xp1'],events:['strike','review','props','cut'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP. `+lvGtA('Bad random events start. ')+`Enemies get +${pct1(TUNE.lvFoe)} HP and damage per level from here.`},
+  {n:8,e:'🐢',name:'Slow Promotions',rules:['xp1'],events:['strike','review','props','cut'],d:()=>`Shop ranks need ${pctOf(TUNE.lvXp[0])} more XP. `+lvGtA('Bad random events start. ')+`Enemies get +${pct1(TUNE.lvFoe)} HP and damage per Ascension from here.`},
   {n:9,e:'🎭',name:'Bidding War',rv:3,rules:['rv3'],legends:['shock','pheromone','armydead','vault','wanted','gameball','lightsout','mothership','finalwars','placement','indie','extuniv'],d:()=>lvRv('3 rival studios. ')+lvGtA('A third Legendary for every genre.')},
   {n:10,e:'🌟',name:'Guest Stars',rvT:0.84,sched:'FFEFFFFMB',rules:['elite'],items:['prop','crest','extras','understudy'],d:()=>`The fight before each boss is a mini-boss: +${pctOf(TUNE.lvElite-1)} HP and damage, a win pays 🪙${TUNE.lvEliteGold}. `+lvGtA('The last 4 items.')},
   {n:11,e:'💔',name:'Short Season',lives:9,rv:4,rules:['life1','rv4'],d:()=>'You start with 9 lives. '+lvRv('4 rival studios.')},
@@ -20595,7 +20595,7 @@ const LADDER=[null,
   {n:15,e:'🎞️',name:'Two-Part Finale',rvT:0.67,rules:['finale2','rvFull'],d:()=>'After Deus Ex Machina, the first two bosses return together. '+lvRv(`Rival casts fight at full strength: +${pctOf(TUNE.rvFull-1)} HP and damage.`)},
   {n:16,e:'🏠',name:'Full House',lives:8,rv:7,rules:['life2','rv7'],d:()=>'You start with 8 lives. '+lvRv('7 rival studios.')},
   {n:17,e:'📈',name:'Sweeps Week',rvT:0.76,rvSK:0.72,sched:'FFEFFRRMB',rules:['sweeps'],d:()=>`The last three fights of every act are ${TUNE.rivalsOn?'rival casts and a mini-boss':'mini-bosses'}.`},
-  {n:18,e:'🏆',name:'Series Finale',rvT:0.72,rvSK:0.9,sched:'FREMRMRMB',rules:['seriesfin'],d:()=>`Most episodes are bosses${TUNE.rivalsOn?', mini-bosses or rival casts':' or mini-bosses'}. This is the top Game Level.`},
+  {n:18,e:'🏆',name:'Series Finale',rvT:0.72,rvSK:0.9,sched:'FREMRMRMB',rules:['seriesfin'],d:()=>`Most episodes are bosses${TUNE.rivalsOn?', mini-bosses or rival casts':' or mini-bosses'}. This is the top level.`},
 ];
 const LV_MAX=LADDER.length-1,LV_KEY='tropebrawl-levels';
 // the playable bottom of the ladder (Level 4 until the tutorial is in); tools asking for 0 get it too (old Level 0)
@@ -20616,7 +20616,7 @@ function cxLockLv(kind,id){if(!(kind==='g'||kind==='h'||TUNE.lvGate))return 0;co
   const p=lvLoad();if(TUNE.epsMode&&p.open>=4&&n>=4)return 0;return p.dev||n<=p.open?0:n;}
 function cxEps(kind,id){if(!TUNE.epsMode||epsAll()||lvLoad().open<4)return 0;const at=epsAt(kind,id);return at&&at>profLoad().eps?at:0;}
 function cxLk(kind,id){return cxLockLv(kind,id)||cxEps(kind,id)?' cxlk':'';}
-function cxLkP(kind,id){const e=cxEps(kind,id);if(e)return `<p class="cxlkp">🔒 Unlocks after ${e} episodes aired (you have ${profLoad().eps})</p>`;const n=cxLockLv(kind,id);return n?`<p class="cxlkp">🔒 Unlocks at Game Level ${n}</p>`:'';}
+function cxLkP(kind,id){const e=cxEps(kind,id);if(e)return `<p class="cxlkp">🔒 Unlocks after ${e} episodes aired (you have ${profLoad().eps})</p>`;const n=cxLockLv(kind,id);return n?`<p class="cxlkp">🔒 Unlocks ${n===4?'in the Season':'at '+lvNm(n)}</p>`:'';}
 function lvText(n){const x=LADDER[n];if(!x)return '';const t=x.d().trim();return t||'Same rules as the level before, for now.';}
 function lvLine(n){const x=LADDER[n];return x?`${x.e} <b>${esc(x.name)}:</b> ${esc(lvText(n))}`:'';}
 function rulesFor(n){return lvDef(lvClamp(n)).rules;}
@@ -20642,7 +20642,7 @@ function lvNewHTML(n){const x=LADDER[n];if(!x)return '';const gt=TUNE.lvGate||n<
     add('Events',(x.events||[]).filter(k=>EVENTS[k]).map(k=>ch(EVENTS[k].e,EVENTS[k].name)));}
   return rows.length?`<div class="lvnew"><span class="newb">New!</span>${rows.join('')}</div>`:'';}
 // v19.57: what the next Game Level adds, and whether it is open yet
-function nextLvNote(){const n=S?S.lv|0:lvMin();if(n>=LV_MAX)return '<p class="lvnext">🏆 This is the top Ascension.</p>';if(S&&S.newLv)return '';const open=lvLoad().open>n,nm=lvNm(n+1).replace(/^the S/,'The S');
+function nextLvNote(){const n=S?S.lv|0:lvMin();if(n>=LV_MAX)return '<p class="lvnext">🏆 This is the top level.</p>';if(S&&S.newLv)return '';const open=lvLoad().open>n,nm=lvNm(n+1).replace(/^the S/,'The S');
   return `<p class="lvnext">${open?`🔓 <b>${nm}</b> is unlocked. It adds`:`🔒 Win this run to unlock <b>${nm}</b>. It adds`} ${lvLine(n+1)}</p>`;}
 function maxLives(){return (S&&S.maxLives)||10;}
 // Tougher Reviews: from Game Level lvFoeFrom on, enemies get +lvFoe HP and damage per level
@@ -20703,6 +20703,7 @@ function epsHTML(){if(!S||!S.real||S.epsAfter==null)return '';const got=EPS.filt
 function epsTitleHTML(cur){if(lvLoad().open<4||epsAll())return '';const pf=profLoad();
   return `<div class="epsbox"><p>📺 <b>${pf.eps} episodes aired</b></p>${epsBar(pf.eps)}${cur===4&&pf.ls>=2?`<button class="btn renew${UI.renew?' on':''}" data-a="renew" aria-pressed="${!!UI.renew}">🎞️ Renewed for another season: start with +🪙${TUNE.renewGold}${UI.renew?' ✓':''}</button>`:''}</div>`;}
 function lvNm(n){n=n|0;return n<=3?'Level '+n:n===4?'the Season':'Ascension '+(n-4);}
+function lvNmC(n){return lvNm(n).replace(/^the S/,'The S');}
 function lvTitle(n){n=n|0;return n<=3?'Pilot · Level '+n+': '+LADDER[n].name:n===4?'📺 The Season':'🔥 Ascension '+(n-4)+': '+LADDER[n].name;}
 // called once when a run ends (from the result screen): a win unlocks the next level and selects it
 function lvRecord(){
@@ -20817,7 +20818,7 @@ const SK={
  infect:{name:'Infect',d:p=>`Each zombie bites its target for 5. A knockout regrows a zombie (${bodiesFromP(p)} zombies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;spellFlat(u,t,5*bodies(u)*u.tierM);if(!t.alive)regrow(u,1);}},
  siphon:{name:'Soul Siphon',d:p=>`Hits the weakest back-row enemy for ${R(55*p)} and heals itself for half.`,cast(u){const t=backWeakest(u);if(t){const d=spell(u,t,55);heal(u,u,d*.5);}}},
  darkpact:{name:'Dark Pact',d:p=>`Each of your crowds gives up to 2 bodies; every body given becomes a bolt that hits a random enemy for ${R(22*p)}. If no crowd can spare a body, it raises 5 skeletons instead (with no empty slot they wait on the battle bench; bench full: 3 bolts).`,cast(u){let n=0;allies(u).filter(a=>a.crowd&&a!==u&&bodies(a)>=2).forEach(a=>{const k=Math.min(2,bodies(a)-1);a.hp-=k*a.bodyHp;n+=k;float(a,'−'+k,'miss');bodyLost(a,k);});if(!n){if(summonSkeletons(u.side,5,u.p,'u'+u.uid,spawnCap(u)))return;n=3;}for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spell(u,t,22);}}},
- catchit:{name:'Catch!',d:p=>`Taunts for 3s and catches the next ${(bodiesFromP(p)+1)/2} attacks aimed at it (no damage); each catch brings one fallen player back.`,cast(u){u.taunt=3;u.catches=Math.min(3,u.level||1)+1;}},
+ catchit:{name:'Catch!',d:p=>`Taunts for 3s and catches the next ${(bodiesFromP(p)+1)/2} attacks aimed at it (no damage); each catch brings one fallen body back.`,cast(u){u.taunt=3;u.catches=Math.min(3,u.level||1)+1;}},
  strikes:{name:'Three Strikes',d:p=>`Three fastballs at its target for ${R(15*p)} each; the third stuns for 1s.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;for(let i=0;i<3&&t.alive;i++){spell(u,t,15);ballFx(u,t);}if(t.alive)stunU(t,1);}},
  waterbreak:{name:'Water Break',d:p=>`Heals your 3 most wounded characters for ${R(40*p)}, ${R(20*p)} and ${R(20*p)}.`,cast(u){wounded(u,3).forEach((a,i)=>heal(u,a,(i?20:40)*u.p));}},
  hailmary:{name:'Hail Mary',d:p=>`Throws at the weakest back-row enemy for ${R(50*p)} damage, +15% for each other Sportsball character on your team. If the throw knocks it out, it throws again (up to 3 throws).`,cast(u){const n=allies(u).filter(a=>a!==u&&a.genre==='ball').length;for(let i=0;i<3;i++){const t=backWeakest(u);if(!t)return;ballFx(u,t);spell(u,t,50*(1+.15*n));if(t.alive)return;}}},
@@ -21090,7 +21091,7 @@ function takeTrinket(v){
   sellItem(old);S.trinkets.splice(i,0,id);S.tlv[id]=1;
 }
 function itemMsg(v){const [id,old]=(v||'').split('>');if(!TR[id])return '+3 gold.';const L=ilv(id);
-  if(L)return L<ITEM_MAX?`${TR[id].name} levels up to ${'★'.repeat(L+1)}.`:'+3 gold.';
+  if(L)return L<ITEM_MAX?`${TR[id].name} goes up to ${'★'.repeat(L+1)}.`:'+🪙3.';
   if(S.trinkets.length>=TRINKET_CAP&&TR[old])return `${TR[id].name} replaces ${TR[old].name} (sold for 🪙${itemSellValue(old)}).`;
   return `You take the ${TR[id].name}.`;}
 // sell an item between fights: 🪙2 / 3 / 4 by level, frees a slot
@@ -22091,7 +22092,7 @@ const RIVALS=[
   {id:'penny',style:'Banker',d:"Saves up to 50 gold and barely spends, then cashes out from Act 3 for a big late board.",tell:"Quiet early, dangerous late.",name:'Penny',e:'💰',pol:{ev:['payday','supply','recruit','promotion','reinforce','deal'],target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:2,ownW:8,econ:r=>r>=15?0:50}},
   {id:'rex',style:'Roller',d:"Rerolls hard early for ★★ Commons and Uncommons, then moves up to rarer characters.",tell:"Your cheap characters' pool counts drop fast.",name:'Rex',e:'🎰',pol:{target:r=>r>=16?7:r>=14?6:r>=12?5:r>=10?4:r>=3?3:r>=2?2:1,keep:0,tierW:1,lateTierW:5,ownW:14,econ:0,rollUntil:10,rollTier:2}},
   {id:'ivy',style:'Wide',d:"Runs three or four genres at once and lives on crossovers.",tell:"Her board is never the same twice.",name:'Ivy',e:'🌈',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:2,ownW:6,econ:20,div:6}},
-  {id:'duke',style:'Streaker',d:"Spends every coin to win early and stack streak gold.",tell:"Strongest in Acts 1 and 2, then runs dry.",name:'Duke',e:'🔥',pol:{target:r=>r>=15?7:r>=12?6:r>=9?5:r>=6?4:r>=3?3:r>=2?2:1,keep:0,tierW:2,ownW:8,econ:0}},
+  {id:'duke',style:'Streaker',d:"Spends all its gold to win early and stack streak gold.",tell:"Strongest in Acts 1 and 2, then runs dry.",name:'Duke',e:'🔥',pol:{target:r=>r>=15?7:r>=12?6:r>=9?5:r>=6?4:r>=3?3:r>=2?2:1,keep:0,tierW:2,ownW:8,econ:0}},
   {id:'goldie',style:'Collector',d:"Skips Commons and hunts Rare, Epic and Mythic characters.",tell:"The top of the pool thins out.",name:'Goldie',e:'💎',pol:{target:r=>r>=14?7:r>=11?6:r>=8?5:r>=5?4:r>=3?3:r>=2?2:1,keep:0,tierW:6,ownW:6,econ:0,minTier:3}},
   {id:'sal',style:'Cheapskate',d:"Maxes Commons and Uncommons to ★★ and floods the board with cheap bodies.",tell:"Strong early, fades late.",name:'Sal',e:'🧢',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:6,tierW:1,ownW:14,econ:20,maxTier:2}},
   {id:'hugo',style:'Hoarder',d:"Keeps a full bench of spares and backups.",tell:"Hard to starve: he always has a body to field.",name:'Hugo',e:'📦',pol:{target:r=>r>=17?7:r>=14?6:r>=10?5:r>=7?4:r>=4?3:r>=2?2:1,keep:2,tierW:2,ownW:10,econ:10,bench:true}},
@@ -22538,8 +22539,8 @@ function showResult(){
 // Personality-first rival cards. m = the studio's mascot figure (a character's 3D toy); the method lives in RB.CARDS.
 const RVX={
   penny:{studio:'Piggy Bank Pictures',m:'prospector',intro:'Saving up for something big. Something with your name on it.',tease:'A quiet studio that never seems to spend a thing.',
-    who:"Penny pinches every coin until her vault hits 50, then cashes out for a monster late-game cast. Early on she looks harmless. She isn't.",
-    flav:"Penny does the sums on every coin: if she'll be around long enough to cash it in, it stays in the vault (a payback period)."},
+    who:"Penny watches every 🪙 until her vault hits 50, then cashes out for a monster late-game cast. Early on she looks harmless. She isn't.",
+    flav:"Penny does the sums on every 🪙: if she'll be around long enough to cash it in, it stays in the vault (a payback period)."},
   rex:{studio:'Lucky Seven Studios',m:'smuggler',intro:'Feeling lucky? He already did the maths.',tease:'Somebody keeps rerolling the shop. A lot.',
     who:'Rex lives for the reroll. He hammers the shop for doubles of cheap characters, then jumps to rarer ones once his luck is in.',
     flav:'Rex counts cards. Literally: before every reroll he works out the expected value of the next shop, and only rolls when the odds pay.'},
@@ -22547,7 +22548,7 @@ const RVX={
     who:"Ivy can't pick a favourite genre, so she runs three or four at once and lives on crossovers. Her board is never the same twice.",
     flav:'Ivy hill-climbs: she swaps characters around one at a time and keeps every swap that switches on more bonuses.'},
   duke:{studio:'Blaze Broadcasting',m:'pitcher',intro:"Next fight. That's the plan. That's the whole plan.",tease:"Someone is burning through gold like it's on fire.",
-    who:'Duke spends every coin, every round, to win right now and stack streak gold. Brutal in Acts 1 and 2, running on fumes by the finale.',
+    who:'Duke spends every 🪙, every round, to win right now and stack streak gold. Brutal in Acts 1 and 2, running on fumes by the finale.',
     flav:'Duke is greedy on purpose: he only asks what wins the very next fight, and a hot streak makes him spend even harder.'},
   goldie:{studio:'Gilded Frame Films',m:'mastermind',intro:"Only the finest for my collection. You'd make a lovely piece.",tease:'The top of the pool keeps thinning out.',
     who:"Goldie won't touch a Common. She hunts Rares, Epics and Mythics, and keeps a little black book of every one she has seen.",
@@ -22649,7 +22650,7 @@ function tbxAfter(go){if(tbxMode()==='off'||TBX.el){go();tbxEnd(true);return;}co
 // run start: black, the level's title card, then the label glides into the top-bar chip
 function tbxCard(){if(!S||tbxMode()==='off'||UI.screen==='battle')return;const n=S.lv|0,x=LADDER[n]||{},k=tbxK();
   const ey=n<=3?'The Pilot':n===4?'Now airing':'The Season · Ascension',rule=n>4?lvText(n):'';
-  const el=tbxOpen('card on',`<div class="tbcard"><small>${ey}</small><b class="tbbig">${esc(lvLong(n))}</b><span class="tbnm">${x.e||''} ${esc(x.name||'')}</span>${rule?`<p class="tbrule">${esc(rule)}</p>`:''}<small>Game Level ${n}${S.round>1?' · Episode '+S.round:''}</small></div>`,lvTitle(n),'Click to skip');
+  const el=tbxOpen('card on',`<div class="tbcard"><small>${ey}</small><b class="tbbig">${esc(lvLong(n))}</b><span class="tbnm">${x.e||''} ${esc(x.name||'')}</span>${rule?`<p class="tbrule">${esc(rule)}</p>`:''}${S.round>1?'<small>Episode '+S.round+'</small>':''}</div>`,lvTitle(n),'Click to skip');
   const glide=()=>{const big=el.querySelector('.tbbig'),tg=document.querySelector('#app .lvb');
       if(!big||!tg||!tg.offsetParent||RM_SYS){el.classList.add('glide');big&&(big.style.opacity='0');return;}
       const a=big.getBoundingClientRect(),b=tg.getBoundingClientRect(),sc=Math.max(.08,b.height/Math.max(1,a.height))*1.15;
@@ -22681,7 +22682,7 @@ function tbxUnlocks(){const W=document.querySelector('#app .endwrap');if(!W||!S)
 function tbxEnd(instant){if(UI.screen!=='end')return false;const items=tbxUnlocks();if(!items.length)return false;tbxCleared(items,instant);return true;}
 function tbxCleared(items,instant){const n=S.lv|0,win=S.result==='win',k=tbxK(),ty=k?1:0;
   const head=win?lvLong(n)+' cleared':`+${S.epsAdd|0} episodes aired`;
-  const el=tbxOpen('clr'+(instant?' on':''),`<div class="tbclr"><small>${win?'Victory':'Run over'} · Game Level ${n}</small><b class="tbbig">${esc(head)}</b><small class="tbey2">${items.length===1?'Unlocked':'Unlocked · '+items.length}</small>
+  const el=tbxOpen('clr'+(instant?' on':''),`<div class="tbclr"><small>${win?'Victory':'Run over'} · ${lvNmC(n)}</small><b class="tbbig">${esc(head)}</b><small class="tbey2">${items.length===1?'Unlocked':'Unlocked · '+items.length}</small>
     <div class="tbul">${items.map(it=>`<div class="tbu${it.big?' big':''}"><span class="ic">${it.rv?rvFigHTML(it.rv,true):`<i>${esc(it.ic)}</i>`}</span><b data-n="${esc(it.t)}">???</b><small>${esc(it.k)}</small></div>`).join('')}</div>
     <button class="btn primary big tbgo">Continue</button></div>`,head,'Click or Space to skip · Esc to close');
   TBX.fin=()=>{window.scrollTo(0,0);};
@@ -22726,7 +22727,7 @@ function ghEpHTML(e){const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{
   const leg=e.gh[1]&&LEGENDS[e.gh[1]];
   return `<section class="vs feat ghep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">📼</span>`}
     <div class="fhd"><small>Rerun · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>📼 ${esc(e.title)}</b></div>
-    <div class="foes">${foes}<button class="foe lineup" data-a="nextfoes" title="Where they stand (V)" aria-label="See where they stand">🔭<small>Lineup</small></button></div>
+    <div class="foes">${foes}<button class="foe lineup" data-a="nextfoes" title="🔭 Lineup: where they stand (V)" aria-label="Lineup">🔭<small>Lineup</small></button></div>
     <p class="rvtell">Another studio's cast from this same episode, scaled to it${leg?`. Legendary: ${esc(leg.name)}`:''}.</p></section>`;}
 function vsStrip0(){
   if(!S.enemy)return '';
@@ -22740,7 +22741,7 @@ function vsStrip0(){
   const lead=EN[e.enc[0].key],eAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,kind=e.part?'Season finale, part 2':e.boss?(eAct>=runActs()?'Season finale':`Act ${eAct} finale`):(e.elite?'Mini-boss':e.trial?'Trial by fire':'Next episode')+` · Act ${eAct}`;
   return `<section class="vs feat${e.boss||e.elite||e.trial?' boss':''}">${(()=>{const lk=e.enc.map(x=>EN[x.key]).sort((a,b)=>(b.x.boss?1e6:0)+b.hp-(a.x.boss?1e6:0)-a.hp)[0].key;return foeSpr(lk)?`<span class="fart fimg" aria-hidden="true"><img src="${SPRITES[foeSpr(lk)]}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${lead.e}</span>`;})()}
     <div class="fhd"><small>${kind} · Ep ${S.round} of ${SCHEDULE.length}${e.boss&&S.bossTries?` · enemies −${Math.round(100*(1-Math.pow(0.9,S.bossTries)))}%`:''}</small><b>${esc(e.title||lead.name)}</b></div>
-    <div class="foes">${foes}${twin}<button class="foe lineup" data-a="nextfoes" title="Where they stand (V)" aria-label="See where they stand">🔭<small>Lineup</small></button></div>
+    <div class="foes">${foes}${twin}<button class="foe lineup" data-a="nextfoes" title="🔭 Lineup: where they stand (V)" aria-label="Lineup">🔭<small>Lineup</small></button></div>
     </section>`;
 }
 function boardHTML(){
@@ -22842,7 +22843,7 @@ function lvPicker(){
     return `<button class="lvn${n===cur?' on':''}${won?' won':''}" data-a="lv" data-v="${n}" ${lock?'disabled':''} role="radio" aria-checked="${n===cur}" aria-label="${nm}${lock?', locked':won?', cleared':''}" title="${nm}${lock?' · win '+lvNm(n-1)+' first':won?' · cleared':''}">${lock?'🔒':n<=3?n:n===4?'S':'A'+(n-4)}</button>`;}).join('').replace(/class="lvn([^"]*)" data-a="lv" data-v="(\d+)"/g,(m,c,v)=>+v>=5?`class="lvn asc${c}" data-a="lv" data-v="${v}"`:m);
   const lo4=cur>=4?Math.max(lo,4):lo,older=LADDER.map((_,i)=>i).filter(n=>n>=lo4&&n<cur).map(n=>`<li>${lvLine(n)}</li>`).join('');
   return `<div class="lvpick"><div class="row" style="justify-content:space-between"><b class="lvh">${esc(lvTitle(cur))}</b><span class="muted" style="font-size:.78rem">${cur<4?'win one to unlock the next':cur===4?'win the Season to open Ascension':'opt-in challenge · win to open the next'}</span></div>
-    <div class="lvnums" role="radiogroup" aria-label="Game Level">${chips}</div>
+    <div class="lvnums" role="radiogroup" aria-label="Level">${chips}</div>
     <p class="lvnew">${cur>lo?'New: ':''}${lvLine(cur)}</p>
     <p class="lvdial">${lvDials(cur)}</p>
     ${older?`<details class="lvold"><summary>Plus ${cur-lo4} earlier rule${cur-lo4>1?'s':''}</summary><ul>${older}</ul></details>`:''}${epsTitleHTML(cur)}</div>`;
@@ -22973,9 +22974,9 @@ const COACH=[
  {id:'c1-fight',lv:1,w:'plan',on:()=>S.round===1&&fielded().length>0&&(fieldCount()>=boardSize()||!S.shop.some((o,i)=>o&&canBuy(i).ok)),done:['fight'],at:'[data-a="fight"]',t:()=>'Board ready? Press Fight. You can\'t steer the brawl, so the plan is everything.'},
  {id:'c1-watch',lv:1,w:'battle',fade:5,on:()=>true,at:'.speed',t:()=>'No inputs here. Watch, or tap 4× to speed it up.'},
  {id:'c1-win',lv:1,w:'plan',on:()=>{const x=tutLR();return !!(x&&x.win);},at:'.top .res>span:nth-child(2)',t:()=>'Episode won: +🪙1. Win or lose, gold comes in every round.'},
- {id:'c1-loss',lv:1,w:'plan',on:()=>{const x=tutLR();return !!(x&&!x.win&&x.lives>0);},at:'.top .res>span:first-child',t:()=>`Episode lost: −${tutLR().lives} ❤️, plus a free reroll. Zero lives ends the season.`},
+ {id:'c1-loss',lv:1,w:'plan',on:()=>{const x=tutLR();return !!(x&&!x.win&&x.lives>0);},at:'.top .res>span:first-child',t:()=>`Episode lost: −${tutLR().lives} ❤️, plus a free reroll. Zero lives ends the run.`},
  {id:'c1-reroll',lv:1,w:'plan',on:()=>S.round>=2,done:['reroll'],at:'[data-a="reroll"]',t:()=>`Nothing you want? Reroll: 🪙${TUNE.reroll} for a fresh shop.`},
- {id:'c1-three',lv:1,w:'plan',on:()=>!!document.querySelector('.shop .scard.ready'),ok:()=>!!tutStar(),at:'.shop .scard.ready',t:()=>'Three copies of one character merge into a ★★. This card makes your third.'},
+ {id:'c1-three',lv:1,w:'plan',on:()=>!!document.querySelector('.shop .scard.ready'),ok:()=>!!tutStar(),at:'.shop .scard.ready',t:()=>'Three copies of one character combine into a ★★. This card makes your third.'},
  {id:'c1-star',lv:1,w:'plan',on:()=>!!tutStar(),at:()=>`.board .slot[data-v="${tutStar().slot}"]`,t:()=>'★★: one character, much stronger. Commons and Uncommons stop here; Rares can reach ★★★.'},
  {id:'c1-genre',lv:1,w:'plan',on:()=>!!tutGOn(),done:['syn'],at:()=>`.syns .syn.on.g-${tutGOn().k}`,t:()=>{const x=tutGOn(),g=GENRES[x.k];return `${g.e} ${g.name} ×${x.n}: the ${g.name} bonus is on. More of them, bigger bonus. Tap it to read it.`;}},
  {id:'c1-recruit',lv:1,w:'event',on:()=>{const e=S.event;return !!(e&&e.sub&&e.sub.kind==='recruit'&&!e.subDone);},done:['event-sub'],at:'.evbody .choices',t:()=>'Intermission. A free character joins your cast. Pick the one that fits your team.'},
@@ -23004,7 +23005,7 @@ const COACH=[
  {id:'c3-rival',lv:3,w:'plan',rv:1,on:()=>S.round===1,t:()=>'A rival studio shares your character pool. Copies they hire leave your shop.'},
  {id:'c3-pool',lv:3,w:'plan',rv:1,on:()=>false,t:()=>'Fewer copies left: the rival hired some. Check the count before chasing ★★★.'},
  {id:'c3-rivalep',lv:3,w:'plan',rv:1,on:()=>!!(S.enemy&&S.enemy.rival),done:['fight'],at:'.vs.feat',t:()=>'Next episode: the rival\'s cast, not the production. Same rules, their board.'},
- {id:'c3-rivalwon',lv:3,w:'plan',rv:1,on:()=>false,t:()=>'From Season 1, a rival\'s cast can turn up in any normal episode.'},
+ {id:'c3-rivalwon',lv:3,w:'plan',rv:1,on:()=>false,t:()=>'From the Season on, a rival\'s cast can turn up in any normal episode.'},
 ];
 function tutLoad(){if(!TUT.seen){try{TUT.seen=JSON.parse(localStorage.getItem(TUT_KEY)||'[]')||[];}catch(e){TUT.seen=[];}if(!Array.isArray(TUT.seen))TUT.seen=[];}return TUT.seen;}
 function tutSee(id){const s=tutLoad();if(id&&!s.includes(id)){s.push(id);try{localStorage.setItem(TUT_KEY,JSON.stringify(s));}catch(e){}}}
@@ -23041,7 +23042,7 @@ function tutPlace(){const b=document.getElementById('tut');if(!b||b.hidden)retur
 try{if(typeof window!=='undefined'&&window.addEventListener){let q=0;const f=()=>{if(q)return;q=1;requestAnimationFrame(()=>{q=0;tutPlace();});};window.addEventListener('resize',f);window.addEventListener('scroll',f,{passive:true});}}catch(e){}
 // Skip to Level 4 (title "I know auto-battlers", or Settings during Levels 1-3)
 function tutSkipHTML(){const mid=S&&!S.over&&(S.lv|0)<=3;
-  return `<div class="eyebrow">Tutorial</div><h3 style="color:var(--gold)">Skip the Pilot?</h3><p>You start at Game Level 4, Season 1: all ${lvDef(4).g.length} genres, four acts, no coach. Levels 1-3 stay open to play any time.</p>${mid?'<p class="muted" style="font-size:.85rem">This run ends here. It doesn\'t count as a loss.</p>':''}<div class="row"><button class="btn primary" data-a="tut-skip-ok">Skip to Season 1</button></div>`;}
+  return `<div class="eyebrow">Tutorial</div><h3 style="color:var(--gold)">Skip the Pilot?</h3><p>You start in the Season: ${lvDef(4).g.length-EPS_LATE.length} genres, four acts, no coach. Space Opera and Kaiju arrive as episodes air. Levels 1-3 stay open to play any time.</p>${mid?'<p class="muted" style="font-size:.85rem">This run ends here. It doesn\'t count as a loss.</p>':''}<div class="row"><button class="btn primary" data-a="tut-skip-ok">Skip to Season 1</button></div>`;}
 function tutSkip(){const p=lvLoad();if(!p.dev)p.open=Math.max(p.open,4);p.pick=4;lvStore(p);COACH.forEach(c=>tutSee(c.id));UI.lv=4;
   if(S&&!S.over&&(S.lv|0)<=3){if(S.round>1)tlEnd(true);clearSave();S=null;}
   UI.screen='title';closeSheet();render();window.scrollTo(0,0);toast('Season 1 is open. Levels 1-3 stay in the level list.');}
@@ -23222,7 +23223,7 @@ SCR.event=()=>{
     if(e.sub.kind==='trinket'&&e.sub.ids.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){e.sub.ids=trinketChoices(3,false);save();}
     if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span>${ownLine(id)}</button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
     else if(UI.swap&&UI.swap.a==='event-sub'&&S.trinkets.length>=TRINKET_CAP)body=swapHTML();
-    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It comes one level higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
+    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It arrives one ★ higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
   }else{art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav='';body=(e.wheel?wheelHTML(e.wheel):'')+`<p class="evresult${e.wheel&&!RM?' late':''}">${esc(e.msg||'Done.')}</p><div class="row" style="justify-content:center"><button class="btn primary big" data-a="event-done">Continue</button></div>`;}
   return `${topBar()}<section class="screen evstage" style="margin-top:12px"><div class="evart">${art}</div><h2 class="evtitle">${title}</h2>${flav?`<p class="evflav">${flav}</p>`:''}<div class="evbody">${body}</div></section>${evTeamHTML(e)}`;
 };
@@ -23245,7 +23246,7 @@ SCR.end=()=>{
     kpi('Level-ups',st.merges,''),
     kpi('Rerolls',st.rerolls,''),
     kpi('Shop rank',`<span class="tier${topTier(S.rank)}" style="color:var(--tc)">${S.rank}/${RMAX}</span>`,RARITY[topTier(S.rank)-1]+' unlocked'),
-    kpi('Game Level',String(S.lv|0),LADDER[S.lv]?LADDER[S.lv].name:''),
+    kpi('Level',S.lv<=3?'Pilot '+(S.lv|0):S.lv==4?'Season':'Asc. '+(S.lv-4),LADDER[S.lv]?LADDER[S.lv].name:''),
   ].join('');
   const bars=top.map(([id,e],i)=>{const d=HERO[id]||{name:ENV[id][0]};const lv=final.get(id);
     const tip=`${d.name}: ${fmtN(e.d)} damage in ${e.f} fight${e.f===1?'':'s'} · best fight ${fmtN(e.best)}${lv?` · on your final board at ${'★'.repeat(lv)}`:''}`;
@@ -23417,7 +23418,7 @@ function infoBody(I){
   if(!I)return '';
   if(I.kind==='rank')return rankDetail();
   if(I.kind==='unit'){const u=S.units.find(x=>x.uid===I.uid);if(!u)return '';
-    const note=u.level>=maxLv(u.id)?`${'★'.repeat(maxLv(u.id))} is the max level for ${RARITY[HERO[u.id].tier-1]} characters, so the shop stops offering this one.`:maxedIds().has(u.id)?`Spare copy: your other ${esc(HERO[u.id].name)} is already maxed, so the shop won't sell more. Sell it, or field it as a second copy (copies don't count twice for synergies).`:'';
+    const note=u.level>=maxLv(u.id)?`${'★'.repeat(maxLv(u.id))} is the top star for ${RARITY[HERO[u.id].tier-1]} characters, so the shop stops offering this one.`:maxedIds().has(u.id)?`Spare copy: your other ${esc(HERO[u.id].name)} is already maxed, so the shop won't sell more. Sell it, or field it as a second copy (copies don't count twice for genre bonuses).`:'';
     return heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'')+`<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell for ':'Sell for '}🪙${sellValue(u)}</button><span class="muted" style="font-size:.78rem">Drag it to move it.</span></div>`;}
   if(I.kind==='hero'){const o=I.shop!=null&&S&&S.shop[I.shop];return heroDetail(I.id,I.level||1)+(o&&o.id===I.id?`<div class="row"><button class="btn primary" data-a="buy" data-v="${I.shop}" ${canBuy(I.shop).ok?'':'disabled'}>Buy · 🪙${shopPrice(o)}</button></div>`:'');}
   if(I.kind==='trinket')return trinketDetail(I.id);
@@ -23470,7 +23471,7 @@ SCR.codex=()=>{
   const tab=UI.codexTab||'how';
   let body='';
   if(tab==='how')body=`<div class="rules">
-    <p><b>Each round</b> you get gold, shop, set up your board, then fight. A run is ${TUNE.acts*9} rounds in ${TUNE.acts} acts of 9: fight, fight, event, five more fights, boss. You start with 10 ❤️; a loss costs 2–3 depending on the act (+1 for a boss). Beat the final boss to win.</p>
+    <p><b>Each round</b> you get gold, shop, set up your board, then fight. A run is ${TUNE.acts*9} rounds in ${TUNE.acts} acts of 9: fight, fight, event, five more fights, boss. You start with 10 ❤️; a loss costs 2–3 depending on the act (+1 for a boss). Beat the final boss to win. Each round is one episode of your show.</p>
     <p><b>Shop.</b> 🔄 rerolls for 🪙2 and 🔓 locks the shop for next round.</p>
     <p><b>Gold.</b> Every round pays 🪙5. <b>Interest:</b> 🪙1 for every 🪙10 you hold when the round ends, up to 🪙5 at 🪙50, so saving pays, but gold in the bank doesn't fight. <b>Streaks:</b> 2 or 3 fights in a row pay +1, 4 pay +2, 5 or more pay +3, for wins and for losses. A win pays +1 (a boss win +3 more), and a loss +1 and a free reroll. A good rhythm: bank early in each act and spend before the boss.</p>
     <p><b>Rarity and shop rank.</b> Characters are <span class="tier1" style="color:var(--tc)">Common</span>, <span class="tier2" style="color:var(--tc)">Uncommon</span>, <span class="tier3" style="color:var(--tc)">Rare</span>, <span class="tier4" style="color:var(--tc)">Epic</span> or <span class="tier5" style="color:var(--tc)">Mythic</span> (🪙${PRICE[0]}–${PRICE[PRICE.length-1]}). ⬆️ Train the shop (🪙${RANK.train} for ${RANK.trainXp} XP; it also gets ${RANK.freeXp} XP free every round). Each full gauge is a rank: ${[2,3,4,5,6,7,8,9].filter(r=>r<=RMAX&&topTier(r)>topTier(r-1)).map(r=>'Rank '+r+' unlocks '+RARITY[topTier(r)-1]).join(', ')}, and every rank improves the odds. Ranks ${(a=>a.slice(0,-1).join(', ')+' and '+a[a.length-1])([2,3,4,5,6,7,8,9].filter(r=>r<=RMAX&&RANK.board[r-1]>RANK.board[r-2]))} add a board slot. Mythics only show up at Rank ${RANK.odds.findIndex(o=>o[4]>0)+1}, and rarely. <button class="btn sm" data-a="rank-info">See the odds</button></p>
@@ -23481,17 +23482,17 @@ SCR.codex=()=>{
     <p><b>Genres &amp; traits.</b> Different characters on your board that share a Genre switch on bonuses at 2, 4 and 6; a Trait at 2 and 4. Two genres with 2 characters each switch on a Crossover. Rare, Epic and Mythic characters count as 2 for their genre from ★★, so a wide board of two or three genres fills up fast.</p>
     <p><b>Typecast.</b> When everyone on your board is from the same genre (3 or more characters, copies count), the shop you get at the start of every round always includes 1 card from that genre (rerolls don\'t), so a one-genre team can find its cast.</p>
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
-    <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you choose a Legendary, win or lose: 3 to choose from if you won (or take the bonus item instead: a Legendary or a bonus item), 2 if you lost. You hold one at a time.</p>
+    <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you pick a Legendary, win or lose. Win: choose from 3, or take a bonus item instead. Lose: choose from 2, no bonus item. You hold one at a time.</p>
     
     <p><b>The Cut.</b> A bad random event: the studio goes after your biggest genre and it leaves the shop for the rest of the run. Pay gold to keep your characters of that genre, let them go (sold for half), or fight it with lives.</p>
-    <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-8 of each act). You never know exactly when: it pops up at the start of a round, before the shop. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props, The Cut), or trade-offs (Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher Game Levels bring more of them, and more bad ones: a window fires 40% of the time at Level 4, plus 6% per level after it.</p>
-    <p><b>Buyback Wheel.</b> A random event: spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud. A thin gold ALL sliver (6%) covers every rarity but Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
+    <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-8 of each act). You never know exactly when: it pops up at the start of a round, before the shop. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props, The Cut), or trade-offs (Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher levels bring more of them, and more bad ones: a window fires 40% of the time in the Season, plus 6% per Ascension.</p>
+    <p><b>Buyback Wheel.</b> A random event: spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud (no effect). A small gold ALL slice (6%) wins for every rarity except Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
     <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>
     <p><b>Battle bench.</b> Summons (skeletons, hatchlings) need an empty slot. If there is none, they wait on the battle bench as cards: spawns of the same kind stack on one card up to 20 bodies, and extra ones start a new card (up to 8 cards). When a slot opens, spawns left behind by the fallen character (Undead 6's skeletons) take it first; then a character waiting to rise (Bone Dragon) - characters always go before summons; then the oldest bench card steps in as one crowd.</p>
     <p><b>Summons</b> (skeletons, hatchlings and other crowds that skills and bonuses bring in) don't get genre, trait or crossover boosts; effects on "your crowds" during the fight do reach them. A summon falling doesn't count as one of your characters falling.</p>
     <p><b>Positioning.</b> Lanes: characters attack the enemy front-liner in their own column first. Cover: a back-row character directly behind one of your Guardians takes 25% less damage. Neighbors: Medics heal the characters right beside them 50% more. Splash hits neighbors too.</p>
     <p><b>Overtime.</b> After 30 seconds everyone takes growing damage and Swarm crowds stop regrowing, so fights always end.</p>
-    <p><b>Game Levels.</b> Win a run to unlock the next Game Level: the same game plus one new rule or unlock, stacked on the earlier ones. Level 4 is the full game; Levels 5 to 18 make it harder step by step. Pick any unlocked level on the title screen. In a run, the Lv button in the top bar shows your level's rules and what the next one adds.</p>
+    <p><b>Levels.</b> Win a run to unlock the next level: the same game plus one new rule or unlock, stacked on the earlier ones. The Pilot (Levels 1-3) teaches the game, the Season is the full game, and Ascension 1 to ${LV_MAX-4} make it harder, one new rule each. Pick any unlocked level on the title screen. In a run, the Lv button in the top bar shows your level's rules and what the next one adds.</p>
     <p><b>Next enemy.</b> The Next episode panel shows who you fight next; 🔭 Lineup (or V) shows where each one stands.</p>
     <p><b>Keyboard</b> (the usual auto-battler keys): <kbd>D</kbd> or <kbd>R</kbd> reroll · <kbd>F</kbd> or <kbd>T</kbd> train · <kbd>Q</kbd> or <kbd>L</kbd> lock · <kbd>E</kbd> sell the character under the mouse · <kbd>W</kbd> move it between board and bench · <kbd>1</kbd>–<kbd>5</kbd> buy · <kbd>V</kbd> next enemy's lineup · <kbd>Space</kbd> fight. In a fight: <kbd>Space</kbd> pause, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> speed, <kbd>S</kbd> skip, <kbd>V</kbd> their team. In the Codex: <kbd>/</kbd> search.</p></div>`;
   if(tab==='fight'){const TR=['guardian','brawler','stalker','gunner','mystic','medic'],ROLE={guardian:'Tank: soaks hits in the front row and protects the back row (Cover).',brawler:'Front-line fighter: the most HP, hits hard up close.',stalker:'Assassin: ignores the front line and goes for the weakest back-liner.',gunner:'Damage from range: picks off the lowest-HP enemy anywhere.',mystic:'Caster: weak hits, big skills that charge fast.',medic:'Support: heals and shields, casts often.'};
@@ -23550,8 +23551,8 @@ SCR.codex=()=>{
     const ch=k=>CHOICES[k]?`<p class="muted" style="font-size:.8rem">Choices: ${CHOICES[k].map(c=>esc(c.t)).join(' · ')}</p>`:'';
     body=`<div class="rules"><p><b>Event rounds.</b> The 3rd episode of every act is an intermission: pick 1 of 3. Choices that cost lives need more lives than they cost, so an event can never end your run.</p>
     <div class="cgrid">${['recruit','payday','supply','deal','promotion','reinforce'].filter(k=>EVENTS[k]).map(k=>ev(k)).join('')}</div>
-    <h3>Plot Twists (Game Level 5+)</h3><p>One choice of every event round is swapped for a risky one.</p><div class="cgrid">${['trial','casting','merchant'].filter(k=>EVENTS[k]).map(k=>ev(k)).join('')}</div>
-    <h3>Random events</h3><p>Each act can bring one, at the start of any episode between its first fight and its boss. Each happens at most once a run; higher Game Levels bring more, and more bad ones.</p>
+    <h3>Plot Twists (Ascension 1+)</h3><p>One choice of every event round is swapped for a risky one.</p><div class="cgrid">${['trial','casting','merchant'].filter(k=>EVENTS[k]).map(k=>ev(k)).join('')}</div>
+    <h3>Random events</h3><p>Each act can bring one, at the start of any episode between its first fight and its boss. Each happens at most once a run; higher levels bring more, and more bad ones.</p>
     <div class="cgrid">${['fanmail','craft','cameo','review','props','strike','montage','cursed','insurance','reboot','cut','wheel'].filter(k=>EVENTS[k]).map(k=>ev(k,ch(k))).join('')}</div></div>`;}
   if(tab==='heroes')body=Object.keys(GENRES).map(g=>`<h3>${GENRES[g].e} ${GENRES[g].name}</h3><div class="cgrid">${HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]];const st=heroStatsAt(d.id,1);return `<button class="ccard g-${g}${cxLk('h',d.id)}" data-a="hero-info" data-v="${d.id}" data-l="1" aria-label="${esc(d.name)} details"><div class="hd">${heroPt(d.id,'sm')}<span><b>${esc(d.name)}</b><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${TRAITS[d.trait].name}${d.crowd?' · 👥 crowd':''}</span></div><p><b>${SK[d.skill].name}:</b> ${skillStars(d.id,0)}</p><p>${reachLabel(d.id)} · ${atkVerb(d.id)} · ${targetShort(d.id)}</p>${cxLkP('h',d.id)}</button>`;}).join('')}</div>`).join('');
   if(tab==='syn')body=`<h3>Genres</h3><div class="cgrid">${Object.keys(GENRES).map(k=>`<div class="ccard g-${k}${cxLk('g',k)}"><div class="hd"><span class="emo" style="font-size:1.4rem">${GENRES[k].e}</span><b>${GENRES[k].name}</b></div>${GENRES[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${GENRES[k].d[i]}</p>`).join('')}${stkCodex(k)}${cxLkP('g',k)}</div>`).join('')}</div>
@@ -23570,7 +23571,7 @@ SCR.codex=()=>{
     ${tlPrivacy()}
 </div>`;
   if(tab==='legends')body=`<div class="cgrid">${Object.keys(LEGENDS).map(id=>{const L=LEGENDS[id];return `<div class="ccard${cxLk('l',id)}" style="border-color:var(--leg)"><div class="hd"><span class="emo" style="font-size:1.4rem">${L.e}</span><span><b>${esc(L.name)}</b>${L.genre?GENRES[L.genre].e+' '+GENRES[L.genre].name:'Any genre'}</span></div><p>${esc(L.d)}</p>${cxLkP('l',id)}</div>`;}).join('')}</div>`;
-  if(tab==='rivals')body=`<div class="rvroster"><h3 class="rvrh">Rival roster <small>${RIVALS.filter(x=>rvKnown(x.id)).length} of ${RIVALS.length} unlocked</small></h3><p class="muted">Rival studios share your character pool and fight some of your episodes. Each one stays a silhouette until you beat its cast; then it steps out of the shadows.${epsAll()?' <i>Every level is unlocked in Settings, so the whole roster is showing.</i>':''}</p><div class="cgrid">${RIVALS.map(rvCardHTML).join('')}</div></div><details class="rvrules"><summary>How rival studios work</summary><p>From Game Level 3, rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. From Ep 3, any normal episode can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Their casts fight with everything yours has: genre and trait bonuses, items, their Legendary and battlefield-wide effects like Army barrages. When a rival's cast is coming, it lines up against your board. Higher Game Levels add more rivals, up to 7; rival casts also grow with the Game Level like Reruns, turn up more often from Level 13, fight at full strength from Level 15, and Sweeps Week and Series Finale put them on the schedule. Rival casts are matched to the level: when one is due, the show looks at a few rival studios and sends the one whose cast best fits the level's difficulty against your current board (it never changes their stats). Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><p>Every rival has its own head for the game, built on a real method from maths, statistics or AI (open <b>How it thinks</b> on an unlocked card). Four of them learn from your runs on this device and nothing is sent. After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast.</p></details>`;
+  if(tab==='rivals')body=`<div class="rvroster"><h3 class="rvrh">Rival roster <small>${RIVALS.filter(x=>rvKnown(x.id)).length} of ${RIVALS.length} unlocked</small></h3><p class="muted">Rival studios share your character pool and fight some of your episodes. Each one stays a silhouette until you beat its cast; then it steps out of the shadows.${epsAll()?' <i>Every level is unlocked in Settings, so the whole roster is showing.</i>':''}</p><div class="cgrid">${RIVALS.map(rvCardHTML).join('')}</div></div><details class="rvrules"><summary>How rival studios work</summary><p>From Table Read (Level 3), rival studios play your season alongside you. They buy from the same character pool (watch the <b>in pool</b> counts), fight the same episodes behind the scenes, and lose lives the same way. At Table Read their cast fights you once, in Act 2. From the Season on, any normal episode from Episode 3 can turn out to be a fight against one of their casts: the Next Episode panel shows who is coming. Their casts fight with everything yours has: genre and trait bonuses, items, their Legendary and battlefield-wide effects like Army barrages. When a rival's cast is coming, it lines up against your board. Higher Ascensions add more rivals, up to 7; rival casts also grow with the level like Reruns, turn up more often from Ascension 9, fight at full strength from Ascension 11, and Sweeps Week and Series Finale put them on the schedule. Rival casts are matched to the level: when one is due, the show looks at a few rival studios and sends the one whose cast best fits the level's difficulty against your current board (it never changes their stats). Every rival plays one of the strongest trained versions of its style, so the same rival can play a little differently from run to run.</p><p>Every rival has its own head for the game, built on a real method from maths, statistics or AI (open <b>How it thinks</b> on an unlocked card). Four of them learn from your runs on this device and nothing is sent. After a rival fight, <b>🧠 What was it thinking?</b> shows the decisions behind its cast.</p></details>`;
   if(tab==='lab')body=`<p>The <b>Algorithm Lab</b>: every rival studio plays by a real method from maths, statistics or AI. Beat one, then open <b>🧠 What was it thinking?</b> after the fight to see its numbers. Grouped by family:</p>${RB.FAM.map(([k,n,d])=>{const xs=RIVALS.filter(x=>(RB.CARDS[x.id]||{}).fam===k);return xs.length?`<h3>${n}</h3><p class="muted">${esc(d)}</p><div class="cgrid">${xs.map(x=>{const c=RB.CARDS[x.id],v=RVX[x.id]||{};return rvKnown(x.id)?`<button class="ccard rvlab" data-a="rvcard" data-v="${x.id}"><span class="rvhd">${rvFigHTML(x.id)}<span><h3>${x.e} ${esc(x.name)}</h3><b>${esc(c.algo)}</b></span></span><p>${esc(v.flav||c.kid)}</p><p class="rvteach"><code>${esc(c.code)}</code></p></button>`:`<button class="ccard rvlab lock" data-a="rvcard" data-v="${x.id}"><span class="rvhd">${rvFigHTML(x.id)}<span><h3>❔ ???</h3><b>Method hidden</b></span></span><p class="rvlk">🔒 Beat this rival's cast to see how it thinks.</p></button>`;}).join('')}</div>`:'';}).join('')}`;
   if(tab==='enemies')body=(TUNE.genOn?`<div class="rules"><p><b>Every fight is new.</b> Normal fights are put together each time from the act's monsters below, from 3 to about 5 enemies, sometimes a pack of one kind. Bosses stay, and from Act 2 a boss can be elite.</p>${TUNE.ghOn?`<p><b>📼 Reruns.</b> From Act 2, some normal fights are another studio's cast: a real team our test bots built at that same episode, with its items and Legendary, scaled to the episode. They fight with everything a player's cast has: genre and trait bonuses and battlefield-wide effects like Army barrages, Swarm regrowth and the Game Ball.</p>`:''}<p><b>Elite traits:</b> ${AFF_KEYS.map(k=>AFF[k].e+' <b>'+AFF[k].n+'</b>: '+AFF[k].d).join(' · ')}.</p>${TUNE.efamOn?`<p><b>Enemy families</b> (bonuses switch on with 2 and 3 on the field, like your genres):</p><ul>${Object.values(EFAM).map(x=>`<li>${x.e} <b>${x.n}</b> (${x.m.filter(k=>EN[k]).map(k=>EN[k].name).join(', ')}): 2: ${x.d2}. 3: ${x.d3}.</li>`).join('')}</ul><p><b>Enemy crossovers</b> (two families with 2+ each):</p><ul>${EXO.map(x=>`<li>🔗 <b>${x.n}</b> (${EFAM[x.a].n} + ${EFAM[x.b].n}): ${x.d}</li>`).join('')}</ul>`:''}</div>`:'')+Array.from({length:TUNE.acts},(_,k)=>k+1).map(a=>{const keys=[...new Set([...(ENC[a].codex||ENC[a].normal),...(ENC[a].easy||[]),ENC[a].boss].join(' ').split(' ').map(x=>x.split(':')[1]))];return `<h3>Act ${a}</h3><div class="cgrid">${keys.map(k=>`<div class="ccard">${enemyDetail(k,null)}</div>`).join('')}</div>`;}).join('');
   return `<section class="screen codex"><div class="row" style="justify-content:space-between"><h2>📖 Codex</h2><button class="btn" data-a="codex-back">Back</button></div>
@@ -23806,10 +23807,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.9',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.10',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.10',items:[["📖", "<b>One name per thing:</b> levels are the Pilot (1-3), the Season and Ascension 1-14 everywhere (Codex, locks, Settings, title card)."], ["✏️", "Clearer texts: stars (not \"levels\") for characters and items, 🪙 gold (not coins), Legendary choices, the Wheel's ALL slice, Crossover Crest, Catch! and the Skip the Pilot dialog (seven genres at the start; Space Opera and Kaiju arrive as episodes air)."]]},
   {v:'20.9',items:[["⚙️", "Deus Ex Machina is a real final boss now: it brings a full cast of six, and its Divine Intervention calls in a CGI Army."]]},
   {v:'20.8',items:[["🎬", "<b>Episode banner fixed:</b> the gold band at the start of each round now fits its text on every screen size. The level line and the enemy name no longer sit on the gold lines."]]},
   {v:'20.7',items:[["📤", "<b>Share your run:</b> the end screen has a Share button. It makes a picture of your final team with your level, how far you got and your best fight, plus a short text line with the game link."], ["📱", "On phones it opens your share menu. On computers: download the picture or copy it, or copy the text. The picture is made on your device; the game uploads nothing."]]},
@@ -23970,7 +23972,7 @@ const TL_SKIP={pool:1,seen:1,stats:1,shop:1,usedEvents:1,preDone:1,lobby:1,event
 function tlSlim(st){const o={};for(const k in st)if(!TL_SKIP[k])o[k]=st[k];return JSON.parse(JSON.stringify(o));}
 function tlSnapSt(f){try{f.st=tlSlim(S);const id=S.enemy&&S.enemy.rival,R=id&&S.lobby&&S.lobby.rv.find(x=>x.id===id);if(R)f.rv={id:R.id,rng:R.rng,st:tlSlim(R.st)};}catch(e){}}
 function tlSeed(sd){try{const r=tlCur();if(r&&r.f)r.f.sd=sd;}catch(e){}}
-function tlPrivacy(){return `<h3 id="privacy">Privacy</h3><p>Tropebrawl records every run anonymously, to train the AI rivals and to balance the game. What is sent: the run's choices (buys, sells, rerolls, picks), your board, bench and items at each fight, the results, the Game Level, the game version, play time, and a random install ID made on this device. No names, no accounts, no emails, nothing about your device. We don't store IP addresses; the services we use to receive runs (ntfy.sh, Google Forms) may log connection info.</p><p>Turn it off any time: <b>Settings → Share anonymous run data</b>. Your saves stay on this device.</p>`;}
+function tlPrivacy(){return `<h3 id="privacy">Privacy</h3><p>Tropebrawl records every run anonymously, to train the AI rivals and to balance the game. What is sent: the run's choices (buys, sells, rerolls, picks), your board, bench and items at each fight, the results, the level, the game version, play time, and a random install ID made on this device. No names, no accounts, no emails, nothing about your device. We don't store IP addresses; the services we use to receive runs (ntfy.sh, Google Forms) may log connection info.</p><p>Turn it off any time: <b>Settings → Share anonymous run data</b>. Your saves stay on this device.</p>`;}
 function tlPrivacySheet(){return `<div class="eyebrow">Settings</div><h3 style="color:var(--gold)">🔒 Run data</h3><div class="rules credits" data-noemoji>${tlPrivacy().replace(/<h3[^>]*>Privacy<\/h3>/,'')}</div><p class="muted" style="font-size:.82rem">Sharing is ${SET.share!==false?'<b>on</b>':'<b>off</b>'}.</p><div class="row" style="gap:8px"><button class="btn sm" data-a="settings">Settings</button></div>`;}
 
 function tlRes(win){try{if(!tlOn())return;const r=tlCur();if(r&&r.f)r.f.w=win?1:0;
@@ -24011,10 +24013,10 @@ function settingsHTML(){
     ${sw('share',SET.share!==false,'Share anonymous run data','Your runs help train the AI rivals. No names, no personal info.')}
     <p class="muted setpriv">On by default. <button class="lnk" data-a="privacy">What is sent</button></p>
     <p class="muted setpriv">Learning rivals remember your play on this device only. <button class="lnk" data-a="rvforget">Forget what rivals learned</button></p>
-    ${sw('coach',SET.coach,'Coaching tips','Levels 1-3: the tutorial coach points at what to do next. From Game Level 9: a tip on the shop screen when you hold a lot of gold or field only one or two genres.')}
-    <div class="row" style="margin:-2px 0 8px;gap:6px"><button class="btn sm ghost" data-a="tut-reset">↺ Replay the tutorial tips</button>${S&&!S.over&&S.ladder&&(S.lv|0)<=3?'<button class="btn sm ghost" data-a="tut-skip">⏭ Skip the tutorial</button>':''}</div>
+    ${sw('coach',SET.coach,'Coaching tips','Levels 1-3: the tutorial coach points at what to do next. From Ascension 5: a tip on the shop screen when you hold a lot of gold or field only one or two genres.')}
+    <div class="row" style="margin:-2px 0 8px;gap:6px"><button class="btn sm ghost" data-a="tut-reset">↺ Replay the tutorial tips</button>${S&&!S.over&&S.ladder&&(S.lv|0)<=3?'<button class="btn sm ghost" data-a="tut-skip">⏭ Skip the Pilot</button>':''}</div>
     ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
-    ${sw('allLv',SET.allLv,'Unlock all Game Levels','Pick any level from '+lvMin()+' to '+LV_MAX+' on the title screen. Wins don\'t count toward unlocking levels while this is on.')}
+    ${sw('allLv',SET.allLv,'Unlock all levels','Pick any level on the title screen, from the Pilot to Ascension '+(LV_MAX-4)+'. Wins don\'t count toward unlocking levels while this is on.')}
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🛠</span><span><b>Developer</b><small>Test panel (jump to any level, event or round) and the Animation Studio (every animation, with notes).</small></span><span class="seg"><button class="btn sm" data-a="devpanel">Test panel</button><button class="btn sm" data-a="devstudio">🎬 Animation Studio</button></span></div>
     <div class="setver"><span>Tropebrawl v${TB_VERSION}</span><button class="btn sm ghost" data-a="news">📜 What's new</button></div>
 `;}
@@ -25726,7 +25728,7 @@ function rvBrainPlace(R){
     const horizon = () => { const st = S.stats || {}, f = st.fights | 0, l = f - (st.won | 0), q = (l + 1) / (f + 2), left = SCHEDULE.length - S.round;
       const life = S.lives / (lossCost() * q) * 7 / 6; return { left, life, h: Math.min(left, life), q }; };
     let kept = 0, H = null;
-    return { why: () => H ? `Payback rule: at 🪙${goldCap()} a coin earns ${Math.round(100 / payback)}% a round, so it pays back in ${payback} rounds. She expects to last ${Math.round(H.h)} more rounds (${H.left} left; ${S.lives} lives at a ${Math.round(100 * H.q)}% loss rate), so she ${kept ? 'kept 🪙' + kept : 'cashed out and spent'}.` : '',
+    return { why: () => H ? `Payback rule: at 🪙${goldCap()} each 🪙 earns ${Math.round(100 / payback)}% a round, so it pays back in ${payback} rounds. She expects to last ${Math.round(H.h)} more rounds (${H.left} left; ${S.lives} lives at a ${Math.round(100 * H.q)}% loss rate), so she ${kept ? 'kept 🪙' + kept : 'cashed out and spent'}.` : '',
       bank: (b0, r, cr) => { H = horizon(); return (kept = (r >= 3 && H.h >= payback && cr.type !== 'boss' && S.lives > lossCost()) ? goldCap() : 0); },
       reroll: c => S.freeRerolls > 0 || (!kept && S.gold >= rerollCost() + (P.keep || 0) && !(S.rank < c.tg && trainCost() != null)) };
   } };
@@ -25800,7 +25802,7 @@ function rvBrainPlace(R){
     let p0 = null, k0 = '', D = null;
     const now = () => { const k = S.units.map(u => u.id + u.level + u.slot[0]).join(); if (k !== k0) { k0 = k; p0 = powNow(); } return p0; };
     return {
-      why: () => D ? `Streak maths: the next win pays 🪙${D.winGold}${D.sk >= 2 ? ` (win streak of ${D.sk})` : ''} and saves ${lossCost()} lives; a coin spent is worth ${D.spendVal.toFixed(2)} vs ${D.intVal.toFixed(2)} saved, so Duke ${D.sk >= 2 || D.spendVal >= D.intVal ? 'spent everything' : 'kept 🪙10'}.` : `Duke spent everything to win now (🪙${S.gold} left).`,
+      why: () => D ? `Streak maths: the next win pays 🪙${D.winGold}${D.sk >= 2 ? ` (win streak of ${D.sk})` : ''} and saves ${lossCost()} lives; a 🪙 spent is worth ${D.spendVal.toFixed(2)} vs ${D.intVal.toFixed(2)} saved, so Duke ${D.sk >= 2 || D.spendVal >= D.intVal ? 'spent everything' : 'kept 🪙10'}.` : `Duke spent everything to win now (🪙${S.gold} left).`,
       score: (id, P2, o) => { const g = boardPow(topSet(afterBuy(id, o ? o.level : 1), boardSize())) - now(); return 0.7 * rvScore0(id, P) + 60 * g / Math.max(1, now()) / Math.max(1, shopPrice(o || { id, level: 1 })); },
       bank: (b0, r, cr) => {
         const sk = S.streak | 0, winGold = 1 + streakGold(Math.max(0, sk) + 1), lifeGold = 6 * lossCost();   // a life valued at 6 gold (tuning constant)
@@ -25980,14 +25982,14 @@ function rvBrainPlace(R){
   RB.FAM = [['prob', '🎲 Probability', 'Chances, odds and updating your beliefs.'], ['opt', '🧮 Optimisation & search', 'Finding the best choice among many.'],
     ['greedy', '⚡ Greedy & robust', 'Best right now, or safe in the worst case.'], ['learn', '🧠 Learning', 'Getting better from experience.'], ['game', '♟️ Game theory', 'Playing against an opponent who thinks too.']];
   RB.CARDS = {
-    penny: { fam: 'opt', algo: 'Payback period (risk-adjusted)', kid: "Penny saves her coins because savings grow, but only while she's sure she'll be around to spend them.",
-      teach: 'At the 🪙50 cap a coin earns 10% a round, so it pays itself back in 10 rounds. Her horizon is the smaller of the rounds left and her expected rounds until she is knocked out (lives ÷ (life cost × her loss rate)).', code: 'bank = horizon(lives, lossRate) ≥ payback ? 50 : 0' },
+    penny: { fam: 'opt', algo: 'Payback period (risk-adjusted)', kid: "Penny saves her gold because savings grow, but only while she's sure she'll be around to spend them.",
+      teach: 'At the 🪙50 cap each 🪙 earns 10% a round, so it pays itself back in 10 rounds. Her horizon is the smaller of the rounds left and her expected rounds until she is knocked out (lives ÷ (life cost × her loss rate)).', code: 'bank = horizon(lives, lossRate) ≥ payback ? 50 : 0' },
     rex: { fam: 'prob', algo: 'Expected value (binomial shop odds)', kid: 'Rex works out the odds before every reroll, like counting cards.',
       teach: 'Per shop slot, P(card) = P(rarity) × 1 / (characters of that rarity still in the pool), plus the nudge toward cards you own. He rerolls only when the expected value of the next shop beats the 🪙2 it costs.', code: 'if Σ P(copy shows) × value(copy) ≥ rerollCost: reroll' },
     ivy: { fam: 'opt', algo: 'Hill climbing (local search)', kid: 'Ivy keeps swapping characters around until she finds the board with the most bonuses switched on.',
       teach: 'Objective: active genre tiers + trait tiers + 1.5 × crossovers, power as the tie-break. She tries every bench↔board swap and keeps any that improves the score.', code: 'repeat: try each swap; keep it if bonuses go up' },
     duke: { fam: 'greedy', algo: 'Greedy (one-fight horizon) + expected value', kid: 'Duke only cares about winning the very next fight, and a winning streak makes him spend even more.',
-      teach: 'Each card is worth the power it adds to this fight per gold. A coin is spent if its share of the next win (win gold + streak bonus + lives saved) beats the interest it would earn.', code: 'buy argmax Δpower_now / price' },
+      teach: 'Each card is worth the power it adds to this fight per gold. A 🪙 is spent if its share of the next win (win gold + streak bonus + lives saved) beats the interest it would earn.', code: 'buy argmax Δpower_now / price' },
     goldie: { fam: 'prob', algo: 'Bayesian updating (Beta-binomial)', kid: 'Goldie keeps a notebook of which rare characters she has seen, and bets on the one most likely to show up again.',
       teach: "Prior = the shop's printed odds; data = her own shops. The posterior gives each rare's chance of reaching ★★ before Ep 20 (Poisson), and she chases the best one.", code: 'θ ~ Beta(4m + seen, 4(1−m) + unseen); P(★★) = P(Poisson(θ·shopsLeft) ≥ need)' },
     sal: { fam: 'opt', algo: '0/1 knapsack', kid: 'Sal shops like a bargain hunter: the most muscle for the least money.',
@@ -26147,7 +26149,7 @@ function scoutBody(x){const n=scoutWho(x.id);
       <div class="scsec"><h4>Crossovers</h4><div class="scchips">${xh||'<span class="muted">None switched on</span>'}</div></div>
       ${it?`<div class="scsec"><h4>Items</h4><div class="scchips">${it}</div></div>`:''}`;});}
 function scoutHTML(sel){const sc=scoutSnap();
-  if(!sc)return `<div class="scoutsh"><div class="eyebrow">Scouting</div><h3 style="color:var(--gold);margin:0">📸 No rivals this run</h3><p class="muted">Rival studios join from the Game Level that turns them on.</p></div>`;
+  if(!sc)return `<div class="scoutsh"><div class="eyebrow">Scouting</div><h3 style="color:var(--gold);margin:0">📸 No rivals this run</h3><p class="muted">Rival studios join from the level that turns them on.</p></div>`;
   const rv=sc.rv,cur=rv.find(x=>x.id===sel)||rv.find(x=>!x.out&&!x.done)||rv[0];UI.scoutSel=cur.id;
   const when=UI.screen==='plan'||UI.screen==='event'?`the start of Ep ${S.round}`:sc.r?`the end of the rivals' Ep ${sc.r} turn`:'the start of the season';
   const tabs=rv.map(x=>{const n=scoutWho(x.id);return `<button type="button" class="sctab${x.id===cur.id?' on':''}${x.out?' out':''}" data-a="scoutrv" data-v="${x.id}" aria-pressed="${x.id===cur.id}">${n.e} ${esc(n.name)} <b>${x.out?'out':x.done?'done':'❤️'+Math.max(0,x.st.lives|0)}</b></button>`;}).join('');
