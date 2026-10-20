@@ -405,6 +405,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .foe.lineup{font-size:1.15rem;line-height:1;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:44px}.foe.lineup small{font:800 .58rem/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase}
 .nearmiss{margin:6px 0 2px;font-size:1rem}.nearmiss p{margin:2px 0}.nearmiss .nm2{font-size:.86rem;opacity:.88}
 .stknew{margin:4px 0 2px;font-size:.95rem;color:var(--gold,#f5c542)}.stknew b{color:var(--ink)}.gchips .stk{font-size:.72rem;font-weight:800;opacity:.95}.ccard .stkl{margin:2px 0 0;font-size:.8rem}
+.shrpic{margin:8px 0;min-height:80px;display:grid;place-items:center}.shrpic img{width:100%;max-width:600px;height:auto;border-radius:10px;border:1px solid var(--line,#333)}.shrbtns{gap:8px;flex-wrap:wrap}.shrtxt{margin:8px 0 4px;font-size:.82rem;word-break:break-word}.shrtxt code{white-space:normal;font-family:var(--f-body)}
 .lvnext{margin:8px 0;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;font-size:.88rem}
 .endchip.synon{border-color:var(--gold)}.endchip small{color:var(--muted);font-weight:700}
 .bqlbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 2px}
@@ -23049,6 +23050,74 @@ function tutEndBtns(win){const n=S.lv|0;if(n>3)return '<button class="btn primar
   if(!win)return '<button class="btn primary big" data-a="nextep">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start Season 1'}[S.newLv]||'New run';
   return `<button class="btn primary big" data-a="nextep">${lbl}</button><button class="btn" data-a="title">🏠 Main menu</button>`;}
+// v20.7: share card. Drawn on the device from the end screen's own numbers; never uploaded by the game.
+const SHR_URL='https://philabella.github.io/tropebrawl-play/';
+function shrLv(){const n=S.lv|0;return n<=3?'Pilot · Level '+n:n===4?'The Season':'Ascension '+(n-4);}
+function shrData(){const st=runStats(),win=S.result==='win',N=SCHEDULE.length,round=win?N:Math.min(S.round|0,N);
+  const team=fielded().filter(u=>HERO[u.id]).sort((a,b)=>b.level-a.level||HERO[b.id].tier-HERO[a.id].tier).slice(0,8);
+  const c={};team.forEach(u=>{const g=HERO[u.id].genre;if(GENRES[g])c[g]=(c[g]||0)+1;});
+  const gs=Object.keys(c).sort((a,b)=>c[b]-c[a]).map(g=>[g,c[g]]);
+  const best=Object.entries(st.dmg||{}).filter(([id,e])=>HERO[id]&&e.best>0).sort((a,b)=>b[1].best-a[1].best)[0];
+  return {win,N,round,team,gs,best:best?{id:best[0],name:HERO[best[0]].name,v:Math.round(best[1].best)}:null,lv:shrLv()};}
+function shrText(){const d=shrData();
+  return `🎬 Tropebrawl · ${d.lv}: ${d.win?`Victory! All ${d.N} rounds`:`out in round ${d.round}/${d.N}`}`+
+    (d.gs.length?` · ${d.gs.map(([g,n])=>GENRES[g].e+' '+GENRES[g].name+' '+n).join(', ')}`:'')+
+    (d.best?` · Best fight: ${d.best.name} ${fmtN(d.best.v)} damage`:'')+`\n${SHR_URL}`;}
+function shrImg(src){return new Promise(res=>{if(!src)return res(null);const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=src;});}
+async function shrDraw(){const d=shrData(),W=1200,H=630,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
+  try{if(document.fonts&&document.fonts.load)await Promise.all(['64px Anton','700 28px Barlow','28px Barlow'].map(f=>document.fonts.load(f)));}catch(e){}
+  const css=k=>(getComputedStyle(document.documentElement).getPropertyValue(k)||'').trim();
+  const gc=g=>css('--g-'+g)||'#888',main=d.gs.length?gc(d.gs[0][0]):'#888',gold=css('--gold')||'#ffcc2e',red=css('--red')||'#ff4d3d',ink='#f3eee4';
+  const DISP='Anton,Impact,"Arial Narrow Bold",sans-serif',BODY='Barlow,"Segoe UI",system-ui,sans-serif',EMO='"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji",sans-serif';
+  x.fillStyle='#151317';x.fillRect(0,0,W,H);
+  let g=x.createRadialGradient(W*.5,H*.95,40,W*.5,H*.95,W*.75);g.addColorStop(0,main+'88');g.addColorStop(1,'#15131700');x.fillStyle=g;x.fillRect(0,0,W,H);
+  x.fillStyle=main;x.fillRect(0,0,W,10); // genre band
+  x.textBaseline='alphabetic';x.textAlign='left';
+  x.fillStyle=ink;x.font='40px '+DISP;x.fillText('TROPEBRAWL',48,74);
+  x.textAlign='right';x.fillStyle='#bdb6aa';x.font='600 26px '+BODY;x.fillText(d.lv+' · v'+TB_VERSION,W-48,70);
+  x.textAlign='left';x.fillStyle=d.win?gold:red;x.font='112px '+DISP;x.fillText(d.win?'VICTORY':'DEFEAT',44,200);
+  x.fillStyle=ink;x.font='700 34px '+BODY;x.fillText(d.win?`All ${d.N} rounds cleared`:`Out in round ${d.round} of ${d.N}`,48,252);
+  // genres on the final board
+  let gx=48;x.font='700 24px '+BODY;
+  d.gs.slice(0,5).forEach(([k,n])=>{const t=`${GENRES[k].name} ${n}`;x.font='26px '+EMO;const ew=x.measureText(GENRES[k].e).width;x.font='700 24px '+BODY;const w=ew+x.measureText(t).width+34;
+    x.fillStyle=gc(k)+'33';x.strokeStyle=gc(k);x.lineWidth=2;x.beginPath();x.roundRect?x.roundRect(gx,274,w,42,21):x.rect(gx,274,w,42);x.fill();x.stroke();
+    x.font='26px '+EMO;x.fillStyle=ink;x.fillText(GENRES[k].e,gx+14,304);x.font='700 24px '+BODY;x.fillText(t,gx+20+ew,304);gx+=w+10;});
+  // the team: toys stand on one line
+  const n=d.team.length,cw=Math.min(136,(W-96)/Math.max(1,n)),x0=(W-cw*n)/2,foot=530;
+  const ims=await Promise.all(d.team.map(u=>shrImg(SPRITES[u.id+'_f']||SPRITES[u.id]||null)));
+  x.fillStyle='#00000055';d.team.forEach((u,i)=>{x.beginPath();x.ellipse(x0+cw*i+cw/2,foot,cw*.36,9,0,0,7);x.fill();});
+  d.team.forEach((u,i)=>{const cx=x0+cw*i+cw/2,im=ims[i],hgt=196;
+    if(im){const k=hgt/im.height,w=im.width*k;x.drawImage(im,cx-w/2,foot-hgt*.88,w,hgt);}
+    else{x.font='96px '+EMO;x.textAlign='center';x.fillStyle=ink;x.fillText(HERO[u.id].e,cx,foot-20);x.textAlign='left';}
+    x.textAlign='center';x.fillStyle=gold;x.font='700 26px '+BODY;x.fillText('★'.repeat(u.level),cx,foot+34);x.textAlign='left';});
+  if(!n){x.fillStyle='#bdb6aa';x.font='700 28px '+BODY;x.textAlign='center';x.fillText('Nobody on the board',W/2,460);x.textAlign='left';}
+  // best fight (right, under the level) and the link
+  if(d.best){x.textAlign='right';x.fillStyle='#bdb6aa';x.font='600 22px '+BODY;x.fillText('BEST FIGHT',W-48,170);
+    x.fillStyle=ink;x.font='700 30px '+BODY;x.fillText(d.best.name,W-48,206);x.fillStyle=gold;x.font='44px '+DISP;x.fillText(fmtN(d.best.v)+' damage',W-48,256);x.textAlign='left';}
+  x.fillStyle='#bdb6aa';x.font='600 22px '+BODY;x.textAlign='center';x.fillText('Free in your browser: '+SHR_URL.replace(/^https:\/\//,'').replace(/\/$/,''),W/2,H-22);x.textAlign='left';
+  return new Promise(res=>cv.toBlob(b=>res(b),'image/png'));}
+function shrFile(){return UI.shrCard&&UI.shrCard.blob&&typeof File==='function'?new File([UI.shrCard.blob],`tropebrawl-${S.lv|0}-${S.result==='win'?'win':'round'+(S.round|0)}.png`,{type:'image/png'}):null;}
+function shrCanOS(){try{const f=shrFile();return !!(f&&navigator.share&&navigator.canShare&&navigator.canShare({files:[f]}));}catch(e){return false;}}
+function shrCanImg(){return !!(window.ClipboardItem&&navigator.clipboard&&navigator.clipboard.write);}
+function shrSheet(){const c=UI.shrCard,ready=!!(c&&c.rid===S.rid&&c.url);
+  return `<div class="eyebrow">Share this run</div><h3 style="color:var(--gold)">📤 Your run card</h3>
+    <div class="shrpic">${ready?`<img src="${c.url}" alt="Run card: ${esc(shrText().split('\n')[0])}">`:'<p class="muted">Drawing the card…</p>'}</div>
+    <div class="row shrbtns">${ready&&shrCanOS()?'<button class="btn primary" data-a="shr-os">📤 Share…</button>':''}<button class="btn" data-a="shr-dl" ${ready?'':'disabled'}>⬇️ Download</button>${shrCanImg()?`<button class="btn" data-a="shr-img" ${ready?'':'disabled'}>🖼️ Copy picture</button>`:''}</div>
+    <p class="shrtxt"><code>${esc(shrText()).replace('\n','<br>')}</code></p>
+    <div class="row"><button class="btn sm" data-a="shr-txt">📋 Copy text</button></div>
+    <p class="muted" style="font-size:.8rem">Made on your device. The game uploads nothing: you choose where it goes. Download blocked? Press and hold (or right-click) the picture to save it.</p>`;}
+async function shrOpen(){sheet(shrSheet());tlShare('open');
+  if(!(UI.shrCard&&UI.shrCard.rid===S.rid)){try{const blob=await shrDraw();if(UI.shrCard&&UI.shrCard.url)URL.revokeObjectURL(UI.shrCard.url);
+    UI.shrCard={rid:S.rid,blob,url:blob?URL.createObjectURL(blob):''};}catch(e){UI.shrCard={rid:S.rid,blob:null,url:''};}}
+  if(UI.sheetOpen&&UI.screen==='end')sheet(shrSheet());}
+async function shrCopyText(t){try{await navigator.clipboard.writeText(t);return true;}catch(e){}
+  try{const a=document.createElement('textarea');a.value=t;a.style.position='fixed';a.style.opacity='0';document.body.appendChild(a);a.select();const ok=document.execCommand('copy');a.remove();return ok;}catch(e){return false;}}
+async function shrDo(k){const c=UI.shrCard;
+  if(k==='txt'){toast(await shrCopyText(shrText())?'Text copied.':'Could not copy: select the text and copy it.');tlShare('txt');return;}
+  if(!c||!c.blob)return;
+  if(k==='dl'){const a=document.createElement('a');a.href=c.url;a.download=shrFile().name;document.body.appendChild(a);a.click();a.remove();tlShare('dl');return;}
+  if(k==='img'){try{await navigator.clipboard.write([new ClipboardItem({'image/png':c.blob})]);toast('Picture copied.');tlShare('img');}catch(e){toast('Could not copy the picture: use Download.');}return;}
+  if(k==='os'){try{await navigator.share({files:[shrFile()],text:shrText().replace('\n',' '),title:'Tropebrawl'});tlShare('os');}catch(e){}return;}}
 function tutWrapHTML(){return `<div class="lvwin tutwrap"><p>📺 <b>That's a wrap on the Pilot.</b> You can hire, merge, line up, save and pick a Legendary. The network ordered a full season.</p>
   <p><b>The Season is open:</b> four acts, Mythic characters, more items and events${TUNE.rivalsOn?', and a rival studio in your episodes':''}. Every run airs episodes, won or lost: they unlock Space Opera, Kaiju and more.</p>
   <p class="muted" style="font-size:.8rem"><i>Coach tips are done. Replay them any time in Settings.</i></p></div>`;}
@@ -23208,7 +23277,7 @@ SCR.end=()=>{
     </div>
     <div class="endcard"><h3>YOUR FINAL TEAM</h3><div class="chiprow">${team||'<span>Nobody on the board</span>'}</div>${synEnd()}${items?`<h3>ITEMS</h3><div class="chiprow">${items}</div>`:''}</div>
     ${UI.tlSent&&UI.tlSent===S.rid?'<p class="tlsent">✓ Run recorded <small>anonymous · <button class="lnk" data-a="privacy">privacy</button></small></p>':''}
-    <div class="row endbar">${tutEndBtns(win)}<button class="btn" data-a="codex">📖 Codex</button></div>
+    <div class="row endbar">${tutEndBtns(win)}<button class="btn" data-a="share">📤 Share</button><button class="btn" data-a="codex">📖 Codex</button></div>
   </section>`;
 };
 
@@ -23602,6 +23671,8 @@ case 'nextep':{const k=S&&!S.newLv?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().open)UI.
     case 'coach-x':{const ev=curRound();S.coachOff=Object.assign({},S.coachOff||{},{[v]:ev?ev.act:0});go();break;}
     case 'appquit':if(window.tbApp)window.tbApp.quit();break;
     case 'privacy':sheet(tlPrivacySheet());break;
+    case 'share':if(S&&S.over)shrOpen();break; // v20.7: share card
+    case 'shr-os':case 'shr-dl':case 'shr-img':case 'shr-txt':if(S&&S.over)shrDo(a.slice(4));break;
     case 'rvwhy':if(UI.rvWhy)sheet(rvWhySheet(UI.rvWhy));break;
     case 'trans':if(['full','short','off'].includes(v)){SET.trans=v;setSave();}sheet(settingsHTML());break;
     case 'rvforget':RB.forget();toast('Rivals forgot what they learned about your play.');break;
@@ -23733,10 +23804,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.6',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.7',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.7',items:[["📤", "<b>Share your run:</b> the end screen has a Share button. It makes a picture of your final team with your level, how far you got and your best fight, plus a short text line with the game link."], ["📱", "On phones it opens your share menu. On computers: download the picture or copy it, or copy the text. The picture is made on your device; the game uploads nothing."]]},
   {v:'20.6',items:[["🏅", "<b>Genre stickers:</b> win a run with 4 or more characters of one genre on your final board and that genre gets a sticker for the level you beat (Season, Asc 1, Asc 2, ...). Each genre keeps its best."], ["👀", "Stickers show on the genre chips of the main menu and in the Codex genre cards, and the win screen tells you when you get a new one. They start empty: go collect all 9."]]},
   {v:'20.5',items:[["▶", "The end screen's main button is now <b>Next episode</b>: one tap starts a new run at the same Game Level. Main menu is right next to it."], ["📏", "Under Victory or Defeat, one line says how far the run got (\"Out in round 31/36, 5 from the finale\"), your best round at that level, and what the next unlock still needs."]]},
   {v:'20.4',items:[["📱", "Phones: a shop round fits on one screen. Your board, bench, the shop and Reroll / Train / Lock / Fight are all in view; the next enemy, rivals, tips, items and the Pool sit behind a row of tabs under the top bar (tap one to open it, tap outside to close)."], ["👆", "On phones, tapping a character opens its details as a sheet at the bottom instead of pushing the shop down, and intermission choices are compact rows, all on the first screen. Turned sideways, the shop splits into two columns and the fight fits the screen."]]},
@@ -23899,9 +23971,16 @@ function tlPrivacySheet(){return `<div class="eyebrow">Settings</div><h3 style="
 
 function tlRes(win){try{if(!tlOn())return;const r=tlCur();if(r&&r.f)r.f.w=win?1:0;
   if(!globalThis.__tlForce&&!tlDb()&&tlRelay()&&TL&&(curRound()||{}).type==='boss'&&!S.over)tlSend(tlSnap('open'));}catch(e){}}
+// v20.7: a share on the end screen adds x:<how> to the finished run's last round (once per kind) and sends it again
+async function tlShare(how){try{const rec=UI.tlRec;if(!rec||!S||rec.rid!==S.rid||!tlOn())return;const r=rec.r[rec.r.length-1];
+  if(!r||!Array.isArray(r.a)||r.a.includes('x:'+how))return;r.a.push('x:'+how);
+  if(globalThis.__tlForce){(globalThis.__tlOut=globalThis.__tlOut||[]).push(JSON.parse(JSON.stringify(rec)));return;}
+  if(!tlDb()){if(tlForm())tlFormPost(rec);if(tlRelay())await tlSend(rec);return;}
+  const db=await window.claude.use('db'),user=await window.claude.use('user');if(!db||!user)return;const id=await user.id();if(id)await db.collection('runs/'+id+'/r').doc(rec.rid).set(rec);}catch(e){}}
 function tlSave(){try{if(TL)localStorage.setItem(TL_KEY,JSON.stringify(TL));}catch(e){}}
 async function tlEnd(quit){try{if(!tlOn())return;tlCur();if(!TL)return;
   const rec=Object.assign({},TL,{res:quit?'quit':S.result,round:S.round,lives:S.lives,ms:S.playMs||0,end:new Date().toISOString()});TL=null;try{localStorage.removeItem(TL_KEY);}catch(e){}
+  UI.tlRec=rec; // v20.7: kept so a share can be marked on it (tlShare)
   if(globalThis.__tlForce){(globalThis.__tlOut=globalThis.__tlOut||[]).push(rec);return;}
   const sent=()=>{UI.tlSent=rec.rid;if(UI.screen==='end')render();};
   if(!tlDb()){Object.assign(rec,{pid:tlPid(),src:(typeof window!=='undefined'&&window.tbApp)?'app':'pages'});const fa=tlForm()&&tlFormPost(rec),ra=tlRelay()&&await tlSend(rec);if(fa||ra)sent();return;}
