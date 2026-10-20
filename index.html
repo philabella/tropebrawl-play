@@ -404,6 +404,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 #field.arena .bslot{min-height:0}.bbq .slot.bq{cursor:default}
 .foe.lineup{font-size:1.15rem;line-height:1;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:44px}.foe.lineup small{font:800 .58rem/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase}
 .nearmiss{margin:6px 0 2px;font-size:1rem}.nearmiss p{margin:2px 0}.nearmiss .nm2{font-size:.86rem;opacity:.88}
+.stknew{margin:4px 0 2px;font-size:.95rem;color:var(--gold,#f5c542)}.stknew b{color:var(--ink)}.gchips .stk{font-size:.72rem;font-weight:800;opacity:.95}.ccard .stkl{margin:2px 0 0;font-size:.8rem}
 .lvnext{margin:8px 0;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;font-size:.88rem}
 .endchip.synon{border-color:var(--gold)}.endchip small{color:var(--muted);font-weight:700}
 .bqlbl{font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 2px}
@@ -20710,7 +20711,21 @@ function lvRecord(){
     if(n===4)pf.ls=S.result==='win'?0:pf.ls+1;profStore(pf);}
   if(S.real){const pf=profLoad(),b=pf.best&&typeof pf.best==='object'?pf.best:{},got=S.result==='win'?SCHEDULE.length:S.round|0; // v20.5
     S.bestBefore=b[n]|0;if(got>S.bestBefore){b[n]=got;pf.best=b;profStore(pf);}}
+  S.stkNew=[];if(S.real&&S.result==='win'&&n>=4&&!(DEV.on&&DEV.all)){const pf=profLoad(),k=stkLoad(pf),c=stkBoard(); // v20.6
+    Object.keys(c).filter(g=>c[g]>=STK_MIN&&(k[g]|0)<n).forEach(g=>{S.stkNew.push([g,n,k[g]|0]);k[g]=n;});if(S.stkNew.length){pf.stk=k;profStore(pf);}}
 }
+// v20.6: genre stickers. Each genre keeps the highest tier (Season, Ascension 1-14) won with 4+ of its characters on the
+// final board. Saved in the profile; saves from before v20.6 start empty.
+const STK_MIN=4;
+function stkLoad(pf){const k=(pf||profLoad()).stk;return k&&typeof k==='object'?Object.assign({},k):{};}
+function stkBoard(){const c={};fielded().forEach(u=>{const h=HERO[u.id];if(h&&GENRES[h.genre])c[h.genre]=(c[h.genre]||0)+1;});return c;}
+function stkNm(n){n=n|0;return n===4?'Season':'Asc '+(n-4);}
+function stkChip(g){const n=stkLoad()[g]|0;return n>=4?` <small class="stk" title="Sticker: best win with ${STK_MIN}+ ${esc(GENRES[g].name)} on the board">🏅 ${stkNm(n)}</small>`:'';}
+function stkCodex(g){const n=stkLoad()[g]|0;
+  return n>=4?`<p class="stkl">🏅 <b>Sticker: ${stkNm(n)}</b>. Your best win with ${STK_MIN}+ ${esc(GENRES[g].name)} on the final board.</p>`
+    :`<p class="stkl">🏅 No sticker yet: win a run with ${STK_MIN}+ ${esc(GENRES[g].name)} on the final board.</p>`;}
+function stkHTML(){if(!S||!S.stkNew||!S.stkNew.length)return '';
+  return `<p class="stknew">${S.stkNew.map(([g,n,was])=>`🏅 New sticker: <b>${GENRES[g].e} ${esc(GENRES[g].name)} · ${stkNm(n)}</b>${was>=4?` (was ${stkNm(was)})`:''}`).join('<br>')}</p>`;}
 // v20.5: one true line under the result (how far this run got, your best at this level) and the next unlock with what
 // is missing. The best is kept per Game Level in the profile, real runs only; no line about a best on the first run.
 function nearHTML(){if(!S||!S.over)return '';const N=SCHEDULE.length,win=S.result==='win',got=win?N:S.round|0,left=N-got,b=S.bestBefore|0,n=S.lv|0;
@@ -22847,7 +22862,7 @@ SCR.title=()=>{
       <button class="btn sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('')}
     </div>
     ${newsCard()}
-    <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}</span>`).join('')}</div>
+    <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION} · <button class="lnk" data-a="news">What's new</button></p>
   </section>`;
 };
@@ -23177,7 +23192,7 @@ SCR.end=()=>{
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
-    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${nearHTML()}</div>
+    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${nearHTML()}${stkHTML()}</div>
     ${S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
@@ -23468,7 +23483,7 @@ SCR.codex=()=>{
     <h3>Random events</h3><p>Each act can bring one, at the start of any episode between its first fight and its boss. Each happens at most once a run; higher Game Levels bring more, and more bad ones.</p>
     <div class="cgrid">${['fanmail','craft','cameo','review','props','strike','montage','cursed','insurance','reboot','cut','wheel'].filter(k=>EVENTS[k]).map(k=>ev(k,ch(k))).join('')}</div></div>`;}
   if(tab==='heroes')body=Object.keys(GENRES).map(g=>`<h3>${GENRES[g].e} ${GENRES[g].name}</h3><div class="cgrid">${HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]];const st=heroStatsAt(d.id,1);return `<button class="ccard g-${g}${cxLk('h',d.id)}" data-a="hero-info" data-v="${d.id}" data-l="1" aria-label="${esc(d.name)} details"><div class="hd">${heroPt(d.id,'sm')}<span><b>${esc(d.name)}</b><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${TRAITS[d.trait].name}${d.crowd?' · 👥 crowd':''}</span></div><p><b>${SK[d.skill].name}:</b> ${skillStars(d.id,0)}</p><p>${reachLabel(d.id)} · ${atkVerb(d.id)} · ${targetShort(d.id)}</p>${cxLkP('h',d.id)}</button>`;}).join('')}</div>`).join('');
-  if(tab==='syn')body=`<h3>Genres</h3><div class="cgrid">${Object.keys(GENRES).map(k=>`<div class="ccard g-${k}${cxLk('g',k)}"><div class="hd"><span class="emo" style="font-size:1.4rem">${GENRES[k].e}</span><b>${GENRES[k].name}</b></div>${GENRES[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${GENRES[k].d[i]}</p>`).join('')}${cxLkP('g',k)}</div>`).join('')}</div>
+  if(tab==='syn')body=`<h3>Genres</h3><div class="cgrid">${Object.keys(GENRES).map(k=>`<div class="ccard g-${k}${cxLk('g',k)}"><div class="hd"><span class="emo" style="font-size:1.4rem">${GENRES[k].e}</span><b>${GENRES[k].name}</b></div>${GENRES[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${GENRES[k].d[i]}</p>`).join('')}${stkCodex(k)}${cxLkP('g',k)}</div>`).join('')}</div>
     <h3>Traits</h3><div class="cgrid">${Object.keys(TRAITS).map(k=>`<div class="ccard"><div class="hd"><span class="syn" style="padding:.2em .4em">${tsvg(k)}</span><b>${TRAITS[k].name}</b></div>${TRAITS[k].tiers.map((t,i)=>`<p><b>${t}:</b> ${TRAITS[k].d[i]}</p>`).join('')}</div>`).join('')}</div>
     <h3>Crossovers</h3><p class="muted" style="font-size:.82rem">Two genres together switch on a crossover bonus. <button class="btn sm" data-a="codex-tab" data-v="cross">See all ${CROSSOVERS.length} crossovers</button></p>`;
   if(tab==='cross')body=crossListBody();
@@ -23718,10 +23733,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.5',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.6',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.6',items:[["🏅", "<b>Genre stickers:</b> win a run with 4 or more characters of one genre on your final board and that genre gets a sticker for the level you beat (Season, Asc 1, Asc 2, ...). Each genre keeps its best."], ["👀", "Stickers show on the genre chips of the main menu and in the Codex genre cards, and the win screen tells you when you get a new one. They start empty: go collect all 9."]]},
   {v:'20.5',items:[["▶", "The end screen's main button is now <b>Next episode</b>: one tap starts a new run at the same Game Level. Main menu is right next to it."], ["📏", "Under Victory or Defeat, one line says how far the run got (\"Out in round 31/36, 5 from the finale\"), your best round at that level, and what the next unlock still needs."]]},
   {v:'20.4',items:[["📱", "Phones: a shop round fits on one screen. Your board, bench, the shop and Reroll / Train / Lock / Fight are all in view; the next enemy, rivals, tips, items and the Pool sit behind a row of tabs under the top bar (tap one to open it, tap outside to close)."], ["👆", "On phones, tapping a character opens its details as a sheet at the bottom instead of pushing the shop down, and intermission choices are compact rows, all on the first screen. Turned sideways, the shop splits into two columns and the fight fits the screen."]]},
   {v:'20.3',items:[["🎭", "Rivals are a roster to collect now. Each studio stays a blacked-out silhouette until you beat its cast; beat one and it steps into the spotlight with its own intro, and its Codex card fills in with who they are and how they play."], ["🎬", "Every run opens on a title card for your level, and the label then sits in the top bar the whole run (shop, intermissions and fights), so you always know which Ascension you're on. Clearing a level reveals everything you unlocked, one by one."], ["📺", "Episode bumpers between the shop and fights, intermission cards and a wipe back to the shop. Settings → Transitions: Full, Short or Off. A click or any key skips them."]]},
