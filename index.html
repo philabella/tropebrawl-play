@@ -211,8 +211,10 @@ strong.lvon{color:var(--gold);font-weight:800}
 #tbx.bump.on{clip-path:inset(0 0 0 0)}#tbx.bump.out{clip-path:inset(0 100% 0 0);transition-duration:.28s}
 #tbx.bump.k5{transition-duration:.13s}#tbx.bump.k5.out{transition-duration:.16s}
 #tbx.bump::before{content:'';position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.035) 0 1px,transparent 1px 3px),radial-gradient(ellipse 70% 60% at 50% 50%,rgba(255,204,46,.10),transparent 70%)}
-#tbx.bump::after{content:'';position:absolute;left:0;right:0;top:50%;height:4px;margin-top:-64px;background:var(--gold);box-shadow:0 128px 0 var(--gold);opacity:.85;transform:scaleX(0);transform-origin:0 50%;transition:transform .45s .1s cubic-bezier(.2,.8,.2,1)}
-#tbx.bump.on::after{transform:scaleX(1)}
+#tbx.bump .tbep{padding:26px 16px;min-height:132px;align-content:center}
+#tbx.bump .tbep::before,#tbx.bump .tbep::after{content:'';position:absolute;left:50%;width:100vw;margin-left:-50vw;height:4px;background:var(--gold);opacity:.85;transform:scaleX(0);transform-origin:0 50%;transition:transform .45s .1s cubic-bezier(.2,.8,.2,1)}
+#tbx.bump .tbep::before{top:0}#tbx.bump .tbep::after{bottom:0}
+#tbx.bump.on .tbep::before,#tbx.bump.on .tbep::after{transform:scaleX(1)}
 #tbx.bump.rm,#tbx.bump.rm.on,#tbx.bump.rm.out{clip-path:none}#tbx.bump.rm{opacity:0;transition:opacity .2s}#tbx.bump.rm.on{opacity:1}#tbx.bump.rm.out{opacity:0}
 .tbep{position:relative;display:grid;justify-items:center;gap:6px;text-align:center;padding:0 16px;max-width:100%}
 .tbep b{font-family:var(--f-display);font-weight:400;font-size:clamp(2.6rem,12vw,5.4rem);line-height:1;color:var(--gold);text-shadow:4px 4px 0 #000;letter-spacing:.02em;text-transform:uppercase}
@@ -23804,10 +23806,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.7',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.8',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.8',items:[["🎬", "<b>Episode banner fixed:</b> the gold band at the start of each round now fits its text on every screen size. The level line and the enemy name no longer sit on the gold lines."]]},
   {v:'20.7',items:[["📤", "<b>Share your run:</b> the end screen has a Share button. It makes a picture of your final team with your level, how far you got and your best fight, plus a short text line with the game link."], ["📱", "On phones it opens your share menu. On computers: download the picture or copy it, or copy the text. The picture is made on your device; the game uploads nothing."]]},
   {v:'20.6',items:[["🏅", "<b>Genre stickers:</b> win a run with 4 or more characters of one genre on your final board and that genre gets a sticker for the level you beat (Season, Asc 1, Asc 2, ...). Each genre keeps its best."], ["👀", "Stickers show on the genre chips of the main menu and in the Codex genre cards, and the win screen tells you when you get a new one. They start empty: go collect all 9."]]},
   {v:'20.5',items:[["▶", "The end screen's main button is now <b>Next episode</b>: one tap starts a new run at the same Game Level. Main menu is right next to it."], ["📏", "Under Victory or Defeat, one line says how far the run got (\"Out in round 31/36, 5 from the finale\"), your best round at that level, and what the next unlock still needs."]]},
