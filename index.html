@@ -23285,7 +23285,7 @@ function shrData(){const st=runStats(),win=S.result==='win',N=SCHEDULE.length,ro
 function shrText(){const d=shrData();
   return `🎬 Tropebrawl · ${d.lv}: ${d.win?`Victory! All ${d.N} rounds`:`out in round ${d.round}/${d.N}`}`+
     (d.gs.length?` · ${d.gs.map(([g,n])=>GENRES[g].e+' '+GENRES[g].name+' '+n).join(', ')}`:'')+
-    (d.best?` · Best fight: ${d.best.name} ${fmtN(d.best.v)} damage`:'')+`\n${SHR_URL}`;}
+    (d.best?` · Best fight: ${d.best.name} ${fmtN(d.best.v)} damage`:'')+`\n${SHR_URL}${tlShareQ()}`;}
 function shrImg(src){return new Promise(res=>{if(!src)return res(null);const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=src;});}
 async function shrDraw(){const d=shrData(),W=1200,H=630,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
   try{if(document.fonts&&document.fonts.load)await Promise.all(['64px Anton','700 28px Barlow','28px Barlow'].map(f=>document.fonts.load(f)));}catch(e){}
@@ -23897,6 +23897,7 @@ case 'nextep':{const k=S&&!S.newLv&&!S.gym?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().
     case 'coach-x':{const ev=curRound();S.coachOff=Object.assign({},S.coachOff||{},{[v]:ev?ev.act:0});go();break;}
     case 'appquit':if(window.tbApp)window.tbApp.quit();break;
     case 'privacy':sheet(tlPrivacySheet());break;
+    case 'tcode':tlCodeCheck();break;
     case 'share':if(S&&S.over)shrOpen();break; // v20.7: share card
     case 'shr-os':case 'shr-dl':case 'shr-img':case 'shr-txt':if(S&&S.over)shrDo(a.slice(4));break;
     case 'rvwhy':if(UI.rvWhy)sheet(rvWhySheet(UI.rvWhy));break;
@@ -24030,10 +24031,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.17',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.18',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.18',items:[["🔒", "Anonymous run data now also holds three rough facts: where you came from, your time zone and phone or computer. Settings → What is sent lists everything."]]},
   {v:'20.17',items:[["🔒", "Test browsers run by scripts no longer send run data, so the run log only holds real players."]]},
   {v:'20.16',items:[["🔍", "Wide screens: the characters on your board and bench are about a third bigger and stand on their tiles, with the name beside them."], ["✨", "Board toys are drawn at the size you see them, so they stay sharp instead of grainy."]]},
   {v:'20.15',items:[["🛒", "<b>Shop cards show the whole character</b> now, framed the same on every screen, with attack, HP and price in the same style as your board."], ["⚔️", "Fight! with nobody on your board is a dashed outline; it turns solid yellow when you are ready."]]},
@@ -24176,6 +24178,31 @@ function tlFormPost(rec){try{let js=JSON.stringify(rec);if(js.length>45000){rec=
   if(!(navigator.sendBeacon&&navigator.sendBeacon(TL_FORM.url,body)))fetch(TL_FORM.url,{method:'POST',mode:'no-cors',body}).catch(()=>{});return true;}catch(e){return false;}}
 function tlDb(){try{return typeof window!=='undefined'&&!!(window.claude&&window.claude.use);}catch(e){return false;}}
 function tlPid(){try{let p=localStorage.getItem('tropebrawl-pid');if(!p){p='p_'+Math.random().toString(36).slice(2,10);localStorage.setItem('tropebrawl-pid',p);}return p;}catch(e){return 'p_anon';}}
+// v20.18 (TRO-92): tester mark, three coarse source fields, sharer id, page opens. No fingerprint: no user agent, no screen size.
+const TL_TESTER='21d633aa98ef20d67abc903aeb537dcb38a7cda723e07dd3a7582831dfc81fb6';
+function tlLs(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){}return null;}
+function tlTester(){return tlLs('tropebrawl-tst')==='1';}
+function tlFrom(){try{let f=tlLs('tropebrawl-from');if(f)return f;
+  const q=new URLSearchParams(location.search).get('from');
+  if(q)f=q.toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,24);
+  else if(document.referrer){const h=new URL(document.referrer).hostname.replace(/^www\./,'').toLowerCase().replace(/[^a-z0-9.-]/g,'');if(h&&h!==location.hostname)f=h.slice(0,60);}
+  if(f)tlLs('tropebrawl-from',f);return f||'';}catch(e){return '';}}
+function tlSharer(){try{let f=tlLs('tropebrawl-f');if(!f){const q=new URLSearchParams(location.search).get('f');if(q&&/^p_[a-z0-9]{3,12}$/.test(q)&&q!==tlPid()){f=q;tlLs('tropebrawl-f',f);}}return f||'';}catch(e){return '';}}
+function tlMeta(){const o={tz:-new Date().getTimezoneOffset(),dev:(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches)?'phone':'desktop'};
+  const f=tlFrom(),sh=tlSharer();if(f)o.from=f;if(sh)o.f=sh;if(tlTester())o.t=1;return o;}
+function tlVisit(){try{if(SET.share===false||seeded||navigator.webdriver||tlDb()||!tlRelay()||globalThis.__tlForce||/dev/.test(location.hash))return;
+  const now=Date.now();if(now-(+tlLs('tropebrawl-vis')||0)<18e5)return;tlLs('tropebrawl-vis',String(now));
+  tlSend(Object.assign({rid:'v'+now.toString(36)+Math.random().toString(36).slice(2,6),v:TB_VERSION,build:TB_BUILD,fmt:2,res:'visit',at:new Date().toISOString(),ms:0,pid:tlPid(),src:window.tbApp?'app':'pages',r:[]},tlMeta()));}catch(e){}}
+function tlShareQ(){return SET.share!==false?'?f='+tlPid():'';}
+function tlCodeHTML(){return `<h3 style="color:var(--gold)">Code</h3><input id="tcode" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="64" style="width:100%;padding:8px;font:inherit"><div class="row" style="margin-top:8px"><button class="btn sm" data-a="tcode">OK</button></div>`;}
+async function tlCodeCheck(){try{const i=$('#tcode'),v=i?i.value.trim():'';closeSheet();if(v.length<16||!(window.crypto&&crypto.subtle))return;
+  const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)))).map(b=>b.toString(16).padStart(2,'0')).join('');
+  if(h!==TL_TESTER)return;tlLs('tropebrawl-tst','1');if(TL){TL.t=1;tlSave();}toast('Marked as tester');}catch(e){}}
+let TAPV={n:0,t:0};
+document.addEventListener('click',e=>{try{const el=e.target.closest&&e.target.closest('.verl,.setver>span');if(!el||e.target.closest('button,a'))return;
+  const now=Date.now();TAPV.n=now-TAPV.t<1500?TAPV.n+1:1;TAPV.t=now;
+  if(TAPV.n>=5){TAPV.n=0;sheet(tlCodeHTML());setTimeout(()=>{const x=$('#tcode');if(x)x.focus();},60);}}catch(err){}});
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&e.target&&e.target.id==='tcode')tlCodeCheck();});
 async function tlPack(js){try{if(typeof CompressionStream==='function'){const st=new Blob([js]).stream().pipeThrough(new CompressionStream('gzip'));
   const b=new Uint8Array(await new Response(st).arrayBuffer());let bin='';for(let i=0;i<b.length;i+=0x8000)bin+=String.fromCharCode.apply(null,b.subarray(i,i+0x8000));return {enc:'g',data:btoa(bin)};}}catch(e){}
   return {enc:'j',data:js};}
@@ -24191,7 +24218,7 @@ function tlOn(){try{return !!globalThis.__tlForce||(SET.share!==false&&!seeded&&
 function tlCur(){if(!S||!tlOn())return null;
   if(!S.rid)S.rid=Date.now().toString(36)+Math.random().toString(36).slice(2,6);
   if(!TL){try{const j=JSON.parse(localStorage.getItem(TL_KEY)||'null');if(j&&j.rid===S.rid)TL=j;}catch(e){}}
-  if(!TL||TL.rid!==S.rid)TL={rid:S.rid,v:TB_VERSION,build:TB_BUILD,fmt:2,lv:S.lv|0,ladder:2,at:new Date().toISOString(),r:[]};
+  if(!TL||TL.rid!==S.rid)TL={rid:S.rid,v:TB_VERSION,build:TB_BUILD,fmt:2,lv:S.lv|0,ladder:2,at:new Date().toISOString(),r:[],...tlMeta()};
   let r=TL.r[TL.r.length-1];const p=S.part||0;
   if(!r||r.n!==S.round||r.p!==p){r={n:S.round,p,g:S.gold,lf:S.lives,rk:S.rank,a:[]};TL.r.push(r);}
   return r;}
@@ -24202,7 +24229,7 @@ const TL_SKIP={pool:1,seen:1,stats:1,shop:1,usedEvents:1,preDone:1,lobby:1,event
 function tlSlim(st){const o={};for(const k in st)if(!TL_SKIP[k])o[k]=st[k];return JSON.parse(JSON.stringify(o));}
 function tlSnapSt(f){try{f.st=tlSlim(S);const id=S.enemy&&S.enemy.rival,R=id&&S.lobby&&S.lobby.rv.find(x=>x.id===id);if(R)f.rv={id:R.id,rng:R.rng,st:tlSlim(R.st)};}catch(e){}}
 function tlSeed(sd){try{const r=tlCur();if(r&&r.f)r.f.sd=sd;}catch(e){}}
-function tlPrivacy(){return `<h3 id="privacy">Privacy</h3><p>Tropebrawl records every run anonymously, to train the AI rivals and to balance the game. What is sent: the run's choices (buys, sells, rerolls, picks), your board, bench and items at each fight, the results, the level, the game version, play time, and a random install ID made on this device. No names, no accounts, no emails, nothing about your device. We don't store IP addresses; the services we use to receive runs (ntfy.sh, Google Forms) may log connection info.</p><p>Turn it off any time: <b>Settings → Share anonymous run data</b>. Your saves stay on this device.</p>`;}
+function tlPrivacy(){return `<h3 id="privacy">Privacy</h3><p>Tropebrawl records every run anonymously, to train the AI rivals and to balance the game. What is sent: the run's choices (buys, sells, rerolls, picks), your board, bench and items at each fight, the results, the level, the game version, play time, and a random install ID made on this device. Three rough facts come with it: where you came from (the tag in the link, or just the name of the website that sent you, like itch.io or discord.com), your time zone's offset from UTC, and whether you play on a phone or a computer. When you open the game, a small "opened" note with those facts is sent too (at most once every 30 minutes), so we can tell how many people leave before a run. If you came from a friend's share link, their install ID is sent with your first run; the share links you send carry yours. No names, no accounts, no emails, no browser or device details, no screen size. We don't store IP addresses; the services we use to receive runs (ntfy.sh, Google Forms) may log connection info.</p><p>Turn it off any time: <b>Settings → Share anonymous run data</b>. Your saves stay on this device.</p>`;}
 function tlPrivacySheet(){return `<div class="eyebrow">Settings</div><h3 style="color:var(--gold)">🔒 Run data</h3><div class="rules credits" data-noemoji>${tlPrivacy().replace(/<h3[^>]*>Privacy<\/h3>/,'')}</div><p class="muted" style="font-size:.82rem">Sharing is ${SET.share!==false?'<b>on</b>':'<b>off</b>'}.</p><div class="row" style="gap:8px"><button class="btn sm" data-a="settings">Settings</button></div>`;}
 
 function tlRes(win){try{if(!tlOn())return;const r=tlCur();if(r&&r.f)r.f.w=win?1:0;
@@ -24402,7 +24429,7 @@ function start(data){
   UI.lv=lvLoad().pick;
   if(data&&(data.v===SAVE_KEY||data.v===OLD_SAVE_KEY)&&data.S&&!data.S.over)restore(data);
   else UI.screen='title';
-  render();devPaint();if(S&&S.inFight&&UI.screen!=='title')resumeFight();
+  render();devPaint();tlVisit();if(S&&S.inFight&&UI.screen!=='title')resumeFight();
 }
 
 // ===== v19.92: character animations + Animation Studio (visual only: reads the battle, never writes what it reads,
