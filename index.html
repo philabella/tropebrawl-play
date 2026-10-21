@@ -22013,16 +22013,22 @@ function cutChoices(){rsKey('c');const cw=g=>ownedIn(g).reduce((t,u)=>t+COPIES[u
 function cutRound(){return null;}
 // TRO-194: good and trade-off random events stay a surprise; a bad one is announced one shop ahead (its kind was rolled
 // at the start of the run, so this draws nothing). Returns the bad events still possible next round, or null.
-function badNext(){if(!S||S.part===2||typeof UI==='undefined'||UI.screen!=='plan')return null;const n=(S.round|0)+1;
+function badNext(){if(!S||S.part===2||typeof UI==='undefined')return null;
+  const im=UI.screen==='event'&&S.event&&!S.event.pre&&!S.event.cut&&!S.event.picked&&(curRound()||{}).type==='event';
+  if(UI.screen!=='plan'&&!im)return null;
+  // TRO-214: an intermission round has no shop, so look past it to the round after (where the event would pop up)
+  let n=(S.round|0)+1;while(specialAt(n)!=='bad'&&(SCHEDULE[n-1]||{}).type==='event'&&!specialAt(n))n++;
   if(specialAt(n)!=='bad'||(S.preDone||{})[n])return null;const used=S.usedEvents||[];
-  const ks=SPECIAL_KEYS.filter(k=>EV_KIND[k]==='bad'&&!used.includes(k)&&SPECIALS[k].ok()&&lvOK('e',k));return ks.length?ks:null;}
+  const ks=SPECIAL_KEYS.filter(k=>EV_KIND[k]==='bad'&&!used.includes(k)&&SPECIALS[k].ok()&&lvOK('e',k));if(!ks.length)return null;
+  ks.r=n;ks.gap=n>S.round+1;return ks;}
 function cutTarget(){const cw=g=>ownedIn(g).reduce((t,u)=>t+COPIES[u.level-1],0),own=Object.keys(GENRES).filter(g=>!gOut(g)&&ownedIn(g).length);
   if(!own.length)return [];const top=Math.max(...own.map(cw));return own.filter(g=>cw(g)===top);}
 function badNextHTML(){const ks=badNext();if(!ks)return '';const nm=ks.map(k=>EVENTS[k].e+' '+EVENTS[k].name);
-  let t=`⚠️ Bad event next round: ${nm.length>1?nm.slice(0,-1).join(', ')+' or '+nm[nm.length-1]:nm[0]}.`;
-  let sh=`⚠️ Bad event next round: ${ks.map(k=>EVENTS[k].name).join(' / ')}`;
+  const when=ks.gap?`after the intermission (round ${ks.r})`:'next round',ws=ks.gap?'after intermission':'next round';
+  let t=`⚠️ Bad event ${when}: ${nm.length>1?nm.slice(0,-1).join(', ')+' or '+nm[nm.length-1]:nm[0]}.`;
+  let sh=`⚠️ Bad event ${ws}: ${ks.map(k=>EVENTS[k].name).join(' / ')}`;
   if(ks.includes('cut')){const g=cutTarget();if(g.length){const gn=g.map(x=>GENRES[x].e+' '+GENRES[x].name).join(' or '),c=Math.min(...g.map(cutCost));
-    t+=` The Cut takes your biggest genre (${gn}): keeping that cast costs 🪙${c}.`;sh=`⚠️ Bad event next round · ✂️ Cut: ${gn}, keep 🪙${c}`;}}
+    t+=` The Cut takes your biggest genre (${gn}): keeping that cast costs 🪙${c}.`;sh=`⚠️ Bad event ${ws} · ✂️ Cut: ${gn}, keep 🪙${c}`;}}
   return `<p class="evnote badnext" role="status" title="${esc(t)}"><span class="bnl">${t}</span><span class="bns">${sh}</span></p>`;}
 function atRisk(){const live=Object.keys(GENRES).filter(g=>!gOut(g)),n=g=>ownedIn(g).length;
   const sorted=live.slice().sort((a,b)=>n(b)-n(a));if(sorted.length<=3)return sorted;const bar=n(sorted[2]);return sorted.filter(g=>n(g)>=bar);}
@@ -23555,7 +23561,7 @@ function itemIcons(){return [
   ].join('');}
 function topBar(){
   const p2=S.part===2;
-  const stripI=SCHEDULE.map((r,i)=>{const n=i+1;const mini=!!r.m&&r.type==='fight';const sp=null,cutR=false,bw=n===S.round+1&&!!badNext();const fl=S.lead&&r.type==='boss'&&n===SCHEDULE.length&&RIVAL[S.lead];const ic=fl?RIVAL[S.lead].e:r.type==='boss'?'💀':bw?'⚠️':sp?EVENTS[sp].e:r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${bw?': starts with a bad random event (see the shop)':''}${mini?': mini-boss':fl?': final boss, '+esc(RIVAL[S.lead].name)+"'s full cast":r.type==='boss'?': boss':sp?': special event: '+EVENTS[sp].name:r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;});
+  const bnx=badNext();const stripI=SCHEDULE.map((r,i)=>{const n=i+1;const mini=!!r.m&&r.type==='fight';const sp=null,cutR=false,bw=n===(bnx&&bnx.r);const fl=S.lead&&r.type==='boss'&&n===SCHEDULE.length&&RIVAL[S.lead];const ic=fl?RIVAL[S.lead].e:r.type==='boss'?'💀':bw?'⚠️':sp?EVENTS[sp].e:r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${bw?': starts with a bad random event (see the warning line)':''}${mini?': mini-boss':fl?': final boss, '+esc(RIVAL[S.lead].name)+"'s full cast":r.type==='boss'?': boss':sp?': special event: '+EVENTS[sp].name:r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;});
   if(rule('finale2'))stripI.push(`<i class="${p2?'now':''} bossp" title="Finale, part 2">💀</i>`);
   // the strip in act groups of 7 (the Two-Part Finale joins the last act); the current act is highlighted
   const curAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act;
@@ -24206,7 +24212,7 @@ SCR.event=()=>{
     art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav=EVFLAV[e.picked]||flav;
     body=`<p class="evnote">${e.pre?'Random event':'Special event'} · ${{good:'a good one',bad:'a bad one: pick your loss',trade:'a trade-off'}[EV_KIND[e.picked]]||''}</p><div class="evchoices">${CHOICES[e.picked].map(c=>`<button class="evcard" data-a="event-sub" data-v="${c.id}" ${c.ok(e)?'':'disabled'}><b>${c.t}</b><small>${c.d(e)}</small></button>`).join('')}</div>`;
   }else if(!e.picked){
-    body=e.opts.map(k=>`<button class="evopt" data-a="event" data-v="${k}" ${k==='deal'&&!dealOK(e)?'disabled title="Needs 3 or more lives"':''}><span class="emo">${EVENTS[k].e}</span> <b>[${esc(EVENTS[k].name)}]</b>${newB('e',k)} ${evDesc(k)}</button>`).join('');
+    body=badNextHTML()+e.opts.map(k=>`<button class="evopt" data-a="event" data-v="${k}" ${k==='deal'&&!dealOK(e)?'disabled title="Needs 3 or more lives"':''}><span class="emo">${EVENTS[k].e}</span> <b>[${esc(EVENTS[k].name)}]</b>${newB('e',k)} ${evDesc(k)}</button>`).join('');
     if(TUNE.repitchEv&&e.opts.length>1&&!e.pre)body+=`<div class="row" style="justify-content:center">${rpBtn('e',e.rp)}</div>`;
     if(e.opts.length)flav=e.opts.map(k=>EVFLAV[k]).filter(Boolean)[0]||flav;
   }else if(e.sub&&!e.subDone){
@@ -24484,7 +24490,7 @@ SCR.codex=()=>{
     <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you pick a Legendary, win or lose. Win: choose from 3, or take a bonus item instead. Lose: choose from 2, no bonus item. You hold one at a time.</p>
     
     <p><b>The Cut.</b> A bad random event: the studio goes after your biggest genre and it leaves the shop for the rest of the run. Pay gold to keep your characters of that genre (🪙3 per character, 🪙6 at least), let them go (sold for half), or fight it with lives. Like every bad random event, it is announced in the shop one round before.</p>
-    <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-8 of each act). It pops up at the start of a round, before the shop. Good ones and trade-offs are a surprise; a bad one is announced in the shop one round before (⚠️ on the round track), so you can save gold for it. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props, The Cut), or trade-offs (Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher levels bring more of them, and more bad ones: a window fires 40% of the time in the Season, plus 6% per Ascension.</p>
+    <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-8 of each act). It pops up at the start of a round, before the shop. Good ones and trade-offs are a surprise; a bad one is announced in the last shop before it (⚠️ on the round track), even when an intermission comes in between, so you can save gold for it. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props, The Cut), or trade-offs (Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher levels bring more of them, and more bad ones: a window fires 40% of the time in the Season, plus 6% per Ascension.</p>
     <p><b>Buyback Wheel.</b> A random event: spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud (no effect). A small gold ALL slice (6%) wins for every rarity except Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
     <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>${TUNE.recast?`
     <p><b>Body double 👯.</b> From Act ${SCHEDULE[TUNE.recastFrom-1]?SCHEDULE[TUNE.recastFrom-1].act:3}, a character you own that is sold out (0 left in the pool) can get a body double: tap it and pay ${TUNE.recastK}× its price for one more copy (${RARITY.slice(2).map((n,i)=>n+' 🪙'+PRICE[i+2]*TUNE.recastK).join(', ')}). It joins like a bought one and counts toward its next star. Same role, new actor. Nobody will notice.</p>`:''}
@@ -24825,10 +24831,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.61',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.62',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.62',items:[["⚠️", "A bad random event right after an intermission is now announced too: the shop before the intermission warns you, and the intermission screen repeats it."]]},
   {v:'20.61',items:[["🛠️", "Fixed a freeze: dropping a two-square character onto a full board could lose a character's square, freeze every button and break the save. Saves with that problem now load and put the character back on your bench."], ["💾", "If a saved run still can't be loaded, the title now says so and lets you start a new run, instead of a Continue button that does nothing."]]},
   {v:'20.60',items:[["👋", "First run: the first shop now shows just the cards, your gold and your board. Reroll, Lock, shop ranks and the Pool appear as the tutorial gets to them, and Fight pulses once someone is on your board."], ["🏷️", "The first shop explains the card tags (a genre and a role) and Crowd cards; the board count says it grows as your shop ranks up; the tutorial tip no longer sits on the first card."], ["🎬", "The first-visit title says what the game is (an auto-battler of movie and TV tropes), with bigger Buy / Combine / Brawl steps and labelled buttons."]]},
   {v:'20.59',items:[["🎬", "The battle board is now a real film set: lighting rigs, a camera on a dolly, the director's chair, prop crates, a fan, crew and a studio audience fill the sides of wide screens."], ["🎭", "The painted set flats change every act: Western town, space station, haunted house, then the finale city. The audience cheers your KOs and the lights flash on crits."], ["👆", "Click the clapperboard, a spotlight, the fan, the camera or the APPLAUSE sign."]]},
