@@ -1151,6 +1151,7 @@ html.ontitle:not(.glass) #tbg canvas.bdsw{display:none}
 html.ontitle:not(.glass) #tbg::before{opacity:.10}
 @media (max-width:899px){html.ontitle:not(.glass) #tbg{background:radial-gradient(ellipse 100% 60% at 50% 22%,rgba(255,176,60,.16),transparent 70%),radial-gradient(ellipse 120% 90% at 50% 40%,transparent 50%,rgba(0,0,0,.65) 100%),linear-gradient(180deg,#171220 0,#0f0b15 100%)}}
 .tplay{display:grid;justify-items:start;gap:8px;margin:18px 0 12px}
+.tlderr{margin:0;padding:8px 12px;border:1px solid #e0a040;border-radius:8px;background:rgba(224,160,64,.14);color:#ffd9a0;font-weight:600;max-width:44ch}
 .tbig{display:grid;justify-items:center;min-width:min(340px,100%);font-size:1.55rem;padding:.55em 1.6em}
 .tbig small{display:block;font-size:.78rem;font-weight:600;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px}
 .tnew{font-size:.85rem}.chalwrap{justify-content:center}.chalcard{--cg:var(--gold);max-width:560px;padding:22px 24px 18px;border-radius:16px;border:2px solid var(--cg);background:linear-gradient(160deg,color-mix(in srgb,var(--cg) 22%,#1b181f) 0%,#16131aee 70%);box-shadow:0 18px 50px #0009,0 0 0 6px color-mix(in srgb,var(--cg) 14%,transparent);display:grid;gap:10px}.chalh{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.05;letter-spacing:.01em;margin:0;color:#f3eee4;text-wrap:balance}.chalver{margin:0;padding:8px 10px;border-radius:8px;background:#ffcc2e1f;border:1px solid #ffcc2e66;font-size:.9rem}.chalsm{font-size:.8rem;margin:0}.chalend{border-color:var(--gold)}.shrname{display:grid;gap:4px;margin:10px 0 0;font-weight:600}.shrname input{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);max-width:16ch}.shrhint{font-size:.8rem;margin:4px 0 0}.dlyt{display:grid;gap:6px;justify-items:start;margin-top:6px}.dlydots{display:inline-flex;gap:3px;margin-left:.3em;vertical-align:middle}.dlydots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--gold);display:inline-block}.dlydots i.on{background:var(--gold)}.dlylist{display:grid;gap:8px;margin:10px 0}.dlyday{display:grid;gap:2px;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit;cursor:pointer}.dlyday.today{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--bg2))}.dlyday small{color:var(--muted,#bdb6aa)}.tsmall{gap:8px}.tsmall .nwdot{display:inline-block;width:8px;height:8px;margin-left:6px;border-radius:50%;background:var(--gold);vertical-align:middle}
@@ -21469,7 +21470,7 @@ function msGapLine(){const x=S.lead&&RIVAL[S.lead];if(x)return {t:`🎬 Dress re
   const g=finaleGap();if(!g)return null;return {t:`🎬 The Season finale cast hits ${g}× harder than tonight's (HP × damage)${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready.`,sh:`the Season finale hits ${g}× harder`,g};}
 
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
-function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=UI._ng=UI._np=null;try{localStorage.setItem('tropebrawl-played','1');}catch(e){}UI._bk=null;}
+function newRun(){if(typeof UI!=='undefined'){UI.loadErr=0;UI._g=UI._l=UI._ng=UI._np=null;try{localStorage.setItem('tropebrawl-played','1');}catch(e){}UI._bk=null;}
   const lv=Math.max(0,Math.min(LV_MAX,UI.lv|0));
   const ch=CHAL_NEXT;CHAL_NEXT=null; // TRO-86 step 4
   const dly=ch?null:DAILY_NEXT;DAILY_NEXT=null;const twk=dly?dlyTw(dly).k:TUNE.twForce&&TW[TUNE.twForce]?TUNE.twForce:null; // TRO-86 step 3
@@ -21686,11 +21687,19 @@ function move(from,to){
   const dest=toField&&twoSlot(a.id)?[to,to[0]+(+to[1]+1)]:[to],hit=[...new Set(dest.map(unitAt).filter(x=>x&&x!==a))];
   if(toField&&!fromField&&fieldCount()+size(a)-hit.reduce((n,u)=>n+size(u),0)>boardSize()){const nr=nextSlotRank();toast(`Board full (${boardSize()}).${nr?` Rank ${nr} adds a slot.`:''}`);return false;}
   // whoever stood there moves to where the character came from, or to the bench
-  hit.forEach(b=>{b._o=b.slot;b.slot='tmp';});a.slot=to;
+  const was=new Map(hit.map(b=>[b,b.slot]));hit.forEach(b=>{b.slot='tmp';});a.slot=to; // TRO-213: old slots kept until every move worked
   for(const b of hit){const cand=fromField?(twoSlot(a.id)?[from,from[0]+(+from[1]+1)]:[from]):[from];let s=cand.find(c=>slotOK(c,b.id));
-    if(!s)s=benchSlots.find(c=>!unitAt(c));if(!s){hit.forEach(x=>{x.slot=x._o;delete x._o;});a.slot=from;toast('No room to swap.');return false;}b.slot=s;delete b._o;}
+    if(!s)s=benchSlots.find(c=>!unitAt(c));if(!s){hit.forEach(x=>{x.slot=was.get(x);});a.slot=from;toast('No room to swap.');return false;}b.slot=s;}
   return true;
 }
+// TRO-213: every character stands on a real square. One with no square, off the edge, overlapping or over the board size
+// goes to the bench (or the board); with no room at all it is sold for its value. On load and before every save.
+function repairSlots(){if(!S||!Array.isArray(S.units))return 0;const ok=new Set([...fieldSlots,...benchSlots]),out=[];
+  S.units.forEach(u=>{if(typeof u.slot!=='string'||!ok.has(u.slot)){out.push(u);u.slot='nx';}});
+  for(const u of S.units){if(u.slot==='nx')continue;const s=u.slot;u.slot='nx';
+    if(s[0]!=='n'?slotOK(s,u.id)&&fieldCount()+(twoSlot(u.id)?2:1)<=boardSize():!unitAt(s))u.slot=s;else out.push(u);}
+  for(const u of out){const s=freeSlotFor(u.id);if(s)u.slot=s;else{S.gold+=sellValue(u);poolGive(u.id,COPIES[u.level-1]);u.slot='gone';}}
+  S.units=S.units.filter(u=>u.slot!=='gone');if(out.length)tlAct('fix',out.length);return out.length;}
 function autoFill(){for(const u of benched()){if(fieldCount()>=boardSize())break;const s=freeSlotFor(u.id);if(s&&s[0]!=='n')u.slot=s;}}
 // ---- merging ----
 function noteLevel(id,level){S.paid[id]=S.paid[id]||{};if(!S.paid[id][level]){S.paid[id][level]=true;if(HERO[id].tier>=3&&lvHas('i'))S.pending.push({kind:'merge',id,level});}}
@@ -23759,7 +23768,7 @@ SCR.title=()=>{
 };
 // TRO-65: the menu = one big Continue / Play (Play opens the level picker), then Codex, Settings, What's New
 function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh();
-  return `<div class="tplay">${sv?`<button class="btn primary big tbig" data-a="continue"><span>▶ Continue</span></button><div class="tlv">${esc(lvNmC(sv.S.lv|0))} · round ${sv.S.round}</div><button class="lnk tnew" data-a="play">Start a different run</button>`
+  return `<div class="tplay">${UI.loadErr&&!sv?'<p class="tlderr" role="alert">⚠️ This run couldn\'t be loaded. Start a new run.</p>':''}${sv?`<button class="btn primary big tbig" data-a="continue"><span>▶ Continue</span></button><div class="tlv">${esc(lvNmC(sv.S.lv|0))} · round ${sv.S.round}</div><button class="lnk tnew" data-a="play">Start a different run</button>`
       :DAILY_LINK?'':`<button class="btn primary big tbig" data-a="play"><span>▶ Play</span></button><div class="tlv">Next on the Ladder: ${esc(lvTitle(UI.lv))}</div>`}${dlyTitleHTML(p,sv)}${DAILY_LINK&&!sv&&!dlyPilot(p)?'<button class="lnk tnew" data-a="play">New to Tropebrawl? Play the Pilot first (5 min)</button>':DAILY_LINK&&!sv?'<button class="lnk tnew" data-a="play">Play the Ladder instead</button>':''}</div>
     <div class="row tsmall">
       <button class="btn sm" data-a="codex">📖 Codex</button>
@@ -24611,7 +24620,7 @@ function peeking(){return !!(UI.legPeek&&S&&S.pending&&S.pending.length);}
 let toastT;
 function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1800);}
 // ================= input =================
-function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}const r_=onAction0(a,v,el);try{tutPaint();}catch(e){}pgPaint();try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
+function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}let r_;try{r_=onAction0(a,v,el);}catch(e){if(!(S&&repairSlots()))throw e;render();}try{tutPaint();}catch(e){}pgPaint();try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
 function onAction0(a,v,el){
   if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x'&&a!=='repitch')return;
   if(a==='fight'&&peeking()){UI.legPeek=false;render();return;}
@@ -24630,7 +24639,7 @@ function onAction0(a,v,el){
 case 'nextep':{const k=S&&!S.newLv&&!S.gym?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().open)UI.lv=k;if(S&&S.gym&&gymUnlocked(GYMS[S.gym.n-1]))UI.gym=S.gym.n; // v20.5: ▶ Next episode on the end screen
   UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);tlAct('n');go();tbxCard();break;}
     case 'renew':UI.renew=!UI.renew;render();break;
-    case 'continue':{const sv=loadSave();if(sv){restore(sv);if(S.inFight)resumeFight();else{go();tbxCard();}}break;}
+    case 'continue':{const sv=loadSave();if(sv){try{restore(sv);if(S.inFight)resumeFight();else{go();tbxCard();}}catch(e){loadFail(e,sv);}}break;}
     case 'pick':{hoverCard(null);if(!canHover&&S.shop[+v]){sheet(shopPreview(+v));break;}if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
     case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
     case 'reroll':if(reroll())go();break;
@@ -24816,10 +24825,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.60',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.61',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.61',items:[["🛠️", "Fixed a freeze: dropping a two-square character onto a full board could lose a character's square, freeze every button and break the save. Saves with that problem now load and put the character back on your bench."], ["💾", "If a saved run still can't be loaded, the title now says so and lets you start a new run, instead of a Continue button that does nothing."]]},
   {v:'20.60',items:[["👋", "First run: the first shop now shows just the cards, your gold and your board. Reroll, Lock, shop ranks and the Pool appear as the tutorial gets to them, and Fight pulses once someone is on your board."], ["🏷️", "The first shop explains the card tags (a genre and a role) and Crowd cards; the board count says it grows as your shop ranks up; the tutorial tip no longer sits on the first card."], ["🎬", "The first-visit title says what the game is (an auto-battler of movie and TV tropes), with bigger Buy / Combine / Brawl steps and labelled buttons."]]},
   {v:'20.59',items:[["🎬", "The battle board is now a real film set: lighting rigs, a camera on a dolly, the director's chair, prop crates, a fan, crew and a studio audience fill the sides of wide screens."], ["🎭", "The painted set flats change every act: Western town, space station, haunted house, then the finale city. The audience cheers your KOs and the lights flash on crits."], ["👆", "Click the clapperboard, a spotlight, the fan, the camera or the APPLAUSE sign."]]},
   {v:'20.58',items:[["👯", "Body doubles: from Act 3, when a character you own is sold out (0 left in the pool), tap it to buy one more copy for 3× its price (Rare 🪙9, Epic 🪙12). Late gold now has a job when the lobby took your carry's copies."]]},
@@ -25139,12 +25149,17 @@ function render(){
   try{tutPaint();}catch(e){}pgPaint();
   if(peeking()){const fb=document.querySelector('#app [data-a="fight"]');if(fb){fb.innerHTML=S.pending[0].kind==='legend'?'🏆 Choose Legendary':'🎁 Choose item';fb.classList.add('peekbtn');fb.disabled=false;}}
 }
-function save(){tlSave();try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
+function save(){tlSave();try{if(S&&!S.over)repairSlots();}catch(e){}try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
 function loadSave(){try{const j=localStorage.getItem(SAVE_KEY)||localStorage.getItem(OLD_SAVE_KEY);return j?JSON.parse(j):null;}catch(e){return null;}}
+// TRO-213: a save that can't be played: keep a copy for bug reports, log the error, offer a new run on the title
+function loadFail(e,sv){const m=String(e&&e.message||e).replace(/[:\s]+/g,' ').slice(0,120);try{console.error('Tropebrawl: save could not be loaded',e);}catch(x){}
+  try{localStorage.setItem('tropebrawl-broken-save',JSON.stringify(sv));}catch(x){}
+  try{if(S){tlAct('err',m);tlEnd(true);}}catch(x){}
+  clearSave();S=null;UI.loadErr=1;UI.screen='title';try{closeSheet();}catch(x){}render();}
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem(OLD_SAVE_KEY);}catch(e){}}
 function snapshot(){return S?{v:SAVE_KEY,S,screen:UI.screen==='battle'?'plan':UI.screen,speed:UI.speed}:{};}
 // restore a saved run; a fight that was already settled on the result screen is advanced, never replayed
-function restore(sv){S=sv.S;RS=S.seed!=null?0:null;if(!S.ladder){S.lv=Math.min(LV_MAX,(S.lv|0)+4);S.ladder=2;}if(!S.cap)S.cap=5;buildSchedule(S.lv);S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=Math.min(3,sv.speed||SET.speed||1);UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
+function restore(sv){S=sv.S;RS=S.seed!=null?0:null;if(!S.ladder){S.lv=Math.min(LV_MAX,(S.lv|0)+4);S.ladder=2;}if(!S.cap)S.cap=5;buildSchedule(S.lv);S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=Math.min(3,sv.speed||SET.speed||1);UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');repairSlots();if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
 
 // ================= test panel (for Philippe; playtesters never see it) =================
 // Open: add #dev to the link, or press the ` key. Lets you pick any Game Level and open any event screen.
