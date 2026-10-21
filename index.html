@@ -24270,10 +24270,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.39',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.40',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.40',items:[["🔍", "Sharper toys: shop cards, the title brawl and the board are drawn at the size you see (up to 2x on sharp screens)."], ["🎞️", "The backup animation, used when your device is slow, is also sharper now."]]},
   {v:'20.39',items:[["💡", "Lost a fight? The result now says who hurt you most (share of the damage), which counter beat you if one did, and one thing to try. Also on the Defeat screen."], ["🎬", "Re-pitch: every Legendary offer can be dealt again once, for free. Not a fan of the three? Ask for three new ones."]]},
   {v:'20.38',items:[["🦴", "Lasers pass through the dead: Space Opera's piercing lasers and area hits do half damage to Undead. Undead vs Space Opera is now a fair fight."]]},
   {v:'20.37',items:[["🗺️", "Level screen: shows how many lives a loss costs in each act."], ["👆", "Tap a character, then an empty slot, to move it (dragging still works)."], ["🪙", "The Sell button says when a character sells for half its price, rounded down (a 1-star Common sells for 🪙0)."]]},
@@ -25183,7 +25184,7 @@ html.noanim .anburst,html.noanim .ansell{display:none}
 }catch(e){}})();
 // ===== v19.25: living toys. Renders animation loops of the toys on screen (three.js, background, one at a time) and
 // swaps them into the art <img>s. Embedded pictures show first and stay if WebGL is missing or animations are off.
-const TBA={tried:false,on:false,cache:new Map(),want:new Map(),busy:false,end:null,SZ:256};
+const TBA={tried:false,on:false,cache:new Map(),want:new Map(),busy:false,end:null,SZ:384};
 const TBA_WIN=['cheer','dance','floss','flex','wave','robot','shuffle','disco','slide','chicken','sprinkler','hipsway','jumpspin','bow','hero'],TBA_FOE=['cheer','taunt','flex','dance','stomp','robot','hipsway','slide','hero']; // v19.92: more picks
 function tbaParse(k){if(/_(atk|up)$/.test(k))return null;let m=/^e_([a-z0-9]+)(?:_(\d))?$/.exec(k);if(m)return {foe:1,id:m[1],view:'foe',v:m[2]?+m[2]-1:0};
   m=/^([a-z0-9]+)_f(\d)?$/.exec(k);if(m&&HERO[m[1]])return {id:m[1],view:'front',v:m[2]?+m[2]-1:0};
@@ -25220,12 +25221,12 @@ function tbaFrame(obj,elev,cam,fig,anims){const {THREE}=TBA,th=elev*Math.PI/180,
     const f=Math.max(1,mx/.94,(my+.76)/1.7);if(f<=1.0005)break;Hf*=f;}}
 const tbaYield=()=>new Promise(r=>setTimeout(r,0));
 // v19.37: frames are kept as image blobs (compact) rather than base64 text; falls back to a data URL
-const tbaBlob=c=>new Promise(res=>{try{c.toBlob(b=>res(b?URL.createObjectURL(b):c.toDataURL('image/webp',.85)),'image/webp',.85);}catch(e){res(c.toDataURL('image/webp',.85));}});
+const tbaBlob=c=>new Promise(res=>{try{c.toBlob(b=>res(b?URL.createObjectURL(b):c.toDataURL('image/webp',.95)),'image/webp',.95);}catch(e){res(c.toDataURL('image/webp',.95));}});
 async function tbaRender(key,anim){const p=tbaParse(key),{THREE,lib,R,E}=TBA;if(!p)return [];const scene=tbaScene(),cam=new THREE.OrthographicCamera(-1,1,1,-1,.1,100);
   const c=(p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);if(!c)return [];
   const root=new THREE.Group(),fig=c.build({variant:p.v});root.add(fig);scene.add(root);root.rotation.y=p.view==='back'?Math.PI:p.view==='foe'?0:-.38;
   tbaFrame(root,p.view==='back'?16:p.view==='foe'?14:8,cam,fig,['idle','wave']);const camState={l:cam.left,r:cam.right,t:cam.top,b:cam.bottom,pos:cam.position.clone(),q:cam.quaternion.clone()};
-  const e=lib.EMOTES[anim],N=anim==='idle'?32:e.once?18:24,out=[];
+  const e=lib.EMOTES[anim],N=anim==='idle'?40:e.once?18:24,out=[];
   try{for(let i=0;i<N;i++){if(!TBA.on)break;
     Object.assign(cam,{left:camState.l,right:camState.r,top:camState.t,bottom:camState.b});cam.position.copy(camState.pos);cam.quaternion.copy(camState.q);cam.updateProjectionMatrix();cam.updateMatrixWorld();
     const ps=lib.sampleEmote(e,(e.once?i/(N-1):i/N)*e.dur);fig.position.y=lib.poseFigure(fig,ps,1,e.rel);root.rotation.x=-(ps.fall||0);E.render(scene,cam);
@@ -25664,7 +25665,7 @@ html.noanim .skc,html.noanim .skm,html.noanim .skr,html.noanim .sks{display:none
 // at start-up), so the page layout and stacking stay exactly as before. Hovering a card or toy makes it wave. Fights are
 // left to the 3D arena / flipbooks. If drawing costs too much on this device it first lowers the rate, then hands the
 // toys back to the pre-drawn pictures. Settings -> Live 3D toys switches it off.
-const LV3={R:null,E:null,scene:null,root:null,figs:new Map(),cams:new Map(),dead:false,why:'',ema:0,nf:0,fps:40,last:0,on:false,css:false,raf:0,CELL:256,COLS:4,keep:false};
+const LV3={R:null,E:null,scene:null,root:null,figs:new Map(),cams:new Map(),dead:false,why:'',ema:0,nf:0,fps:40,last:0,on:false,css:false,raf:0,CELL:256,COLS:4,cap:512,keep:false};
 function tlStatus(){if(SET.live===false)return 'Shop toys: pre-drawn animation.';if(RM)return 'Shop toys: still (animations are off).';if(LV3.dead)return 'Shop toys: pre-drawn animation ('+(LV3.why||'live drawing could not start')+').';return LV3.on?'Shop toys: drawn live.':'Shop toys: starting…';}
 function tlWanted(){return SET.live!==false&&!RM&&!LV3.dead&&TBA.on;}
 function tlInit(){if(LV3.R)return true;if(LV3.dead||!TBA.on)return false;
@@ -25713,7 +25714,11 @@ function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
   const vw=innerWidth,vh=innerHeight,list=[];
   document.querySelectorAll('canvas.toylive').forEach(c=>{if(!c.offsetParent)return;const r=c.getBoundingClientRect();if(r.bottom<0||r.top>vh||r.right<0||r.left>vw||r.width<2)return;list.push(c);});
   LV3.on=true;if(!list.length)return;
-  const {THREE,lib}=TBA,R=LV3.R,C=LV3.CELL,cols=LV3.COLS,rows=Math.ceil(list.length/cols),W=C*cols,H=C*rows,sz=R.getSize(new THREE.Vector2());
+  const {THREE,lib}=TBA,R=LV3.R,cols=LV3.COLS,sz=R.getSize(new THREE.Vector2());
+  // v20.40 (TRO-158): cell = the biggest toy shown x devicePixelRatio, up to cap (512); keep the atlas under 4096 px
+  let need=0;list.forEach(c=>{need=Math.max(need,c.getBoundingClientRect().height*(devicePixelRatio||1));});
+  let C=Math.min(LV3.cap,Math.max(128,Math.ceil(need/64)*64));while(C>128&&Math.ceil(list.length/cols)*C>4096)C-=64;
+  const rows=Math.ceil(list.length/cols),W=C*cols,H=C*rows;
   if(sz.x!==W||sz.y<H)R.setSize(W,Math.max(H,sz.y),false);const HH=R.getSize(sz).y;
   R.setScissorTest(false);R.setClearColor(0,0);R.clear();R.setScissorTest(true);const now=performance.now()/1000;
   const drawn=[];list.forEach((c,i)=>{const f=tlFig(c._k);if(!f)return;const x=(i%cols)*C,y=HH-(Math.floor(i/cols)+1)*C;
@@ -25724,7 +25729,7 @@ function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
     if(c.width!==w)c.width=c.height=w;g.imageSmoothingEnabled=true;g.imageSmoothingQuality='high';g.clearRect(0,0,w,w);g.drawImage(src,x,y,C,C,0,0,w,w);});
   // too slow here: draw less often, then give the toys back their pre-drawn pictures
   if(!LV3.keep){const cost=performance.now()-t0;LV3.ema=LV3.nf?LV3.ema*.93+cost*.07:cost;
-    if(++LV3.nf>60&&LV3.ema>14){LV3.nf=0;if(LV3.fps>20)LV3.fps=20;else tlFail('too slow on this device');}}}
+    if(++LV3.nf>60&&LV3.ema>14){LV3.nf=0;if(LV3.cap>256)LV3.cap-=128;else if(LV3.fps>20)LV3.fps=20;else tlFail('too slow on this device');}}}
 LV3.raf=requestAnimationFrame(tlFrame);
 
 // ================= music (v19.28): two original loops; crossfade between shop and battle; Settings -> Music =================
