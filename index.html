@@ -1881,6 +1881,59 @@ html:not(.dt) .phd[data-k="it"]{display:none}
   html:not(.dt) .plan .shop .scard>.sart img{top:-12px;width:64px;height:64px}
   html:not(.dt) .top{padding-block:3px}
 }
+/* TRO-61: portrait phones fit one screen (no scrolling in a shop round or a fight) */
+.ph-menu,.phstrip,.top .phonly,html:not(.dt) .phtab.ph-menu{display:none}
+@media (max-width:760px) and (min-height:521px){
+  html:not(.dt) .screen.plan>.top{position:relative;z-index:33}
+  html:not(.dt) .screen.plan:has(.phstrip)>.top>.strip,html:not(.dt) .screen.plan>.top .r1>.row{display:none}
+  html:not(.dt) .screen.plan>.top.mopen .r1>.row{display:flex;flex-direction:column;align-items:stretch;gap:6px!important;position:absolute;right:0;top:calc(100% + 52px);min-width:190px;padding:8px;background:var(--panel);border:2px solid var(--inkline);border-radius:3px;box-shadow:0 14px 30px -8px rgba(0,0,0,.8),4px 4px 0 var(--inkline)}
+  html:not(.dt) .screen.plan>.top.mopen .r1>.row .btn{justify-content:center;align-items:center;min-height:44px;width:100%;gap:8px;margin:0}
+  html:not(.dt) .screen.plan>.top.mopen .r1>.row [data-a="settings"]::after{content:'Settings';font-size:.9rem}
+  html:not(.dt) .screen.plan>.top.mopen .r1>.row [data-a="mute"]::after{content:'Sound';font-size:.9rem}
+  html:not(.dt) .screen.plan>.top.mopen .cxw{display:inline}
+  html:not(.dt) .phtab.ph-menu{display:inline-flex;justify-content:center}
+  html:not(.dt) .phtab.ph-pool{display:none}
+  html:not(.dt) .screen.plan>.top.mopen .r1>.row .phonly{display:inline-flex}
+  html:not(.dt) .ph-menu .phi{font-family:var(--f-body);font-size:1.25rem;font-weight:800}
+  html:not(.dt) .phd .phstrip{display:flex;flex-wrap:wrap;gap:4px 7px;margin:0 0 6px;padding:8px 10px;background:var(--panel);border:2px solid var(--inkline);border-radius:3px;box-shadow:0 14px 30px -8px rgba(0,0,0,.8)}
+  html:not(.dt) .phd .phstrip i{width:20px;height:24px}
+  html:not(.dt) .bbq{margin-top:4px}
+  /* very short screens (iPhone SE with browser bars) may still scroll a little: Reroll and Fight stay on the bottom edge */
+  html:not(.dt) .plan .actions{position:sticky;bottom:0;z-index:6;background:color-mix(in srgb,var(--bg2) 80%,#000)}
+  html:not(.dt) .bbq .board.bqboard{padding-block:2px 4px}
+  html:not(.dt) .bbq .board.bqboard .frow.bench.bqrow{margin-top:calc(var(--t,150px)*.16)}
+}
+/* taller phones get the room back: bigger tiles and shop art than v20.4 gave them */
+@media (max-width:760px) and (min-height:741px) and (max-height:820px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:72px;--ph-n:52px;--ph-m:19px}
+}
+@media (max-width:760px) and (min-height:821px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:92px;--ph-n:64px;--ph-m:25px}
+  html:not(.dt) .plan .shop .scard>.sart{height:64px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-10px;width:80px;height:80px}
+}
+@media (max-width:760px) and (min-height:521px) and (max-height:720px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:54px;--ph-n:43px;--ph-m:13px}
+  html:not(.dt) #app{padding-block:4px 2px}
+  html:not(.dt) .plan .shop .scard>.sart{height:38px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-6px;width:58px;height:58px}
+}
+@media (max-width:760px) and (min-height:521px) and (max-height:660px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:52px;--ph-n:40px;--ph-m:12px}
+  html:not(.dt) :is(.plan,.evteam) .board .slot .rgem{display:none}
+  html:not(.dt) :is(.plan,.evteam) .board .slot .tagl.max{display:none}
+  html:not(.dt) .plan .shop .scard>.sart{height:32px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-3px;width:50px;height:50px}
+  html:not(.dt) .plan>.syns>.syn{min-height:32px}
+  html:not(.dt) .plan .actions .btn{min-height:40px}
+  html:not(.dt) .bbq{display:none}
+}
+@media (max-width:760px) and (min-height:521px) and (max-height:600px){
+  html:not(.dt) :is(.plan,.evteam) .board{--ph-t:46px;--ph-n:36px;--ph-m:10px}
+  html:not(.dt) .plan .shop .scard>.sart{height:22px}
+  html:not(.dt) .plan>.syns>.syn{min-height:30px}
+  html:not(.dt) .plan .shop .scard>.sart img{top:-2px;width:40px;height:40px}
+}
 /* landscape phones: the shop in two columns, the fight fits the height */
 @media (max-height:520px) and (min-width:561px){
   html:not(.dt) #app{max-width:none}
@@ -23371,12 +23424,13 @@ function topBar(){
   const curAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act;
   const strip=Array.from({length:runActs()},(_,k)=>{const a=k+1,ix=SCHEDULE.map((r,i)=>r.act===a?i:-1).filter(i=>i>=0);if(a===SCHEDULE[SCHEDULE.length-1].act&&rule('finale2'))ix.push(SCHEDULE.length);
     return `<span class="act${a===curAct?' cur':''}" title="Act ${a} of ${runActs()}">${ix.map(i=>stripI[i]).join('')}</span>`;}).join('');
+  topBar.st=strip; // TRO-61: phones show it inside the next-enemy tab
   const inc=income();const next=inc.base+inc.interest+inc.coin+inc.ledger;
   const items=itemIcons();
-  return `<header class="top">
+  return `<header class="top${UI.phMenu?' mopen':''}">
     <div class="r1">
       <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${gnum('g',S.gold)}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${S.gym?gymChipHTML():lvChipHTML(S.lv)}${S.lead&&RIVAL[S.lead]?`<span class="lvlead2">💀 ${RIVAL[S.lead].e} ${esc(RIVAL[S.lead].name)}</span>`:''}</button></div>
-      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
+      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost phonly" data-a="poolview" aria-label="Character pool: copies left of every character">🃏<span class="cxw"> Pool</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}${leadChip()}</div>
     ${items?`<div class="items">${items}</div>`:''}
@@ -23710,7 +23764,7 @@ const COACH=[
  {id:'c2-event',lv:2,w:'event',on:()=>{const e=S.event;return !!(e&&!e.picked&&!e.special&&e.opts.length>1);},done:['event'],at:'.evbody',t:()=>'Intermission: pick one of three. A character, gold now, or supplies. Each suits a different plan.'},
  {id:'c2-item',lv:2,w:'plan',on:()=>S.trinkets.length>0,done:['trinket'],at:'.ic[data-a="trinket"]',t:()=>'An item. It helps your whole team in every fight. Tap it to read it.'},
  {id:'c2-genre',lv:2,w:'plan',on:()=>!!document.querySelector('.shop .scard.g-bug,.shop .scard.g-undead'),done:['hero-info','pick'],at:'.shop .scard.g-bug,.shop .scard.g-undead',t:()=>'New genre. Tap the card\'s i to read its genre bonus before you commit.'},
- {id:'c2-act2',lv:2,w:'plan',on:()=>{const x=curRound();return !!(x&&x.act===2);},at:'.top .strip .act.cur',t:()=>'Act 2. Enemies get tougher every act. Your rank and your board need to keep up.'},
+ {id:'c2-act2',lv:2,w:'plan',on:()=>{const x=curRound();return !!(x&&x.act===2);},at:'.strip .act.cur',t:()=>'Act 2. Enemies get tougher every act. Your rank and your board need to keep up.'},
  {id:'c3-hello',lv:3,w:'plan',nx:1,on:()=>S.round===1,t:()=>`📖 Table Read: three acts, Heist Crew and Slasher. Epic characters appear from shop rank ${tutEpic()}.`},
  {id:'c3-genres',lv:3,w:'plan',on:()=>!!document.querySelector('.shop .scard.g-heist,.shop .scard.g-horror'),at:'.shop .scard.g-heist,.shop .scard.g-horror',t:()=>'Heist Crew hits harder the more gold you hold. Slasher\'s first hit is a Jump Scare.'},
  {id:'c3-near',lv:3,w:'plan',on:()=>!!document.querySelector('.syn.combo.near'),done:['combo'],at:'.syn.combo.near',t:()=>'One character away from a crossover: two genres side by side add a bonus of their own.'},
@@ -23874,18 +23928,19 @@ function shopSyn(o,fieldNow,synNow){try{const g=HERO[o.id].genre,c0=synNow.c.g[g
 function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:1000px)').matches;}
 // v20.4: phones get the next enemy, rivals, the coach tip and items behind one row of tabs (a tab opens its panel over
 // the board; tap it again or outside to close). On bigger screens CSS hides the tabs and shows the panels in place.
-function phFold(){if(UI.phR!==S.round){UI.phR=S.round;UI.phOpen='';}
+function phFold(){if(UI.phR!==S.round){UI.phR=S.round;UI.phOpen='';UI.phMenu=false;}
   const e=S.enemy,vs=vsStrip0(),rv=rvStrip(),tip=coachHTML(),it=itemIcons(),T=[];
   if(vs){const x=e.rival&&RIVAL[e.rival],ld=e.enc&&e.enc[0]&&EN[e.enc[0].key];
     const ic=x?x.e:e.gh?'📼':e.boss?'💀':e.elite?'🌟':'⚔️',k=x?'Rival':e.gh?'Rerun':e.part?'Boss 2/2':e.boss?'Boss':e.elite?'Mini-boss':e.trial?'Trial':'Next';
-    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+'\'s cast':String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,vs]);}
+    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+'\'s cast':String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,(topBar.st?`<div class="strip phstrip" aria-label="Round ${S.round} of ${SCHEDULE.length}">${topBar.st}</div>`:'')+vs]);}
   if(rv)T.push(['rv','🏁','<span class="phl">Rivals</span>',rv]);
   if(tip)T.push(['tip','💡','<span class="phl">Tip</span>',tip]);
   if(it)T.push(['it','🎒',`<span class="phl">${S.trinkets.length+(S.legend?1:0)}</span>`,`<div class="items phitems">${it}</div>`]);
   const o=T.some(t=>t[0]===UI.phOpen)?UI.phOpen:'';
-  return `<div class="phw${o?' open':''}"><div class="phbar">${T.map(([k,ic,l])=>`<button type="button" class="phtab ph-${k}${o===k?' on':''}" data-a="phd" data-v="${k}" aria-expanded="${o===k}"><span class="phi" aria-hidden="true">${ic}</span>${l}<i class="phc" aria-hidden="true">▾</i></button>`).join('')}<button type="button" class="phtab ph-pool" data-a="poolview" aria-label="Character pool: copies left of every character"><span class="phi" aria-hidden="true">🃏</span><span class="phl">Pool</span></button></div>${T.map(([k,,,h])=>`<div class="phd${o===k?' on':''}" data-k="${k}">${h}</div>`).join('')}<button type="button" class="phbg" data-a="phd" data-v="" aria-label="Close the panel" tabindex="-1"></button></div>`;}
+  return `<div class="phw${o||UI.phMenu?' open':''}"><div class="phbar">${T.map(([k,ic,l])=>`<button type="button" class="phtab ph-${k}${o===k?' on':''}" data-a="phd" data-v="${k}" aria-expanded="${o===k}"><span class="phi" aria-hidden="true">${ic}</span>${l}<i class="phc" aria-hidden="true">▾</i></button>`).join('')}<button type="button" class="phtab ph-pool" data-a="poolview" aria-label="Character pool: copies left of every character"><span class="phi" aria-hidden="true">🃏</span><span class="phl">Pool</span></button><button type="button" class="phtab ph-menu${UI.phMenu?' on':''}" data-a="phmenu" aria-expanded="${!!UI.phMenu}" aria-label="Menu: Settings, Sound, Codex, Quit"><span class="phi" aria-hidden="true">☰</span></button></div>${T.map(([k,,,h])=>`<div class="phd${o===k?' on':''}" data-k="${k}">${h}</div>`).join('')}<button type="button" class="phbg" data-a="phd" data-v="" aria-label="Close the panel" tabindex="-1"></button></div>`;}
 // opens one tab's panel (or closes them all with ''), in place: no re-render
-function phSet(k){UI.phOpen=k||'';const w=document.querySelector('.phw');if(!w)return;w.classList.toggle('open',!!UI.phOpen);
+function phMenu(on){UI.phMenu=!!on;const t=document.querySelector('.top'),b=document.querySelector('.ph-menu');if(t)t.classList.toggle('mopen',UI.phMenu);if(b){b.classList.toggle('on',UI.phMenu);b.setAttribute('aria-expanded',UI.phMenu);}}
+function phSet(k){UI.phOpen=k||'';if(UI.phMenu)phMenu(false);const w=document.querySelector('.phw');if(!w)return;w.classList.toggle('open',!!UI.phOpen);
   w.querySelectorAll('.phd').forEach(d=>d.classList.toggle('on',d.dataset.k===UI.phOpen));
   w.querySelectorAll('.phtab[data-a="phd"]').forEach(b=>{const on=b.dataset.v===UI.phOpen;b.classList.toggle('on',on);b.setAttribute('aria-expanded',on);});}
 SCR.plan=()=>{
@@ -24403,7 +24458,7 @@ function peeking(){return !!(UI.legPeek&&S&&S.pending&&S.pending.length);}
 let toastT;
 function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1800);}
 // ================= input =================
-function onAction(a,v,el){try{tutAct(a);}catch(e){}const r_=onAction0(a,v,el);try{tutPaint();}catch(e){}try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
+function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}const r_=onAction0(a,v,el);try{tutPaint();}catch(e){}try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
 function onAction0(a,v,el){
   if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x'&&a!=='repitch')return;
   if(a==='fight'&&peeking()){UI.legPeek=false;render();return;}
@@ -24481,6 +24536,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'twin':showInfo({kind:'twin'});break;
     case 'nextfoes':sheet(nextFoesHTML());break;
     case 'phd':phSet(v&&UI.phOpen!==v?v:'');break;
+    case 'phmenu':{const on=!UI.phMenu;phSet('');phMenu(on);const w=document.querySelector('.phw');if(w)w.classList.toggle('open',on);break;}
     case 'nextfoe':sheet(nextFoeDetail(+v));break;
     case 'lv-info':showInfo({kind:'lv'});break;
     case 'lv':{const p=lvLoad();UI.lv=Math.max(lvMin(),Math.min(p.open,+v||0));p.pick=UI.lv;lvStore(p);render();break;}
@@ -24605,10 +24661,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.51',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.52',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.52',items:[["📱", "Phones: a shop round and a fight now fit on one screen, no scrolling. Settings, Sound, Codex, the Pool and Quit sit behind the <b>☰</b> tab, and this act's rounds are in the next-enemy tab."]]},
   {v:'20.51',items:[["⚔️", "<b>Rivals hit harder</b>: on the Ladder a rival's cast is now a real step up from a normal fight, from Act 1 on."], ["❤️", "On the Ladder every lost fight now costs 1 life (bosses 2), so the tougher rivals don't end your run sooner."]]},
   {v:'20.50',items:[["🎯", "Challenge a friend: Share now gives a link that drops them into your exact run, with your result to beat (\"Sam reached round 23 with Swarm. Beat that.\"). Put your name on the link if you like. At the end they see how they did against you, and can send their own link back."], ["🎯", "A challenge run does not count for your Ladder, so playing one never costs you anything."]]},
   {v:'20.49',items:[["🆚", "<b>Rival fights now have an entrance</b>: a VS card with the rival studio, its taunt and a stinger, so you know who you're up against. The Leader's card is bigger."], ["🎨", "During a rival fight their side of the board takes the studio's colour, with a nameplate. After it, the result names the rival you beat (or who beat you)."]]},
