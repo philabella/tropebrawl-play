@@ -2157,6 +2157,46 @@ html:not(.dt) .evscene.fbs .evpanel{padding-top:30px}
 #field.rvf:not(.arena) .bslot[data-k^="E"]{background:color-mix(in srgb,var(--rvc) 14%,var(--bg2));border-color:color-mix(in srgb,var(--rvc) 45%,transparent)}
 .rvres{margin:4px 0 2px;padding:4px 12px;border-left:4px solid var(--rvc);background:color-mix(in srgb,var(--rvc) 12%,transparent);border-radius:4px;font-size:.95rem;font-weight:700}
 .rvres b{color:var(--rvc)}
+/* TRO-124 polish v2: phones read at arm's length. 12 px floor, names wrap (never cut), MAX beside the stars */
+@media (max-width:760px){
+  html:not(.dt) .res small,html:not(.dt) .res small i{font-size:12px}
+  html:not(.dt) .top .lvb .lvlead2{font-size:12px;line-height:1}
+  html:not(.dt) .phtab.ph-vs .phl small{font-size:12px;letter-spacing:.06em}
+  html:not(.dt) .eyebrow{font-size:12px}
+  html:not(.dt) .choice .rar{font-size:12px;letter-spacing:.08em}
+  html:not(.dt) .syn.combo.near .c{font-size:12px}
+  html:not(.dt) .scard .own{font-size:12px}
+  html:not(.dt) .slot .sbdg{font-size:12px}
+  html:not(.dt) .slot:has(.sbdg.tg) .rgem{display:none}
+  html:not(.dt) .board .rowlbl.bhead>:is(span,b){font-size:12px}
+  html:not(.dt) .rowlbl{font-size:12px}
+  html:not(.dt) .slot .rgem>b{font-size:12px}
+  html:not(.dt) .board .slot .nm{font-size:12px;line-height:1.05;white-space:normal;display:flex;flex-direction:column;justify-content:flex-end;height:1.05em;overflow:visible;text-overflow:clip;overflow-wrap:break-word;text-align:center}
+  html:not(.dt) .board .slot .tagl.max{display:none}
+  html:not(.dt) .board .slot:has(>.tagl.max) .row::after{content:'MAX';display:inline-block;margin-left:4px;padding:0 3px;border-radius:3px;background:var(--gold);color:#1a1408;font:800 12px/1.25 var(--f-body,inherit);letter-spacing:.04em;vertical-align:1px}
+  html:not(.dt) .evteam>summary{font-size:12px;letter-spacing:.1em}
+  html:not(.dt) .oddsrow,html:not(.dt) .oddsrow span{font-size:12px}
+  html:not(.dt) .shop .scard .nm{font-size:12px;line-height:1.1;overflow-wrap:break-word}
+  html:not(.dt) .shop.nm3 .scard .nm{-webkit-line-clamp:3}
+  html:not(.dt) .shop.nm3 .scard>.sart::after{height:4px;font-size:0}
+  html:not(.dt) .shop .scard .rarl{font-size:12px;line-height:1;letter-spacing:0;text-transform:none}
+  html:not(.dt) .shop .scard .pleft{font-size:12px;left:3px;bottom:2px;line-height:18px}
+  html:not(.dt) .shop .scard{padding-bottom:20px}
+  html:not(.dt) .plan .shop .scard>.pr{bottom:2px;line-height:18px}
+  html:not(.dt) .plan .shop .scard>.pr .prc{font-size:12px}
+  html:not(.dt) .plan .shop .scard>.pr{transform:translateX(calc(-50% - 1px))}
+  html:not(.dt) .scard .gch .x2s{font-size:12px}
+  html:not(.dt) .shop>div>button.info{right:2px;bottom:3px;width:16px;height:16px;font-size:12px;line-height:16px}
+  html:not(.dt) .evchoices .evcard:not(:has(>.big)){grid-template-columns:minmax(0,1fr) auto}
+  html:not(.dt) .evchoices .evcard:not(:has(>.big))>b{grid-column:1}
+  html:not(.dt) .evchoices .evcard:not(:has(>.big))>small{grid-column:1/-1}
+}
+/* SMI-24: the rival chips were the one small button under 12 px (11.5); buttons now step 12 / 13 / 15 / 24 */
+.rvc{font-size:12px}
+/* short phones: the rarity letter would sit on the name, the tile border already shows rarity (as under 660 px) */
+@media (max-width:760px) and (max-height:720px){
+  html:not(.dt) :is(.plan,.evteam) .board .slot .rgem{display:none}
+}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -23645,8 +23685,13 @@ let DESK=false;
 function dtWant(){try{return !!window.tbApp||matchMedia('(min-width:1200px) and (min-height:700px) and (hover:hover) and (pointer:fine)').matches;}catch(e){return false;}}
 function dtCheck(){const on=dtWant();if(on===DESK)return false;DESK=on;try{document.documentElement.classList.toggle('dt',on);}catch(e){}return true;}
 // size the board (--t) and the battle (--tb) so the screen fills the window exactly: measure, adjust, twice
+// TRO-124: a phone shop name that needs a third line takes it from the art of every card in the row: same page height
+function phNames(){const sh=document.querySelector('.plan .shop');if(!sh)return;const ns=[...sh.querySelectorAll('.scard>.nm')],as=[...sh.querySelectorAll('.scard>.sart')];
+  sh.classList.remove('nm3');as.forEach(a=>{a.style.height='';});
+  if(document.documentElement.classList.contains('dt')||!ns.some(n=>n.scrollHeight>n.clientHeight+2))return;
+  const cut=Math.round(ns[0].clientHeight/2);sh.classList.add('nm3');as.forEach(a=>{a.style.height=Math.max(8,a.offsetHeight-cut)+'px';});}
 function dtFit(){try{
-  if(!DESK)return;const root=document.documentElement;
+  phNames();if(!DESK)return;const root=document.documentElement;
   const fit=(free,v,per,lo,hi)=>{let t=parseFloat(root.style.getPropertyValue(v))||150;
     for(let k=0;k<3;k++){const nt=Math.max(lo,Math.min(hi,t+free()/per));if(Math.abs(nt-t)<1)break;t=nt;root.style.setProperty(v,t.toFixed(1)+'px');}};
   if(UI.screen!=='plan')root.classList.remove('bwide');
@@ -23910,7 +23955,7 @@ function coachTip(){try{
 function coachHTML(){const c=coachTip();if(!c)return '';
   return `<div class="coach" role="note" data-k="${c.k}"><span class="ci" aria-hidden="true">💡</span><p><b>Tip</b> ${c.t}</p><button class="btn sm ghost" data-a="coach-x" data-v="${c.k}" title="Hide this tip until the next act">Got it</button></div>`;}
 // v19.15: soft hyphens in long name words for narrow shop cards (a hyphen only shows when the word must break)
-const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Safe-cracker',Quarterback:'Quarter-back',Starcaller:'Star-caller',Mastermind:'Master-mind',Gunslinger:'Gun-slinger',Chainblade:'Chain-blade',Bonesetter:'Bone-setter',Prospector:'Pros-pector',Cutthroats:'Cut-throats',Shellback:'Shell-back',Priestess:'Priest-ess',Corporate:'Corpo-rate',Dodgeball:'Dodge-ball',Moonwell:'Moon-well',Ironhide:'Iron-hide',Commando:'Com-mando',Skeleton:'Skele-ton',Lookouts:'Look-outs',Sergeant:'Ser-geant',Warchief:'War-chief',Operator:'Oper-ator',Observer:'Ob-server',Scorpion:'Scor-pion',Spitters:'Spit-ters'};
+const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Safe-cracker',Quarterback:'Quarter-back',Starcaller:'Star-caller',Mastermind:'Master-mind',Gunslinger:'Gun-slinger',Chainblade:'Chain-blade',Bonesetter:'Bone-setter',Prospector:'Pros-pector',Cutthroats:'Cut-throats',Shellback:'Shell-back',Priestess:'Priest-ess',Corporate:'Corpo-rate',Dodgeball:'Dodge-ball',Moonwell:'Moon-well',Ironhide:'Iron-hide',Commando:'Com-mando',Skeleton:'Skele-ton',Lookouts:'Look-outs',Sergeant:'Ser-geant',Warchief:'War-chief',Operator:'Oper-ator',Observer:'Ob-server',Scorpion:'Scor-pion',Spitters:'Spit-ters',Counselors:'Coun-selors',Babysitter:'Baby-sitter',Leviathan:'Levia-than',Wellspring:'Well-spring'};
 function shy(t){return String(t).replace(/[A-Za-z]{8,}/g,w=>SHY[w]?SHY[w].replace('-','­'):w);}
 // v19.18: shop synergy preview. A card whose genre is already on the board (count >= 1): the count it brings it to,
 // and whether that switches on the next genre bonus. Same counting as the board (activeSyn), the card added as fielded.
@@ -24661,10 +24706,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.52',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.53',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.53',items:[["🔎", "Phones: small text is bigger (12 px at least), long names like Radio Operator wrap instead of being cut, and the MAX tag sits next to the stars."]]},
   {v:'20.52',items:[["📱", "Phones: a shop round and a fight now fit on one screen, no scrolling. Settings, Sound, Codex, the Pool and Quit sit behind the <b>☰</b> tab, and this act's rounds are in the next-enemy tab."]]},
   {v:'20.51',items:[["⚔️", "<b>Rivals hit harder</b>: on the Ladder a rival's cast is now a real step up from a normal fight, from Act 1 on."], ["❤️", "On the Ladder every lost fight now costs 1 life (bosses 2), so the tougher rivals don't end your run sooner."]]},
   {v:'20.50',items:[["🎯", "Challenge a friend: Share now gives a link that drops them into your exact run, with your result to beat (\"Sam reached round 23 with Swarm. Beat that.\"). Put your name on the link if you like. At the end they see how they did against you, and can send their own link back."], ["🎯", "A challenge run does not count for your Ladder, so playing one never costs you anything."]]},
