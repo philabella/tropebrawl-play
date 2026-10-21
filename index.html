@@ -2063,6 +2063,47 @@ html:not(.dt) .evscene.fbs .evpanel{padding-top:30px}
 @keyframes evShake{20%{transform:translate(-4px,2px)}40%{transform:translate(4px,-2px)}60%{transform:translate(-3px,-1px)}80%{transform:translate(2px,1px)}}
 @media (max-height:820px) and (min-width:561px){html .evstage.evscene{max-width:min(100%,calc(34vh*2.4))}.evscene .evpanel{margin-top:-40px}}
 @media (max-height:520px) and (min-width:561px){.evset,.evhw{min-height:150px}}
+/* TRO-174: rival entrance (VS card), rival nameplate + tint on the field, rival line on the result bar */
+#tbx.vs::after{content:'';position:absolute;inset:0;pointer-events:none;background:linear-gradient(104deg,transparent 0 51%,color-mix(in srgb,var(--rvc) 30%,transparent) 51.2%,color-mix(in srgb,var(--rvc) 8%,transparent) 100%);opacity:0;transition:opacity .35s .1s}
+#tbx.vs.on::after{opacity:1}
+#tbx.vs.lead::after{background:linear-gradient(104deg,rgba(255,40,60,.10) 0 51%,color-mix(in srgb,var(--rvc) 34%,transparent) 51.2%,rgba(255,40,60,.16) 100%)}
+.tbvs{position:relative;z-index:1;display:grid;justify-items:center;gap:8px;width:min(100%,1100px);padding:12px 14px}
+.tbvtag{font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);font-size:.78rem;text-align:center}
+.tbvtag b{color:var(--rvc)}#tbx.vs.lead .tbvtag b{color:var(--red);font-size:1.15em}
+.tbvrow{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:clamp(6px,3vw,48px);width:100%}
+.tbvside{display:grid;justify-items:center;gap:3px;text-align:center;min-width:0}
+.tbvfig{position:relative;width:clamp(104px,min(22vw,34vh),340px);aspect-ratio:1/1;display:grid;place-items:center}
+.tbvside.rv .tbvfig::before{content:'';position:absolute;inset:-6%;border-radius:50%;background:radial-gradient(circle,color-mix(in srgb,var(--rvc) 42%,transparent),transparent 66%)}
+.tbvimg{position:relative;width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 6px 0 rgba(0,0,0,.45))}
+.tbvside.me .tbvimg{transform:scaleX(-1)}
+.tbvfig.sh .tbvimg{filter:brightness(0) drop-shadow(0 0 1px rgba(255,255,255,.9)) drop-shadow(0 0 10px var(--rvc))}
+.tbvemo{position:relative;font-family:var(--f-emoji);font-size:clamp(3.4rem,11vw,7rem);line-height:1}
+.tbvside b{font-family:var(--f-display);font-weight:400;font-size:clamp(1.25rem,4.2vw,2.7rem);line-height:1.05;text-shadow:3px 3px 0 #000;max-width:100%}
+.tbvside.me b{color:var(--ink)}.tbvside.rv b{color:var(--rvc)}
+.tbvside span{font-weight:800;letter-spacing:.12em;text-transform:uppercase;font-size:clamp(.62rem,1.6vw,.8rem);color:var(--muted);max-width:100%}
+.tbvvs{font-family:var(--f-display);font-weight:400;font-size:clamp(2.8rem,10vw,7.4rem);line-height:1;color:var(--gold);text-shadow:5px 5px 0 #000;transform:rotate(-8deg)}
+#tbx.vs.lead .tbvvs{color:var(--red)}
+.tbvq{margin:2px 0 0;font-style:italic;font-weight:700;font-size:clamp(.95rem,2.4vw,1.3rem);color:var(--ink);max-width:46ch;text-align:center}
+#tbx.vs.on .tbvtag{animation:tbFade .3s both}
+#tbx.vs.on .tbvside.me{animation:tbvL .42s cubic-bezier(.2,.8,.2,1) .05s both}
+#tbx.vs.on .tbvside.rv{animation:tbvR .42s cubic-bezier(.2,.8,.2,1) .05s both}
+#tbx.vs.on .tbvvs{animation:tbvSlam .36s cubic-bezier(.3,1.4,.5,1) .3s both}
+#tbx.vs.on .tbvq{animation:tbUp .4s cubic-bezier(.2,.8,.2,1) .5s both}
+#tbx.vs.lead.on .tbvside.rv .tbvfig{animation:tbvPulse 1s ease-in-out .7s infinite alternate}
+#tbx.vs.fast *{animation-duration:.01s!important;animation-delay:0s!important}
+@keyframes tbvL{from{opacity:0;transform:translateX(-32vw)}to{opacity:1;transform:none}}
+@keyframes tbvR{from{opacity:0;transform:translateX(32vw)}to{opacity:1;transform:none}}
+@keyframes tbvSlam{from{opacity:0;transform:rotate(-8deg) scale(2.8)}to{opacity:1;transform:rotate(-8deg) scale(1)}}
+@keyframes tbvPulse{from{transform:none}to{transform:scale(1.05)}}
+@media (max-width:560px){.tbvrow{gap:2px}.tbvfig{width:34vw}.tbvside span{letter-spacing:.06em}}
+.rvplate{position:absolute;z-index:3;top:8px;left:10px;display:grid;justify-items:start;gap:0;padding:5px 12px 6px 10px;border-left:5px solid var(--rvc);border-radius:4px 10px 10px 4px;background:rgba(11,10,13,.78);box-shadow:0 2px 0 rgba(0,0,0,.4);pointer-events:none;max-width:46%}
+.rvplate i{font-style:normal;font-weight:800;font-size:.62rem;letter-spacing:.16em;text-transform:uppercase;color:var(--rvc)}
+.rvplate.lead i{color:var(--red)}
+.rvplate b{font-family:var(--f-display);font-weight:400;font-size:clamp(.95rem,1.6vw,1.25rem);line-height:1.05;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.rvplate small{font-size:.66rem;font-weight:700;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+#field.rvf:not(.arena) .bslot[data-k^="E"]{background:color-mix(in srgb,var(--rvc) 14%,var(--bg2));border-color:color-mix(in srgb,var(--rvc) 45%,transparent)}
+.rvres{margin:4px 0 2px;padding:4px 12px;border-left:4px solid var(--rvc);background:color-mix(in srgb,var(--rvc) 12%,transparent);border-radius:4px;font-size:.95rem;font-weight:700}
+.rvres b{color:var(--rvc)}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -23069,7 +23110,7 @@ function recapHTML(){if(!B||!B.units)return '';
     return `<div class="rc${o===top?' mvp':''}${u.alive===false?' ko':''}" style="--i:${i}" title="${esc(u.name)}: ${R(o.d)} damage dealt, ${R(o.t)} taken, ${R(o.h)} healed + shielded${u.alive===false?' (knocked out)':''}">${o===top?'<span class="crown" aria-label="MVP">👑</span>':''}${o.sum?pt({e:u.e,genre:'foe'}):rcPt(u)}<div class="rcb"><div class="rcn">${esc(u.name)}${u.level>1?' '+'★'.repeat(u.level):''}</div>${ln('rcd',o.d)}${ln('rct',o.t)}${ln('rch2',o.h)}</div></div>`;}).join('')}</div></div>`;}
 function showResult(){
   FR=null;if(S)delete S.inFight;
-  const rvBeat=S&&S.enemy&&S.enemy.rival; // v20.3: for the rival reveal (read only)
+  const rvBeat=S&&S.enemy&&S.enemy.rival,rvLead=!!(S&&S.enemy&&S.enemy.lead); // v20.3: for the rival reveal (read only)
   // v20.2: the fought rival's reasoning, taken before settle (its next shop turn runs inside settle)
   {const id=S&&S.enemy&&S.enemy.rival,R=id&&S.lobby&&S.lobby.rv.find(x=>x.id===id);UI.rvWhy=R&&(R.whys||R.whyPlace)?{id,w:(R.whys||[]).slice(-3),pl:R.whyPlace||''}:null;}
   const res=settle();UI.lastRes=res;UI.foeTeam=foeSnap(res);const rcap=recapHTML();
@@ -23087,7 +23128,7 @@ function showResult(){
   }
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
   const rvA=rvBeat&&RIVAL[rvBeat]&&(res.win||rvKnown(rvBeat))&&typeof RB!=='undefined'&&RB.CARDS&&RB.CARDS[rvBeat]?RB.CARDS[rvBeat].algo:'';
-  f.insertAdjacentHTML('beforeend',`<div class="overlay resbar"><div class="ov${res.win?'':' lose'}" role="status">${body}${rvA?`<p class="muted rvalgo">${RIVAL[rvBeat].e} ${esc(RIVAL[rvBeat].name)} plays by: <b>${esc(rvA)}</b></p>`:''}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}</div>${rcap}</div></div>`);
+  f.insertAdjacentHTML('beforeend',`<div class="overlay resbar"><div class="ov${res.win?'':' lose'}" role="status">${body}${rvResLine(rvBeat,rvLead,res.win)}${rvA?`<p class="muted rvalgo">${RIVAL[rvBeat].e} ${esc(RIVAL[rvBeat].name)} plays by: <b>${esc(rvA)}</b></p>`:''}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}</div>${rcap}</div></div>`);
   const b=f.querySelector('.overlay [data-a="after-fight"]');if(b)b.focus();
   try{if(res.win&&rvBeat&&RIVAL[rvBeat])rvuWon(rvBeat);}catch(e){}
 }
@@ -23132,6 +23173,21 @@ const RVX={
     who:'Cue learns from its own wins and losses in your games. It experiments early, then settles into habits: same situation, same move.',
     flav:'Cue is pure trial and error (Q-learning): every fight nudges its score for each habit in each situation, and it keeps what pays.'},
 };
+// TRO-174: each rival studio's colour (VS card, enemy floor mats, nameplate, result line)
+const RVCOL={penny:'#ff8fb8',rex:'#2fd07a',ivy:'#b48cff',duke:'#ff5a2e',goldie:'#ffc93c',sal:'#49c6e5',hugo:'#c99a62',ace:'#f04a6a',
+  kit:'#ffa62b',echo:'#a8c8ff',quill:'#5b7cff',cue:'#39e6c8',bettina:'#d9a35a'};
+function rvCol(id){return RVCOL[id]||'#ff6b6b';}
+function rvStudio(id){return (RVX[id]||{}).studio||'';}
+// "Penny's Piggy Bank Pictures"
+function rvFull(id){const x=RIVAL[id],st=rvStudio(id);return x?x.name+"'s "+(st||'cast'):'';}
+function rvTaunt(id,lead){const G=GYMS.find(g=>g.id===id),v=RVX[id]||{};return (lead&&G&&G.taunt)||v.intro||(G&&G.taunt)||(RIVAL[id]?RIVAL[id].tell:'');}
+// your strongest fielded character (rarity, then stars) faces the rival on the VS card
+function rvMyAce(){let b=null,bs=-1;fielded().forEach(u=>{const d=HERO[u.id];if(!d)return;const sc=u.level*10+d.tier;if(sc>bs){bs=sc;b=u;}});return b;}
+function rvToy(id,cls){const src=id&&typeof SPRITES!=='undefined'&&(SPRITES[id+'_f']||SPRITES[id]);return src?`<img class="${cls}" src="${src}" alt="" draggable="false">`:'';}
+function rvPlate(){const id=S&&S.enemy&&S.enemy.rival,x=id&&RIVAL[id];if(!x)return '';const st=rvStudio(id);
+  return `<div class="rvplate${S.enemy.lead?' lead':''}" style="--rvc:${rvCol(id)}"><i>${S.enemy.lead?'💀 Final boss':'Rival'}</i><b>${x.e} ${esc(x.name)}</b>${st?`<small>${esc(st)}</small>`:''}</div>`;}
+function rvResLine(id,lead,win){const x=id&&RIVAL[id];if(!x)return '';const n=`<b>${esc(rvFull(id))}</b>`;
+  return `<p class="rvres${win?'':' l'}" style="--rvc:${rvCol(id)}">${x.e} ${win?(lead?'You beat the Leader, ':'You beat ')+n+'!':n+(lead?' held on to the finale. Next time.':' got you this time.')}</p>`;}
 // which rivals you have beaten (their cast, in a fight you won). Its own key next to the settings one, so the demo's
 // remapped SET_KEY gives it a demo key too.
 const RVU_KEY=SET_KEY.replace(/settings$/,'rivals');
@@ -23194,9 +23250,19 @@ if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener(
 // shop -> fight: an "Episode 12" bumper (the fight starts under it, then it wipes away)
 function tbxFight(go){if(tbxMode()==='off'||TBX.el||!S){go();return;}
   const k=tbxK(),e=S.enemy||{},act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,boss=!!e.boss,rv=e.rival&&RIVAL[e.rival];
+  if(rv){tbxVs(go,e,act,k);return;} // TRO-174
   const tag=e.lead?'Final boss · the Leader':e.gym?'Gym Leader ('+(e.gym===2?4:act)+'/4)'+(e.gym===2?' · cast ×'+TUNE.gymBossK:''):e.part?'Boss · part 2':boss?'Boss episode':e.elite?'Mini-boss':rv?'Rival episode':e.gh?'Rerun':'';
   tbxOpen('bump'+(k<1?' k5':''),`<div class="tbep${boss?' boss':''}"><small>${esc(runLong())} · Act ${act}${tag?' · '+tag:''}</small><b>Episode ${S.round}</b><i>${boss?'💀 ':rv?rv.e+' ':'⚔️ '}${esc(e.title||'')}</i></div>`,'Episode '+S.round);
   tbxRun([[16,()=>TBX.el.classList.add('on')],[(boss?980:760)*k,go],[(boss?980:760)*k+40,()=>tbxOut(320*k+40)]]);}
+// TRO-174: a rival fight opens with a VS card: you vs the rival studio (the fight starts under it, then it wipes away)
+function tbxVs(go,e,act,k){const id=e.rival,x=RIVAL[id],big=!!e.lead,me=rvMyAce(),st=rvStudio(id),tag=big?'Final boss · the Leader':'Rival episode';
+  const el=tbxOpen('bump vs'+(big?' lead':'')+(k<1?' k5':''),`<div class="tbvs"><small class="tbvtag">${esc(runLong())} · Act ${act} · Episode ${S.round} · <b>${tag}</b></small>
+    <div class="tbvrow"><div class="tbvside me"><div class="tbvfig">${me&&rvToy(me.id,'tbvimg')||'<span class="tbvemo">🎬</span>'}</div><b>Your cast</b><span>${me&&HERO[me.id]?esc(HERO[me.id].name):''}</span></div>
+    <div class="tbvvs" aria-hidden="true">VS</div>
+    <div class="tbvside rv"><div class="tbvfig${rvRevealed(id)?'':' sh'}">${rvToy((RVX[id]||{}).m,'tbvimg')||`<span class="tbvemo">${x.e}</span>`}</div><b>${x.e} ${esc(x.name)}</b><span>${esc(st||'Rival studio')}</span></div></div>
+    <p class="tbvq">“${esc(rvTaunt(id,big))}”</p></div>`,tag+': '+rvFull(id),'Click to skip');
+  el.style.setProperty('--rvc',rvCol(id));sfxStinger(big);const T=(big?1900:1450)*k;
+  tbxRun([[16,()=>el.classList.add('on')],[T,go],[T+40,()=>tbxOut(320*k+40)]]);}
 // fight -> shop / intermission / end: a wipe; an intermission gets a card with its icon and title; a level clear or a
 // new unlock goes straight on into the level-cleared sequence
 function tbxAfter(go){if(tbxMode()==='off'||TBX.el){go();tbxEnd(true);return;}const k=tbxK();
@@ -23798,13 +23864,13 @@ SCR.plan=()=>{
 SCR.battle=()=>{
   const row=(side,r)=>`<div class="frow">${[0,1,2,3].map(i=>`<div class="bslot" data-k="${side}${r[0]}${i}"></div>`).join('')}</div>`;
   return `<section>
-    <div class="bhead"><div><div class="eyebrow"><span class="lvchip" title="${esc(lvTitle(S.lv))}">${esc(lvLong(S.lv))}</span> Round ${S.round} · ${S.enemy.part?'Boss · part 2':S.enemy.boss?'Boss':S.enemy.elite?'Mini-boss':S.enemy.trial?'Trial by Fire':'Fight'}</div><h2>${esc(S.enemy.title)}</h2></div>
+    <div class="bhead"><div><div class="eyebrow"><span class="lvchip" title="${esc(lvTitle(S.lv))}">${esc(lvLong(S.lv))}</span> Round ${S.round} · ${S.enemy.lead?'Final boss · the Leader':S.enemy.rival&&RIVAL[S.enemy.rival]?'Rival':S.enemy.part?'Boss · part 2':S.enemy.boss?'Boss':S.enemy.elite?'Mini-boss':S.enemy.trial?'Trial by Fire':'Fight'}</div><h2>${esc(S.enemy.title)}</h2></div>
       <div class="row"><span class="streak" id="streak" hidden></span><span id="bbench" hidden></span><span class="clock" id="clock">0.0s</span><div class="speed" role="group" aria-label="Battle speed">
       <button class="btn sm sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>
       <button class="btn sm" data-a="pause" aria-label="Pause">⏸</button>
       ${[1,2,3].map(s=>`<button class="btn sm${UI.speed===s?' on':''}" data-a="speed" data-v="${s}">${s}×</button>`).join('')}
       <button class="btn sm" data-a="skip" aria-label="Skip to the result">⏭</button></div></div></div>
-    <div class="field" id="field">${row('E','back')}${row('E','front')}<div class="clashline"></div>${row('A','front')}${row('A','back')}</div>
+    <div class="field${S.enemy.rival&&RIVAL[S.enemy.rival]?' rvf':''}" id="field"${S.enemy.rival&&RIVAL[S.enemy.rival]?` style="--rvc:${rvCol(S.enemy.rival)}"`:''}>${rvPlate()}${row('E','back')}${row('E','front')}<div class="clashline"></div>${row('A','front')}${row('A','back')}</div>
     <div class="bbq" id="bbq" hidden></div>
     <div style="margin-top:10px">${synHTML(fielded())}</div>
   </section>`;
@@ -24501,10 +24567,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.48',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.49',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.49',items:[["🆚", "<b>Rival fights now have an entrance</b>: a VS card with the rival studio, its taunt and a stinger, so you know who you're up against. The Leader's card is bigger."], ["🎨", "During a rival fight their side of the board takes the studio's colour, with a nameplate. After it, the result names the rival you beat (or who beat you)."]]},
   {v:'20.48',items:[["⏩", "Fights now have a <b>3×</b> speed too (1× / 2× / 3×, or keys 1 2 3). The game remembers the speed you pick."]]},
   {v:'20.47',items:[["🎬", "The Act 3 boss is now the Mid-season finale: a dress rehearsal for the Season finale. A board that isn't ready finds out at Episode 27, with time left to fix it."]]},
   {v:'20.46',items:[["🩹", "Fight recap fix: the red <b>taken</b> row now shows the damage each of your characters took (it always showed a dash)."]]},
@@ -24901,6 +24968,17 @@ function sfx(k,o){try{
   src.buffer=list[SFX.n%list.length];src.playbackRate.value=SFX_RATE[SFX.n%SFX_RATE.length];
   g.gain.value=(SFX_VOL[k]||.4)*fast*(o&&o.vol||1);src.connect(g);g.connect(SFX.ctx.destination);
   SFX.voices++;src.onended=()=>{SFX.voices--;};src.start();
+}catch(e){}}
+// TRO-174: rival stinger. Synthesised (no sample file). No Math.random / rand(): the whoosh noise uses its own LCG.
+function sfxStinger(big){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;
+  const C=SFX.ctx,t0=C.currentTime+.02,out=C.createGain(),lp=C.createBiquadFilter();out.gain.value=big?.4:.32;out.connect(C.destination);lp.type='lowpass';lp.frequency.value=1900;lp.Q.value=.8;lp.connect(out);
+  const stab=(t,fs,dur,v)=>fs.forEach(f=>[-7,7].forEach(dt=>{const o=C.createOscillator(),g=C.createGain();o.type='sawtooth';o.frequency.value=f;o.detune.value=dt;
+    g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.018);g.gain.exponentialRampToValueAtTime(v*.3,t+dur*.45);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(lp);o.start(t);o.stop(t+dur+.05);}));
+  const boom=(t,v,d)=>{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(36,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(out);o.start(t);o.stop(t+d+.05);};
+  {const n=C.sampleRate*.3|0,b=C.createBuffer(1,n,C.sampleRate),d=b.getChannelData(0);let q=1234567;for(let i=0;i<n;i++){q=(q*1103515245+12345)&0x7fffffff;d[i]=(q/1073741824-1)*Math.pow(i/n,2)*.5;}
+    const ns=C.createBufferSource(),hp=C.createBiquadFilter();hp.type='highpass';hp.frequency.value=900;ns.buffer=b;ns.connect(hp);hp.connect(out);ns.start(t0);}
+  const a=t0+.3;stab(a,[146.8,220],.2,.09);stab(a+.24,[146.8,174.6,220],big?.5:.75,.1);boom(a+.24,.6,.7);
+  if(big){stab(a+.62,[110,138.6,164.8],1.1,.12);boom(a+.62,.8,1.1);}
 }catch(e){}}
 function sndPaint(){try{document.querySelectorAll('.sndbtn').forEach(b=>{b.textContent=SET.sound?'🔊':'🔇';b.setAttribute('aria-pressed',String(!SET.sound));
   const t='Sound '+(SET.sound?'on':'off')+' (M)';b.title=t;b.setAttribute('aria-label',t);});}catch(e){}}
@@ -25553,6 +25631,10 @@ function arMat(c,o){return new TBA.THREE.MeshStandardMaterial(Object.assign({col
 // board, a clapperboard, sandbags, cables and tape marks
 function arTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new TBA.THREE.CanvasTexture(c);t.colorSpace=TBA.THREE.SRGBColorSpace;t.anisotropy=4;return t;}
 const arNo=m=>{m.userData.outlineParameters={visible:false};return m;},arAt=(m,x,y,z)=>{m.position.set(x,y,z);return m;};
+// TRO-174: the enemy floor mats in the rival studio's colour (back to the red mats for every other fight)
+function arRvTint(){try{if(!AR.eMat||!AR.mat)return;const id=S&&S.enemy&&S.enemy.rival;let m=AR.mE0;
+  if(id&&RIVAL[id]){if(!AR.mR[id]){const h=rvCol(id),c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)*.4|0);AR.mR[id]=AR.mat(`rgba(${c.join(',')},.72)`,h);}m=AR.mR[id];}
+  AR.eMat.forEach(o=>{o.material=m;});}catch(e){}}
 function arFlat(geo,mat,x,y,z){const m=arNo(new TBA.THREE.Mesh(geo,mat));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);return m;}
 function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group(),TW=AR_X*4+1.3,TD=AR_Z.Ab*2+4.4,FL=-.62;
   const M=(c,o)=>arMat(c,o),add=(m,x,y,z)=>{m.position.set(x,y,z);g.add(m);return m;},mesh=(geo,mat)=>new THREE.Mesh(geo,mat);
@@ -25576,7 +25658,8 @@ function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Gr
   const mat=(fill,tape)=>M('#ffffff',{transparent:true,depthWrite:false,roughness:.9,map:arTex(256,256,(x,w,h)=>{x.fillStyle=fill;x.fillRect(10,10,w-20,h-20);x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=3;x.strokeRect(22,22,w-44,h-44);
     x.fillStyle=tape;for(const [cx,cy,sx,sy] of [[10,10,1,1],[w-10,10,-1,1],[10,h-10,1,-1],[w-10,h-10,-1,-1]]){x.fillRect(cx,cy,sx*62,sy*14);x.fillRect(cx,cy,sx*14,sy*62);}})});
   const mA=mat('rgba(44,58,92,.62)','#5aa9ff'),mE=mat('rgba(92,36,52,.62)','#ff4d5e');
-  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<4;c++){const w=arWorld(k+c);g.add(arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z));}
+  AR.eMat=[];AR.mE0=mE;AR.mat=mat;AR.mR={};
+  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<4;c++){const w=arWorld(k+c),o=arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z);g.add(o);if(k[0]==='E')AR.eMat.push(o);}
   // clash line: red-and-white tape
   const ct=arTex(512,32,(x,w,h)=>{for(let i=0;i<16;i++){x.fillStyle=i%2?'#f3eee4':'#e8303f';x.fillRect(i*32,0,32,h);}});
   g.add(arFlat(new THREE.PlaneGeometry(AR_X*4+.8,.3),M('#ffffff',{map:ct,emissive:'#ff2d40',emissiveIntensity:.25}),0,.016,0));
@@ -25685,7 +25768,7 @@ function arProj(now){if(!AR.proj.length)return;const {THREE}=TBA,X=new THREE.Vec
 function arFrame(){AR.raf=0;const f=document.getElementById('field');
   if(!(SET.arena!==false&&!RM&&f&&UI.screen==='battle'&&typeof B!=='undefined'&&B&&!B.silent)){arOff();return;}
   if(!TBA.tried)tbaInit();if(!TBA.on||!arInit()){arOff();return;}
-  try{if(AR.f!==f||AR.B!==B){arOff();AR.f=f;AR.B=B;AR.last=0;AR.nf=0;f.classList.add('arena');document.body.appendChild(AR.cv);document.documentElement.classList.add('ar3d');AR.W=-1;}
+  try{if(AR.f!==f||AR.B!==B){arOff();AR.f=f;AR.B=B;AR.last=0;AR.nf=0;f.classList.add('arena');arRvTint();document.body.appendChild(AR.cv);document.documentElement.classList.add('ar3d');AR.W=-1;}
     if(f.clientWidth!==AR.W||f.clientHeight!==AR.H0)arLayout();else arView();AR.cv.classList.toggle('shake',f.classList.contains('shake'));
     const now=performance.now(),gap=AR.last?now-AR.last:16;AR.dt=Math.min(.1,gap/1000);AR.last=now;
     // too slow (under ~20 frames a second): sharper pixels go first, then the ink outlines, then back to the flat board
