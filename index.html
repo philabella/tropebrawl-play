@@ -188,6 +188,9 @@ strong.lvon{color:var(--gold);font-weight:800}
 .bar .track{height:12px}
 .bar .fill{height:100%;border-radius:0 4px 4px 0;background:var(--dim);min-width:2px}
 .bar.mvp .fill{background:var(--gold)}
+.lwctr{margin:6px 0;font-size:.9rem;color:#ffb4a8}
+.lwend{max-width:560px;margin:10px auto 0;text-align:left}
+.rpb{margin-top:8px}
 .bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700}
 .spend{display:flex;height:16px;gap:2px}
 .spend i{display:block;height:100%;min-width:3px}
@@ -20760,7 +20763,7 @@ function buildSchedule(n){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={spaceVsDead:0.5,ladderOn:1,ladderLv:5,ladderTo:16,ladderActK:[0.7,0.9,1.3,1.6],ladderLowK:[0.6,0.7,0.9,1.1],ladderRampTo:9,ladderLoss:[1,1,2,2],heistShield:1.5,westShield:2,kaijuShield:0.5,artShield:2,kaijuArt:0.5,ballBug:0.3,fearNoBounce:1,shieldBounce:1,undeadFearless:1,kaijuFearless:1,bugOverkill:1.5,heistBug:0.7,spaceShieldAct:[0.6,0,0,0],seasonBossF:1.0,gymBossK:2.8,gymActK:1,gymGenreW:1.5,gymLobby:3,gymSim:0,rvBrains:1,rvPC:[-2.108,0.0302],rvMatch:1,rvMatchN:3,rvCal:{"w":[1.0617,2.6306,-0.1192,0.2886,-4.1458],"st":{"ace":-0.0653,"cue":0.2443,"duke":-0.1342,"echo":-0.4375,"goldie":0.4,"hugo":-0.1407,"ivy":-0.2401,"kit":0.0913,"penny":-0.0064,"quill":0.367,"rex":0.109,"sal":-0.1873},"lv":{"4":0.3763,"10":0.1108,"13":-0.1938,"15":-0.2323,"17":-0.0405,"18":-0.0205}},rvP2:1,rvFull:1.03,rvSchedK:0.9,rvBrain:1,symFoes:1,xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:0.7,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"army":0.07,"bug":0.28,"undead":0.34,"heist":0.3,"west":0,"horror":0.07,"space":0,"kaiju":0.14,"ball":0.42},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.773,4.001,3.377,2.586],bossF:[1.9,1.6,1.2,2.2],bossP2:0.37,lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:0.85,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.45,"bug":1.2,"undead":1.15,"ball":1.25,"heist":1.5,"west":1.1,"horror":1.4,"space":1.35,"kaiju":1.5},rivalsOn:true,wideHp:2.0,wideAtk:1.8,wideP:1.4,giant3:0.85,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.14,spacePierce:.5,spaceHaste:0.15,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:0.2,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
+const TUNE={repitchEv:0,spaceVsDead:0.5,ladderOn:1,ladderLv:5,ladderTo:16,ladderActK:[0.7,0.9,1.3,1.6],ladderLowK:[0.6,0.7,0.9,1.1],ladderRampTo:9,ladderLoss:[1,1,2,2],heistShield:1.5,westShield:2,kaijuShield:0.5,artShield:2,kaijuArt:0.5,ballBug:0.3,fearNoBounce:1,shieldBounce:1,undeadFearless:1,kaijuFearless:1,bugOverkill:1.5,heistBug:0.7,spaceShieldAct:[0.6,0,0,0],seasonBossF:1.0,gymBossK:2.8,gymActK:1,gymGenreW:1.5,gymLobby:3,gymSim:0,rvBrains:1,rvPC:[-2.108,0.0302],rvMatch:1,rvMatchN:3,rvCal:{"w":[1.0617,2.6306,-0.1192,0.2886,-4.1458],"st":{"ace":-0.0653,"cue":0.2443,"duke":-0.1342,"echo":-0.4375,"goldie":0.4,"hugo":-0.1407,"ivy":-0.2401,"kit":0.0913,"penny":-0.0064,"quill":0.367,"rex":0.109,"sal":-0.1873},"lv":{"4":0.3763,"10":0.1108,"13":-0.1938,"15":-0.2323,"17":-0.0405,"18":-0.0205}},rvP2:1,rvFull:1.03,rvSchedK:0.9,rvBrain:1,symFoes:1,xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:0.7,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:2,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"army":0.07,"bug":0.28,"undead":0.34,"heist":0.3,"west":0,"horror":0.07,"space":0,"kaiju":0.14,"ball":0.42},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.773,4.001,3.377,2.586],bossF:[1.9,1.6,1.2,2.2],bossP2:0.37,lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:0.85,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.45,"bug":1.2,"undead":1.15,"ball":1.25,"heist":1.5,"west":1.1,"horror":1.4,"space":1.35,"kaiju":1.5},rivalsOn:true,wideHp:2.0,wideAtk:1.8,wideP:1.4,giant3:0.85,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.14,spacePierce:.5,spaceHaste:0.15,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:0.2,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:8,lvMin:1,lvGate:1,epsMode:1,renewGold:5};
 buildSchedule(false);
@@ -21530,14 +21533,27 @@ function enemyStats(e){
   if(d.x.crowd)return {crowd:d.x.crowd,bodyHp:d.x.bodyHp*m,bodyAtk:d.x.bodyAtk*m,hp:d.x.crowd*d.x.bodyHp*m,atk:d.x.bodyAtk*m,p:m};
   return {hp:d.hp*m,atk:d.atk*m,p:m};
 }
+// the 3 event offers; ex = offers to avoid (a Re-pitch deals new ones while the pool has enough)
+function evOpts(ex){const pool=Object.keys(EVENTS).filter(k=>!NOPOOL.includes(k)&&lvOK('e',k));let opts=shuffle(pool.filter(k=>!ex.includes(k))).slice(0,3);
+  if(opts.length<3)opts=opts.concat(shuffle(ex.filter(k=>pool.includes(k)))).slice(0,3);
+  if(S.round===3&&opts.length>2&&!opts.includes('supply')&&lvOK('e','supply'))opts[2]='supply';
+  if(rule('plot'))opts[opts[2]==='supply'?1:2]=pick(PLOT); // Plot Twists: one risky choice
+  return opts;}
+// TRO-130: Re-pitch, one free re-deal of each Legendary offer (kind 'l'; event offers 'e' only with TUNE.repitchEv)
+function repitch(kind){
+  if(kind==='l'){const p=S.pending[0];if(!p||p.kind!=='legend'||p.rp||!p.choices)return false;const old=p.choices.slice().sort().join();
+    let ch=p.choices;for(let i=0;i<8;i++){ch=legendChoices(p.win?3:2);if(ch.slice().sort().join()!==old)break;}
+    p.choices=ch;if(p.rare)p.rare=trinketChoices(3,true).find(t=>t!==p.rare)||p.rare;p.rp=1;tlAct('p','l');save();return true;}
+  const e=S.event;if(!TUNE.repitchEv||!e||e.picked||e.pre||e.rp||!e.opts||e.opts.length<2)return false;
+  e.opts=evOpts(e.opts);e.rp=1;tlAct('p','e');save();return true;}
+function rpBtn(kind,used){return `<button class="btn sm rpb" data-a="repitch" data-v="${kind}" ${used?'disabled':''} title="Deal a whole new offer, once per offer. The old choices go away.">🎬 Re-pitch${used?': used':' · 1 free'}</button>`;}
 function startRound(){rsKey('r');
   const ev=curRound();
   S.event=null;S.enemy=null;
   // special event on this round (rolled at the start of the run); if it can't happen now, it's a normal event
   // a random event pops up at the start of its round (before the shop or the pick); the round then goes on as normal
   if(specialAt(S.round)&&!(S.preDone||{})[S.round]){S.preDone=S.preDone||{};S.preDone[S.round]=1;const k=drawRandomEvent(specialAt(S.round));if(k){startSpecial(k);S.event.pre=true;UI.screen='event';return;}}
-  if(ev.type==='event'){let opts=shuffle(Object.keys(EVENTS).filter(k=>!NOPOOL.includes(k)&&lvOK('e',k))).slice(0,3);if(S.round===3&&opts.length>2&&!opts.includes('supply')&&lvOK('e','supply'))opts[2]='supply';
-    if(rule('plot'))opts[opts[2]==='supply'?1:2]=pick(PLOT); // Plot Twists: one risky choice
+  if(ev.type==='event'){const opts=evOpts([]);
     S.event={opts,picked:null,sub:null};if(opts.length===1)eventPick(opts[0]);}
   else prepareFight();
   UI.screen=ev.type==='event'?'event':'plan';
@@ -22334,6 +22350,20 @@ function lossTip(){
   if(S.rank<RMAX-1)return 'Train the shop (⬆️) to fill its gauge: each rank unlocks rarer characters'+(RANK.board[S.rank]>boardSize()?' and a bigger board.':'.');
   return 'Put your strongest characters on the board and get 4 or 6 of one genre.';
 }
+// TRO-130: why you lost, from this fight's data: who hurt you (share of all enemy damage), the counter arrow if one
+// applied (only arrows measured 55%+, as in the next-fight panel), one thing to try
+// (symmetric rival fights credit damage to the units only, B.threat stays empty: then read the enemy units' dmgDone)
+function lossWhy(res){let th=B.threat;if(!Object.keys(th).length){th={};B.units.filter(u=>u.side==='E'&&u.dmgDone>0).forEach(u=>{const k=u.key||u.name;th[k]=(th[k]||0)+u.dmgDone;});}
+  const tot=Object.values(th).reduce((a,v)=>a+v,0),c={},dm={};
+  if(!res.threat){const t=Object.entries(th).sort((a,b)=>b[1]-a[1])[0];if(t){const f=foeInfo(t[0]);res.threat={k:t[0],e:f.e,name:f.name,dmg:R(t[1])};}}
+  if(res.threat&&tot>0&&th[res.threat.k])res.threat.pct=Math.round(100*th[res.threat.k]/tot);
+  const seen=new Set();B.units.filter(u=>u.side==='E'&&!u.summon&&u.tid&&HERO[u.tid]).forEach(u=>{const g=HERO[u.tid].genre;if(!COUNTER[g]||!GENRES[g])return;dm[g]=(dm[g]||0)+(u.dmgDone||0);if(!seen.has(u.tid)){seen.add(u.tid);c[g]=(c[g]||0)+1;}});
+  const T=Object.keys(c).filter(g=>c[g]>=2).sort((a,b)=>dm[b]-dm[a]),mine=ctrMine();
+  for(const t of T){const m=mine.find(x=>ctrOn(t,x));if(!m)continue;
+    const fix=ctrFears(t).filter(x=>ctrOn(x,t)),ok=fix.filter(x=>!T.some(y=>ctrOn(y,x))),f=ok[0]||fix[0]||null;
+    res.ctr={t,m,f};if(fieldCount()>=boardSize()&&f)res.tip=`Try: add ${GENRES[f].name} characters. ${GENRES[f].name} beats ${GENRES[t].name}: ${ctrLc(ctrWhy(f,t))}.`;break;}}
+function lossWhyHTML(res){if(!res||res.win)return '';const t=res.threat,k=res.ctr;
+  return `${t?`<div class="why">${foePt(t.k,'md')||`<span class="emo" style="font-size:1.6rem">${t.e}</span>`}<span><b>${esc(t.name)}</b> hurt you most<br><span class="muted">${t.pct!=null?t.pct+'% of the damage you took · ':''}${t.dmg} damage</span></span></div>`:''}${k?`<p class="lwctr">⚠️ Their ${ctrNm(k.t)} beats your ${ctrNm(k.m)}: ${esc(ctrLc(ctrWhy(k.t,k.m)))}.</p>`:''}<div class="tip">💡 ${esc(res.tip)}</div>`;}
 function settle(){
   const win=B.win;if(!B.silent)tlRes(win);const ev=curRound();const res={win,boss:ev.type==='boss',act:ev.act,gold:0,lives:0};
   S.stats.fights++;
@@ -22361,7 +22391,7 @@ function settle(){
     if(S.insured){S.insured=0;cost=0;res.insured=true;}
     S.lives-=cost;res.lives=cost;S.stats.lost++;
     g+=TUNE.lossGold+(X.insurance2?1:0);S.freeRerolls+=1;
-    res.tip=lossTip();
+    res.tip=lossTip();if(!B.silent)lossWhy(res);
     if(res.boss&&ev.act===runActs())S.bossTries++;
   }
   rs.rounds.push({r:S.round,t:res.boss?'boss':'fight',w:win});
@@ -22885,8 +22915,7 @@ function showResult(){
   }else{
     const finalBoss=res.boss&&res.act===runActs()&&!S.over;
     body=`<h2>Defeat</h2><div class="rw"><span style="color:var(--red)">−${res.lives} ❤️</span><span class="goldv">+${res.gold} 🪙</span>${res.sgold&&!res.win?`<span class="stk l" title="Losing streak gold">🧊${-res.streak} +${res.sgold}</span>`:''}${res.rerolls?`<span>+${res.rerolls} 🔄</span>`:''}</div>
-      ${res.threat?`<div class="why">${foePt(res.threat.k,'md')||`<span class="emo" style="font-size:1.6rem">${res.threat.e}</span>`}<span><b>${esc(res.threat.name)}</b> hurt you most<br><span class="muted">${res.threat.dmg} damage</span></span></div>`:''}
-      <div class="tip">💡 ${esc(res.tip)}</div>
+      ${lossWhyHTML(res)}
       ${finalBoss?'<p class="muted" style="font-size:.85rem">Rehearsal round: +4 gold and 2 free rerolls. The boss returns 10% weaker.</p>':(res.boss&&!S.over?'<p class="muted" style="font-size:.85rem">The show goes on: on to the next act.</p>':'')}`;
   }
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
@@ -23637,6 +23666,7 @@ SCR.event=()=>{
     body=`<p class="evnote">${e.pre?'Random event':'Special event'} · ${{good:'a good one',bad:'a bad one: pick your loss',trade:'a trade-off'}[EV_KIND[e.picked]]||''}</p><div class="evchoices">${CHOICES[e.picked].map(c=>`<button class="evcard" data-a="event-sub" data-v="${c.id}" ${c.ok(e)?'':'disabled'}><b>${c.t}</b><small>${c.d(e)}</small></button>`).join('')}</div>`;
   }else if(!e.picked){
     body=e.opts.map(k=>`<button class="evopt" data-a="event" data-v="${k}" ${k==='deal'&&!dealOK(e)?'disabled title="Needs 3 or more lives"':''}><span class="emo">${EVENTS[k].e}</span> <b>[${esc(EVENTS[k].name)}]</b>${newB('e',k)} ${evDesc(k)}</button>`).join('');
+    if(TUNE.repitchEv&&e.opts.length>1&&!e.pre)body+=`<div class="row" style="justify-content:center">${rpBtn('e',e.rp)}</div>`;
     if(e.opts.length)flav=e.opts.map(k=>EVFLAV[k]).filter(Boolean)[0]||flav;
   }else if(e.sub&&!e.subDone){
     art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav=EVFLAV[e.picked]||flav;
@@ -23684,7 +23714,7 @@ SCR.end=()=>{
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
-    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${nearHTML()}${stkHTML()}</div>
+    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${nearHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
     ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. See Gyms on the title screen.</p>`:`<p class="lvwin">🏟️ No badge this time. A Gym run costs nothing: try again from Gyms on the title screen.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
@@ -24011,7 +24041,7 @@ function showPending(){
       +(p.rare?itemCard(p.rare,'pend-leg','t:'):'');
     sheet(`<div class="eyebrow">${p.win?'Boss beaten':'The show goes on'}</div><h3 style="color:var(--leg)">Choose a Legendary</h3>
       <p class="muted" style="font-size:.85rem">You hold one at a time.${p.rare?' Or take the bonus item instead.':''}${p.win?'':' Lost the boss: 2 choices and no bonus item (a win offers 3 and an item).'}${S.legend?` Taking a new one replaces ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)}.`:''}</p>
-      <div class="choices">${cards}</div><div class="row">${S.legend?`<button class="btn ghost" data-a="pend-leg" data-v="">Keep ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)} · +🪙3</button>`:''}<button class="btn ghost" data-a="pend-hide">👀 See my team first</button></div>`,true);UI.pendOpen=true;
+      <div class="choices">${cards}</div><div class="row">${S.legend?`<button class="btn ghost" data-a="pend-leg" data-v="">Keep ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)} · +🪙3</button>`:''}${rpBtn('l',p.rp)}<button class="btn ghost" data-a="pend-hide">👀 See my team first</button></div>`,true);UI.pendOpen=true;
     return;
   }
   // offers are re-checked against what you own, so a restored or older offer never repeats an item
@@ -24042,7 +24072,7 @@ function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=fals
 // ================= input =================
 function onAction(a,v,el){try{tutAct(a);}catch(e){}const r_=onAction0(a,v,el);try{tutPaint();}catch(e){}try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
 function onAction0(a,v,el){
-  if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x')return;
+  if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x'&&a!=='repitch')return;
   if(a==='fight'&&peeking()){UI.legPeek=false;render();return;}
   if((a==='pend'||a==='pend-leg'||a==='event-sub'||(a==='sell-item'&&UI.armItem===v))&&fresh())return;
   if(a!=='sell-item')UI.armItem=null; // an armed Sell disarms on any other tap
@@ -24082,6 +24112,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'skip':skipBattle();break;
     case 'after-fight':if(tbxBusy())return;if(UI.rvPend){const id=UI.rvPend;UI.rvPend=null;if(RIVAL[id]){tbxReveal(id);return;}}tbxAfter(()=>{if(!S||UI.screen!=='battle')return;delete S.toAdvance;if(S.over){UI.screen='end';clearSave();render();window.scrollTo(0,0);return;}advanceAfterFight(UI.lastRes);go();window.scrollTo(0,0);});break;
     case 'event':eventPick(v);UI.freshAt=Date.now();go();break;
+    case 'repitch':if(fresh())return;if(repitch(v)){toast('🎬 Re-pitched: a whole new offer.');if(v==='l')showPending();else go();}break;
     case 'cut-mode':UI.cutMode=v||null;render();break;
     case 'event-sub':eventSub(v||null);UI.cutMode=null;go();break;
     case 'item-reroll':{const c=propCost();if(!has('prop')||S.gold<c)break;S.gold-=c;runStats().spend.reroll+=c;
@@ -24239,10 +24270,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.38',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.39',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.39',items:[["💡", "Lost a fight? The result now says who hurt you most (share of the damage), which counter beat you if one did, and one thing to try. Also on the Defeat screen."], ["🎬", "Re-pitch: every Legendary offer can be dealt again once, for free. Not a fan of the three? Ask for three new ones."]]},
   {v:'20.38',items:[["🦴", "Lasers pass through the dead: Space Opera's piercing lasers and area hits do half damage to Undead. Undead vs Space Opera is now a fair fight."]]},
   {v:'20.37',items:[["🗺️", "Level screen: shows how many lives a loss costs in each act."], ["👆", "Tap a character, then an empty slot, to move it (dragging still works)."], ["🪙", "The Sell button says when a character sells for half its price, rounded down (a 1-star Common sells for 🪙0)."]]},
   {v:'20.36',items:[["🤝", "Free Agent: one of the three characters is always from your biggest genre."], ["🎒", "Weak items buffed: Smoke Grenade dodges 30/40/50%, Background Extras +2/+3/+4 bodies, Crossover Crest 2/3/4 genres, Tesla Coil hits harder, Interest Ledger also pays 🪙1 every round."], ["🔩", "Iron Plating and Tesla Coil now say exactly what they do."]]},
