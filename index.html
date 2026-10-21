@@ -21056,7 +21056,7 @@ const EVENTS={
   reinforce:{name:'Reinforcements',e:'❤️',d:'+2 lives, up to your max lives. Already full: +🪙5.'},
   // Plot Twists (Game Level 2+): one of these risky choices replaces a normal one
   trial:{name:'Trial by Fire',e:'🔥',d:'Your next fight is tougher: enemies get +10% HP and damage. Win it: +8 gold and pick 1 of 3 items.'},
-  casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre, keeping its stars. None? Your best Rare becomes an Epic. Nobody to recast? +🪙5.'},
+  casting:{name:'Casting Call',e:'🎭',d:'Your best Common or Uncommon on the board is recast as a random Rare of the same genre that you do not own yet, keeping its stars. None? Your best Rare becomes an Epic. Nobody to recast? +🪙5.'},
   fanmail:{name:'Fan Mail',e:'💌',d:'The fans love you. Take the gold, or take heart.'},
   craft:{name:'Craft Services',e:'🍩',d:'Free snacks and a favor from the crew.'},
   review:{name:'Bad Review',e:'🍅',d:'A critic tore the last episode apart. It will cost you something.'},
@@ -21114,7 +21114,7 @@ function evDesc(k){
   if(k==='trial')return `Your next fight is tougher: enemies get +${Math.round(100*(TUNE.lvTrial-1))}% HP and damage. Win it: +${TUNE.lvTrialGold} gold and pick 1 of 3 items.`;
   if(k==='merchant')return `Buy 1 of 3 items for 🪙${EVC.merchant()}. It arrives one ★ higher (★★ when new). Or pass.`;
   if(S&&k==='promotion'){const u=promoTarget();return u?`Your character with the fewest stars gets +★: <b>${esc(HERO[u.id].name)}</b> ${'★'.repeat(u.level)} → ${'★'.repeat(u.level+1)}.`:'Nobody on the board can gain a ★ (Epics and Mythics can\'t): +🪙5 instead.';}
-  if(S&&k==='casting'){const c=castTarget();return c?`<b>${esc(HERO[c.u.id].name)}</b> (${RARITY[HERO[c.u.id].tier-1]} ${'★'.repeat(c.u.level)}) is recast as a random ${GENRES[HERO[c.u.id].genre].name} ${RARITY[c.to-1]}, keeping its stars.`:'Nobody on the board to recast: +🪙5 instead.';}
+  if(S&&k==='casting'){const c=castTarget();return c?`<b>${esc(HERO[c.u.id].name)}</b> (${RARITY[HERO[c.u.id].tier-1]} ${'★'.repeat(c.u.level)}) is recast as ${c.pool.length===1?`<b>${esc(HERO[c.pool[0]].name)}</b>`:`a random ${GENRES[HERO[c.u.id].genre].name} ${RARITY[c.to-1]}`}, keeping its stars.`:'Nobody on the board to recast: +🪙5 instead.';}
   if(S&&k==='wheel'){const own=WHEEL.filter(t=>S.units.some(u=>HERO[u.id].tier===t)).map(t=>`${RARITY[t-1]} ×${S.units.filter(u=>HERO[u.id].tier===t).length}`);return EVENTS[k].d+(own.length?` You own: ${own.join(' · ')}.`:'');}
   return EVENTS[k].d;
 }
@@ -21971,12 +21971,13 @@ function payIncome(extra){S.rrRound=0;if(legend('dircut'))S.freeRerolls=(S.freeR
 function nextRound(){payIncome();startRound();}
 // Field Promotion's target: your lowest-level character on the board that can still level up (Rare or below)
 function promoTarget(){return fielded().filter(u=>u.level<maxLv(u.id)&&HERO[u.id].tier<=3).sort((a,b)=>a.level-b.level||HERO[b.id].tier-HERO[a.id].tier)[0]||null;}
-// Casting Call's target: your best Common/Uncommon on the board (most stars) whose genre still has a Rare to give;
+// Casting Call's target: your best Common/Uncommon on the board (most stars) whose genre still has a Rare to give
+// (TRO-136: never one you already own, else a single-Rare genre was a guaranteed ★★★ merge);
 // with none on the board, your best Rare (to an Epic). {u, to, pool} or null
 function castTarget(){
-  const maxed=maxedIds(),f=fielded(),by=(a,b)=>b.level-a.level||HERO[b.id].tier-HERO[a.id].tier;
+  const maxed=maxedIds(),own=new Set(S.units.map(u=>u.id)),f=fielded(),by=(a,b)=>b.level-a.level||HERO[b.id].tier-HERO[a.id].tier;
   const low=f.filter(u=>HERO[u.id].tier<=2).sort(by),cand=low.length?low:f.filter(u=>HERO[u.id].tier===3).sort(by);
-  for(const u of cand){const d=HERO[u.id],to=low.length?3:4,fits=id=>!twoSlot(id)||twoSlot(u.id)||fieldCount()+1<=boardSize(),pool=HEROES.filter(h=>h[2]===d.genre&&h[4]===to&&!maxed.has(h[0])&&fits(h[0])).map(h=>h[0]);if(pool.length)return {u,to,pool};}
+  for(const u of cand){const d=HERO[u.id],to=low.length?3:4,fits=id=>!twoSlot(id)||twoSlot(u.id)||fieldCount()+1<=boardSize(),pool=HEROES.filter(h=>h[2]===d.genre&&h[4]===to&&!maxed.has(h[0])&&!own.has(h[0])&&fits(h[0])).map(h=>h[0]);if(pool.length)return {u,to,pool};}
   return null;}
 function dealOK(e){return S.lives>2||!(e||S.event||{opts:[]}).opts.some(k=>k!=='deal');}
 function eventPick(key){rsKey('v');
@@ -24574,7 +24575,7 @@ SCR.codex=()=>{
     <h3>Tags on cards</h3><div class="cgrid">${[['🎭','Recast','On a shop card: The Cut (a bad random event) removed a genre from the show, and this card replaced a card of that genre that was already in your shop. Same price and odds, a fresh pick from the genres still in.'],
       ['🎬','Typecast','On a shop card: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it. Typecast also gives most genres extra HP and damage (see the genre in Genres & traits).'],
       ['✨','New!','You haven\'t seen this card, item, Legendary or event before, or it was just unlocked by episodes aired.'],
-      ['🎭','RECAST / 🔁 REBOOT (events)','On the event screen, marks the character the event will change: Casting Call recasts it as a Rare of its genre and it keeps its stars; Reboot recasts it one rarity higher and starts it over at ★.'],
+      ['🎭','RECAST / 🔁 REBOOT (events)','On the event screen, marks the character the event will change: Casting Call recasts it as a Rare of its genre that you do not own yet and it keeps its stars; Reboot recasts it one rarity higher and starts it over at ★.'],
       ['🧮','N in pool','Copies of this character left in the shared pool. Buying takes one out, selling puts it back; at 0 it stops showing up.'],
       ['💎','Rare: counts as 2 from ★★','A Rare or better character at ★★ counts as 2 characters toward its genre bonuses and crossovers (traits count it once).'],
       ['🔝','MAX','On a board character: it is at its top star level, so copies can\'t raise it any more. Commons and Uncommons top out at ★★, Rares and up at ★★★ (Spin-off lifts everyone to ★★★).'],
@@ -24864,10 +24865,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.68',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.69',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.69',items:[["🎭", "Casting Call now gives a Rare you don't already own, so it can no longer copy your Rare and merge it straight into ★★★. The event says exactly who you'll get when there's only one choice."]]},
   {v:'20.68',items:[["🎬", "New: Double Feature. A board of exactly two genres with 2+ of each gives those characters +50% HP and damage, so a two-genre cast (and its crossover) is a real plan next to going all in on one genre."]]},
   {v:'20.67',items:[["📏", "The next-fight panel is no longer cut off on smaller desktop windows (1280x800): the Mid-season finale numbers and the Season finale cast line show in full (the left column scrolls)."], ["🔭", "See their team now shows the damage a boosted cast really deals (it showed the base number next to the boosted HP). The finale VS card shows the rival's top fighter, and the tag says Final boss."]]},
   {v:'20.66',items:[["🎨", "The genre and combo chips under your board are calmer: muted colours that match the new battle look, so your characters stand out more. Active, MAX and not-yet-active chips still look clearly different."]]},
