@@ -20741,7 +20741,7 @@ const tsvg=t=>`<svg class="gi" viewBox="0 0 512 512" aria-hidden="true">${traitT
 const HEROES_ALL=[
  ['riot','Riot Shield','army','guardian',1,0,'holdline','🛡️','Has not lowered the shield since basic training.'],
  ['rifle','Rifle Squad','army','gunner',1,1,'frag','🪖','Three to seven soldiers, one opinion.'],
- ['commando','Commando','army','stalker',1,0,'snatch','🔪','Face paint on, knife out, already behind you.'],
+ ['commando','Spotter','army','stalker',1,0,'snatch','🔭','Sees the big one first. Tells the guns where.'],
  ['radio','Radio Operator','army','mystic',2,0,'artillery','📻','Coordinates are a love language.'],
  ['mule','Ammo Mule','army','brawler',2,0,'moreshells','🎒','Eighty pounds of shells. Zero complaints. Some punching.'],
  ['fieldmed','Field Medic','army','medic',3,0,'fallback','⛑️','Has carried every one of you at least once.'],
@@ -21352,7 +21352,7 @@ const SK={
  badge:{name:'Badge of Office',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, your Wild West characters attack 25% faster.`,cast(u){u.taunt=3;shieldU(u,u,40*u.p);allies(u).filter(a=>a.genre==='west').forEach(a=>a.hastes.push({m:.25,t:3}));}},
  whiskey:{name:'Whiskey and Stitches',d:p=>`Heals your most wounded character for ${R(50*p)} and frees it from stuns.`,cast(u){const a=wounded(u,1)[0];if(!a)return;heal(u,a,50*u.p);a.stun=0;}},
  wanted:{name:'Wanted Poster',d:p=>`${R(45*p)} damage to the toughest enemy, doubled if it is below half HP.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.maxHp>a.maxHp?b:a);spell(u,t,t.hp<t.maxHp/2?90:45);}},
- dynamite:{name:'Dynamite',d:p=>`${R(30*p)} damage to every enemy in the most crowded row, and they are stunned for 0.5s.`,cast(u){rowMost(u).forEach(x=>{spell(u,x,30,true);stunU(x,.5);});}},
+ dynamite:{name:'Dynamite',d:p=>`Throws one stick at the enemy with the most energy (the next to use a skill): ${R(70*p)} damage and stunned for 1.5s.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>(b.mana||0)>(a.mana||0)?b:a);spell(u,t,70);stunU(t,1.5);}},
  fanhammer:{name:'Fan the Hammer',d:p=>`Six shots at random enemies for ${R(12*p)} each. Each shot can crit, using the character's crit chance (from Wild West or crossovers).`,cast(u){for(let i=0;i<6;i++){const t=randFoe(u);if(!t)break;const c=u.crit&&rand()<u.crit;B.fxCritS=c;spell(u,t,12*(c?(u.critX||2):1));B.fxCritS=false;if(c&&u.critScare&&u.side==='A')terrify(t,3);}}},
  showdown:{name:'Showdown',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}. Meanwhile, it shoots back at every attacker for ${R(15*p)}.`,cast(u){u.taunt=3;u.counterUntil=B.t+3;shieldU(u,u,40*u.p);}},
  deadeye:{name:'Sure Shot',d:p=>`Shoots the 3 lowest-HP enemies for ${R(110*p)} each (shown as a crit; crit bonuses don't apply).`,cast(u){targetFoes(u).sort((a,b)=>a.hp-b.hp).slice(0,3).forEach(t=>{B.fxCritS=true;spell(u,t,110);B.fxCritS=false;});}},
@@ -21397,7 +21397,7 @@ const SK={
  waterbreak:{name:'Water Break',d:p=>`Heals your 3 most wounded characters for ${R(40*p)}, ${R(20*p)} and ${R(20*p)}.`,cast(u){wounded(u,3).forEach((a,i)=>heal(u,a,(i?20:40)*u.p));}},
  hailmary:{name:'Hail Mary',d:p=>`Throws at the weakest back-row enemy for ${R(50*p)} damage, +15% for each other Sportsball character on your team. If the throw knocks it out, it throws again (up to 3 throws).`,cast(u){const n=allies(u).filter(a=>a!==u&&a.genre==='ball').length;for(let i=0;i<3;i++){const t=backWeakest(u);if(!t)return;ballFx(u,t);spell(u,t,50*(1+.15*n));if(t.alive)return;}}},
  // ---- new heroes (rarity update) ----
- snatch:{name:'Snatch and Grab',d:p=>`${R(45*p)} damage to the weakest back-row enemy. It takes 25% more damage for 3s and is dragged forward if there's room.`,cast(u){const t=backWeakest(u);if(!t)return;spell(u,t,45);if(t.alive){t.vuln=Math.max(t.vuln||0,3);pullFront(t);}}},
+ snatch:{name:'Spot the Target',d:p=>`Marks the enemy crowd with the most bodies (no crowd: the enemy with the most HP) and hits it for ${R(30*p)}. For 6s it takes +50% damage from area hits (shells, blasts).`,cast(u){const f=targetFoes(u);if(!f.length)return;const cr=f.filter(x=>x.crowd);const t=cr.length?cr.reduce((a,b)=>bodies(b)>bodies(a)?b:a):f.reduce((a,b)=>b.hp>a.hp?b:a);spell(u,t,30);if(t.alive){t.spotT=B.t+6;float(t,'Spotted','miss');}}},
  moreshells:{name:'More Shells!',d:p=>`Hits its target for ${R(40*p)}. Your artillery deals +${R(6*p*TUNE.artDmg)} per shell for the rest of the fight.`,cast(u){const t=pickTarget(u)||randFoe(u);if(t)spell(u,t,40);B.artBonus=(B.artBonus||0)+6*u.p;}},
  onmypos:{name:'Fire on My Position',d:p=>`Taunts all enemies for 3s and shields itself for ${R(40*p)}. Your artillery (Army bonus) fires twice as fast meanwhile.`,cast(u){u.taunt=3;u.observer=true;shieldU(u,u,40*u.p);}},
  openfire:{name:'Open Fire!',d:p=>`All your characters attack ${R(20*p)}% faster for 5s, and your artillery (Army bonus) fires now (not under Danger Close, or once Shock and Awe has stopped).`,cast(u){allies(u).forEach(a=>a.hastes.push({m:.2*u.p,t:5}));if(B.artEvery&&!legend('danger')&&!(legend('shock')&&B.t>=TUNE.shockFor))B.art=0;}},
@@ -22439,6 +22439,7 @@ function dealDamage(src,t,amt,type,aoe){
   if(src&&src.side==='A'&&src.genre==='undead'&&legend('graveyard'))amt*=1+Math.min(TUNE.graveMax,TUNE.gravePer*B.units.reduce((n,x)=>n+(x.alive?0:1),0));
   if(t.insideJob&&src&&src.genre==='heist')amt*=1+TUNE.ijDmg;
   if(t.pheroT>B.t)amt*=1+TUNE.pheroAmp; // Pheromone Trail mark
+  if(aoe&&t.spotT>B.t)amt*=1.5; // Spotter mark (TRO-271)
   if(TUNE.kaijuArt&&!src&&B.envSrc==='artillery'&&t.genre==='kaiju')amt*=TUNE.kaijuArt;if(TUNE.ballBug&&src&&src.genre==='ball'&&t.crowd&&t.genre==='bug')amt*=1+TUNE.ballBug;if(TUNE.heistBug&&src&&src.genre==='heist'&&t.crowd&&t.genre==='bug')amt*=TUNE.heistBug;
   const amt0=amt; // before damage reduction, armor and shields (for 'damage blocked')
   if(t.row==='front'&&B.frontDR[t.side])amt*=1-B.frontDR[t.side];
@@ -24118,7 +24119,7 @@ function coachTip(){try{
 function coachHTML(){const c=coachTip();if(!c)return '';
   return `<div class="coach" role="note" data-k="${c.k}"><span class="ci" aria-hidden="true">💡</span><p><b>Tip</b> ${c.t}</p><button class="btn sm ghost" data-a="coach-x" data-v="${c.k}" title="Hide this tip until the next act">Got it</button></div>`;}
 // v19.15: soft hyphens in long name words for narrow shop cards (a hyphen only shows when the word must break)
-const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Safe-cracker',Quarterback:'Quarter-back',Starcaller:'Star-caller',Mastermind:'Master-mind',Gunslinger:'Gun-slinger',Chainblade:'Chain-blade',Bonesetter:'Bone-setter',Prospector:'Pros-pector',Cutthroats:'Cut-throats',Shellback:'Shell-back',Priestess:'Priest-ess',Corporate:'Corpo-rate',Dodgeball:'Dodge-ball',Moonwell:'Moon-well',Ironhide:'Iron-hide',Commando:'Com-mando',Skeleton:'Skele-ton',Lookouts:'Look-outs',Sergeant:'Ser-geant',Warchief:'War-chief',Operator:'Oper-ator',Observer:'Ob-server',Scorpion:'Scor-pion',Spitters:'Spit-ters',Counselors:'Coun-selors',Babysitter:'Baby-sitter',Leviathan:'Levia-than',Wellspring:'Well-spring'};
+const SHY={Hospitaller:'Hospi-taller',Necromancer:'Necro-mancer',Safecracker:'Safe-cracker',Quarterback:'Quarter-back',Starcaller:'Star-caller',Mastermind:'Master-mind',Gunslinger:'Gun-slinger',Chainblade:'Chain-blade',Bonesetter:'Bone-setter',Prospector:'Pros-pector',Cutthroats:'Cut-throats',Shellback:'Shell-back',Priestess:'Priest-ess',Corporate:'Corpo-rate',Dodgeball:'Dodge-ball',Moonwell:'Moon-well',Ironhide:'Iron-hide',Skeleton:'Skele-ton',Lookouts:'Look-outs',Sergeant:'Ser-geant',Warchief:'War-chief',Operator:'Oper-ator',Observer:'Ob-server',Scorpion:'Scor-pion',Spitters:'Spit-ters',Counselors:'Coun-selors',Babysitter:'Baby-sitter',Leviathan:'Levia-than',Wellspring:'Well-spring'};
 function shy(t){return String(t).replace(/[A-Za-z]{8,}/g,w=>SHY[w]?SHY[w].replace('-','­'):w);}
 // v19.18: shop synergy preview. A card whose genre is already on the board (count >= 1): the count it brings it to,
 // and whether that switches on the next genre bonus. Same counting as the board (activeSyn), the card added as fielded.
@@ -24878,10 +24879,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.78',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.79',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.79',items:[["🔭", "The Commando is now the Spotter: it marks the biggest enemy crowd for 6s, and shells and blasts hit it 50% harder. The Army's job is the big crowd, not the back row."], ["🧨", "The Prospector now throws one stick of dynamite at the enemy about to use a skill: big damage and a 1.5s stun. Fastest draw, Wild West style."]]},
   {v:'20.78',items:[["🤠", "Typecast now helps one-genre Wild West and Sportsball teams again: an all-Wild West board gets +15% HP and damage (was none), an all-Sportsball board +40% (was +20%). Both were losing most head-to-head fights against every other genre."]]},
   {v:'20.77',items:[["🔪", "Stalker (4) no longer refunds energy on crits: 55% crit chance stays. A team of Stalkers beat every other trait; now it trades blows like the rest."]]},
   {v:'20.76',items:[["🔭", "See who is countering you: a rival drafting against your main genre gets 🎯 on the Lobby strip, and when it is your next opponent the Next Episode panel says which genre it is drafting and why it beats yours."], ["📸", "Each rival on the Lobby strip now shows its two main genres, so you can read the lobby without opening Scouting."]]},
