@@ -1433,6 +1433,8 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .nwl b{color:var(--ink)}
 .nwv{font-size:.75rem;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-top:10px}
 .verl{margin-top:12px;color:var(--muted);font-size:.78rem}
+.tstb{color:var(--gold);font-weight:700}
+.settst{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;padding:6px 4px 0}
 .lnk{background:none;border:0;padding:0;color:var(--gold);font:inherit;text-decoration:underline;text-underline-offset:2px;cursor:pointer}
 .ovbtns{display:flex;flex-direction:row-reverse;gap:8px;flex-wrap:wrap;justify-content:center} /* Continue first: on top when they wrap */
 .ov:has(.ovbtns){max-width:400px}
@@ -20412,7 +20414,7 @@ const R=n=>Math.round(n);const R1d=n=>Math.round(n*10)/10; /* v19.89: one decima
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl,trans:['full','short','off'].includes(d.trans)?d.trans:'full'};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl,trans:['full','short','off'].includes(d.trans)?d.trans:'full',speed:[1,2,3].includes(d.speed)?d.speed:1};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=false; // v19.62: animations are always on
 function applyMotion(){RM=false;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -21242,7 +21244,7 @@ function bodiesFromP(p){return Math.max(3,Math.round(p*3));}
 
 // ================= run state =================
 let S=null;
-let UI={screen:'title',sel:null,speed:1,sheetOpen:false,armSell:null,armQuit:false,lv:0};
+let UI={screen:'title',sel:null,speed:SET.speed,sheetOpen:false,armSell:null,armQuit:false,lv:0};
 let B=null;
 const SAVE_KEY='tropebrawl-lean-v5', OLD_SAVE_KEY='tropebrawl-lean-v4'; // v5: items have levels (S.tlv); v4 saves are upgraded on load
 
@@ -23442,7 +23444,7 @@ function titleFreshHTML(){UI.lv=lvMin();const ns=newsFresh();
     </div>
     ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 New in v${esc(ns[0].v)}: see what changed</button></section>`:''}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
-    <p class="verl">v${TB_VERSION}</p>
+    <p class="verl">v${TB_VERSION}${tlBadge()}</p>
   </div></section>`;}
 // TRO-155: the Gyms screen is gone (its Leaders are the Ladder's final bosses); an old 'gyms' screen lands on the Ladder
 SCR.gyms=()=>{UI.screen='title';UI.pick=1;return SCR.title();};
@@ -23467,7 +23469,7 @@ SCR.title=()=>{
     <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
     ${UI.pick?`${lvPicker()}<div class="row tgo">${tutTitleBtns()}<button class="btn" data-a="pick-back">← Back</button></div>${epsTitleHTML(UI.lv)}`:titleMenuHTML(sv)}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
-    <p class="verl">v${TB_VERSION}</p>
+    <p class="verl">v${TB_VERSION}${tlBadge()}</p>
   </div></section>`;
 };
 // TRO-65: the menu = one big Continue / Play (Play opens the level picker), then Codex, Settings, What's New
@@ -23548,7 +23550,7 @@ function dtSell(slot,now){const u=slot&&unitAt(slot);if(!u||!S||S.over)return;
       else if(k==='Enter')hit('.overlay [data-a="after-fight"]');
       else if(k==='s')hit('[data-a="skip"]');
       else if(k==='v')hit('.overlay [data-a="foeteam"]');
-      else if(k==='1'||k==='2')hit(`[data-a="speed"][data-v="${[1,2][+k-1]}"]`);
+      else if(k==='1'||k==='2'||k==='3')hit(`[data-a="speed"][data-v="${[1,2,3][+k-1]}"]`);
     }else if(UI.screen==='codex'&&k==='Escape')hit('[data-a="codex-back"]');
   }catch(err){}});
 }catch(e){}})();
@@ -23800,7 +23802,7 @@ SCR.battle=()=>{
       <div class="row"><span class="streak" id="streak" hidden></span><span id="bbench" hidden></span><span class="clock" id="clock">0.0s</span><div class="speed" role="group" aria-label="Battle speed">
       <button class="btn sm sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>
       <button class="btn sm" data-a="pause" aria-label="Pause">⏸</button>
-      ${[1,2].map(s=>`<button class="btn sm${UI.speed===s?' on':''}" data-a="speed" data-v="${s}">${s}×</button>`).join('')}
+      ${[1,2,3].map(s=>`<button class="btn sm${UI.speed===s?' on':''}" data-a="speed" data-v="${s}">${s}×</button>`).join('')}
       <button class="btn sm" data-a="skip" aria-label="Skip to the result">⏭</button></div></div></div>
     <div class="field" id="field">${row('E','back')}${row('E','front')}<div class="clashline"></div>${row('A','front')}${row('A','back')}</div>
     <div class="bbq" id="bbq" hidden></div>
@@ -24174,7 +24176,7 @@ SCR.codex=()=>{
     <p><b>Overtime.</b> After 30 seconds everyone takes growing damage and Swarm crowds stop regrowing, so fights always end.</p>
     <p><b>Levels.</b> Win a run to unlock the next level: the same game plus one new rule or unlock, stacked on the earlier ones. The Pilot (Levels 1-3) teaches the game, the Season is the full game, and Ascension 1 to ${LV_MAX-4} make it harder, one new rule each. Pick any unlocked level on the title screen. In a run, the Lv button in the top bar shows your level's rules and what the next one adds.</p>
     <p><b>Next enemy.</b> The Next episode panel shows who you fight next; 🔭 Lineup (or V) shows where each one stands.</p>
-    <p><b>Keyboard</b> (the usual auto-battler keys): <kbd>D</kbd> or <kbd>R</kbd> reroll · <kbd>F</kbd> or <kbd>T</kbd> train · <kbd>Q</kbd> or <kbd>L</kbd> lock · <kbd>E</kbd> sell the character under the mouse · <kbd>W</kbd> move it between board and bench · <kbd>1</kbd>–<kbd>5</kbd> buy · <kbd>V</kbd> next enemy's lineup · <kbd>Space</kbd> fight. In a fight: <kbd>Space</kbd> pause, <kbd>1</kbd> <kbd>2</kbd> speed, <kbd>S</kbd> skip, <kbd>V</kbd> their team. In the Codex: <kbd>/</kbd> search.</p></div>`;
+    <p><b>Keyboard</b> (the usual auto-battler keys): <kbd>D</kbd> or <kbd>R</kbd> reroll · <kbd>F</kbd> or <kbd>T</kbd> train · <kbd>Q</kbd> or <kbd>L</kbd> lock · <kbd>E</kbd> sell the character under the mouse · <kbd>W</kbd> move it between board and bench · <kbd>1</kbd>–<kbd>5</kbd> buy · <kbd>V</kbd> next enemy's lineup · <kbd>Space</kbd> fight. In a fight: <kbd>Space</kbd> pause, <kbd>1</kbd> <kbd>2</kbd> <kbd>3</kbd> speed, <kbd>S</kbd> skip, <kbd>V</kbd> their team. In the Codex: <kbd>/</kbd> search.</p></div>`;
   if(tab==='fight'){const TR=['guardian','brawler','stalker','gunner','mystic','medic'],ROLE={guardian:'Tank: soaks hits in the front row and protects the back row (Cover).',brawler:'Front-line fighter: the most HP, hits hard up close.',stalker:'Assassin: ignores the front line and goes for the weakest back-liner.',gunner:'Damage from range: picks off the lowest-HP enemy anywhere.',mystic:'Caster: weak hits, big skills that charge fast.',medic:'Support: heals and shields, casts often.'};
     const odd=HEROES.filter(h=>heroReach(h[0])!==TBASE[h[3]].range).map(h=>esc(HERO[h[0]].name));
     const prof=Object.keys(GENRES).map(g=>HEROES.filter(h=>h[2]===g).sort((a,b)=>a[4]-b[4]).map(h=>{const d=HERO[h[0]],rk=rowKey(d.id);return `<tr><td>${esc(d.name)}</td><td>${GENRES[g].e} ${GENRES[g].name}</td><td>${TRAITS[d.trait].name}</td><td>${reachLabel(d.id)}</td><td>${atkVerb(d.id)}</td><td>${targetShort(d.id)}</td><td>${ROWP[rk].n.replace('Prefers ','')}</td></tr>`;}).join('')).join('');
@@ -24335,7 +24337,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'codex-back':UI.screen=UI.codexBack&&UI.codexBack!=='codex'?UI.codexBack:(S?'plan':'title');render();break;
     case 'quit':if(!UI.armQuit){UI.armQuit=true;render();setTimeout(()=>{if(UI.armQuit){UI.armQuit=false;if(UI.screen!=='battle')render();}},3000);}else{UI.armQuit=false;if(S&&S.round>1)tlEnd(true);clearSave();S=null;UI.screen='title';render();}break;
     case 'fight':if(!fielded().length||tbxBusy())return;tbxFight(()=>{if(!S||S.over||UI.screen!=='plan'||!fielded().length)return;UI.screen='battle';UI.sel=null;render();startBattle(false);drawBattle();requestAnimationFrame(battleLoop);});break;
-    case 'speed':UI.speed=Math.min(2,+v||1);if(B)B.speed=UI.speed;document.querySelectorAll('.speed [data-a="speed"]').forEach(b=>b.classList.toggle('on',+b.dataset.v===UI.speed));break;
+    case 'speed':UI.speed=Math.min(3,+v||1);SET.speed=UI.speed;setSave();if(B)B.speed=UI.speed;document.querySelectorAll('.speed [data-a="speed"]').forEach(b=>b.classList.toggle('on',+b.dataset.v===UI.speed));break;
     case 'pause':if(B){B.paused=!B.paused;el.textContent=B.paused?'▶':'⏸';}break;
     case 'skip':skipBattle();break;
     case 'after-fight':if(tbxBusy())return;if(UI.rvPend){const id=UI.rvPend;UI.rvPend=null;if(RIVAL[id]){tbxReveal(id);return;}}tbxAfter(()=>{if(!S||UI.screen!=='battle')return;delete S.toAdvance;if(S.over){UI.screen='end';clearSave();render();window.scrollTo(0,0);return;}advanceAfterFight(UI.lastRes);go();window.scrollTo(0,0);});break;
@@ -24393,6 +24395,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'bmus':if(MUS_BATTLE.some(x=>x[0]===v)){SET.bmus=v;setSave();sheet(settingsHTML());try{musLoad();}catch(e){}}break;
     case 'mus':if(MUS_SHOP.some(x=>x[0]===v)){SET.mus=v;setSave();sheet(settingsHTML());try{musTick();}catch(e){}}break;
     case 'bd':if(['sun','swirl','curt','violet'].includes(v)){SET.bd=v;SET.bdPick=true;BDS.last=0;setSave();applyLook();sheet(settingsHTML());}break;
+    case 'tst-off':tlUnmark();sheet(settingsHTML());if(UI.screen==='title')render();break;
     case 'news':newsSeen();sheet(newsHTML());if(UI.screen==='title')render();break;
     case 'news-x':newsSeen();render();break;
     case 'foeteam':if(v!=null&&v!=='')sheet(foeDetailHTML(+v));else{if(!UI.sheetOpen)tlAct('v');sheet(foeTeamHTML());}break;
@@ -24498,10 +24501,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.47',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.48',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.48',items:[["⏩", "Fights now have a <b>3×</b> speed too (1× / 2× / 3×, or keys 1 2 3). The game remembers the speed you pick."]]},
   {v:'20.47',items:[["🎬", "The Act 3 boss is now the Mid-season finale: a dress rehearsal for the Season finale. A board that isn't ready finds out at Episode 27, with time left to fix it."]]},
   {v:'20.46',items:[["🩹", "Fight recap fix: the red <b>taken</b> row now shows the damage each of your characters took (it always showed a dash)."]]},
   {v:'20.45',items:[["📅", "Daily Episode: one Season run a day, the same shops and fights for every player, with one twist (Low Budget, Bargain Bin, Spotlight and more). Play today or any of the last 6 days; skipping a day costs nothing."], ["📤", "Share a Daily and the link opens that same run for your friend: compare how far you each got."]]},
@@ -24678,6 +24682,8 @@ function tlPid(){try{let p=localStorage.getItem('tropebrawl-pid');if(!p){p='p_'+
 const TL_TESTER='2744ccd10c7533bd736ad890f9dd5cab2adb27b07d500b9493f29cdc420cb2e0';
 function tlLs(k,v){try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v);}catch(e){}return null;}
 function tlTester(){return tlLs('tropebrawl-tst')==='1';}
+function tlBadge(){return tlTester()?' <b class="tstb" title="This device is marked as tester">· tester</b>':'';}
+function tlUnmark(){try{localStorage.removeItem('tropebrawl-tst');}catch(e){}if(TL){delete TL.t;tlSave();}toast('Tester mark removed');}
 function tlFrom(){try{let f=tlLs('tropebrawl-from');if(f)return f;
   const q=new URLSearchParams(location.search).get('from');
   if(q)f=q.toLowerCase().replace(/[^a-z0-9_-]/g,'').slice(0,24);
@@ -24693,7 +24699,7 @@ function tlShareQ(){return SET.share!==false?'?f='+tlPid():'';}
 function tlCodeHTML(){return `<h3 style="color:var(--gold)">Code</h3><input id="tcode" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="64" style="width:100%;padding:8px;font:inherit"><div class="row" style="margin-top:8px"><button class="btn sm" data-a="tcode">OK</button></div>`;}
 async function tlCodeCheck(){try{const i=$('#tcode'),v=i?i.value.trim().toLowerCase():'';closeSheet();if(!v||!(window.crypto&&crypto.subtle))return;
   const h=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',new TextEncoder().encode(v)))).map(b=>b.toString(16).padStart(2,'0')).join('');
-  if(h!==TL_TESTER)return;tlLs('tropebrawl-tst','1');if(TL){TL.t=1;tlSave();}toast('Marked as tester');}catch(e){}}
+  if(h!==TL_TESTER)return;tlLs('tropebrawl-tst','1');if(TL){TL.t=1;tlSave();}toast('Marked as tester');if(UI.screen==='title')render();}catch(e){}}
 let TAPV={n:0,t:0};
 document.addEventListener('click',e=>{try{const el=e.target.closest&&e.target.closest('.verl,.setver>span');if(!el||e.target.closest('button,a'))return;
   const now=Date.now();TAPV.n=now-TAPV.t<1500?TAPV.n+1:1;TAPV.t=now;
@@ -24771,7 +24777,8 @@ function settingsHTML(){
     ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
     ${sw('allLv',SET.allLv,'Unlock all levels','Pick any level on the title screen, from the Pilot to Ascension '+(LV_MAX-4)+'. Wins don\'t count toward unlocking levels while this is on.')}
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🛠</span><span><b>Developer</b><small>Test panel (jump to any level, event or round) and the Animation Studio (every animation, with notes).</small></span><span class="seg"><button class="btn sm" data-a="devpanel">Test panel</button><button class="btn sm" data-a="devstudio">🎬 Animation Studio</button></span></div>
-    <div class="setver"><span>Tropebrawl v${TB_VERSION}</span><button class="btn sm ghost" data-a="news">📜 What's new</button></div>
+    <div class="setver"><span>Tropebrawl v${TB_VERSION}${tlBadge()}</span><button class="btn sm ghost" data-a="news">📜 What's new</button></div>
+    ${tlTester()?'<div class="settst"><span>This device is marked as tester (not counted as a stranger)</span><button class="btn sm ghost" data-a="tst-off">Unmark</button></div>':''}
 `;}
 // game feel (Settings → Animations; off with reduced motion): screen transitions and act / boss / fight banners
 function feel(){try{
@@ -24810,7 +24817,7 @@ function loadSave(){try{const j=localStorage.getItem(SAVE_KEY)||localStorage.get
 function clearSave(){try{localStorage.removeItem(SAVE_KEY);localStorage.removeItem(OLD_SAVE_KEY);}catch(e){}}
 function snapshot(){return S?{v:SAVE_KEY,S,screen:UI.screen==='battle'?'plan':UI.screen,speed:UI.speed}:{};}
 // restore a saved run; a fight that was already settled on the result screen is advanced, never replayed
-function restore(sv){S=sv.S;RS=S.seed!=null?0:null;if(!S.ladder){S.lv=Math.min(LV_MAX,(S.lv|0)+4);S.ladder=2;}if(!S.cap)S.cap=5;buildSchedule(S.lv);S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=Math.min(2,sv.speed||1);UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
+function restore(sv){S=sv.S;RS=S.seed!=null?0:null;if(!S.ladder){S.lv=Math.min(LV_MAX,(S.lv|0)+4);S.ladder=2;}if(!S.cap)S.cap=5;buildSchedule(S.lv);S.tlv=S.tlv||{};S.trinkets.forEach(t=>{if(!S.tlv[t])S.tlv[t]=1;});UI.swap=null;UI.speed=Math.min(3,sv.speed||SET.speed||1);UI.screen=sv.screen==='battle'?'plan':(sv.screen||'plan');if(S.toAdvance){const r=S.toAdvance;delete S.toAdvance;advanceAfterFight(r);}}
 
 // ================= test panel (for Philippe; playtesters never see it) =================
 // Open: add #dev to the link, or press the ` key. Lets you pick any Game Level and open any event screen.
