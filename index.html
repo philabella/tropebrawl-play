@@ -786,6 +786,13 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .scard .xo{position:absolute;top:5px;left:50%;transform:translateX(-50%);z-index:2;width:max-content;max-width:90%;white-space:normal;text-align:center;line-height:1.15;font-size:.55rem;font-weight:900;letter-spacing:.03em;padding:2px 5px;border-radius:2px;background:var(--gold);color:#141018;box-shadow:2px 2px 0 var(--inkline);pointer-events:none}
 .syn.xlist{background:transparent;border-color:var(--line);color:var(--ink);margin-left:auto}
 .syn.xlist:hover,.syn.xlist:focus-visible{border-color:var(--gold);color:var(--gold)}
+/* TRO-248: chips in the look C grade (muted, dark-teal base; figures stay the loudest thing) */
+:root{--chip-base:#12201f;--chip-amber:#d9a441;--chip-ink:#f3eee4}
+.syn.on{color:var(--chip-ink);background:color-mix(in srgb,var(--gc,var(--chip-amber)) 34%,var(--chip-base));border-color:color-mix(in srgb,var(--gc,var(--chip-amber)) 55%,var(--chip-base))}
+.syn.on.max{background:color-mix(in srgb,var(--gc,var(--chip-amber)) 46%,var(--chip-base));border-color:color-mix(in srgb,var(--gc,var(--chip-amber)) 85%,var(--chip-base));color:#fff;box-shadow:0 0 0 1px color-mix(in srgb,var(--gc,var(--chip-amber)) 40%,transparent)}
+.syn.combo:not(.near){background:color-mix(in srgb,var(--chip-amber) 38%,var(--chip-base));border-color:color-mix(in srgb,var(--chip-amber) 70%,var(--chip-base));color:var(--chip-ink)}
+.syn.combo.near{color:#c9a15a;border-color:color-mix(in srgb,var(--chip-amber) 60%,var(--chip-base))}
+.syn.xlist:hover,.syn.xlist:focus-visible{border-color:var(--chip-amber);color:#d9b061}
 div.xlist{display:grid;gap:6px}
 .xrow{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px;padding:7px 9px;border:2px solid var(--inkline);border-radius:3px;background:var(--panel2)}
 .xrow .xg{margin-left:auto;font-size:.78rem;font-weight:700;white-space:nowrap}
@@ -1067,6 +1074,7 @@ html.dt .dtl .insp{position:static;max-height:none;overflow:visible}
 html.dt .dtl .top .items{display:none}
 html.dt .dcol.l .vs.feat .fart{font-size:46px;right:10px}
 html.dt .dcol.l .vs.feat .fhd b{font-size:1.2rem}
+html.dt .dcol.l>.vs{flex-shrink:0} /* TRO-245: overflow:hidden let flex shrink it and cut its text at 1280x800 */
 html.dt .board .slot,html.dt .board .slot.hasspr{height:var(--t,150px);min-height:var(--t,150px)}
 html.dt .board .slot[data-v^="n"],html.dt .board .slot.hasspr[data-v^="n"]{height:calc(var(--t,150px)*.7);min-height:calc(var(--t,150px)*.7)}
 html.dt .board .frow{margin-top:calc(var(--t,150px)*.42)}
@@ -23042,7 +23050,7 @@ function rvMaybeEpisode(ev){rsKey('rm');
 function rvFoes(id){const R=S.lobby&&S.lobby.rv.find(x=>x.id===id);if(!R)return [];let out=[];
   rvSwap(R,()=>{const sn=R.out&&R.snap&&!S.units.length;if(sn)S.units=JSON.parse(R.snap);S.enemy={enc:[]};startBattle(true);out=B.units.filter(u=>u.side==='A'&&!u.summon);if(sn)S.units=[];});
   out.forEach(u=>{u.side='E';u.foe=true;u.twin=true;u.tid=u.id;u.key='rv:'+id+':'+u.id;u.rival=id;delete u.ref;u.el=null;});
-  const e0=S.enemy||{},k=rvStrength()*(e0.lead?leadK()*Math.pow(0.9,S.bossTries|0):e0.gym===2?TUNE.gymBossK*Math.pow(0.9,S.bossTries|0):e0.sched?TUNE.rvSchedK*(lvDef(S.lv|0).rvSK||1)*ladK()*(e0.gym?TUNE.gymActK:1):1);if(k!==1)out.forEach(u=>{u.hp*=k;u.maxHp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;u.shield=(u.shield||0)*k;u.healMult=(u.healMult||1)*k;});return out;}
+  const e0=S.enemy||{},k=rvStrength()*(e0.lead?leadK()*Math.pow(0.9,S.bossTries|0):e0.gym===2?TUNE.gymBossK*Math.pow(0.9,S.bossTries|0):e0.sched?TUNE.rvSchedK*(lvDef(S.lv|0).rvSK||1)*ladK()*(e0.gym?TUNE.gymActK:1):1);if(k!==1)out.forEach(u=>{u.hp*=k;u.maxHp*=k;if(u.crowd)u.bodyHp*=k;u.dmgMult*=k;u.rvK=k;u.shield=(u.shield||0)*k;u.healMult=(u.healMult||1)*k;});return out;}
 // v19.98: rival casts grow with the Game Level like Reruns (1.0 at Level 14), LADDER rvK, "full strength" from Level 15
 function rvStrength(){if(!TUNE.rvP2||!S)return 1;const d=lvDef(S.lv|0);return (d.rvK||1)*(rule('rvFull')?TUNE.rvFull:1)*(1+(S.curse||0))*(1+foeStep(S.lv))/(1+foeStep(14));}
 function rvChip(R){const x=RIVAL[R.id],gl=S&&S.gym&&S.gym.id===R.id;return `<span class="rvc${R.out?' out':''}${gl?' gym':''}" title="${gl?'Gym Leader. ':''}${esc(x.name)}, ${esc(x.style)}: ${esc(x.d)}${R.out?' Out of the season.':''}">${gl?'🏟️ ':''}${x.e} ${esc(x.name)} <b>${R.out?'out':'❤️'+Math.max(0,R.st.lives)}</b></span>`;}
@@ -23062,7 +23070,7 @@ function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL
   const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
   const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
   return `<section class="vs feat boss rvep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${x.e}</span>`}
-    <div class="fhd"><small>${L?'💀 Final boss · the Leader':'Rival episode'} · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s ${L?'full ':''}cast</b></div>
+    <div class="fhd"><small>${L?'💀 Final boss':'Rival episode'} · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s ${L?'full ':''}cast</b></div>
     <div class="foes">${foes}</div>${L?`<p class="rvtell lcast">💀 <b>${L.n} fight</b>, ${L.s3} of them ★★★${L.bn?` (+${L.bn} benched)`:''} · each ×${L.k} HP and damage${L.c?` · 🎯 carry <b>${esc(L.cn)}</b> (${esc(GENRES[L.cg]?GENRES[L.cg].name:'')})${L.hit.length?`: your ${esc(ctrNm(L.hit[0]))} counters it`:': none of your counters hits it'}`:''}</p>${ctrPanel()}`:''}${rvAlgo(e.rival)?`<p class="rvtell rvalgo">Plays by: <b>${esc(rvAlgo(e.rival))}</b></p>`:''}<p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p>${rvKit(R)}${L?'':ctrPanel()}</section>`;}
 function advanceAfterFight(res){
   if(S.over)return;
@@ -23308,7 +23316,7 @@ function skipBattle(){if(!B||B.done)return;B.silent=true;B.startDelay=0;let g=0;
 // your team, still standing or not. Enemy units are built in S.enemy.enc order, then the Evil Twin; summons are left out.
 function foeSnap(res){try{if(!S.enemy||!B||!B.units)return null;const en=S.enemy,eu=B.units.filter(u=>u.side==='E'&&!u.summon);
   const list=eu.map((u,i)=>{const c=!u.twin&&en.enc[i];return {key:u.key,twin:!!u.twin,e:u.e,name:u.name,row:c?c.row:u.row,col:c?c.col:u.col,
-    hp:u.maxHp,atk:u.crowd?u.bodyAtk:u.atk,crowd:u.crowd?u.maxBodies:0,p:u.p,dmg:u.dmgDone||0,alive:!!u.alive,level:u.level||0,tid:u.tid};});
+    hp:u.maxHp,atk:(u.crowd?u.bodyAtk:u.atk)*(u.rvK||1),crowd:u.crowd?u.maxBodies:0,p:u.p,dmg:u.dmgDone||0,alive:!!u.alive,level:u.level||0,tid:u.tid};});
   const extra=B.units.filter(u=>u.side==='E'&&u.summon).reduce((a,u)=>a+(u.dmgDone||0),0);
   return {title:en.title,round:S.round,win:!!res.win,list,extra};}catch(e){return null;}}
 function foeTeamHTML(){const T=UI.foeTeam;if(!T)return '<p class="muted">No fight to show.</p>';
@@ -23422,6 +23430,7 @@ function rvStudio(id){return (RVX[id]||{}).studio||'';}
 function rvFull(id){const x=RIVAL[id],st=rvStudio(id);return x?x.name+"'s "+(st||'cast'):'';}
 function rvTaunt(id,lead){const G=GYMS.find(g=>g.id===id),v=RVX[id]||{};return (lead&&G&&G.taunt)||v.intro||(G&&G.taunt)||(RIVAL[id]?RIVAL[id].tell:'');}
 // your strongest fielded character (rarity, then stars) faces the rival on the VS card
+function rvAce(id){const R=S.lobby&&S.lobby.rv.find(x=>x.id===id),us=R&&R.st&&R.st.units||[];let b=null,bs=-1;us.filter(u=>u.slot&&u.slot[0]!=='n').forEach(u=>{const d=HERO[u.id];if(!d)return;const sc=u.level*10+d.tier;if(sc>bs){bs=sc;b=u;}});return b;}
 function rvMyAce(){let b=null,bs=-1;fielded().forEach(u=>{const d=HERO[u.id];if(!d)return;const sc=u.level*10+d.tier;if(sc>bs){bs=sc;b=u;}});return b;}
 function rvToy(id,cls){const src=id&&typeof SPRITES!=='undefined'&&(SPRITES[id+'_f']||SPRITES[id]);return src?`<img class="${cls}" src="${src}" alt="" draggable="false">`:'';}
 function rvPlate(){const id=S&&S.enemy&&S.enemy.rival,x=id&&RIVAL[id];if(!x)return '';const st=rvStudio(id);
@@ -23491,15 +23500,15 @@ if(typeof window!=='undefined'&&window.addEventListener)window.addEventListener(
 function tbxFight(go){if(tbxMode()==='off'||TBX.el||!S){go();return;}
   const k=tbxK(),e=S.enemy||{},act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,boss=!!e.boss,rv=e.rival&&RIVAL[e.rival];
   if(rv){tbxVs(go,e,act,k);return;} // TRO-174
-  const tag=e.lead?'Final boss · the Leader':e.gym?'Gym Leader ('+(e.gym===2?4:act)+'/4)'+(e.gym===2?' · cast ×'+TUNE.gymBossK:''):e.part?'Boss · part 2':boss?'Boss episode':e.elite?'Mini-boss':rv?'Rival episode':e.gh?'Rerun':'';
+  const tag=e.lead?'Final boss':e.gym?'Gym Leader ('+(e.gym===2?4:act)+'/4)'+(e.gym===2?' · cast ×'+TUNE.gymBossK:''):e.part?'Boss · part 2':boss?'Boss episode':e.elite?'Mini-boss':rv?'Rival episode':e.gh?'Rerun':'';
   tbxOpen('bump'+(k<1?' k5':''),`<div class="tbep${boss?' boss':''}"><small>${esc(runLong())} · Act ${act}${tag?' · '+tag:''}</small><b>Episode ${S.round}</b><i>${boss?'💀 ':rv?rv.e+' ':'⚔️ '}${esc(e.title||'')}</i></div>`,'Episode '+S.round);
   tbxRun([[16,()=>TBX.el.classList.add('on')],[(boss?980:760)*k,go],[(boss?980:760)*k+40,()=>tbxOut(320*k+40)]]);}
 // TRO-174: a rival fight opens with a VS card: you vs the rival studio (the fight starts under it, then it wipes away)
-function tbxVs(go,e,act,k){const id=e.rival,x=RIVAL[id],big=!!e.lead,me=rvMyAce(),st=rvStudio(id),tag=big?'Final boss · the Leader':'Rival episode';
+function tbxVs(go,e,act,k){const id=e.rival,x=RIVAL[id],big=!!e.lead,me=rvMyAce(),st=rvStudio(id),tag=big?'Final boss':'Rival episode';
   const el=tbxOpen('bump vs'+(big?' lead':'')+(k<1?' k5':''),`<div class="tbvs"><small class="tbvtag">${esc(runLong())} · Act ${act} · Episode ${S.round} · <b>${tag}</b></small>
     <div class="tbvrow"><div class="tbvside me"><div class="tbvfig">${me&&rvToy(me.id,'tbvimg')||'<span class="tbvemo">🎬</span>'}</div><b>Your cast</b><span>${me&&HERO[me.id]?esc(HERO[me.id].name):''}</span></div>
     <div class="tbvvs" aria-hidden="true">VS</div>
-    <div class="tbvside rv"><div class="tbvfig${rvRevealed(id)?'':' sh'}">${rvToy((RVX[id]||{}).m,'tbvimg')||`<span class="tbvemo">${x.e}</span>`}</div><b>${x.e} ${esc(x.name)}</b><span>${esc(st||'Rival studio')}</span>${(k=>k?`<span class="tbvkit" title="Took: ${esc(k.replace(/<[^>]*>/g,''))}">${k}</span>`:'')(rvKit(S.lobby&&S.lobby.rv.find(R=>R.id===id),1))}</div></div>
+    <div class="tbvside rv"><div class="tbvfig${rvRevealed(id)?'':' sh'}">${(a=>a&&rvToy(a.id,'tbvimg'))(rvAce(id))||rvToy((RVX[id]||{}).m,'tbvimg')||`<span class="tbvemo">${x.e}</span>`}</div><b>${x.e} ${esc(x.name)}</b><span>${(a=>a&&HERO[a.id]?esc(HERO[a.id].name)+' · ':'')(rvAce(id))}${esc(st||'Rival studio')}</span>${(k=>k?`<span class="tbvkit" title="Took: ${esc(k.replace(/<[^>]*>/g,''))}">${k}</span>`:'')(rvKit(S.lobby&&S.lobby.rv.find(R=>R.id===id),1))}</div></div>
     <p class="tbvq">“${esc(rvTaunt(id,big))}”</p></div>`,tag+': '+rvFull(id),'Click to skip');
   el.style.setProperty('--rvc',rvCol(id));sfxStinger(big);const T=(big?1900:1450)*k;
   tbxRun([[16,()=>el.classList.add('on')],[T,go],[T+40,()=>tbxOut(320*k+40)]]);}
@@ -23668,7 +23677,7 @@ function synHTML(units,withList){
   const need=legend('crossep')?1:2,rl=s.real||{};
   const near=!xoOn()?[]:CROSSOVERS.filter(x=>!s.X[x.id]&&xoRoom(units,x)&&GENRES[x.a]&&GENRES[x.b]&&((rl[x.a]||0)>=need&&(rl[x.b]||0)===need-1||(rl[x.b]||0)>=need&&(rl[x.a]||0)===need-1)&&need-1>=0&&((rl[x.a]||0)+(rl[x.b]||0)>0)).slice(0,3);
   if(!items.length)return withList?`<div class="syns">${xlistBtn(s)}</div>`:'';
-  return `<div class="syns">${items.map(i=>`<button class="syn${i.on?' on':''}${i.kind==='genre'?' g-'+i.k:''}${pulse((i.kind==='genre'?'g':'t')+i.k)}" data-a="syn" data-v="${i.k}" title="${esc((GENRES[i.k]||TRAITS[i.k]).name)}: ${i.n} counted${i.kind==='genre'?' (Rare and up count as 2 from ★★)'+esc(ctrTip(i.k)):''}">${i.html}<span class="c">${i.max?'MAX':i.n+'/'+i.nx}</span></button>`).join('')}
+  return `<div class="syns">${items.map(i=>`<button class="syn${i.on?' on':''}${i.kind==='genre'?' g-'+i.k:''}${i.on&&i.max?' max':''}${pulse((i.kind==='genre'?'g':'t')+i.k)}" data-a="syn" data-v="${i.k}" title="${esc((GENRES[i.k]||TRAITS[i.k]).name)}: ${i.n} counted${i.kind==='genre'?' (Rare and up count as 2 from ★★)'+esc(ctrTip(i.k)):''}">${i.html}<span class="c">${i.max?'MAX':i.n+'/'+i.nx}</span></button>`).join('')}
     ${combos.map(x=>`<button class="syn combo${pulse('x'+x.id)}" data-a="combo" data-v="${x.id}">🔗 ${esc(x.name)}</button>`).join('')}${near.map(x=>{const m=(rl[x.a]||0)<need?x.a:x.b;return `<button class="syn combo near" data-a="combo" data-v="${x.id}" title="One more ${esc(GENRES[m].name)} character on your board switches on ${esc(x.name)}">🔗 ${esc(x.name)} <span class="c">${GENRES[x.a].e}${Math.min(need,rl[x.a]||0)}/${need} ${GENRES[x.b].e}${Math.min(need,rl[x.b]||0)}/${need}</span></button>`;}).join('')}${withList?xlistBtn(s):''}</div>`;
 }
 function shopHTML(){
@@ -24847,10 +24856,12 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.65',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.67',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.67',items:[["📏", "The next-fight panel is no longer cut off on smaller desktop windows (1280x800): the Mid-season finale numbers and the Season finale cast line show in full (the left column scrolls)."], ["🔭", "See their team now shows the damage a boosted cast really deals (it showed the base number next to the boosted HP). The finale VS card shows the rival's top fighter, and the tag says Final boss."]]},
+  {v:'20.66',items:[["🎨", "The genre and combo chips under your board are calmer: muted colours that match the new battle look, so your characters stand out more. Active, MAX and not-yet-active chips still look clearly different."]]},
   {v:'20.65',items:[["🎥", "New battle look: the fight is lit like a movie scene. A low amber spotlight from the side, teal shadows, real shadows under every toy and a warm pool of light on the board."], ["🎞️", "The film set around the board is quieter and darker so your team stands out, with a soft film grade at the edges of the screen."]]},
   {v:'20.64',items:[["✂️", "The Cut's text says what \"biggest genre\" means: the most copies (a ★★ counts 3, a ★★★ 6), and that only Fight the studio keeps the genre in the shop. When another bad event could come instead, the warning says \"if it is The Cut\"."], ["📱", "Phone: the coach tip no longer hides the first shop's genre/role line, and the final boss panel scrolls above the Fight bar instead of being cut off."]]},
   {v:'20.63',items:[["💀", "Ladder finales in numbers: the Mid-season finale now counts the Leader's cast (board, bench, ★★★, their carry) and says how much stronger it fights in the finale (×HP and ×damage). The Season finale panel uses the same name and count as the fight, and says whether your counters hit their carry."], ["🪙", "Lose the Season finale with gold in the bank and the tip now says to spend it in the rematch shop (it was telling you not to save)."]]},
@@ -25158,7 +25169,7 @@ function feel(){try{
     banner('Rank '+rk,[nt?RARITY[topTier(rk)-1]+'s unlocked':'',sl?'+1 board slot':'',!nt&&!sl?'Better odds':''].filter(Boolean).join(' · '),'rank');}UI._rk=rk;UI._rkS=S;}
 }catch(e){}}
 function banner(t,sub,kind){try{let b=document.getElementById('banner');if(b)b.remove();b=document.createElement('div');b.id='banner';b.className='bn-'+kind;b.setAttribute('aria-hidden','true');
-  b.innerHTML=`<b>${esc(t)}</b>${sub?`<span>${esc(sub)}</span>`:''}`;document.body.appendChild(b);setTimeout(()=>{if(b.parentNode)b.remove();},kind==='fight'||kind==='win'||kind==='lose'?950:1700);}catch(e){}}
+  b.innerHTML=`<b>${esc(t)}</b>${sub?`<span>${esc(sub)}</span>`:''}`;const ms=kind==='fight'||kind==='win'||kind==='lose'?950:Math.min(4500,1700+35*Math.max(0,String(sub||'').length-40));if(ms>1700)b.style.animationDuration=ms+'ms';document.body.appendChild(b);setTimeout(()=>{if(b.parentNode)b.remove();},ms);}catch(e){}}
 // floating +/- next to gold and lives when they change between two renders
 function gnum(k,v){const o=UI['_n'+k];UI['_n'+k]=v;const c=RM||o==null||o===v?'':v>o?' pop up':' pop dn';return `<b class="gnum${c}">${v}</b>`;}
 function dfl(k,v){const o=UI['_'+k];UI['_'+k]=v;if(RM||o==null||o===v)return '';const d=v-o;return `<i class="dlt ${d>0?'up':'dn'}" aria-hidden="true">${d>0?'+':'−'}${Math.abs(d)}</i>`;}
