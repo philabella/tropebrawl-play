@@ -3,9 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#151317">
 <title>Tropebrawl</title>
 </head>
 <body>
+<div id="tbload" style="position:fixed;inset:0;z-index:99999;display:grid;place-content:center;gap:14px;text-align:center;background:#151317;color:#bdb6aa;font:600 15px/1.4 system-ui,sans-serif"><b style="font:900 clamp(40px,12vw,96px)/1 Impact,'Arial Narrow Bold',sans-serif;color:#ffcc2e;letter-spacing:.02em">TROPEBRAWL</b><span>An auto-battler of movie and TV tropes</span><i style="display:block;width:min(260px,70vw);height:6px;margin:6px auto 0;border-radius:3px;background:linear-gradient(90deg,#ffcc2e 0 30%,#3a3540 30%) 0 0/200% 100%;animation:tbl 1.1s linear infinite"></i><small>Loading the cast (about 6 MB, once)…</small><style>@keyframes tbl{to{background-position:-200% 0}}</style></div>
 
 <style>
 /* fonts: Anton and Barlow (SIL Open Font License), latin, embedded */
@@ -1478,6 +1480,28 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 /* v20.11 P9: first visit title */
 .tfresh .tgo{margin-top:6px}.tfresh .tgo .btn.primary.big{font-size:1.5rem;padding:16px 34px}
 .tfresh .ticons{gap:6px}.tfresh .ticons .btn{min-width:44px;min-height:44px}
+/* TRO-211 first look: labelled icons, bigger steps, genre caption */
+.tfresh .ticons{gap:10px;align-items:flex-start}
+.tfresh .tic{display:grid;justify-items:center;gap:2px}
+.tfresh .tic small{font-size:.68rem;color:var(--muted);letter-spacing:.02em}
+.tfresh .tline{max-width:46ch;margin:0}
+.tfresh .eyebrow{font-size:.9rem}
+.tfresh .tsteps{max-width:520px}
+.tfresh .tsteps div{font-size:.95rem;padding:12px 8px}
+.tfresh .tsteps .emo{font-size:2.1rem}
+.tfresh .tsteps b{font-size:1.35rem}
+.tfresh .gcap{margin:6px 0 -2px;font-size:.78rem;color:var(--muted)}
+@media (max-width:500px){.tfresh .tplot{display:none}.tfresh .eyebrow{font-size:.75rem}.tfresh .tsteps div{padding:6px 4px;font-size:.8rem;gap:1px}.tfresh .tsteps .emo{font-size:1.5rem}.tfresh .tsteps b{font-size:1.1rem}.tfresh .gcap{font-size:.74rem;margin-top:0}.tfresh .tic small{font-size:.7rem}.tfresh .ticons .btn{min-height:40px}}
+html:not(.dt) .pgkey{font-size:.72rem;line-height:1.25;margin-bottom:4px}
+/* TRO-211 Pilot gate: parts of the shop wait for their tip */
+html.pg-r1 .shopwrap .actions [data-a="reroll"],html.pg-r1 .shopwrap .actions [data-a="lock"]{display:none!important}
+html.pg-rk .shopwrap .oddsrow,html.pg-rk .shopwrap .ranksbtn,html.pg-rk .top .res>span[class^="tier"],html.pg-rk .top .intm{display:none!important}
+html.pg-pool .shopwrap .poolbtn,html.pg-pool .scard .pleft{display:none!important}
+.pgkey{margin:0 0 6px;font-size:.8rem;line-height:1.3;color:var(--muted)}
+.pgkey b{color:var(--ink);font-weight:700}
+.bh3{font-weight:400;opacity:.75;text-transform:none;letter-spacing:0}
+.actions [data-a="fight"].go:not(:disabled){animation:fgo 1.3s ease-in-out infinite}
+@keyframes fgo{0%,100%{box-shadow:0 0 0 0 rgba(255,204,46,.0),4px 4px 0 var(--inkline)}50%{box-shadow:0 0 0 6px rgba(255,204,46,.45),0 0 28px 6px rgba(255,204,46,.55)}}
 .news.nw1{padding:8px 12px}.news.nw1 .lnk{font-size:.9rem}
 .ftc .pt.ftp{width:52px;height:52px;font-size:1.6rem}
 .ftsub{font-size:.82rem;margin:0}
@@ -23580,7 +23604,7 @@ function boardHTML(){
   };
   const full=fieldCount()>=bs;
   return `<section class="board" aria-label="Your board">
-      <div class="rowlbl bhead"><span>Your board<span class="bh2"> · front row faces the enemy</span></span><b style="${full?'color:var(--gold)':''}">${fieldCount()}/${bs} on board</b></div>
+      <div class="rowlbl bhead"><span>Your board<span class="bh2"> · front row faces the enemy</span></span><b style="${full?'color:var(--gold)':''}">${fieldCount()}/${bs} on board${bs<RANK.board[RANK.board.length-1]?'<span class="bh3"> · rank up for more</span>':''}</b></div>
       <div class="frow rf" aria-label="Front row">${['f0','f1','f2','f3'].map(s=>wcell(cell,s)).join('')}</div>
       <div class="frow rb" aria-label="Back row">${['b0','b1','b2','b3'].map(s=>wcell(cell,s)).join('')}</div>
       <div class="frow bench" aria-label="Bench">${benchSlots.map(cell).join('')}</div>
@@ -23645,7 +23669,7 @@ function shopHTML(){
   const pct=need?Math.min(100,100*xp/need):100,nxt=need?Math.min(100,100*(xp+trXp())/need):100;
   const gauge=`<span class="gauge ${nx?'tier'+nxT:'max'}${UI.gaugePop?' pop':''}" style="--p:${pct.toFixed(1)};--q:${nxt.toFixed(1)};--seg:${need?(360*trXp()/need).toFixed(1):360}deg" aria-hidden="true"><b>⬆️</b></span>`;UI.gaugePop=false;
   return `<section class="shopwrap${S.locked?' locked':''}" aria-label="Shop${S.locked?' (locked)':''}">
-    <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank}: see every rank, its odds and board slots" title="See every shop rank: odds, board slots and unlocks">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: ${nxNew?`<span class="tier${nxT}" style="color:var(--tc)">${RARITY[nxT-1]}</span>`:`Rank ${nx}`}${RANK.board[nx-1]>boardSize()?' +1 slot':''} · ${xp}/${need} XP</span>`:'<span>Max</span>'}<span class="oddsgo">All ranks ›</span></button>
+    ${pgKey()}<button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank}: see every rank, its odds and board slots" title="See every shop rank: odds, board slots and unlocks">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: ${nxNew?`<span class="tier${nxT}" style="color:var(--tc)">${RARITY[nxT-1]}</span>`:`Rank ${nx}`}${RANK.board[nx-1]>boardSize()?' +1 slot':''} · ${xp}/${need} XP</span>`:'<span>Max</span>'}<span class="oddsgo">All ranks ›</span></button>
     <div class="shop${deal?' deal':''}">${cards}</div>
     ${badNextHTML()}${S.units.some(buybackOn)?`<p class="evnote">🎡 ${S.units.filter(buybackOn).length} of your characters sell back at full price (Buyback Wheel).</p>`:''}
     <p class="holdhint">${canHover?'Click a card to buy it; hover to see details.':'Tap a card to see what it does, then Buy.'} Drag a card onto a slot to buy it there; drag characters (or tap one, then an empty slot) to move them, or drag onto the shop to sell.</p>
@@ -23658,7 +23682,7 @@ function shopHTML(){
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
       <button class="btn sm poolbtn" data-a="poolview" aria-label="Character pool: copies left of every character" title="Character pool: how many copies of each character are left (P)">🃏<span class="rbl"> Pool</span>${DESK?'<kbd class="kh">P</kbd>':''}</button>
       <span class="grow"></span>
-      <button class="btn primary big" data-a="fight" ${fielded().length?'':'disabled title="Put a character on your board first"'}>Fight!</button>
+      <button class="btn primary big${pgGo()?' go':''}" data-a="fight" ${fielded().length?'':'disabled title="Put a character on your board first"'}>Fight!</button>
     </div></section>`;
 }
 // Game Level picker: one chip per level; the newest rule in one line, the dials below, the earlier rules folded away
@@ -23688,21 +23712,21 @@ function lvPicker(){
 // (not the profile's episode count: with every level unlocked, the profile credits old-ladder episodes on its first load)
 function titleFresh(sv){try{if(sv||DEV.on)return false;const g=k=>localStorage.getItem(k);if(g('tropebrawl-all'))return false;
   return !g('tropebrawl-played')&&!g('tropebrawl-pid')&&!tutLoad().length&&!(lvLoad().won||[]).length;}catch(e){return false;}}
-function titleFreshHTML(){UI.lv=lvMin();const ns=newsFresh();
+function titleFreshHTML(){UI.lv=lvMin();
   return `<section class="screen tfresh tst">${titleScene()}<div class="tmenu">
-    <div class="eyebrow">Shop · Level up · Brawl</div>
+    <div class="eyebrow">An auto-battler of movie and TV tropes</div>
     <h1 class="title-word">${TITLE}</h1>
-    <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
-    <div class="steps"><div><span class="emo">🛒</span><b>Buy</b>characters</div><div><span class="emo">✨</span><b>Combine</b>3 → ★★</div><div><span class="emo">⚔️</span><b>Brawl</b>${lvRounds(UI.lv|0)} rounds</div></div>
+    <p class="muted tline">Hire a cast, combine copies into stars, then watch them brawl on their own.<span class="tplot"> Every story is falling into a hole in the plot: fight your way out.</span></p>
+    <div class="steps tsteps"><div><span class="emo">🛒</span><b>Buy</b>characters</div><div><span class="emo">✨</span><b>Combine</b>3 → ★★</div><div><span class="emo">⚔️</span><b>Brawl</b>${lvRounds(UI.lv|0)} rounds</div></div>
     <div class="row tgo"><button class="btn primary big tbig" data-a="new">▶ Play</button></div>
     <div class="row ticons">
-      <button class="btn sm ghost" data-a="codex" aria-label="Codex" title="Codex: every rule and character">📖</button>
-      <button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button>
-      <button class="btn sm ghost" data-a="devstudio" aria-label="Animation Studio" title="Animation Studio">🎬</button>
+      <span class="tic"><button class="btn sm ghost" data-a="codex" aria-label="Codex" title="Codex: every rule and character">📖</button><small>Codex</small></span>
+      <span class="tic"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><small>Settings</small></span>
+      <span class="tic"><button class="btn sm ghost" data-a="devstudio" aria-label="Animation Studio" title="Animation Studio">🎬</button><small>Animations</small></span>
       ${typeof window!=='undefined'&&window.tbApp?'<button class="btn sm ghost" data-a="appquit">Quit game</button>':''}
-      <button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('sm ghost')}
+      <span class="tic"><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button><small>Sound</small></span>${fsCan()?`<span class="tic">${fsBtn('sm ghost')}<small>Full screen</small></span>`:''}
     </div>
-    ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 New in v${esc(ns[0].v)}: see what changed</button></section>`:''}
+    <p class="gcap">The ${['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres you hire from. ${Math.min(...Object.values(GENRES).map(g=>g.tiers[0]))} of one on your board = its bonus.</p>
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION}${tlBadge()}</p>
   </div></section>`;}
@@ -23727,7 +23751,7 @@ SCR.title=()=>{
   return `<section class="screen tst${UI.pick?' ladon':''}">${titleScene()}<div class="tmenu">
     ${UI.pick?'<div class="eyebrow">Climb it one tier at a time</div><h1 class="title-word ladword">The Ladder</h1>':`<div class="eyebrow">Shop · Level up · Brawl</div>
     <h1 class="title-word">${TITLE}</h1>`}
-    <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
+    <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
     ${UI.pick?`${lvPicker()}<div class="row tgo">${tutTitleBtns()}<button class="btn" data-a="pick-back">← Back</button></div>${epsTitleHTML(UI.lv)}`:titleMenuHTML(sv)}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION}${tlBadge()}</p>
@@ -23892,6 +23916,15 @@ const COACH=[
  {id:'c3-rivalep',lv:3,w:'plan',rv:1,on:()=>!!(S.enemy&&S.enemy.rival),done:['fight'],at:'.vs.feat',t:()=>'Next episode: the rival\'s cast, not the production. Same rules, their board.'},
  {id:'c3-rivalwon',lv:3,w:'plan',rv:1,on:()=>false,t:()=>'From the Season on, a rival\'s cast can turn up in any normal episode.'},
 ];
+// TRO-211: the Pilot (coach on) shows the shop a piece at a time; display only, never in sims or seeded runs
+function pgate(){if(!S||S.over||UI.screen!=='plan'||!tutOn())return {};const lv=S.lv|0;
+  return {r1:lv===1&&S.round===1,rk:lv===1&&S.rank<=1,pool:lv<=2,items:lv<=2&&!S.trinkets.length&&!S.legend};}
+function pgPaint(){try{const g=pgate(),h=document.documentElement;['r1','rk','pool','items'].forEach(k=>h.classList.toggle('pg-'+k,!!g[k]));}catch(e){}}
+function pgGo(){const g=pgate();return !!(g.rk&&S.round<=2&&fielded().length);}
+// the first shop's key (in place of the rank row): what the two tags and Crowd mean, from a card on offer
+function pgKey(){if(!pgate().rk)return '';const o=S.shop.find(x=>x&&HERO[x.id]);if(!o)return '';const d=HERO[o.id],g=GENRES[d.genre],t=TRAITS[d.trait];
+  const n=Math.min(g.tiers[0],t?t.tiers[0]:9),cr=S.shop.some(x=>x&&HERO[x.id]&&HERO[x.id].crowd);
+  return `<p class="pgkey">🏷️ <b>${g.e} ${esc(g.name)}</b> is a genre, <b>${esc(t?t.name:'')}</b> a role: ${n} with one tag on your board = a bonus.${cr?' <b>Crowd</b>: a squad with one HP bar, priced as one.':''}</p>`;}
 function tutLoad(){if(!TUT.seen){try{TUT.seen=JSON.parse(localStorage.getItem(TUT_KEY)||'[]')||[];}catch(e){TUT.seen=[];}if(!Array.isArray(TUT.seen))TUT.seen=[];}return TUT.seen;}
 function tutSee(id){const s=tutLoad();if(id&&!s.includes(id)){s.push(id);try{localStorage.setItem(TUT_KEY,JSON.stringify(s));}catch(e){}}}
 function tutReset(){TUT.seen=[];TUT.shown=null;try{localStorage.removeItem(TUT_KEY);}catch(e){}}
@@ -23917,13 +23950,13 @@ function tutPaint(){if(typeof document==='undefined'||!document.body)return;let 
   if(TUT.shown!==c.id){TUT.shown=c.id;clearTimeout(TUT.t);if(tg&&tg.scrollIntoView)try{tg.scrollIntoView({block:'nearest'});}catch(e){}
     if(c.fade)TUT.t=setTimeout(()=>{if(TUT.cur===c.id){tutSee(c.id);TUT.shown=null;tutPaint();}},c.fade*1000);}
   b.innerHTML=`<div class="coach tutb" role="note"><span class="ci" aria-hidden="true">💡</span><p>${c.t()}</p><button class="btn sm ${c.nx?'primary':'ghost'}" data-a="tut-x" data-v="${c.id}">${c.nx?'Next':'Got it'}</button></div>`;
-  b.hidden=false;if(tg)tg.classList.add('tutring');tutPlace();}
+  b.hidden=false;if(tg)tg.classList.add('tutring');tutPlace();clearTimeout(TUT.pt);TUT.pt=setTimeout(()=>{tutPlace();TUT.pt=setTimeout(tutPlace,500);},420);}
 // docks above or below the target (where it fits; never on it), arrow pointing at the target's centre
 function tutPlace(){const b=document.getElementById('tut');if(!b||b.hidden)return;const tg=document.querySelector('.tutring');
   const W=innerWidth,H=innerHeight,w=Math.min(340,W-16);b.style.width=w+'px';
   if(!tg){b.style.left=Math.round((W-w)/2)+'px';b.style.top=Math.round(H*.28)+'px';delete b.dataset.side;return;}
   const r=tg.getBoundingClientRect(),bh=b.offsetHeight,gap=12,upR=r.top-gap-8,dnR=H-r.bottom-gap-8;
-  const below=dnR>=bh||upR<bh&&dnR>=upR;
+  const low=r.top+r.height/2>H/2,below=low?upR<bh&&dnR>=upR:dnR>=bh||upR<bh&&dnR>=upR;
   const top=Math.max(8,Math.min(H-bh-8,below?r.bottom+gap:r.top-gap-bh)),cx=r.left+r.width/2,left=Math.max(8,Math.min(W-w-8,cx-w/2));
   b.style.left=Math.round(left)+'px';b.style.top=Math.round(top)+'px';b.dataset.side=below?'b':'t';b.style.setProperty('--ax',Math.round(Math.max(16,Math.min(w-16,cx-left)))+'px');}
 try{if(typeof window!=='undefined'&&window.addEventListener){let q=0;const f=()=>{if(q)return;q=1;requestAnimationFrame(()=>{q=0;tutPlace();});};window.addEventListener('resize',f);window.addEventListener('scroll',f,{passive:true});}}catch(e){}
@@ -24392,6 +24425,7 @@ function inspHTML(){
 }
 // right-hand panel on wide screens: your Legendary and items (phones show them as icons in the top bar)
 function itemsPanel(){
+  if(pgate().items)return '<aside class="insp" id="items" aria-label="Your items"><h4>YOUR ITEMS</h4><p class="muted" style="font-size:.85rem">None yet. Items come later in the run; each one helps your whole team.</p></aside>';
   return `<aside class="insp" id="items" aria-label="Your items"><h4>YOUR ITEMS <span class="itemcount">${S.trinkets.length}/${TRINKET_CAP}</span></h4>${itemsList()}<ul class="irules"><li>Items help your whole team.</li><li>Picking an item you have levels it up (max ★★★).</li><li>Tap an item to see or sell it.</li><li>Full? A new item replaces one (that one is sold).</li></ul></aside>`;
 }
 // open details: in the side panel on the planning screen, otherwise in a sheet
@@ -24577,7 +24611,7 @@ function peeking(){return !!(UI.legPeek&&S&&S.pending&&S.pending.length);}
 let toastT;
 function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1800);}
 // ================= input =================
-function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}const r_=onAction0(a,v,el);try{tutPaint();}catch(e){}try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
+function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}const r_=onAction0(a,v,el);try{tutPaint();}catch(e){}pgPaint();try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
 function onAction0(a,v,el){
   if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x'&&a!=='repitch')return;
   if(a==='fight'&&peeking()){UI.legPeek=false;render();return;}
@@ -24782,10 +24816,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.59',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.60',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.60',items:[["👋", "First run: the first shop now shows just the cards, your gold and your board. Reroll, Lock, shop ranks and the Pool appear as the tutorial gets to them, and Fight pulses once someone is on your board."], ["🏷️", "The first shop explains the card tags (a genre and a role) and Crowd cards; the board count says it grows as your shop ranks up; the tutorial tip no longer sits on the first card."], ["🎬", "The first-visit title says what the game is (an auto-battler of movie and TV tropes), with bigger Buy / Combine / Brawl steps and labelled buttons."]]},
   {v:'20.59',items:[["🎬", "The battle board is now a real film set: lighting rigs, a camera on a dolly, the director's chair, prop crates, a fan, crew and a studio audience fill the sides of wide screens."], ["🎭", "The painted set flats change every act: Western town, space station, haunted house, then the finale city. The audience cheers your KOs and the lights flash on crits."], ["👆", "Click the clapperboard, a spotlight, the fan, the camera or the APPLAUSE sign."]]},
   {v:'20.58',items:[["👯", "Body doubles: from Act 3, when a character you own is sold out (0 left in the pool), tap it to buy one more copy for 3× its price (Rare 🪙9, Epic 🪙12). Late gold now has a job when the lobby took your carry's copies."]]},
   {v:'20.57',items:[["🎟️", "Rivals now play by your rules: they go through the same events, plot twists and surprise events, earn items (including the one a Rare ★★ pays) and pick a Legendary after the Act 1-3 bosses. Their cast panel and the VS card show what they took."], ["⚖️", "Since rivals now earn their power, their flat strength bonus is lower (mostly in Acts 2-4 and for the Ladder Leader), so the Ladder is about as hard as before."]]},
@@ -25101,7 +25136,7 @@ function render(){
   dtFit();dtKeys();
   feel();
   if(UI.screen!=='battle'&&!UI.sheetOpen&&!peeking())showPending();
-  try{tutPaint();}catch(e){}
+  try{tutPaint();}catch(e){}pgPaint();
   if(peeking()){const fb=document.querySelector('#app [data-a="fight"]');if(fb){fb.innerHTML=S.pending[0].kind==='legend'?'🏆 Choose Legendary':'🎁 Choose item';fb.classList.add('peekbtn');fb.disabled=false;}}
 }
 function save(){tlSave();try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
@@ -27859,5 +27894,6 @@ window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
 </script>
 
+<script>(function(){var e=document.getElementById("tbload");if(e)e.remove();})();</script>
 </body>
 </html>
