@@ -20621,16 +20621,16 @@ const TRINKETS=[
  ['coin','Lucky Coin','C','🪙','{v} gold after every win.',['+1','+2','+3']],
  ['battery','Battery Pack','C','🔋','All your characters start fights with {v} energy.',['30%','45%','60%']],
  ['fangs','Vampire Fangs','C','🦷','All your characters heal for {v} of damage dealt.',['12%','18%','24%']],
- ['smoke','Smoke Grenade','C','💨','For the first 10s of a fight, your characters dodge {v} of attacks.',['20%','30%','40%']],
+ ['smoke','Smoke Grenade','C','💨','For the first 10s of a fight, your characters dodge {v} of attacks.',['30%','40%','50%']],
  ['hollow','Hollow Points','C','💢','All your characters deal {v} more damage to enemies below half HP.',['50%','75%','100%']],
  ['spikes','Spiked Armor','C','🌵','Your front-row characters reflect {v} of melee damage.',['45%','65%','85%']],
  ['flare','Signal Flare','C','🎆','All your characters attack instantly and 30% faster for the first {v}.',['5s','7s','10s']],
- ['plating','Iron Plating','C','🔩','Your front-row characters gain {v} armor.',['+5','+7','+9']],
- ['ledger','Interest Ledger','C','📒','Your interest cap goes up by {v} (🪙1 per 🪙10 you hold).',['+1','+2','+3']],
+ ['plating','Iron Plating','C','🔩','Your front-row characters gain {v} armor: attacks deal 20% / 26% / 31% less to them.',['+5','+7','+9']],
+ ['ledger','Interest Ledger','C','📒','You get 🪙1 more every round, and your interest cap goes up by {v} (🪙1 per 🪙10 you hold).',['+1','+2','+3']],
  ['overclock','Overclock Chip','R','💾','All your characters\' skills hit {v} harder.',['70%','100%','130%']],
- ['tesla','Tesla Coil','R','🌩️','Every {v}, lightning hits a random enemy.',['4s','3s','2s']],
+ ['tesla','Tesla Coil','R','🌩️','Every {v}, lightning hits a random enemy for 12 + 4 × the round number (armor doesn\'t help).',['4s','3s','2s']],
  ['extralife','Extra Life','R','💖','Your first character to fall each fight revives at {v} HP (summons don\'t count). If another save catches that fall first, it waits for the next one.',['50%','75%','100%']],
- ['crest','Crossover Crest','R','🔗','Adds +1 character to {v} for genre bonuses (not crossovers), picked where it helps most.',['1 genre','2 genres','3 genres']],
+ ['crest','Crossover Crest','R','🔗','Adds +1 character to {v} for genre bonuses (not crossovers), picked where it helps most.',['2 genres','3 genres','4 genres']],
  ['glass','Glass Cannon','R','🧨','All your characters deal {v} more damage but have 10% less HP.',['35%','50%','65%']],
  ['scope','Sniper Scope','R','🔭','Your ranged characters deal {v} more damage.',['40%','60%','80%']],
  ['banner','War Banner','R','🚩','Your melee characters deal {v} more damage.',['40%','60%','80%']],
@@ -20638,7 +20638,7 @@ const TRINKETS=[
  ['teamup','Team-Up Poster','C','🤝','All your characters deal {v} more damage for each crossover you have on.',['10%','15%','20%']],
  ['residuals','Residuals','C','💵','After every fight: +🪙1 for each different Rare or rarer character on your board, up to 🪙{v}.',['2','3','4']],
  ['slowburn','Slow Burn','C','🕯️','After 12s of a fight, all your characters deal {v} more damage.',['30%','45%','60%']],
- ['extras','Background Extras','C','📣','Your crowds get {v} more bodies.',['+1','+2','+3']],
+ ['extras','Background Extras','C','📣','Your crowds get {v} more bodies.',['+2','+3','+4']],
  ['understudy','Understudy','R','🎟️','When characters on your board fall, your best bench character of the same or lower rarity steps into their square, up to {v} per fight. Summons falling don\'t count, and stand-ins miss start-of-fight effects (starting shields and energy, Mega Roar).',['1','2','3']],
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
@@ -20766,7 +20766,7 @@ const TUNE={ladderOn:1,ladderLv:5,ladderTo:16,ladderActK:[0.7,0.9,1.3,1.6],ladde
 buildSchedule(false);
 
 const EVENTS={
-  recruit:{name:'Free Agent',e:'🤝',d:'Pick 1 of 3 characters one rarity above your shop rank (Epic at most), free. No room: you get their price in gold.'},
+  recruit:{name:'Free Agent',e:'🤝',d:'Pick 1 of 3 characters one rarity above your shop rank (Epic at most), free. One is always from your biggest genre. No room: you get their price in gold.'},
   payday:{name:'Payday',e:'💵',d:'+8 gold.'},
   supply:{name:'Supply Drop',e:'📦',d:'Pick 1 of 3 items, and +🪙3.'},
   deal:{name:'Risky Deal',e:'🎲',d:'+15 gold, −2 lives (needs 3 or more lives).'},
@@ -21545,7 +21545,7 @@ function startRound(){rsKey('r');
 // interest cap: 🪙5 (The Vault 10, Director's Cut 4, Haunted Wallet 1), plus the Interest Ledger
 function intCap(){return (legend('wallet')?1:legend('vault')?10:legend('dircut')?4:TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
 function income(){const interest=Math.min(intCap(),Math.floor(Math.max(0,S.gold)/TUNE.intPer)),max=S.rank>=RMAX;
-  return {base:5,interest,coin:0,ledger:0,xp:max?0:RANK.freeXp};}
+  return {base:5,interest,coin:0,ledger:lvl('ledger')?1:0,xp:max?0:RANK.freeXp};}
 function intMeter(inc){const cap=intCap(),n=inc.interest,nx=n<cap?TUNE.intPer*(n+1)-S.gold:0;
   return `<span class="intm" title="Interest: 🪙1 per 🪙${TUNE.intPer} you hold when the round ends, up to 🪙${cap} at 🪙${TUNE.intPer*cap}. ${nx>0?`🪙${nx} more for +${n+1}.`:'Maxed.'}" aria-label="Interest +${n} of ${cap}">${Array.from({length:cap},(_,k)=>`<i class="${k<n?'on':''}"></i>`).join('')}</span>`;}
 function streakGold(n){const t=TUNE.streakGold;return t[Math.min(t.length-1,Math.abs(n|0))];}
@@ -21589,7 +21589,9 @@ function eventPick(key){rsKey('v');
   if(key==='recruit'){
     // Free Agent: heroes exactly one rarity above your shop rank (Epic at most) - the low-rank side door
     const maxed=maxedIds();const rar=Math.min(topTier(S.rank)+1,4,S.cap||5);
-    e.sub={kind:'recruit',ids:shuffle(HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!gOut(h[2])).map(h=>h[0])).slice(0,3)};
+    const pool=HEROES.filter(h=>h[4]===rar&&!maxed.has(h[0])&&!gOut(h[2])).map(h=>h[0]),cw=g=>ownedIn(g).reduce((t,u)=>t+COPIES[u.level-1],0);
+    const top=Object.keys(GENRES).filter(g=>!gOut(g)&&ownedIn(g).length).sort((a,b)=>cw(b)-cw(a))[0],mine=shuffle(pool.filter(id=>HERO[id].genre===top));
+    e.sub={kind:'recruit',ids:mine.length?shuffle([mine[0],...shuffle(pool.filter(id=>id!==mine[0])).slice(0,2)]):shuffle(pool).slice(0,3)};
   }
   if(key==='supply'){S.gold+=3;S.stats.gold+=3;e.sub={kind:'trinket',ids:trinketChoices(3,false)};}
   if(key==='wheel'){
@@ -22295,7 +22297,7 @@ function step(dt){
     const f=danger?B.units.filter(x=>x.side==='E'&&targetable(x)):rowMost({side:'A'});
     B.envSrc='artillery';f.forEach(x=>dealDamage(null,x,amt*(danger?TUNE.dangerMult:1),'spell',true));B.envSrc=null;
     if(f.length&&legend('fieldhosp')){const w=sideUnits('A').filter(a=>a.hp<a.maxHp).sort((a,b)=>a.hp/a.maxHp-b.hp/b.maxHp)[0];if(w)heal(null,w,amt*TUNE.fhHeal);}if(f.length)shake();}}
-  if(has('tesla')){B.tesla-=dt;if(B.tesla<=0){B.tesla+=tv('tesla');const f=B.units.filter(x=>x.side==='E'&&targetable(x));if(f.length){B.envSrc='tesla';dealDamage(null,pick(f),8+3*B.round,'true');B.envSrc=null;}}}
+  if(has('tesla')){B.tesla-=dt;if(B.tesla<=0){B.tesla+=tv('tesla');const f=B.units.filter(x=>x.side==='E'&&targetable(x));if(f.length){B.envSrc='tesla';dealDamage(null,pick(f),12+4*B.round,'true');B.envSrc=null;}}}
   if(B.t>30){B.ot=(B.ot||.5)-dt;if(B.ot<=0){B.ot=.5;const k=.02*(1+(B.t-30)/8);B.envSrc='overtime';B.units.forEach(u=>{if(u.alive)dealDamage(null,u,u.maxHp*k,'true');});B.envSrc=null;}}
   for(const u of B.units){
     if(!u.alive)continue;
@@ -24236,10 +24238,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.35',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.36',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.36',items:[["🤝", "Free Agent: one of the three characters is always from your biggest genre."], ["🎒", "Weak items buffed: Smoke Grenade dodges 30/40/50%, Background Extras +2/+3/+4 bodies, Crossover Crest 2/3/4 genres, Tesla Coil hits harder, Interest Ledger also pays 🪙1 every round."], ["🔩", "Iron Plating and Tesla Coil now say exactly what they do."]]},
   {v:'20.35',items:[["🧍", "Fighters idle in their own way: Guardians sway, Stalkers glance around, Brawlers bounce, flyers hover, and no two move in step."], ["✨", "Casting a skill is easy to see: the caster pops, the skill name appears over it, and the numbers it deals show in its genre colour."]]},
   {v:'20.34',items:[["🪜", "The Ladder, part 1: from Ascension 1, a rival cast fights you in most episodes. Only the opener, the event and the act bosses are not rivals."], ["💔", "On the Ladder a loss in Acts 1-2 costs 1 life (2 in Acts 3-4), and rivals stay in the show to the end."]]},
   {v:'20.33',items:[["📊", "After every fight, a recap shows what each of your characters did: damage dealt, damage taken, and healing + shields. The crown marks your top damage dealer."]]},
