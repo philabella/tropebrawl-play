@@ -1,11 +1,11 @@
 name: runlog
-# Collects playtest runs into this repo's `runlog` branch every 6 hours (runs/<player id>/<run id>.json). The game on
+# Collects playtest runs into this repo's `runlog` branch every hour (and summary.json for runs.html) (runs/<player id>/<run id>.json). The game on
 # this site posts each finished run (anonymous: a random player id, the moves, no personal data) to an ntfy.sh relay
 # topic and to the developer's Google Form; the relay keeps messages ~12 h, so a pull every 6 h never misses one.
 # It lives in this public repo because Actions minutes are free here (moved from the private tropebrawl repo, 2026-10-15).
 on:
   schedule:
-    - cron: '23 */6 * * *'
+    - cron: '23 * * * *'
   workflow_dispatch:
     inputs:
       selftest:
@@ -38,6 +38,8 @@ jobs:
         run: node src/runlog/selftest.mjs
       - name: Collect
         run: cd data && node ../src/runlog/collect.mjs
+      - name: Summary for runs.html
+        run: cd data && node ../src/runlog/summary.mjs
       - name: Commit
         run: |
           cd data

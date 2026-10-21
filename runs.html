@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Tropebrawl run log</title>
+<style>
+  :root { --bg:#14171c; --card:#1d2128; --line:#2a303a; --tx:#e8e4dc; --mut:#8a909a; --win:#5fc47a; --lose:#e06060; --quit:#d9a441; --me:#5aa9e6; --tester:#9b7fe0; --str:#ffb36b; }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--tx); font:15px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif; }
+  header { padding:16px 16px 8px; position:sticky; top:0; background:var(--bg); border-bottom:1px solid var(--line); z-index:2; }
+  h1 { margin:0 0 2px; font-size:19px; letter-spacing:.3px; }
+  .sub { color:var(--mut); font-size:12.5px; }
+  .stats { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin:12px 0 10px; }
+  .st { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:8px 10px; }
+  .st b { display:block; font-size:22px; font-variant-numeric:tabular-nums; }
+  .st span { color:var(--mut); font-size:11.5px; }
+  .ctl { display:flex; gap:6px; flex-wrap:wrap; }
+  .ctl button { background:var(--card); color:var(--tx); border:1px solid var(--line); border-radius:999px; padding:5px 11px; font:inherit; font-size:13px; }
+  .ctl button.on { border-color:var(--str); color:var(--str); }
+  main { padding:8px 12px 40px; max-width:760px; margin:0 auto; }
+  .day { color:var(--mut); font-size:12px; text-transform:uppercase; letter-spacing:1px; margin:16px 4px 6px; }
+  .run { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--line); border-radius:10px; padding:9px 12px; margin:6px 0; }
+  .run.win { border-left-color:var(--win); } .run.lose { border-left-color:var(--lose); } .run.quit, .run.open { border-left-color:var(--quit); }
+  .top { display:flex; justify-content:space-between; gap:8px; align-items:baseline; }
+  .res { font-weight:650; }
+  .win .res { color:var(--win); } .lose .res { color:var(--lose); } .quit .res, .open .res { color:var(--quit); }
+  .t { color:var(--mut); font-size:12.5px; white-space:nowrap; }
+  .meta { color:var(--mut); font-size:12.5px; margin-top:2px; }
+  .tag { display:inline-block; border-radius:5px; padding:0 6px; font-size:11.5px; font-weight:600; margin-right:4px; }
+  .tag.me { background:#5aa9e622; color:var(--me); } .tag.tester { background:#9b7fe022; color:var(--tester); } .tag.stranger { background:#ffb36b22; color:var(--str); }
+  .board { margin-top:5px; display:flex; flex-wrap:wrap; gap:4px; }
+  .board span { background:#ffffff0d; border-radius:5px; padding:1px 6px; font-size:12px; }
+  .visit { color:var(--mut); font-size:12.5px; padding:3px 6px; }
+  .empty { color:var(--mut); text-align:center; margin:40px 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Tropebrawl run log</h1>
+  <div class="sub" id="upd">Loading…</div>
+  <div class="stats" id="stats"></div>
+  <div class="ctl">
+    <button data-f="others" class="on">Not me</button>
+    <button data-f="stranger">Strangers only</button>
+    <button data-f="all">Everyone</button>
+    <button data-v="1" id="vis">Show visits</button>
+  </div>
+</header>
+<main id="list"></main>
+<script>
+// Data: summary.json on the runlog branch, rebuilt every hour by .github/workflows/runlog.yml.
+const SRC = 'https://raw.githubusercontent.com/philabella/tropebrawl-play/runlog/summary.json';
+const TZ = 'America/Winnipeg';
+let data = null, filt = localStorage.getItem('rl-f') || 'others', showVis = localStorage.getItem('rl-v') === '1';
+const fmtT = s => new Date(s).toLocaleTimeString('en-CA', { timeZone: TZ, hour: 'numeric', minute: '2-digit' });
+const fmtD = s => new Date(s).toLocaleDateString('en-CA', { timeZone: TZ, weekday: 'short', month: 'short', day: 'numeric' });
+const dayKey = s => new Date(s).toLocaleDateString('en-CA', { timeZone: TZ });
+const ago = s => { const m = (Date.now() - Date.parse(s)) / 60000; return m < 60 ? Math.round(m) + ' min ago' : m < 1440 ? Math.round(m / 60) + ' h ago' : Math.round(m / 1440) + ' d ago'; };
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const keep = r => filt === 'all' ? true : filt === 'stranger' ? r.who === 'stranger' : r.who !== 'me';
+function resText(r) {
+  if (r.res === 'win') return 'Won the run';
+  if (r.res === 'lose' || r.res === 'loss') return 'Lost at round ' + r.round;
+  if (r.res === 'quit') return 'Quit at round ' + r.round;
+  return 'Left at round ' + (r.round || '?');
+}
+function render() {
+  document.querySelectorAll('.ctl button[data-f]').forEach(b => b.classList.toggle('on', b.dataset.f === filt));
+  document.getElementById('vis').classList.toggle('on', showVis);
+  const rows = data.rows.filter(keep);
+  const runs = rows.filter(r => !r.visit), now = Date.now(), wk = r => now - Date.parse(r.at) < 7 * 864e5;
+  const today = dayKey(new Date().toISOString());
+  const people = new Set(runs.filter(wk).map(r => r.pid)).size;
+  const stats = [
+    [runs.filter(r => dayKey(r.at) === today).length, 'runs today'],
+    [runs.filter(wk).length, 'runs, 7 days'],
+    [people, 'players, 7 days'],
+    [rows.filter(r => r.visit && wk(r)).length, 'visits, 7 days'],
+  ];
+  document.getElementById('stats').innerHTML = stats.map(([n, l]) => `<div class="st"><b>${n}</b><span>${l}</span></div>`).join('');
+  let html = '', lastDay = '';
+  for (const r of rows) {
+    if (r.visit && !showVis) continue;
+    const d = fmtD(r.at); if (d !== lastDay) { html += `<div class="day">${d}</div>`; lastDay = d; }
+    const where = [r.build === 'itch' ? 'itch' : 'playtest page', r.from && 'from ' + r.from, r.dev].filter(Boolean).join(' · ');
+    const tag = `<span class="tag ${r.who}">${r.who === 'me' ? 'you' : r.who}</span>`;
+    if (r.visit) { html += `<div class="visit">${fmtT(r.at)} ${tag} opened the page · ${esc(where)} · v${esc(r.v)}</div>`; continue; }
+    const cls = r.res === 'win' ? 'win' : (r.res === 'lose' || r.res === 'loss') ? 'lose' : r.res === 'quit' ? 'quit' : 'open';
+    const board = r.board.map(u => { const [id, s] = u.split(':'); return `<span>${esc(id)} ${'★'.repeat(+s || 1)}</span>`; }).join('');
+    html += `<div class="run ${cls}"><div class="top"><span class="res">${resText(r)}</span><span class="t">${fmtT(r.at)}</span></div>
+      <div class="meta">${tag}Level ${esc(r.lv ?? '?')}${r.daily ? ' · Daily ' + esc(r.daily) : ''} · ${r.min} min · ${r.lives ?? '?'} lives left · ${esc(where)} · v${esc(r.v)} · ${esc(r.pid.slice(2, 6))}</div>
+      ${r.foe ? `<div class="meta">Last fight: ${esc(r.foe)}</div>` : ''}${board ? `<div class="board">${board}</div>` : ''}</div>`;
+  }
+  document.getElementById('list').innerHTML = html || '<div class="empty">No runs yet with this filter.</div>';
+}
+document.querySelectorAll('.ctl button[data-f]').forEach(b => b.onclick = () => { filt = b.dataset.f; localStorage.setItem('rl-f', filt); render(); });
+document.getElementById('vis').onclick = () => { showVis = !showVis; localStorage.setItem('rl-v', showVis ? '1' : '0'); render(); };
+fetch(SRC + '?t=' + Date.now(), { cache: 'no-store' }).then(r => r.json()).then(j => {
+  data = j;
+  document.getElementById('upd').textContent = `Newest data ${ago(j.built)} (${fmtD(j.built)}, ${fmtT(j.built)} Winnipeg) · checked every hour · a run shows up after it ends`;
+  render();
+}).catch(e => { document.getElementById('upd').textContent = 'Could not load the run log: ' + e.message; });
+</script>
+</body>
+</html>
