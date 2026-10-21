@@ -1759,6 +1759,7 @@ h2 svg.gi,h3 svg.gi,h4 svg.gi{width:1.15em;height:1.15em;vertical-align:-.18em;d
 .ghep .fhd small{color:var(--gold)}
 .vs.feat.ghep .fart{top:56px;transform:none}
 .ghep .rvtell{max-width:100%}
+.vs .msgap{font-size:.78rem;color:#ffcf6b;margin:4px 0 0;position:relative;z-index:1;max-width:68%}
 /* v20.4: phone layout. Portrait phones (<=760 px wide) and landscape phones (<=520 px tall), never html.dt */
 .phbar,.phbg{display:none}
 html:not(.dt) .phw,html:not(.dt) .phd{display:contents}
@@ -21433,6 +21434,13 @@ function buybackOn(u){return !!(S.fullSell&&S.fullSell[u.uid]!=null);}
 function gOut(g){return (S.cut||[]).includes(g)||!!(S.lvG&&!S.lvG.includes(g));}
 function runActs(){return (SCHEDULE[SCHEDULE.length-1]||{act:TUNE.acts}).act;}
 function curRound(){return S?SCHEDULE[S.round-1]:undefined;}
+// TRO-197: how much harder the Season finale is than the Mid-season finale (HP x damage, first try), or null. Reads only.
+function finaleGap(){if(!S||runActs()!==4)return null;let fr=0;SCHEDULE.forEach((x,i)=>{if(x.act===4&&x.type==='boss')fr=i+1;});
+  const mr=SCHEDULE.findIndex(x=>x.act===3&&x.type==='boss')+1;if(!fr||!mr)return null;const r0=S.round,b0=S.bossTries;
+  try{const st=n=>{S.round=n;S.bossTries=0;const ev=curRound(),m=roundMult();return m*m*ACT_REF[ev.act]*TUNE.bossF[ev.act-1];};
+    return Math.round(10*st(fr)/st(mr))/10;}catch(e){return null;}finally{S.round=r0;S.bossTries=b0;}}
+function msGapLine(){const x=S.lead&&RIVAL[S.lead];if(x)return {t:`🎬 Dress rehearsal only: the Season finale is ${x.e} ${x.name}'s full cast, not monsters${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready for them.`,sh:`the Season finale is ${x.name}'s full cast`};
+  const g=finaleGap();if(!g)return null;return {t:`🎬 The Season finale cast hits ${g}× harder than tonight's (HP × damage)${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready.`,sh:`the Season finale hits ${g}× harder`,g};}
 
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
 function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=UI._ng=UI._np=null;try{localStorage.setItem('tropebrawl-played','1');}catch(e){}UI._bk=null;}
@@ -23525,10 +23533,11 @@ function vsStrip0(){
   const twin=tu?`<button class="foe" data-a="twin" aria-label="Evil twin of your ${esc(HERO[tw.id].name)}">${foePt(null,'sm',tw.id)||pt({e:HERO[tw.id].e,foe:true},'sm')}<small>${tu.crowd?'×'+tu.maxBodies:R(tu.maxHp)}</small><span class="ab">😈</span></button>`:'';
   const tag=e.part?'BOSS 2/2':e.boss?'BOSS':e.elite?'MINI-BOSS':e.trial?'TRIAL':'NEXT';
   const lead=EN[e.enc[0].key],eAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,kind=e.part?'Season finale, part 2':e.boss?(eAct>=runActs()?'Season finale':eAct===3&&runActs()===4?'Mid-season finale':`Act ${eAct} finale`):(e.elite?'Mini-boss':e.trial?'Trial by fire':'Next episode')+` · Act ${eAct}`;
+  const ms=e.boss&&!e.part&&eAct===3&&runActs()===4?msGapLine():null;
   return `<section class="vs feat${e.boss||e.elite||e.trial?' boss':''}">${(()=>{const lk=e.enc.map(x=>EN[x.key]).sort((a,b)=>(b.x.boss?1e6:0)+b.hp-(a.x.boss?1e6:0)-a.hp)[0].key;return foeSpr(lk)?`<span class="fart fimg" aria-hidden="true"><img src="${SPRITES[foeSpr(lk)]}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${lead.e}</span>`;})()}
     <div class="fhd"><small>${kind} · Ep ${S.round} of ${SCHEDULE.length}${e.boss&&S.bossTries?` · enemies −${Math.round(100*(1-Math.pow(0.9,S.bossTries)))}%`:''}</small><b>${esc(e.title||lead.name)}</b></div>
     <div class="foes">${foes}${twin}<button class="foe lineup" data-a="nextfoes" title="🔭 Lineup: where they stand (V)" aria-label="Lineup">🔭<small>Lineup</small></button></div>
-    </section>`;
+    ${ms?`<p class="msgap" title="${esc(ms.t)}">${esc(ms.t)}</p>`:''}</section>`;
 }
 function boardHTML(){
   const sel=UI.sel;const bs=boardSize();
@@ -24737,10 +24746,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.55',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.56',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.56',items:[["🎬", "The Mid-season finale (Episode 27) now says what the Season finale holds: how much harder its cast hits (2.6× in HP × damage), or, on the Ladder, whose full cast you face. Winning the rehearsal doesn't mean you're ready."]]},
   {v:'20.55',items:[["✂️", "The Cut says what it does: it always goes after your biggest genre, and the event screen now says so."], ["⚠️", "Bad random events are announced one round early: a ⚠️ on the round track and a line under the shop. For The Cut it names the genre it would take and what keeping that cast costs."]]},
   {v:'20.54',items:[["🧩", "A second copy you buy now joins the board when there's room, instead of waiting on the bench (round 1 is 3 v 3, not 2 v 3). Characters with no copies left in the pool show a <b>0 LEFT</b> tag."], ["🏆", "Legendary offers: the bonus item has its own row, and replacing the Legendary you hold takes a second tap."], ["💬", "Clearer words: Commons that sell for 🪙0 say so, the Season finale tells you a loss with lives left gives a rematch, and with Unlock all levels on the end screen no longer claims a loss unlocked the next level."]]},
   {v:'20.53',items:[["🔎", "Phones: small text is bigger (12 px at least), long names like Radio Operator wrap instead of being cut, and the MAX tag sits next to the stars."]]},
@@ -25032,7 +25042,7 @@ function feel(){try{
   if(scr==='plan'){const k=S.round+'/'+(S.part||0);if(UI._bk!==k){UI._bk=k;const ev=curRound()||{},first=SCHEDULE.findIndex(r=>r.act===ev.act)===S.round-1;
     if(S.part===2)banner('The Reunion','Season finale · part 2','boss');
     else if(first){const rs=SCHEDULE.map((r,i)=>r.act===ev.act?i+1:0).filter(Boolean);banner('Act '+ev.act,'Episodes '+rs[0]+'–'+rs[rs.length-1],'act');}
-    else if(ev.type==='boss')banner(ev.act>=runActs()?'Season finale':ev.act===3&&runActs()===4?'Mid-season finale':'Act '+ev.act+' finale',ev.act===3&&runActs()===4?'Dress rehearsal for the Season finale':'Boss episode','boss');}}
+    else if(ev.type==='boss')banner(ev.act>=runActs()?'Season finale':ev.act===3&&runActs()===4?'Mid-season finale':'Act '+ev.act+' finale',ev.act===3&&runActs()===4?(()=>{const ms=msGapLine();return ms?'Dress rehearsal · '+ms.sh:'Dress rehearsal for the Season finale';})():'Boss episode','boss');}}
   if(scr==='battle'&&chg)banner(S.enemy&&S.enemy.boss?'Boss fight!':'Fight!','','fight');
   if(scr==='plan'){const rk=S.rank;if(UI._rkS===S&&UI._rk!=null&&rk>UI._rk&&!document.getElementById('banner')){const r0=UI._rk,nt=topTier(rk)>topTier(r0),sl=RANK.board[rk-1]>RANK.board[r0-1];
     banner('Rank '+rk,[nt?RARITY[topTier(rk)-1]+'s unlocked':'',sl?'+1 board slot':'',!nt&&!sl?'Better odds':''].filter(Boolean).join(' · '),'rank');}UI._rk=rk;UI._rkS=S;}
