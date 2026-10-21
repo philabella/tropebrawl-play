@@ -24498,10 +24498,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.45',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.46',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.46',items:[["🩹", "Fight recap fix: the red <b>taken</b> row now shows the damage each of your characters took (it always showed a dash)."]]},
   {v:'20.45',items:[["📅", "Daily Episode: one Season run a day, the same shops and fights for every player, with one twist (Low Budget, Bargain Bin, Spotlight and more). Play today or any of the last 6 days; skipping a day costs nothing."], ["📤", "Share a Daily and the link opens that same run for your friend: compare how far you each got."]]},
   {v:'20.44',items:[["🎬", "Events and intermissions now open on a full stage set: the scene's host walks on in your chosen toy look, says their line and reacts to what you pick. Fan Mail's host is your own best character."], ["✨", "Choice cards slide in and lift as you point at them; what you pick flies to your gold, your lives or your team. Rare moments (a Legendary, a Field Promotion, a Crossover Cameo) step right out of the frame."]]},
   {v:'20.43',items:[["🪜", "Play now opens <b>the Ladder</b>: every tier shows who waits at the end of it (the Leader's portrait, or Deus Ex Machina) and the badge it pays. Pick a tier to see its final boss, its badge and how many rival studios share the lobby."], ["🏟️", "The Gyms screen is gone: its Leaders are the Ladder's final bosses now, and the badges you won stay yours. Echo, Kit and Prof. Quill get badges too."]]},
@@ -26088,7 +26089,7 @@ globalThis.SYMF = globalThis.SYMF || (function () {
     let sAbs = 0; if (t.shield > 0 && !B.wsk) { const k = shK(src, t); const s = Math.min(t.shield, amt * k); t.shield -= s; amt -= s / k; sAbs = s / k; }
     if (TUNE.bugOverkill && t.crowd && t.genre === 'bug' && !aoe && (type === 'attack' || type === 'spell')) amt = Math.min(amt, TUNE.bugOverkill * t.bodyHp);
     t.blocked = (t.blocked || 0) + Math.max(0, amt0 - amt);
-    t.hp -= amt;
+    t.taken = (t.taken || 0) + Math.max(0, Math.min(amt, t.hp)); t.hp -= amt;   // HP lost, for the fight recap (write-only)
     if (t.crowd) { const lost = b0 - bodies(t); if (lost > 0) bodyLost(t, lost); }
     if (t.hp > 0 && t.genre === 'heist' && !t.gotAway && t.hp < t.maxHp * TUNE.cgAt && LG(t.side, 'getaway')) { t.gotAway = true; t.untarget = Math.max(t.untarget, TUNE.cgFor); heal(null, t, t.maxHp * TUNE.cgHeal, true); float(t, 'Getaway!', 'heal'); }
     if (!src && t.side === 'E' && B.envSrc) { B.env = B.env || {}; B.env[B.envSrc] = (B.env[B.envSrc] || 0) + dealt; }
