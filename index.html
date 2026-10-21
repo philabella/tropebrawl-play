@@ -1148,7 +1148,7 @@ html.ontitle:not(.glass) #tbg::before{opacity:.10}
 .tplay{display:grid;justify-items:start;gap:8px;margin:18px 0 12px}
 .tbig{display:grid;justify-items:center;min-width:min(340px,100%);font-size:1.55rem;padding:.55em 1.6em}
 .tbig small{display:block;font-size:.78rem;font-weight:600;letter-spacing:0;text-transform:none;opacity:.8;margin-top:2px}
-.tnew{font-size:.85rem}.dlyt{display:grid;gap:6px;justify-items:start;margin-top:6px}.dlydots{display:inline-flex;gap:3px;margin-left:.3em;vertical-align:middle}.dlydots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--gold);display:inline-block}.dlydots i.on{background:var(--gold)}.dlylist{display:grid;gap:8px;margin:10px 0}.dlyday{display:grid;gap:2px;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit;cursor:pointer}.dlyday.today{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--bg2))}.dlyday small{color:var(--muted,#bdb6aa)}.tsmall{gap:8px}.tsmall .nwdot{display:inline-block;width:8px;height:8px;margin-left:6px;border-radius:50%;background:var(--gold);vertical-align:middle}
+.tnew{font-size:.85rem}.chalwrap{justify-content:center}.chalcard{--cg:var(--gold);max-width:560px;padding:22px 24px 18px;border-radius:16px;border:2px solid var(--cg);background:linear-gradient(160deg,color-mix(in srgb,var(--cg) 22%,#1b181f) 0%,#16131aee 70%);box-shadow:0 18px 50px #0009,0 0 0 6px color-mix(in srgb,var(--cg) 14%,transparent);display:grid;gap:10px}.chalh{font-family:Anton,Impact,sans-serif;font-weight:400;font-size:clamp(1.9rem,4.4vw,3rem);line-height:1.05;letter-spacing:.01em;margin:0;color:#f3eee4;text-wrap:balance}.chalver{margin:0;padding:8px 10px;border-radius:8px;background:#ffcc2e1f;border:1px solid #ffcc2e66;font-size:.9rem}.chalsm{font-size:.8rem;margin:0}.chalend{border-color:var(--gold)}.shrname{display:grid;gap:4px;margin:10px 0 0;font-weight:600}.shrname input{font:inherit;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);max-width:16ch}.shrhint{font-size:.8rem;margin:4px 0 0}.dlyt{display:grid;gap:6px;justify-items:start;margin-top:6px}.dlydots{display:inline-flex;gap:3px;margin-left:.3em;vertical-align:middle}.dlydots i{width:9px;height:9px;border-radius:50%;border:1.5px solid var(--gold);display:inline-block}.dlydots i.on{background:var(--gold)}.dlylist{display:grid;gap:8px;margin:10px 0}.dlyday{display:grid;gap:2px;text-align:left;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--bg2);color:var(--ink);font:inherit;cursor:pointer}.dlyday.today{border-color:var(--gold);background:color-mix(in srgb,var(--gold) 12%,var(--bg2))}.dlyday small{color:var(--muted,#bdb6aa)}.tsmall{gap:8px}.tsmall .nwdot{display:inline-block;width:8px;height:8px;margin-left:6px;border-radius:50%;background:var(--gold);vertical-align:middle}
 .rvalgo{margin:4px 0 0}.rvalgo b{color:var(--gold)}
 @media (max-width:560px){.tplay{justify-items:stretch}.tbig{width:100%}.tsmall .btn{white-space:nowrap}.tsmall .btn:not(.ghost){flex:1 1 auto}}
 .kh{display:inline-block;margin-left:.45em;padding:0 .38em;font:700 .62rem/1.5 var(--f-body);letter-spacing:.02em;color:var(--muted);background:rgba(0,0,0,.28);border:1px solid var(--line);border-bottom-width:2px;border-radius:3px;vertical-align:middle;text-transform:none}
@@ -21067,7 +21067,7 @@ function lvNewHTML(n){const x=LADDER[n];if(!x)return '';const gt=TUNE.lvGate||n<
     add('Events',(x.events||[]).filter(k=>EVENTS[k]).map(k=>ch(EVENTS[k].e,EVENTS[k].name)));}
   return rows.length?`<div class="lvnew"><span class="newb">New!</span>${rows.join('')}</div>`:'';}
 // v19.57: what the next Game Level adds, and whether it is open yet
-function nextLvNote(){if(S&&S.daily)return '';const n=S?S.lv|0:lvMin();if(n>=LV_MAX)return '<p class="lvnext">🏆 This is the top level.</p>';if(S&&S.newLv)return '';const open=lvLoad().open>n,nm=lvNm(n+1).replace(/^the S/,'The S');
+function nextLvNote(){if(S&&(S.daily||S.chal))return '';const n=S?S.lv|0:lvMin();if(n>=LV_MAX)return '<p class="lvnext">🏆 This is the top level.</p>';if(S&&S.newLv)return '';const open=lvLoad().open>n,nm=lvNm(n+1).replace(/^the S/,'The S');
   return `<p class="lvnext">${open?`🔓 <b>${nm}</b> is unlocked. It adds`:`🔒 Win this run to unlock <b>${nm}</b>. It adds`} ${lvLine(n+1)}</p>`;}
 function maxLives(){return (S&&S.maxLives)||10;}
 // Tougher Reviews: from Game Level lvFoeFrom on, enemies get +lvFoe HP and damage per level
@@ -21135,6 +21135,7 @@ function lvTitle(n){n=n|0;return n<=3?'Pilot · Level '+n+': '+LADDER[n].name:n=
 function lvRecord(){
   if(!S||!S.over||S.recorded)return;S.recorded=true;tlEnd(false);
   if(S.daily){dlyRecord();return;} // TRO-86: a daily does not move the Ladder
+  if(S.chal){S.stkNew=[];return;} // TRO-86 step 4: nor does a challenge
   const p=lvLoad(),n=S.lv|0;
   if(S.gym)gymRecord();else if(S.result==='win'){if(!p.won.includes(n))p.won.push(n);if(n>=p.open&&n<LV_MAX){p.open=n+1;p.pick=n+1;S.newLv=n+1;UI.lv=n+1;}}
   if(!S.gym)lvStore(p);
@@ -21329,16 +21330,19 @@ function curRound(){return S?SCHEDULE[S.round-1]:undefined;}
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
 function newRun(){if(typeof UI!=='undefined'){UI._g=UI._l=UI._ng=UI._np=null;try{localStorage.setItem('tropebrawl-played','1');}catch(e){}UI._bk=null;}
   const lv=Math.max(0,Math.min(LV_MAX,UI.lv|0));
-  const dly=DAILY_NEXT;DAILY_NEXT=null;const twk=dly?dlyTw(dly).k:TUNE.twForce&&TW[TUNE.twForce]?TUNE.twForce:null; // TRO-86 step 3
-  const gy=dly?null:gymPick(),lvD=lvDef(lvClamp(dly?4:gy?gy.lv:lv)); // v20.13: a Gym plays at its own fixed tier
+  const ch=CHAL_NEXT;CHAL_NEXT=null; // TRO-86 step 4
+  const dly=ch?null:DAILY_NEXT;DAILY_NEXT=null;const twk=dly?dlyTw(dly).k:TUNE.twForce&&TW[TUNE.twForce]?TUNE.twForce:null; // TRO-86 step 3
+  const gy=dly||ch?null:gymPick(),lvD=lvDef(lvClamp(dly?4:ch?ch.l:gy?gy.lv:lv)); // v20.13: a Gym plays at its own fixed tier
   S={lv:lvD.n,ladder:2,rules:lvD.rules.slice(),part:1,round:1,lives:10,gold:twk&&TW[twk].gold0!=null?TW[twk].gold0:6,streak:0,rank:1,xp:0,wins:0,units:[],trinkets:[],tlv:{},legend:null,shop:[],locked:false,uid:1,paid:{},pending:[],freeRerolls:0,
      bossTries:0,lastWin:null,stats:{fights:0,won:0,merges:0,gold:0,lost:0},over:false,enemy:null,event:null};
   if(dly){S.daily=dly;S.seed=dlySeed(dly);SEED_NEXT=null;}if(twk){S.tw=dly?dlyTw(dly):twMake(twk,0);if(S.tw.plot&&!S.rules.includes('plot'))S.rules.push('plot');}
-  if(SEED_NEXT!=null){S.seed=SEED_NEXT|0;SEED_NEXT=null;}RS=S.seed!=null?0:null; // TRO-86: seeded run
+  if(ch){S.chal=ch;SEED_NEXT=ch.s;}
+  if(SEED_NEXT!=null){S.seed=SEED_NEXT|0;SEED_NEXT=null;}else if(S.seed==null&&typeof UI!=='undefined'&&UI.real){S.seed=(Math.random()*2147483646)|0;S.seedAuto=1;} // TRO-86 step 4: every player run can be shared
+  RS=S.seed!=null?0:null; // TRO-86: seeded run
   S.maxLives=lvD.lives;S.lives=S.maxLives;S.cap=lvD.cap;if(gy)S.gym={n:gy.n,id:gy.id};
   // the level's genres (null = all of them): locked genres never show up, like a genre that got The Cut
   S.lvG=Object.keys(GENRES).every(g=>lvD.g.includes(g))?null:lvD.g.filter(g=>GENRES[g]);
-  if(typeof UI!=='undefined'&&UI.real){S.real=1;if(S.lv>=4&&TUNE.epsMode&&!S.daily){const all=epsAll(),pf=profLoad();S.newFrom=all?EPS.length:pf.seen;S.cont=epsCont(all?1e9:pf.eps);
+  if(typeof UI!=='undefined'&&UI.real){S.real=1;if(S.lv>=4&&TUNE.epsMode&&!S.daily&&!S.chal){const all=epsAll(),pf=profLoad();S.newFrom=all?EPS.length:pf.seen;S.cont=epsCont(all?1e9:pf.eps);
       const gs=lvD.g.filter(g=>GENRES[g]&&S.cont.g.includes(g));S.lvG=gs.length===Object.keys(GENRES).length?null:gs;
       if(!all){pf.seen=epsDrops(pf.eps).length;profStore(pf);if(UI.renew&&pf.ls>=2&&S.lv===4){S.gold+=TUNE.renewGold;S.renewed=1;}}}}
   if(typeof UI!=='undefined'){UI.real=0;UI.renew=0;UI.gym=0;}
@@ -21387,6 +21391,34 @@ function dlyRes(r){return !r?'':r.w?'won':'round '+(r.b|0);}
 function dlyRecord(){const j=dlyLoad(),r=j.d[S.daily]||{b:0,w:0,n:0},got=S.result==='win'?SCHEDULE.length:S.round|0;
   S.bestBefore=r.w?SCHEDULE.length:r.b|0;r.n=(r.n|0)+1;if(got>(r.b|0))r.b=got;if(S.result==='win')r.w=1;j.d[S.daily]=r;
   const keep=new Set(dlyDays());Object.keys(j.d).forEach(k=>{if(!keep.has(k)&&Object.keys(j.d).length>60)delete j.d[k];});dlyStore(j);S.dlyBest=r;S.stkNew=[];}
+// ===== TRO-86 step 4: challenge link. #c=<base64url JSON {v,s,l,r,w,g,n}>: the same seed + level, a result to beat
+const CHN_KEY='tropebrawl-chname';let CHAL_NEXT=null,CHAL_LINK=null;
+function chalClean(n){return String(n==null?'':n).replace(/[^\p{L}\p{N}]/gu,'').slice(0,12);}
+function chalName(){try{return chalClean(localStorage.getItem(CHN_KEY)||'');}catch(e){return '';}}
+function chalNameSet(n){try{localStorage.setItem(CHN_KEY,chalClean(n));}catch(e){}}
+function chalCan(){return !!(S&&S.seed!=null&&!S.daily&&!S.gym);}
+function chalB64(t){return btoa(unescape(encodeURIComponent(t))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,'');}
+function chalEnc(){const d=shrData(),o={v:TB_VERSION,s:S.seed|0,l:S.lv|0,r:d.round|0,w:d.win?1:0};if(d.gs[0])o.g=d.gs[0][0];const n=chalName();if(n)o.n=n;return chalB64(JSON.stringify(o));}
+function chalHash(){return chalCan()?'#c='+chalEnc():'';}
+function chalDec(t){try{const o=JSON.parse(decodeURIComponent(escape(atob(String(t).replace(/-/g,'+').replace(/_/g,'/')))));
+  if(!o||typeof o!=='object'||!/^\d{1,3}\.\d{1,3}$/.test(o.v)||!Number.isInteger(o.s)||o.s<0||o.s>=2147483647)return null;
+  const l=o.l|0;if(l<1||l>LV_MAX)return null;
+  return {v:o.v,s:o.s,l,r:Math.max(1,Math.min(40,o.r|0)),w:o.w?1:0,g:GENRES[o.g]?o.g:'',n:chalClean(o.n)};}catch(e){return null;}}
+function chalVer(v){const p=x=>String(x).split('.').map(Number),a=p(v),b=p(TB_VERSION);return (a[0]-b[0])||(a[1]-b[1]);}
+function chalHead(c){const who=c.n||'A friend',g=GENRES[c.g];return `${who} ${c.w?'won '+lvNm(c.l):'reached round '+c.r}${g?' with '+g.name:''}. Beat that.`;}
+function chalLandHTML(sv){const c=CHAL_LINK,g=GENRES[c.g],vd=chalVer(c.v);
+  return `<section class="screen tst">${titleScene()}<div class="tmenu chalwrap"><div class="chalcard"${g?` style="--cg:var(--g-${c.g})"`:''}>
+    <div class="eyebrow">🎯 A challenge · ${esc(lvNmC(c.l))}</div>
+    <h1 class="chalh">${esc(chalHead(c))}</h1>
+    <p class="muted">Same level, same seed: your run starts exactly like theirs. Your own picks change what comes next.</p>
+    ${vd<0?`<p class="chalver">Made on v${esc(c.v)}. The game changed since, so the shops may differ.</p>`:vd>0?`<p class="chalver">Made on v${esc(c.v)}, newer than this page. Reload the page to get the latest version.</p>`:''}
+    <div class="tplay"><button class="btn primary big tbig" data-a="chal"><span>▶ Play the same run</span></button>
+    <button class="lnk tnew" data-a="chal-skip">Just play</button></div>
+    <p class="muted chalsm">A challenge run does not count for your Ladder.${sv?' Starting it ends the run you are in.':''}</p>
+  </div><p class="verl">v${TB_VERSION}</p></div></section>`;}
+function chalEndHTML(){const c=S&&S.chal;if(!c)return '';const N=SCHEDULE.length,win=S.result==='win',me=win?N+1:Math.min(S.round|0,N),them=c.w?N+1:Math.min(c.r|0,N);
+  const nm=c.n||'your friend',Nm=c.n||'Your friend',f=(w,rd)=>w?'won':'round '+rd;
+  return `<p class="lvwin chalend">🎯 <b>You: ${f(win,Math.min(S.round|0,N))} · ${esc(Nm)}: ${f(c.w,c.r)}.</b> ${me>them?'You beat '+esc(nm)+'.':me===them?'A tie with '+esc(nm)+'.':esc(Nm)+' is still ahead.'} <span class="muted">Share your run to send ${esc(nm)} your own link back.</span></p>`;}
 function dlyLabel(){return S&&S.daily?`Daily ${dlyMD(S.daily)} · ${twName(S.tw)}`:'';}
 function dlyStrip(){const j=dlyLoad();return `<span class="dlydots" aria-label="Days played in the last 7 days">${dlyDays().slice().reverse().map(d=>`<i class="${j.d[d]?'on':''}" title="${dlyMD(d)}${j.d[d]?': '+dlyRes(j.d[d]):''}"></i>`).join('')}</span>`;}
 function dlyPilot(p){return (p.won||[]).some(n=>n>=3);} // the Pilot is won (every tier is open by default: SET.allLv)
@@ -23528,7 +23560,8 @@ function titleScene(){const f=TITLE_CAST.filter(c=>SPRITES[c[0]+'_f']);if(!f.len
     +TITLE_HITS.map(([x,b,w,d])=>`<svg class="tburst" style="left:${x}%;bottom:${b}%;width:${w}%;--d:${d}s" viewBox="-50 -50 100 100"><polygon points="0,-46 9,-20 34,-32 22,-8 48,0 22,8 34,32 9,20 0,46 -9,20 -34,32 -22,8 -48,0 -22,-8 -34,-32 -9,-20"/></svg>`).join('')
     +`<i class="tspark a"></i><i class="tspark b"></i><i class="tspark c"></i></div>`;}
 SCR.title=()=>{
-  const sv=loadSave();if(!DAILY_LINK&&titleFresh(sv))return titleFreshHTML(); // TRO-86: a daily link skips the first-visit title
+  const sv=loadSave();if(CHAL_LINK)return chalLandHTML(sv); // TRO-86 step 4: a challenge link
+  if(!DAILY_LINK&&titleFresh(sv))return titleFreshHTML(); // TRO-86: a daily link skips the first-visit title
   return `<section class="screen tst${UI.pick?' ladon':''}">${titleScene()}<div class="tmenu">
     ${UI.pick?'<div class="eyebrow">Climb it one tier at a time</div><h1 class="title-word ladword">The Ladder</h1>':`<div class="eyebrow">Shop · Level up · Brawl</div>
     <h1 class="title-word">${TITLE}</h1>`}
@@ -23735,7 +23768,7 @@ function tutSkip(){const p=lvLoad();if(!p.dev)p.open=Math.max(p.open,4);p.pick=4
 function tutTitleBtns(){const p=lvLoad(),n=UI.lv|0;
   return `<button class="btn primary big" data-a="new">${n===1?'🎬 Start the Pilot':n>=2&&n<=3?'▶ Play '+esc(LADDER[n].name):'New run'}</button>${p.open<4&&!p.dev?'<button class="btn" data-a="tut-skip">I know auto-battlers</button>':''}`;}
 if(window.top!==window)addEventListener('wheel',e=>{if(e.defaultPrevented||e.ctrlKey||!e.deltaY)return;for(let el=e.target;el&&el!==document.body&&el.nodeType===1;el=el.parentElement){const c=getComputedStyle(el).overflowY;if((c==='auto'||c==='scroll')&&el.scrollHeight>el.clientHeight+1)return;}const se=document.scrollingElement,y=se.scrollTop;requestAnimationFrame(()=>{if(se.scrollTop===y)se.scrollBy(0,e.deltaMode===1?e.deltaY*40:e.deltaY);});},{passive:true});
-function tutEndBtns(win){const n=S.lv|0;if(S.daily)return `<button class="btn primary big" data-a="daily" data-v="${S.daily}">↻ Replay this Daily</button><button class="btn" data-a="title">🏠 Main menu</button>`;if(n>3)return '<button class="btn primary big" data-a="nextep">▶ Next episode</button><button class="btn" data-a="title">🏠 Main menu</button>'; // v20.5
+function tutEndBtns(win){const n=S.lv|0;if(S.chal)return '<button class="btn primary big" data-a="chal" data-v="again">↻ Same run again</button><button class="btn" data-a="title">🏠 Main menu</button>';if(S.daily)return `<button class="btn primary big" data-a="daily" data-v="${S.daily}">↻ Replay this Daily</button><button class="btn" data-a="title">🏠 Main menu</button>`;if(n>3)return '<button class="btn primary big" data-a="nextep">▶ Next episode</button><button class="btn" data-a="title">🏠 Main menu</button>'; // v20.5
   if(!win)return '<button class="btn primary big" data-a="nextep">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start the Season'}[S.newLv]||'New run';
   return `<button class="btn primary big" data-a="nextep">${lbl}</button><button class="btn" data-a="title">🏠 Main menu</button>`;}
@@ -23751,7 +23784,7 @@ function shrData(){const st=runStats(),win=S.result==='win',N=SCHEDULE.length,ro
 function shrText(){const d=shrData();
   return `🎬 Tropebrawl · ${d.lv}: ${d.win?`Victory! All ${d.N} rounds`:`out in round ${d.round}/${d.N}`}`+
     (d.gs.length?` · ${d.gs.map(([g,n])=>GENRES[g].e+' '+GENRES[g].name+' '+n).join(', ')}`:'')+
-    (d.best?` · Best fight: ${d.best.name} ${fmtN(d.best.v)} damage`:'')+`\n${SHR_URL}${tlShareQ()}${S.daily?'#daily='+S.daily:''}`;}
+    (d.best?` · Best fight: ${d.best.name} ${fmtN(d.best.v)} damage`:'')+`\n${SHR_URL}${tlShareQ()}${S.daily?'#daily='+S.daily:chalHash()}`;}
 function shrImg(src){return new Promise(res=>{if(!src)return res(null);const im=new Image();im.onload=()=>res(im);im.onerror=()=>res(null);im.src=src;});}
 async function shrDraw(){const d=shrData(),W=1200,H=630,cv=document.createElement('canvas');cv.width=W;cv.height=H;const x=cv.getContext('2d');
   try{if(document.fonts&&document.fonts.load)await Promise.all(['64px Anton','700 28px Barlow','28px Barlow'].map(f=>document.fonts.load(f)));}catch(e){}
@@ -23792,6 +23825,7 @@ function shrSheet(){const c=UI.shrCard,ready=!!(c&&c.rid===S.rid&&c.url);
   return `<div class="eyebrow">Share this run</div><h3 style="color:var(--gold)">📤 Your run card</h3>
     <div class="shrpic">${ready?`<img src="${c.url}" alt="Run card: ${esc(shrText().split('\n')[0])}">`:'<p class="muted">Drawing the card…</p>'}</div>
     <div class="row shrbtns">${ready&&shrCanOS()?'<button class="btn primary" data-a="shr-os">📤 Share…</button>':''}<button class="btn" data-a="shr-dl" ${ready?'':'disabled'}>⬇️ Download</button>${shrCanImg()?`<button class="btn" data-a="shr-img" ${ready?'':'disabled'}>🖼️ Copy picture</button>`:''}</div>
+    ${chalCan()?`<label class="shrname"><span>Your name on the link <small class="muted">(optional)</small></span><input id="shrname" maxlength="12" autocomplete="off" spellcheck="false" placeholder="A friend" value="${esc(chalName())}"></label><p class="muted shrhint">The link drops your friend into this same run, with your result to beat.</p>`:''}
     <p class="shrtxt"><code>${esc(shrText()).replace('\n','<br>')}</code></p>
     <div class="row"><button class="btn sm" data-a="shr-txt">📋 Copy text</button></div>
     <p class="muted" style="font-size:.8rem">Made on your device. The game uploads nothing: you choose where it goes. Download blocked? Press and hold (or right-click) the picture to save it.</p>`;}
@@ -24010,8 +24044,8 @@ SCR.end=()=>{
   const lst=(rows,ic)=>rows.length?rows.map(([id,v])=>`<div class="row endrow" data-a="endhero" data-v="${id}" data-l="${final.get(id)||1}">${heroPt(id,'sm')}<span><b>${esc(HERO[id].name)}</b><br><span class="sub">${ic} ${fmtN(v)}</span></span></div>`).join(''):'<p class="sub">None this run.</p>';
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
-    <div><div class="eyebrow">${S.daily?esc(dlyLabel())+' · ':S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
-    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${dlyEndHTML()}${S.daily?'':nearHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
+    <div><div class="eyebrow">${S.daily?esc(dlyLabel())+' · ':S.chal?'🎯 Challenge · '+esc(lvNmC(S.lv))+' · ':S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
+    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${dlyEndHTML()}${chalEndHTML()}${S.daily||S.chal?'':nearHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
     ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. Its Leader now waits on the Ladder.</p>`:`<p class="lvwin">🏟️ No badge this time. Gyms are now part of the Ladder: Play, then pick ${esc(lvLong(ladTier(gymOf().id)||gymOf().lv))}.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
@@ -24211,6 +24245,8 @@ function cxFilter(){const root=document.querySelector('.cx-body');if(!root)retur
 function cxOther(words){const cur=UI.codexTab||'how',out=[];try{CODEX_TABS.forEach(([k,nm])=>{if(k===cur)return;UI.codexTab=k;let h='';try{h=SCR.codex();}catch(e){}const i=h.indexOf('<div class="cx-body">');
     const t=(i<0?'':h.slice(i)).replace(/data:[^"')\s]+/g,'').replace(/<[^>]+>/g,' ').replace(/&amp;/g,'&').toLowerCase();if(words.every(w=>t.includes(w)))out.push([k,nm]);});}finally{UI.codexTab=cur;}return out;}
 document.addEventListener('input',e=>{if(e.target&&e.target.id==='cxq'){UI.codexQ=e.target.value;cxFilter();}});
+document.addEventListener('input',e=>{const t=e.target;if(!t||t.id!=='shrname')return;const v=chalClean(t.value);if(v!==t.value)t.value=v;chalNameSet(v); // TRO-86 step 4
+  const c=document.querySelector('#sheet .shrtxt code');if(c)c.innerHTML=esc(shrText()).replace('\n','<br>');});
 document.addEventListener('keydown',e=>{try{if(UI.screen!=='codex')return;const t=e.target||{},inField=/INPUT|TEXTAREA|SELECT/.test(t.tagName||'')||t.isContentEditable;
   if(t.id==='cxq'&&e.key==='Escape'){e.preventDefault();e.stopPropagation();if(t.value){t.value='';UI.codexQ='';cxFilter();}else t.blur();return;}
   if(e.key==='/'&&!inField&&!UI.sheetOpen&&!e.ctrlKey&&!e.metaKey&&!e.altKey){const i=document.getElementById('cxq');if(i){e.preventDefault();i.focus();i.select();}}}catch(err){}},true);
@@ -24379,6 +24415,8 @@ function onAction0(a,v,el){
     case 'new':UI.pick=0;UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();tbxCard();break;
     case 'play':UI.pick=1;DAILY_LINK=null;closeSheet();render();window.scrollTo(0,0);break;
     case 'daily-menu':sheet(dlySheet());break;
+    case 'chal':{const again=v==='again',c=again?S&&S.chal:CHAL_LINK;if(!c)break;UI.pick=0;UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;UI.gym=0;CHAL_NEXT=c;CHAL_LINK=null;closeSheet();newRun(false);if(!again)tlAct('h');go();tbxCard();break;} // TRO-86 step 4
+    case 'chal-skip':CHAL_LINK=null;render();window.scrollTo(0,0);break;
     case 'daily':{const fromLink=!!DAILY_LINK;UI.pick=0;UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;UI.gym=0;DAILY_NEXT=dlyOk(v);DAILY_LINK=null;closeSheet();newRun(false);if(fromLink)tlAct('d');go();tbxCard();break;} // TRO-86 step 3
     case 'pick-back':UI.pick=0;render();window.scrollTo(0,0);break;
 case 'nextep':{const k=S&&!S.newLv&&!S.gym?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().open)UI.lv=k;if(S&&S.gym&&gymUnlocked(GYMS[S.gym.n-1]))UI.gym=S.gym.n; // v20.5: ▶ Next episode on the end screen
@@ -24567,10 +24605,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.49',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.50',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.50',items:[["🎯", "Challenge a friend: Share now gives a link that drops them into your exact run, with your result to beat (\"Sam reached round 23 with Swarm. Beat that.\"). Put your name on the link if you like. At the end they see how they did against you, and can send their own link back."], ["🎯", "A challenge run does not count for your Ladder, so playing one never costs you anything."]]},
   {v:'20.49',items:[["🆚", "<b>Rival fights now have an entrance</b>: a VS card with the rival studio, its taunt and a stinger, so you know who you're up against. The Leader's card is bigger."], ["🎨", "During a rival fight their side of the board takes the studio's colour, with a nameplate. After it, the result names the rival you beat (or who beat you)."]]},
   {v:'20.48',items:[["⏩", "Fights now have a <b>3×</b> speed too (1× / 2× / 3×, or keys 1 2 3). The game remembers the speed you pick."]]},
   {v:'20.47',items:[["🎬", "The Act 3 boss is now the Mid-season finale: a dress rehearsal for the Season finale. A board that isn't ready finds out at Episode 27, with time left to fix it."]]},
@@ -24757,7 +24796,7 @@ function tlFrom(){try{let f=tlLs('tropebrawl-from');if(f)return f;
   else if(document.referrer){const h=new URL(document.referrer).hostname.replace(/^www\./,'').toLowerCase().replace(/[^a-z0-9.-]/g,'');if(h&&h!==location.hostname)f=h.slice(0,60);}
   if(f)tlLs('tropebrawl-from',f);return f||'';}catch(e){return '';}}
 function tlSharer(){try{let f=tlLs('tropebrawl-f');if(!f){const q=new URLSearchParams(location.search).get('f');if(q&&/^p_[a-z0-9]{3,12}$/.test(q)&&q!==tlPid()){f=q;tlLs('tropebrawl-f',f);}}return f||'';}catch(e){return '';}}
-function tlMeta(){const o={tz:-new Date().getTimezoneOffset(),...(S&&S.seed!=null?{seed:S.seed}:{}),...(S&&S.daily?{daily:S.daily,tw:S.tw&&S.tw.k}:{}),dev:(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches)?'phone':'desktop'};
+function tlMeta(){const o={tz:-new Date().getTimezoneOffset(),...(S&&S.seed!=null?{seed:S.seed}:{}),...(S&&S.daily?{daily:S.daily,tw:S.tw&&S.tw.k}:{}),...(S&&S.chal?{chal:{v:S.chal.v,r:S.chal.r,w:S.chal.w}}:{}),dev:(typeof matchMedia==='function'&&matchMedia('(pointer:coarse)').matches)?'phone':'desktop'};
   const f=tlFrom(),sh=tlSharer();if(f)o.from=f;if(sh)o.f=sh;if(tlTester())o.t=1;return o;}
 function tlVisit(){try{if(SET.share===false||seeded||navigator.webdriver||tlDb()||!tlRelay()||globalThis.__tlForce||/dev/.test(location.hash))return;
   const now=Date.now();if(now-(+tlLs('tropebrawl-vis')||0)<18e5)return;tlLs('tropebrawl-vis',String(now));
@@ -24946,6 +24985,7 @@ document.addEventListener('keydown',e=>{if(e.key==='`'&&!/INPUT|TEXTAREA|SELECT/
 if(typeof location!=='undefined'&&location.hash==='#dev'){DEV.on=true;devSave();}
 if(typeof location!=='undefined'){const sm=/^#seed=(\d{1,10})$/.exec(location.hash);if(sm)SEED_NEXT=(+sm[1])%2147483647;} // TRO-86: seeded run link
 if(typeof location!=='undefined'){const dm=/^#daily=(\d{4}-\d\d-\d\d)$/.exec(location.hash);if(dm)DAILY_LINK=dlyOk(dm[1]);} // TRO-86 step 3: daily link
+if(typeof location!=='undefined'){const cm=/^#c=([A-Za-z0-9_-]{8,600})$/.exec(location.hash);if(cm)CHAL_LINK=chalDec(cm[1]);} // TRO-86 step 4: challenge link
 if(typeof location!=='undefined'&&location.hash==='#all'){try{localStorage.setItem('tropebrawl-all','1');}catch(e){}} // TRO-86: testers keep the full menu
 
 // ================= sound (v19.10): Kenney sound effects (CC0); quick mute: speaker button, M key, Settings =================
@@ -27082,7 +27122,7 @@ function rvBrainPlace(R){
     // the rivals' turn: before it, learning rivals see the player's board (as in the lobby); after it, credit results
     const turn0 = globalThis.rivalsTurn;
     globalThis.rivalsTurn = function () {
-      RB.live = !seeded && !(S && S.seed != null);
+      RB.live = !seeded && !(S && S.seed != null && !S.seedAuto);
       if (RB.on && TUNE.rvBrains !== 0 && S.lobby) { const gen = {}; fielded().forEach(u => { const g = HERO[u.id].genre; gen[g] = (gen[g] || 0) + 1; });
         S.lobby.rv.forEach(R => { if (R.id === 'echo' && !R.out) { BRAINS.echo.observe(R, gen); R.seenN = (R.seenN || 0) + 1; } }); }
       const pre = S.lobby ? S.lobby.rv.map(R => R.last ? R.last.round : 0) : [];
@@ -27104,7 +27144,7 @@ function rvBrainPlace(R){
     if (place0) globalThis.rvBrainPlace = function (R) { if (!(RB.on && !RB.identity && TUNE.rvBrains !== 0 && R && (R.id === 'ace' || R.id === 'mel'))) return place0.apply(this, arguments); return R.id === 'mel' ? melPlace(R) : acePlace(R); };
     // forced lobby (benchmarks only): RB.force = [ids] puts these rivals first; RB.focus = id makes only it eligible for casts
     const init0 = globalThis.lobbyInit;
-    globalThis.lobbyInit = function () { RB.live = !seeded && !(S && S.seed != null); RB.tmp = null; const r = init0.apply(this, arguments); if (!RB.force || !S.lobby) return r;
+    globalThis.lobbyInit = function () { RB.live = !seeded && !(S && S.seed != null && !S.seedAuto); RB.tmp = null; const r = init0.apply(this, arguments); if (!RB.force || !S.lobby) return r;
       // (shuffle is a const in the game, so the forced rivals take over the first non-forced seats after the draw)
       const rv = S.lobby.rv; RB.force.forEach(id => { if (!RIVAL[id] || rv.some(R => R.id === id)) return; const R = rv.find(x => !RB.force.includes(x.id)); if (!R) return; R.id = id; R.px = rvPick(id); });
       return r; };
