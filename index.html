@@ -20945,7 +20945,8 @@ function lvMinis(n){const d=lvDef(n);let k=0;for(let a=1;a<=d.acts;a++){const tp
 function lvDials(n){const d=lvDef(n),R=d.rules,h=id=>R.includes(id);
   const rounds=lvRounds(n),lives=d.lives,xp=(h('xp1')?TUNE.lvXp[0]:0)+(h('xp2')?TUNE.lvXp[1]:0);
   const bosses=d.acts+(h('finale2')?1:0),mb=lvMinis(n),fm=(d.foe||1)*(1+foeStep(n))-1;
-  return `${rounds} rounds · ${lives} lives · shop XP ${xp?'+'+pctOf(xp):'normal'} · ${bosses} boss${bosses>1?'es':''}${mb?` + ${mb} mini-boss${mb>1?'es':''}`:''}${Math.abs(fm)>1e-9?' · enemies '+(fm>0?'+':'−')+pct1(Math.abs(fm)):''}`;}
+  const lc=(lvLadder(n)?TUNE.ladderLoss:TUNE.lossCost).slice(0,d.acts).map(x=>x||2);
+  return `${rounds} rounds · ${lives} lives · a loss costs ${lc.join('/')} ${lc.length>1?'(by act) ':''}${lc.length===1&&lc[0]===1?'life':'lives'}, bosses +1 · shop XP ${xp?'+'+pctOf(xp):'normal'} · ${bosses} boss${bosses>1?'es':''}${mb?` + ${mb} mini-boss${mb>1?'es':''}`:''}${Math.abs(fm)>1e-9?' · enemies '+(fm>0?'+':'−')+pct1(Math.abs(fm)):''}`;}
 function lvMigrate(j){if(!j||typeof j!=='object')j={};if(j.v===2)return j;const lo=lvMin();
   if(j.open==null&&j.pick==null&&!Array.isArray(j.won))return {v:2,open:lo,won:[],pick:lo};
   const won=(Array.isArray(j.won)?j.won:[]).map(n=>Math.min(LV_MAX,(n|0)+4));[1,2,3].forEach(n=>{if(!won.includes(n))won.push(n);});
@@ -23191,7 +23192,7 @@ function shopHTML(){
     <button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank}: see every rank, its odds and board slots" title="See every shop rank: odds, board slots and unlocks">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: ${nxNew?`<span class="tier${nxT}" style="color:var(--tc)">${RARITY[nxT-1]}</span>`:`Rank ${nx}`}${RANK.board[nx-1]>boardSize()?' +1 slot':''} · ${xp}/${need} XP</span>`:'<span>Max</span>'}<span class="oddsgo">All ranks ›</span></button>
     <div class="shop${deal?' deal':''}">${cards}</div>
     ${S.units.some(buybackOn)?`<p class="evnote">🎡 ${S.units.filter(buybackOn).length} of your characters sell back at full price (Buyback Wheel).</p>`:''}
-    <p class="holdhint">${canHover?'Click a card to buy it; hover to see details.':'Tap a card to see what it does, then Buy.'} Drag a card onto a slot to buy it there; drag characters to move them, or onto the shop to sell.</p>
+    <p class="holdhint">${canHover?'Click a card to buy it; hover to see details.':'Tap a card to see what it does, then Buy.'} Drag a card onto a slot to buy it there; drag characters (or tap one, then an empty slot) to move them, or drag onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${gnum('p',S.gold)}</span>
@@ -23210,7 +23211,7 @@ function lvPicker(){
   const chips=LADDER.map((_,i)=>i).filter(n=>n>=lo).map(n=>{const lock=n>p.open,won=p.won.includes(n),nm=lvNm(n).replace(/^the S/,'The S');
     return `<button class="lvn${n===cur?' on':''}${won?' won':''}" data-a="lv" data-v="${n}" ${lock?'disabled':''} role="radio" aria-checked="${n===cur}" aria-label="${nm}${lock?', locked':won?', cleared':''}" title="${nm}${lock?' · win '+lvNm(n-1)+' first':won?' · cleared':''}">${lock?'🔒':n<=3?n:n===4?'S':'A'+(n-4)}</button>`;}).join('').replace(/class="lvn([^"]*)" data-a="lv" data-v="(\d+)"/g,(m,c,v)=>+v>=5?`class="lvn asc${c}" data-a="lv" data-v="${v}"`:m);
   const lo4=cur>=4?Math.max(lo,4):lo,older=LADDER.map((_,i)=>i).filter(n=>n>=lo4&&n<cur).map(n=>`<li>${lvLine(n)}</li>`).join('');
-  return `<div class="lvpick"><div class="row" style="justify-content:space-between"><b class="lvh">${esc(lvTitle(cur))}</b><span class="muted" style="font-size:.78rem">${cur<4?'win one to unlock the next':cur===4?'win the Season to open Ascension':'opt-in challenge · win to open the next'}</span></div>
+  return `<div class="lvpick"><div class="row" style="justify-content:space-between"><b class="lvh">${esc(lvTitle(cur))}</b><span class="muted" style="font-size:.78rem">${cur<4?'win one to unlock the next (or skip to the Season)':cur===4?'win the Season to open Ascension':'opt-in challenge · win to open the next'}</span></div>
     <div class="lvnums" role="radiogroup" aria-label="Level">${chips}</div>
     <p class="lvnew">${cur>lo?'New: ':''}${lvLine(cur)}${rvDebutTxt(cur)}</p>
     <p class="lvdial">${lvDials(cur)}</p>
@@ -23839,7 +23840,7 @@ function infoBody(I){
   if(I.kind==='rank')return rankDetail();
   if(I.kind==='unit'){const u=S.units.find(x=>x.uid===I.uid);if(!u)return '';
     const note=u.level>=maxLv(u.id)?`${'★'.repeat(maxLv(u.id))} is the top star for ${RARITY[HERO[u.id].tier-1]} characters, so the shop stops offering this one.`:maxedIds().has(u.id)?`Spare copy: your other ${esc(HERO[u.id].name)} is already maxed, so the shop won't sell more. Sell it, or field it as a second copy (copies don't count twice for genre bonuses).`:'';
-    return `<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell for ':'Sell for '}🪙${sellValue(u)}</button><span class="muted" style="font-size:.78rem">Drag it to move it.</span></div>`+heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'');}
+    return `<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell for ':'Sell for '}🪙${sellValue(u)}</button><span class="muted" style="font-size:.78rem">${sellValue(u)<(u.cost|0)?'Sells for half its price, rounded down. ':''}Drag it, or tap an empty slot, to move it.</span></div>`+heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'');}
   if(I.kind==='hero'){const o=I.shop!=null&&S&&S.shop[I.shop];return heroDetail(I.id,I.level||1)+(o&&o.id===I.id?`<div class="row"><button class="btn primary" data-a="buy" data-v="${I.shop}" ${canBuy(I.shop).ok?'':'disabled'}>Buy · 🪙${shopPrice(o)}</button></div>`:'');}
   if(I.kind==='trinket')return trinketDetail(I.id);
   if(I.kind==='legend')return legendDetail(I.id);
@@ -24144,9 +24145,9 @@ function clickSlot(slot){
   if(!sel){const u=unitAt(slot);if(u){UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};}render();return;}
   if(sel===slot){UI.sel=null;UI.insp=null;render();return;}
   if(!unitAt(sel)){const u=unitAt(slot);UI.sel=u?slot:null;UI.insp=u?{kind:'unit',uid:u.uid}:null;render();return;}
-  // tapping only shows characters; moving is drag-and-drop
+  // tapping another character shows it; tapping an empty slot moves the selected one there (TRO-141; drag still works)
   if(unitAt(slot)){const u=unitAt(slot);UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};render();return;}
-  UI.sel=null;UI.insp=null;render();
+  const ok=move(sel,slot);UI.sel=null;UI.insp=null;if(ok)go();else render();
 }
 function go(){save();render();if(DEV.on)devPaint();}
 // ---- hold a shop card or character to see it; drag a card or character onto a slot to buy or move ----
@@ -24238,10 +24239,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.36',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.37',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.37',items:[["🗺️", "Level screen: shows how many lives a loss costs in each act."], ["👆", "Tap a character, then an empty slot, to move it (dragging still works)."], ["🪙", "The Sell button says when a character sells for half its price, rounded down (a 1-star Common sells for 🪙0)."]]},
   {v:'20.36',items:[["🤝", "Free Agent: one of the three characters is always from your biggest genre."], ["🎒", "Weak items buffed: Smoke Grenade dodges 30/40/50%, Background Extras +2/+3/+4 bodies, Crossover Crest 2/3/4 genres, Tesla Coil hits harder, Interest Ledger also pays 🪙1 every round."], ["🔩", "Iron Plating and Tesla Coil now say exactly what they do."]]},
   {v:'20.35',items:[["🧍", "Fighters idle in their own way: Guardians sway, Stalkers glance around, Brawlers bounce, flyers hover, and no two move in step."], ["✨", "Casting a skill is easy to see: the caster pops, the skill name appears over it, and the numbers it deals show in its genre colour."]]},
   {v:'20.34',items:[["🪜", "The Ladder, part 1: from Ascension 1, a rival cast fights you in most episodes. Only the opener, the event and the act bosses are not rivals."], ["💔", "On the Ladder a loss in Acts 1-2 costs 1 life (2 in Acts 3-4), and rivals stay in the show to the end."]]},
