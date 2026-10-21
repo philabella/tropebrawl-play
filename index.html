@@ -532,6 +532,35 @@ html:not(.dt) .plan>.syns>.syn.xlist{order:-1;margin-left:0;flex:none}
 .gchips{display:flex;flex-wrap:wrap;gap:6px}
 /* game levels (difficulty ladder) */
 .lvpick{display:grid;gap:8px;background:var(--bg2);border:1px solid var(--line);border-radius:14px;padding:10px 12px;max-width:520px}
+/* TRO-155: the Ladder */
+.lvpick.ladder{max-width:min(620px,100%);width:100%;gap:10px;padding:14px;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015)),var(--bg2);box-shadow:0 18px 50px rgba(0,0,0,.35)}
+.ladhd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;font-size:.78rem}
+.ladcase{display:inline-flex;align-items:center;gap:3px;font-family:var(--f-emoji);font-size:1rem}.ladcase i{font-style:normal;filter:grayscale(1) brightness(.6);opacity:.45}.ladcase i.got{filter:none;opacity:1;text-shadow:0 0 8px rgba(255,204,46,.55)}
+.ladcase small{font-family:var(--f-body,inherit);font-size:.72rem;margin-left:5px;color:var(--gold)}
+.ladder .lvnums{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:7px}
+.lvn.ladt{position:relative;display:grid;justify-items:center;align-content:start;gap:2px;min-width:0;width:100%;height:auto;padding:5px 3px 4px;font-size:.78rem;border-radius:12px;overflow:visible}
+.lvn.ladt .rvfig{width:100%;height:auto;aspect-ratio:5/4;border-radius:9px;overflow:hidden;font-size:1.6rem}
+.lvn.ladt .rvfig>i{inset:0;background-size:190% auto;background-position:50% 27%}
+.ladbig .rvfig>i{inset:0;background-size:135% auto;background-position:50% 58%}
+.lvn.ladt .rvfig.emo>i{inset:0;height:auto}
+.lvn.ladt .rvfig.emo{color:var(--ink,#f4ead2)}
+.lvn.ladt .rvfig.ladeus{background:radial-gradient(circle at 50% 40%,rgba(255,90,90,.22),var(--panel) 72%)}
+.lvn.ladt.sh .rvfig>*,.ladcard.sh .ladbig .rvfig>*{filter:brightness(0) drop-shadow(0 0 1px rgba(255,255,255,.8)) drop-shadow(0 0 5px rgba(160,180,255,.35))}
+.lvn.ladt:disabled{font-family:var(--f-display);font-size:.78rem}
+.lvn.ladt:disabled .rvfig{opacity:.55}
+.lvn.ladt.on{box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(255,190,40,.45)}
+.lvn.ladt.won b::after{content:' ✓';font-family:var(--f-emoji);font-size:.7em}
+.ladb{position:absolute;top:-6px;right:-6px;width:22px;height:22px;display:grid;place-items:center;border-radius:50%;font-style:normal;font-family:var(--f-emoji);font-size:.8rem;background:var(--panel);border:1px solid var(--line);filter:grayscale(1);opacity:.6}
+.ladb.got{filter:none;opacity:1;background:radial-gradient(circle,#ffe37a,#c98a10);border-color:#ffe37a;box-shadow:0 0 10px rgba(255,204,46,.6)}
+.ladlk{position:absolute;top:22%;left:50%;transform:translateX(-50%);font-style:normal;font-family:var(--f-emoji);font-size:1rem}
+.ladcard{display:grid;grid-template-columns:clamp(84px,22%,128px) 1fr;gap:12px;align-items:center;padding:10px;border-radius:12px;background:radial-gradient(ellipse at 0 50%,rgba(255,90,90,.12),transparent 60%),var(--panel);border:1px solid var(--line)}
+.ladbig .rvfig{width:100%;height:auto;aspect-ratio:1;font-size:3rem}
+.ladtx{display:grid;gap:4px;min-width:0}.ladtx p{margin:0;font-size:.84rem}.ladboss small{display:block;font-size:.74rem;opacity:.8}
+.ladin{font-style:italic;opacity:.85}.ladbd b{color:var(--gold)}
+.ladword{font-size:clamp(2.2rem,min(7vw,7vh),4.2rem)!important;line-height:1}
+.ladon .tmenu{gap:7px}
+.ladon .tmenu>p.muted,.ladon .gchips{display:none}
+@media (max-width:760px){.ladon .tscene{display:none}.lvpick.ladder{padding:10px}.ladder .lvnums{gap:5px}.lvn.ladt{font-size:.7rem;padding:3px 2px}.ladb{width:18px;height:18px;font-size:.66rem;top:-5px;right:-4px}}
 .lvh{font-family:var(--f-display);font-weight:400;color:var(--leg)}
 .lvnums{display:flex;flex-wrap:wrap;gap:5px}
 .lvn{appearance:none;cursor:pointer;min-width:36px;height:36px;padding:0 8px;border-radius:9px;border:1px solid var(--line);background:var(--panel);color:var(--ink);font-family:var(--f-display);font-size:.9rem}
@@ -22454,6 +22483,11 @@ const GYMS=[
   {n:8,id:'goldie',lv:13,g:'heist',badge:'Gilded Frame',be:'🖼️',arena:'The Gallery',taunt:'Every collection needs a centrepiece. Hold still.'}];
 const LEADS={14:'echo',15:'kit',16:'quill',17:'cue',18:'ace'};
 function lvLead(n){const G=GYMS.find(g=>g.lv===n);let id=G?G.id:LEADS[n];if(!(id&&RIVAL[id])){const nw=RIVALS.find(x=>(x.lv|0)===n);id=nw?nw.id:null;}return id&&RIVAL[id]?id:null;}
+// TRO-155: the Leader who is the final boss of tier n on the Ladder (null = Deus Ex Machina), its badge, its first tier
+const LEAD_BADGE={echo:['🪞','Mirror Match'],kit:['🎰','All In'],quill:['📐','Long Game']};
+function ladLead(n){return TUNE.ladderLead&&TUNE.ladderOn&&n>=TUNE.leadFrom&&n>=TUNE.ladderLv&&n<=TUNE.ladderTo?lvLead(n):null;}
+function leadBadge(id){const G=GYMS.find(g=>g.id===id),b=LEAD_BADGE[id];return G?{e:G.be,n:G.badge}:b?{e:b[0],n:b[1]}:null;}
+function ladTier(id){for(let n=TUNE.leadFrom;n<=TUNE.ladderTo;n++)if(ladLead(n)===id)return n;return 0;}
 function leadK(){const a=TUNE.leadBossK,i=Math.max(0,Math.min(a.length-1,(S.lv|0)-6));return a[i]||2.8;}
 // the Leader's genre for the top bar: its Gym signature genre, crossovers for Ivy, else how it plays
 function leadTag(id){const G=GYMS.find(g=>g.id===id),x=RIVAL[id];if(G&&G.g&&GENRES[G.g])return GENRES[G.g].e+' '+GENRES[G.g].name;if(G)return '🔀 Crossovers';return x?'plays by '+x.style.toLowerCase():'';}
@@ -22485,19 +22519,11 @@ function leadRecord(){if(!S.real||!RIVAL[S.lead])return;const j=rvuLoad(),id=S.l
 function gymRecord(){const G=gymOf();if(!G||!S.real)return;const j=rvuLoad(),rc=j.gym[G.n]=j.gym[G.n]||{t:0,b:0},win=S.result==='win',got=win?SCHEDULE.length:S.round|0;
   rc.t=(rc.t|0)+1;S.gymBest=rc.b|0;if(got>(rc.b|0))rc.b=got;if(win){rc.w=(rc.w|0)+1;S.badgeNew=!j.badge[G.id];j.badge[G.id]=1;}rvuStore(j);
   if(win&&S.badgeNew&&typeof UI!=='undefined'){const id=G.id;UI.rvBadge=id;UI.rvPend=id;setTimeout(()=>{if(UI.rvPend===id&&UI.screen==='battle'&&!tbxBusy()){UI.rvPend=null;tbxReveal(id);}},650);}}
-function gymCardTag(id){const G=GYMS.find(g=>g.id===id);if(!G)return '';const won=!!rvuLoad().badge[id];
-  return `<p class="rvgym">🏟️ <b>Gym ${G.n} Leader</b> · ${G.be} ${esc(G.badge)} Badge${won?' · ✅ won':G.on?'':' · coming in a later update'}</p>`;}
+function gymCardTag(id){const n=ladTier(id),b=leadBadge(id);if(!n||!b)return '';const won=!!rvuLoad().badge[id];
+  return `<p class="rvgym">💀 <b>Leader of ${esc(lvLong(n))}</b> · ${b.e} ${esc(b.n)} Badge${won?' · ✅ won':''}</p>`;}
 // the level picker / level-up lines: who joins the lobby on this tier, and the circuit opening
 function rvDebutTxt(n){if(!TUNE.rivalsOn)return '';const d=RIVALS.filter(x=>x.lv===n);
-  return (d.length?' 🎭 '+d.map(x=>rvKnown(x.id)?x.e+' '+esc(x.name):'A new rival studio').join(', ')+' joins the lobby.':'')+(n===GYM_OPEN?' 🏟️ The Gym Circuit opens.':'');}
-function gymSlotHTML(G){const j=rvuLoad(),x=RIVAL[G.id],v=RVX[G.id]||{},won=!!j.badge[G.id],open=gymUnlocked(G),rc=j.gym[G.n]||{},kn=!!x&&(G.on||rvKnown(G.id));
-  const lit=won||(!!x&&rvRevealed(G.id)),N=lvRounds(G.lv),gn=G.g&&GENRES[G.g];
-  return `<div class="gymslot${won?' won':''}${G.on?'':' soon'}"><div class="gymfig${lit?'':' sh'}">${x?rvFigHTML(G.id):`<span class="rvfig emo" aria-hidden="true"><i>${G.e||'❔'}</i></span>`}</div>
-    <div class="gymtx"><small>Gym ${G.n} · ${esc(lvLong(G.lv))} rules</small><b>${kn?x.e+' '+esc(x.name):'❔ ???'}</b>${kn&&v.studio?`<small>${esc(v.studio)}</small>`:''}
-    <p class="gymar">${esc(G.arena)}${kn?` · “${esc(G.taunt)}”`:''}</p>
-    <p class="gymbd">${G.be} ${esc(G.badge)} Badge${won?' · ✅ won':''}</p>
-    ${kn?`<p class="muted gymsg">Signature: ${gn?gn.e+' '+esc(gn.name):'🔀 crossovers'}</p>`:''}
-    ${G.on?(open?`<p class="muted gymbest">${rc.w?`Won ${rc.w} time${rc.w===1?'':'s'}`:rc.b?`Best: Episode ${rc.b} of ${N}`:'Not tried yet'}</p><button class="btn primary" data-a="gym-go" data-v="${G.n}">Challenge</button>`:`<p class="muted">🔒 Win Gym ${G.n-1} first.</p>`):'<p class="muted">Opens in a later update.</p>'}</div></div>`;}
+  return (d.length?' 🎭 '+d.map(x=>rvKnown(x.id)?x.e+' '+esc(x.name):'A new rival studio').join(', ')+' joins the lobby.':'');}
 // v19.63 champion pool (fastsim/rival-train.js, v1962.html, Game Level 10): trained policies per rival style
 const RV_POOL={"penny":[{"g2":0.326,"g3":2.285,"g4":1.987,"g5":0.977,"g6":3.901,"g7":4.563,"keep":7.368,"tierW":0.915,"ownW":3.549,"econ":49.531,"econUntil":18.918,"ev":["payday","supply","recruit","promotion","reinforce","deal"]},{"g2":0.294,"g3":3.308,"g4":1.151,"g5":1.135,"g6":3.888,"g7":4.659,"keep":5.941,"tierW":1.249,"ownW":2.162,"econ":48.393,"econUntil":20.025,"ev":["payday","supply","recruit","promotion","reinforce","deal"]},{"g2":0.406,"g3":2.348,"g4":2.122,"g5":0.845,"g6":3.694,"g7":5.129,"keep":7.588,"tierW":0.877,"ownW":4.915,"econ":51.369,"econUntil":19.66,"ev":["payday","supply","recruit","promotion","reinforce","deal"]}],"rex":[{"g2":1.081,"g3":2.658,"g4":4.431,"g5":1.661,"g6":2.128,"g7":3.981,"keep":1.877,"tierW":2.701,"ownW":13.591,"econ":2.044,"lateTierW":1.835,"rollUntil":10.821,"rollTier":2},{"g2":0.675,"g3":2.073,"g4":4.853,"g5":2.468,"g6":4.48,"g7":3.954,"keep":1.597,"tierW":1.854,"ownW":14.564,"econ":1.379,"lateTierW":2.247,"rollUntil":10.706,"rollTier":2},{"g2":0.477,"g3":1.735,"g4":4.329,"g5":2.745,"g6":2.264,"g7":4.217,"keep":2.53,"tierW":2.812,"ownW":14.77,"econ":0.442,"lateTierW":1.253,"rollUntil":11.169,"rollTier":2}],"ivy":[{"g2":0.73,"g3":0.366,"g4":1.676,"g5":2.131,"g6":2.431,"g7":5.751,"keep":12.412,"tierW":3.512,"ownW":12.072,"econ":8.003,"div":6.884},{"g2":0.795,"g3":0.282,"g4":2.345,"g5":2.458,"g6":2.408,"g7":4.333,"keep":10.797,"tierW":3.79,"ownW":12.219,"econ":9.726,"div":6.342},{"g2":0.549,"g3":0.61,"g4":3.177,"g5":2.159,"g6":2.347,"g7":4.829,"keep":12.184,"tierW":3.604,"ownW":11.087,"econ":11.829,"div":5.347}],"duke":[{"g2":0.293,"g3":0.888,"g4":1.263,"g5":1.838,"g6":2.506,"g7":0.767,"tierW":0.781,"ownW":9.254,"keep":0,"econ":0},{"g2":0.095,"g3":0.43,"g4":1.979,"g5":2.653,"g6":2.047,"g7":1.314,"tierW":1.345,"ownW":8.917,"keep":0,"econ":0},{"g2":0.345,"g3":0.561,"g4":1.048,"g5":3.089,"g6":2.479,"g7":1.781,"tierW":1.332,"ownW":9.82,"keep":0,"econ":0}],"goldie":[{"g2":0.432,"g3":0.936,"g4":2.293,"g5":3.206,"g6":4.998,"g7":5.157,"keep":6.562,"tierW":4.274,"ownW":8.643,"econ":7.924,"minTier":3},{"g2":0.638,"g3":1.023,"g4":0.86,"g5":3.542,"g6":3.72,"g7":6.322,"keep":2.684,"tierW":5.243,"ownW":12.559,"econ":3.997,"minTier":3},{"g2":0.019,"g3":0.194,"g4":2.07,"g5":3.861,"g6":3.22,"g7":7.931,"keep":1.949,"tierW":4.018,"ownW":9.797,"econ":6.245,"minTier":3}],"sal":[{"g2":0.727,"g3":0.805,"g4":3.675,"g5":1.231,"g6":5.432,"g7":1.692,"keep":1.78,"tierW":1.973,"ownW":13.872,"econ":0.758,"maxTier":2},{"g2":0.845,"g3":1.912,"g4":1.655,"g5":0.538,"g6":3.711,"g7":1.818,"keep":2.218,"tierW":1.544,"ownW":14.524,"econ":24.727,"maxTier":2},{"g2":0.805,"g3":1.559,"g4":2.494,"g5":0.881,"g6":3.273,"g7":1.602,"keep":2.6,"tierW":1.484,"ownW":13.818,"econ":23.048,"maxTier":2}],"hugo":[{"g2":0.488,"g3":0.851,"g4":2.449,"g5":2.16,"g6":6.469,"g7":2.236,"keep":3.885,"tierW":1.624,"ownW":9.386,"econ":29.534,"bench":true},{"g2":0.326,"g3":0.745,"g4":2.324,"g5":1.632,"g6":6.852,"g7":2.167,"keep":4.495,"tierW":1.49,"ownW":7.677,"econ":34.088,"bench":true},{"g2":0.336,"g3":0.471,"g4":2.798,"g5":1.549,"g6":6.999,"g7":2.446,"keep":3.892,"tierW":1.641,"ownW":8.244,"econ":32.764,"bench":true}],"ace":[{"g2":0.843,"g3":0.968,"g4":1.628,"g5":1.881,"g6":5.722,"g7":4.059,"keep":9.702,"tierW":0.901,"ownW":2.94,"econ":22.21},{"g2":0.468,"g3":0.355,"g4":2.106,"g5":2.313,"g6":5.163,"g7":4.263,"keep":8.033,"tierW":1.505,"ownW":6.248,"econ":16.257},{"g2":0.12,"g3":0.603,"g4":1.181,"g5":4.098,"g6":3.343,"g7":2.879,"keep":6.914,"tierW":1.369,"ownW":4.479,"econ":24.891}]};
 function rvMkPol(x){let t=1;const th=[2,3,4,5,6,7].map(k=>t+=x['g'+k]);
@@ -23098,11 +23124,11 @@ function tbxCard(){if(!S||tbxMode()==='off'||UI.screen==='battle')return;const n
 
 // a rival's first defeat: fade to black, banner, the silhouette fills in, name / studio / intro / tell type on
 function tbxReveal(id,then){const x=RIVAL[id],v=RVX[id]||{};if(!x)return;const k=tbxK(),ty=k?22:0;
-  const G=UI.rvBadge===id?GYMS.find(g=>g.id===id):null,lit=!!G||rvRevealed(id),ban=G?G.be+' '+G.badge+' Badge won':'Rival scouted';if(G)UI.rvBadge=null;
+  const G=UI.rvBadge===id?leadBadge(id):null,lit=!!G||rvRevealed(id),ban=G?G.e+' '+G.n+' Badge won':'Rival scouted',tn=S&&S.lead===id?S.lv|0:ladTier(id);if(G)UI.rvBadge=null;
   const el=tbxOpen('rev',`<div class="tbrev"><div class="tbban">${esc(ban)}</div><div class="tbfig">${rvFigHTML(id,true)}</div>
     <b class="tbnm" data-t="${esc(x.e+' '+x.name)}"></b><span class="tbstu" data-t="${esc((v.studio||'Rival studio')+' · '+x.style)}"></span>
     <p class="tbin" data-t="${esc('“'+(v.intro||x.d)+'”')}"></p><p class="tbtell dim"><b>Tell:</b> <span data-t="${esc(x.tell)}"></span></p>
-    ${G?`<p class="tbgym">Gym ${G.n} cleared: ${esc(x.name)} steps out of the shadows.</p>`:lit?'':'<p class="tbgym dim">Win its Gym to see it in full.</p>'}
+    ${G?`<p class="tbgym">${tn?esc(lvLong(tn))+' cleared: ':''}${esc(x.name)} steps out of the shadows.</p>`:lit||!ladTier(id)?'':`<p class="tbgym dim">Beat ${esc(x.name)} as the final boss of ${esc(lvLong(ladTier(id)))} to see them in full.</p>`}
     <button class="btn primary big tbgo">Continue</button></div>`,ban+': '+x.name,'Click or Space to skip · Esc to close');
   TBX.fin=()=>{const b=document.querySelector('#field .overlay [data-a="after-fight"]');if(b)b.focus();if(then)then();};
   const q=s=>el.querySelector(s);
@@ -23276,16 +23302,27 @@ function shopHTML(){
     </div></section>`;
 }
 // Game Level picker: one chip per level; the newest rule in one line, the dials below, the earlier rules folded away
+// TRO-155: Play opens the Ladder. A tile per tier shows who ends it and the badge it pays; the chosen tier's card below.
+function ladFig(n,big){const id=ladLead(n);if(id)return rvFigHTML(id);const d=n>=4&&typeof SPRITES!=='undefined'&&SPRITES.e_deus;
+  return d?`<span class="rvfig ladeus" aria-hidden="true"><i style="background-image:url(${d})"></i></span>`:`<span class="rvfig emo" aria-hidden="true"><i>${(LADDER[n]||{}).e||'🎬'}</i></span>`;}
 function lvPicker(){
-  const p=lvLoad(),lo=lvMin();const cur=Math.max(lo,Math.min(UI.lv|0,p.open));UI.lv=cur;
-  const chips=LADDER.map((_,i)=>i).filter(n=>n>=lo).map(n=>{const lock=n>p.open,won=p.won.includes(n),nm=lvNm(n).replace(/^the S/,'The S');
-    return `<button class="lvn${n===cur?' on':''}${won?' won':''}" data-a="lv" data-v="${n}" ${lock?'disabled':''} role="radio" aria-checked="${n===cur}" aria-label="${nm}${lock?', locked':won?', cleared':''}" title="${nm}${lock?' · win '+lvNm(n-1)+' first':won?' · cleared':''}">${lock?'🔒':n<=3?n:n===4?'S':'A'+(n-4)}</button>`;}).join('').replace(/class="lvn([^"]*)" data-a="lv" data-v="(\d+)"/g,(m,c,v)=>+v>=5?`class="lvn asc${c}" data-a="lv" data-v="${v}"`:m);
+  const p=lvLoad(),lo=lvMin();const cur=Math.max(lo,Math.min(UI.lv|0,p.open));UI.lv=cur;const bj=rvuLoad(),all=epsAll(),seen=id=>all||rvRevealed(id);
+  const chips=LADDER.map((_,i)=>i).filter(n=>n>=lo).map(n=>{const lock=n>p.open,won=p.won.includes(n),nm=lvNm(n).replace(/^the S/,'The S'),ld=ladLead(n),bd=ld&&leadBadge(ld);
+    return `<button class="lvn${n===cur?' on':''}${won?' won':''} ladt${lock||(ld&&!seen(ld))?' sh':''}" data-a="lv" data-v="${n}" ${lock?'disabled':''} role="radio" aria-checked="${n===cur}" aria-label="${nm}${lock?', locked':won?', cleared':''}" title="${nm}${lock?' · win '+lvNm(n-1)+' first':won?' · cleared':''}">${ladFig(n)}${bd?`<i class="ladb${bj.badge[ld]?' got':''}">${bd.e}</i>`:''}${lock?'<i class="ladlk">🔒</i>':''}<b>${n<=3?n:n===4?'S':'A'+(n-4)}</b></button>`;}).join('');
   const lo4=cur>=4?Math.max(lo,4):lo,older=LADDER.map((_,i)=>i).filter(n=>n>=lo4&&n<cur).map(n=>`<li>${lvLine(n)}</li>`).join('');
-  return `<div class="lvpick"><div class="row" style="justify-content:space-between"><b class="lvh">${esc(lvTitle(cur))}</b><span class="muted" style="font-size:.78rem">${cur<4?'win one to unlock the next (or skip to the Season)':cur===4?'win the Season to open Ascension':'opt-in challenge · win to open the next'}</span></div>
+  const ids=[...new Set(LADDER.map((_,n)=>ladLead(n)).filter(Boolean))],nb=ids.filter(id=>bj.badge[id]).length;
+  const ld=ladLead(cur),x=ld&&RIVAL[ld],v=ld&&RVX[ld]||{},kn=!!ld&&(all||rvKnown(ld)),bd=ld&&leadBadge(ld),lob=lobbyAt(cur);
+  const boss=cur<4?'':ld?(kn?`${x.e} ${esc(x.name)}'s full cast`:'❔ a Leader you have not met yet'):'🤖 Deus Ex Machina';
+  return `<div class="lvpick ladder"><div class="ladhd"><span class="muted">${cur<4?'win one to unlock the next (or skip to the Season)':cur===4?'win the Season to open Ascension':'opt-in challenge · win to open the next'}</span>${p.open>=5&&ids.length?`<span class="ladcase" aria-label="Leader badges: ${nb} of ${ids.length}">${ids.map(id=>{const b=leadBadge(id);return b?`<i class="${bj.badge[id]?'got':''}" title="${esc(b.n)} Badge${bj.badge[id]?'':' (not won yet)'}">${b.e}</i>`:'';}).join('')}<small>${nb} of ${ids.length}</small></span>`:''}</div>
     <div class="lvnums" role="radiogroup" aria-label="Level">${chips}</div>
+    <div class="ladcard${ld&&!seen(ld)?' sh':''}"><div class="ladbig">${ladFig(cur)}</div><div class="ladtx"><b class="lvh">${esc(lvTitle(cur))}</b>
+      ${boss?`<p class="ladboss">💀 Final boss: <b>${boss}</b>${kn?`<small>${esc(leadTag(ld))}</small>`:''}</p>`:''}
+      ${kn?`<p class="ladin">“${esc(v.intro||x.d)}”</p>`:ld&&v.tease?`<p class="ladin">${esc(v.tease)}</p>`:''}
+      ${bd?`<p class="ladbd">${bd.e} <b>${esc(bd.n)} Badge</b> · ${bj.badge[ld]?'✅ yours':'beat the final boss to earn it'}</p>`:''}
+      ${lob?`<p class="ladlob">🎭 You share the lobby with ${lob} rival studios.</p>`:''}</div></div>
     <p class="lvnew">${cur>lo?'New: ':''}${lvLine(cur)}${rvDebutTxt(cur)}</p>
     <p class="lvdial">${lvDials(cur)}</p>
-    ${older?`<details class="lvold"><summary>Plus ${cur-lo4} earlier rule${cur-lo4>1?'s':''}</summary><ul>${older}</ul></details>`:''}${epsTitleHTML(cur)}</div>`;
+    ${older?`<details class="lvold"><summary>Plus ${cur-lo4} earlier rule${cur-lo4>1?'s':''}</summary><ul>${older}</ul></details>`:''}</div>`;
 }
 // v20.11 P9: nobody has aired an episode, won a level or saved a run yet: one big Start, the rest waits
 // (not the profile's episode count: with every level unlocked, the profile credits old-ladder episodes on its first load)
@@ -23309,15 +23346,8 @@ function titleFreshHTML(){UI.lv=lvMin();const ns=newsFresh();
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION}</p>
   </div></section>`;}
-// v20.13: the Gym Circuit, a badge case. Back returns to the title without touching a saved run.
-SCR.gyms=()=>{const G1=GYMS[0];
-  return `<section class="screen gyms" style="padding-block:24px 0">
-    <div class="eyebrow">The Gym Circuit</div><h1 class="title-word" style="font-size:clamp(2.2rem,7vw,3.6rem)">🏟️ Gyms</h1>
-    <p class="muted" style="max-width:62ch">Each Gym is a full season at fixed rules, in a lobby of at least ${TUNE.gymLobby} rival studios. The Gym Leader films beside you all season, fights you in Episode 8 of Acts 1, 2 and 3 (a win pays 🪙${TUNE.lvEliteGold} more) and is the final boss in Episode ${lvRounds(G1.lv)}: its own cast as it stands, ×${TUNE.gymBossK}, in place of Deus Ex Machina. The leader leans on its signature genre. Win the season to earn its badge and see the leader step out of the shadows. A lost Gym run costs nothing: the episodes you air still count, and Gyms never change your Ascension.</p>
-    <div class="gymcase">${GYMS.map(gymSlotHTML).join('')}</div>
-    <div class="gympins" aria-label="Elite Four and Champion"><span>🪞</span><span>🎲</span><span>🎓</span><span>🧠</span><span class="cup">🏆</span><small class="muted">The Elite Four and the Champion wait behind all 8 badges (a later update).</small></div>
-    <div class="row"><button class="btn" data-a="gyms-back">← Back</button><button class="btn" data-a="codex">📖 Codex</button></div>
-  </section>`;};
+// TRO-155: the Gyms screen is gone (its Leaders are the Ladder's final bosses); an old 'gyms' screen lands on the Ladder
+SCR.gyms=()=>{UI.screen='title';UI.pick=1;return SCR.title();};
 // TRO-149: the title screen's toy brawl = 4 clashes + a thief slipping past. Front-view sprites; the left fighter of each pair is
 // mirrored so both face in. [sprite id, centre x %, bottom %, width %, lean deg, z, dir (+1 = left side), pair delay s]
 const TITLE_CAST=[['starknight',17,40,24,4,1,1,0],['kingmonster',40,41,34,-3,1,-1,0],
@@ -23333,11 +23363,11 @@ function titleScene(){const f=TITLE_CAST.filter(c=>SPRITES[c[0]+'_f']);if(!f.len
     +`<i class="tspark a"></i><i class="tspark b"></i><i class="tspark c"></i></div>`;}
 SCR.title=()=>{
   const sv=loadSave();if(titleFresh(sv))return titleFreshHTML();
-  return `<section class="screen tst">${titleScene()}<div class="tmenu">
-    <div class="eyebrow">Shop · Level up · Brawl</div>
-    <h1 class="title-word">${TITLE}</h1>
+  return `<section class="screen tst${UI.pick?' ladon':''}">${titleScene()}<div class="tmenu">
+    ${UI.pick?'<div class="eyebrow">Climb it one tier at a time</div><h1 class="title-word ladword">The Ladder</h1>':`<div class="eyebrow">Shop · Level up · Brawl</div>
+    <h1 class="title-word">${TITLE}</h1>`}
     <p class="muted" style="max-width:44ch">Every story is falling into a hole in the plot. Build a crew from ${['no','one','two','three','four','five','six','seven','eight'][Object.keys(GENRES).length]||Object.keys(GENRES).length} genres and fight your way out.</p>
-    ${UI.pick?`${lvPicker()}<div class="row tgo">${tutTitleBtns()}<button class="btn" data-a="pick-back">← Back</button></div>`:titleMenuHTML(sv)}
+    ${UI.pick?`${lvPicker()}<div class="row tgo">${tutTitleBtns()}<button class="btn" data-a="pick-back">← Back</button></div>${epsTitleHTML(UI.lv)}`:titleMenuHTML(sv)}
     <div class="gchips">${Object.keys(GENRES).map(k=>`<span class="g-${k}">${GENRES[k].e} ${GENRES[k].name}${stkChip(k)}</span>`).join('')}</div>
     <p class="verl">v${TB_VERSION}</p>
   </div></section>`;
@@ -23345,7 +23375,7 @@ SCR.title=()=>{
 // TRO-65: the menu = one big Continue / Play (Play opens the level picker), then Codex, Settings, What's New
 function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh();
   return `<div class="tplay">${sv?`<button class="btn primary big tbig" data-a="continue"><span>▶ Continue</span></button><div class="tlv">${esc(lvNmC(sv.S.lv|0))} · round ${sv.S.round}</div><button class="lnk tnew" data-a="play">Start a different run</button>`
-      :`<button class="btn primary big tbig" data-a="play"><span>▶ Play</span></button><div class="tlv">${esc(lvTitle(UI.lv))}</div>`}</div>
+      :`<button class="btn primary big tbig" data-a="play"><span>▶ Play</span></button><div class="tlv">Next on the Ladder: ${esc(lvTitle(UI.lv))}</div>`}</div>
     <div class="row tsmall">
       <button class="btn sm" data-a="codex">📖 Codex</button>
       <button class="btn sm" data-a="settings">⚙️ Settings</button>
@@ -23756,7 +23786,7 @@ SCR.end=()=>{
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
     <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${nearHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
-    ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. See Gyms on the title screen.</p>`:`<p class="lvwin">🏟️ No badge this time. A Gym run costs nothing: try again from Gyms on the title screen.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
+    ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. Its Leader now waits on the Ladder.</p>`:`<p class="lvwin">🏟️ No badge this time. Gyms are now part of the Ladder: Play, then pick ${esc(lvLong(ladTier(gymOf().id)||gymOf().lv))}.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
     <div class="endgrid">
@@ -24121,11 +24151,8 @@ function onAction0(a,v,el){
     case 'pend-hide':if(!UI.pendOpen)break;UI.legPeek=true;UI.swap=null;closeSheet();render();break;
     case 'pend-show':UI.legPeek=false;closeSheet();render();break;
     case 'new':UI.pick=0;UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();tbxCard();break;
-    case 'gyms':UI.screen='gyms';closeSheet();render();window.scrollTo(0,0);break;
     case 'play':UI.pick=1;closeSheet();render();window.scrollTo(0,0);break;
     case 'pick-back':UI.pick=0;render();window.scrollTo(0,0);break;
-    case 'gyms-back':UI.screen='title';closeSheet();render();window.scrollTo(0,0);break;
-    case 'gym-go':{const G=GYMS[(+v|0)-1];if(!gymUnlocked(G))break;UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;UI.gym=G.n;newRun(false);go();tbxCard();break;}
 case 'nextep':{const k=S&&!S.newLv&&!S.gym?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().open)UI.lv=k;if(S&&S.gym&&gymUnlocked(GYMS[S.gym.n-1]))UI.gym=S.gym.n; // v20.5: ▶ Next episode on the end screen
   UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);tlAct('n');go();tbxCard();break;}
     case 'renew':UI.renew=!UI.renew;render();break;
@@ -24311,10 +24338,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.42',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.43',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.43',items:[["🪜", "Play now opens <b>the Ladder</b>: every tier shows who waits at the end of it (the Leader's portrait, or Deus Ex Machina) and the badge it pays. Pick a tier to see its final boss, its badge and how many rival studios share the lobby."], ["🏟️", "The Gyms screen is gone: its Leaders are the Ladder's final bosses now, and the badges you won stay yours. Echo, Kit and Prof. Quill get badges too."]]},
   {v:'20.42',items:[["🏁", "The Ladder, part 3: the lobby. You share each run with 3 rival studios at Ascension 1, up to 7 from Ascension 8 (was 1 at Ascension 1, and 7 only at Ascension 12). The new Lobby strip shows their portraits and lives, most lives first; tap one to scout it."], ["⚔️", "Like TFT, you never face the same rival twice in a row (unless only one is left)."]]},
   {v:'20.41',items:[["💀", "The Ladder, part 2: from Ascension 2 each tier has a Leader. It sits in your lobby all run and drafts its own genre, and its full cast is the final boss. The top bar shows it from round 1, so you can plan your counter."], ["🏅", "Beat a Leader's full cast to win the run and earn its badge. The Season and Ascension 1 keep Deus Ex Machina."]]},
   {v:'20.40',items:[["🔍", "Sharper toys: shop cards, the title brawl and the board are drawn at the size you see (up to 2x on sharp screens)."], ["🎞️", "The backup animation, used when your device is slow, is also sharper now."]]},
