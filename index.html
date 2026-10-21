@@ -2253,6 +2253,10 @@ html:not(.dt) .phd .vs.rvep:has(.fimg) .rvtell.fintry{max-width:68%} /* TRO-240 
 @media (max-width:760px) and (max-height:720px){
   html:not(.dt) :is(.plan,.evteam) .board .slot .rgem{display:none}
 }
+html .rvep .rvtell{max-width:none;padding-right:96px}
+.rvep .foe small{font-size:max(12px,.8rem);color:var(--ink,#eee);font-weight:700}
+.pt.tp.rvc{background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--gc) 40%,var(--panel2)),var(--bg2) 80%)}
+@media (max-height:760px){html.dt .dcol.c .top{padding:6px 10px;gap:5px}html.dt .dcol.c .top .r1{flex-wrap:nowrap;gap:6px}html.dt .dcol.c .top .r1 .btn{padding:.3em .55em;min-height:0;font-size:.74rem}html.dt:not(.bwide) .board .slot.hasspr .spr{bottom:calc(var(--gh,41px) + 1px)}html.dt .board .slot.hasspr .nm{position:relative;z-index:3;overflow:visible;line-height:1.15;max-width:none;font-size:.72rem;text-shadow:0 1px 2px #000,0 0 3px #000}}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -23091,7 +23095,7 @@ function rvKit(R,short){const st=R&&R.st;if(!st)return '';const L=st.legend&&LEG
 function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL[e.rival],f=R?R.st.units.filter(u=>u.slot[0]!=='n'):[],L=e.lead?leadCast():null;
   const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1;
   const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
-  const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
+  const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id,HERO[u.id].genre)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
   return `<section class="vs feat boss rvep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${x.e}</span>`}
     <div class="fhd"><small>${L?'💀 Final boss':'Rival episode'} · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s ${L?'full ':''}cast</b></div>
     <div class="foes">${foes}</div>${rvPivLine(R,1)}${L?`<p class="rvtell lcast">💀 <b>${L.n} fight</b>, ${L.s3} of them ★★★${L.bn?` (+${L.bn} benched)`:''} · each ×${L.k} HP and damage${L.c?` · 🎯 carry <b>${esc(L.cn)}</b> (${esc(GENRES[L.cg]?GENRES[L.cg].name:'')})${L.hit.length?`: your ${esc(ctrNm(L.hit[0]))} counters it`:': none of your counters hits it'}`:''}</p>${ctrPanel()}`:''}<p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p>${rvKit(R)}${L?'':ctrPanel()}</section>`;}
@@ -23111,8 +23115,8 @@ function heroArt(id,cls){const d=HERO[id];if(!SPRITES[id])return heroPt(id,cls);
 // v19.22: enemy art. e_<key> = front-facing toy (crowds add _2/_3); the Evil Twin uses the copied character's front toy,
 // tinted. foePt: a round toy portrait (the upper body), '' when there is no art (callers fall back to the icon)
 function foeSpr(k){return k&&SPRITES['e_'+k]?'e_'+k:null;}
-function foePt(k,cls,tid){const src=tid?(SPRITES[tid+'_f']||SPRITES[tid]):(foeSpr(k)&&SPRITES[foeSpr(k)]);if(!src)return '';
-  return `<span class="pt g-foe tp ${cls||''}${tid?' evil':' k-'+k}" aria-hidden="true"><img src="${src}" alt="" draggable="false"></span>`;}
+function foePt(k,cls,tid,gn){const src=tid?(SPRITES[tid+'_f']||SPRITES[tid]):(foeSpr(k)&&SPRITES[foeSpr(k)]);if(!src)return '';
+  return `<span class="pt ${gn?'g-'+gn+' rvc':'g-foe'} tp ${cls||''}${tid&&!gn?' evil':tid?'':' k-'+k}" aria-hidden="true"><img src="${src}" alt="" draggable="false"></span>`;}
 function stars(n){return `<span class="stars">${'★'.repeat(n)}</span>`;}
 function float(u,txt,cls){
   if(!B||B.silent||!u.el||(RM&&cls!=='sp'&&cls!=='ko'))return;
@@ -23630,7 +23634,7 @@ function vsStrip(){return finTry(vsStrip0())+rvStrip();}
 function ghEpHTML(e){const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1;
   const f=e.gh[6].split(',').map(x=>{const [id,lv]=x.split(':');return {id,level:+lv};}).filter(u=>HERO[u.id]);
   const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
-  const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
+  const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id,HERO[u.id].genre)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
   const leg=e.gh[1]&&LEGENDS[e.gh[1]];
   return `<section class="vs feat ghep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">📼</span>`}
     <div class="fhd"><small>Rerun · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>📼 ${esc(e.title)}</b></div>
@@ -24884,10 +24888,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.80',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.81',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.81',items:[["👀", "Rival cast portraits now show each character in its own colours inside a genre-coloured ring (they were dark red), with bigger star labels."], ["🖥️", "Smaller desktop windows (1280x720): the crossover chips and the shop bar no longer overlap, and board names are readable."], ["🎯", "The rival's tell lines no longer run under its picture."]]},
   {v:'20.80',items:[["🎯", "Lobby strip: a rival drafting against you now has a big 🎯 and a red ring on its portrait, and its two main-genre icons are bigger."], ["🎬", "Double Feature now shows on your board: every character it boosts wears a 🎬 badge (+50% HP and damage in fights)."], ["❤️", "Rivals play the same events as you, so their lives can go up: the Lobby strip now shows the rise (+2) and says why."]]},
   {v:'20.79',items:[["🔭", "The Commando is now the Spotter: it marks the biggest enemy crowd for 6s, and shells and blasts hit it 50% harder. The Army's job is the big crowd, not the back row."], ["🧨", "The Prospector now throws one stick of dynamite at the enemy about to use a skill: big damage and a 1.5s stun. Fastest draw, Wild West style."]]},
   {v:'20.78',items:[["🤠", "Typecast now helps one-genre Wild West and Sportsball teams again: an all-Wild West board gets +15% HP and damage (was none), an all-Sportsball board +40% (was +20%). Both were losing most head-to-head fights against every other genre."]]},
