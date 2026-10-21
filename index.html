@@ -24782,10 +24782,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.58',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.59',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.59',items:[["🎬", "The battle board is now a real film set: lighting rigs, a camera on a dolly, the director's chair, prop crates, a fan, crew and a studio audience fill the sides of wide screens."], ["🎭", "The painted set flats change every act: Western town, space station, haunted house, then the finale city. The audience cheers your KOs and the lights flash on crits."], ["👆", "Click the clapperboard, a spotlight, the fan, the camera or the APPLAUSE sign."]]},
   {v:'20.58',items:[["👯", "Body doubles: from Act 3, when a character you own is sold out (0 left in the pool), tap it to buy one more copy for 3× its price (Rare 🪙9, Epic 🪙12). Late gold now has a job when the lobby took your carry's copies."]]},
   {v:'20.57',items:[["🎟️", "Rivals now play by your rules: they go through the same events, plot twists and surprise events, earn items (including the one a Rare ★★ pays) and pick a Legendary after the Act 1-3 bosses. Their cast panel and the VS card show what they took."], ["⚖️", "Since rivals now earn their power, their flat strength bonus is lower (mostly in Acts 2-4 and for the Ladder Leader), so the Ladder is about as hard as before."]]},
   {v:'20.56',items:[["🎬", "The Mid-season finale (Episode 27) now says what the Season finale holds: how much harder its cast hits (2.6× in HP × damage), or, on the Ladder, whose full cast you face. Winning the rehearsal doesn't mean you're ready."]]},
@@ -25848,7 +25849,7 @@ function arInit(){if(AR.R)return !AR.dead;if(AR.dead||!TBA.on)return false;
     const E=new OutlineEffect(R,{defaultThickness:.0042,defaultColor:[.02,.02,.03],defaultAlpha:1});
     cv.addEventListener('webglcontextlost',e=>{e.preventDefault();AR.dead=true;});
     const scene=tbaLights(new THREE.Scene(),true);
-    Object.assign(AR,{cv,R,E,scene,cam:new THREE.PerspectiveCamera(13,1,1,900)});scene.add(arBoard());return true;}
+    Object.assign(AR,{cv,R,E,scene,cam:new THREE.PerspectiveCamera(13,1,1,900)});scene.add(arBoard());try{scene.add(arSet());}catch(e){ARS.g=null;}return true;}
   catch(e){AR.dead=true;AR.why=String(e&&e.message||e).slice(0,80);return false;}}
 function arMat(c,o){return new TBA.THREE.MeshStandardMaterial(Object.assign({color:c,roughness:.85,metalness:0},o||{}));}
 // v19.39: the board is a film-set soundstage: plank floor with hazard-tape edges, taped floor mats (blue: yours, red:
@@ -25908,13 +25909,214 @@ function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Gr
     const slate=new THREE.Group();slate.position.set(.3,.75,.25);slate.rotation.x=-.5;K.add(slate);
     slate.add(mesh(new THREE.BoxGeometry(1.1,.8,.05),M('#1a191d')));
     const stripes=M('#ffffff',{map:arTex(256,32,(x,w,h)=>{for(let i=0;i<8;i++){x.fillStyle=i%2?'#f3eee4':'#1a191d';x.beginPath();x.moveTo(i*32,h);x.lineTo(i*32+32,h);x.lineTo(i*32+48,0);x.lineTo(i*32+16,0);x.fill();}})});
-    const bar=mesh(new THREE.BoxGeometry(1.12,.16,.06),stripes);bar.position.set(0,.5,0);slate.add(bar);const top=mesh(new THREE.BoxGeometry(1.12,.16,.06),stripes);top.position.set(-.08,.68,0);top.rotation.z=.32;slate.add(top);
+    const bar=mesh(new THREE.BoxGeometry(1.12,.16,.06),stripes);bar.position.set(0,.5,0);slate.add(bar);const hg=new THREE.Group();hg.position.set(-.56,.58,0);hg.rotation.z=.32;slate.add(hg);const top=mesh(new THREE.BoxGeometry(1.12,.16,.06),stripes);top.position.set(.56,.08,0);hg.add(top);AR.clapTop=hg;AR.clapK=K;
     slate.add(arNo(arAt(mesh(new THREE.PlaneGeometry(1,.6),M('#ffffff',{map:arTex(256,160,(x,w,h)=>{x.fillStyle='#1a191d';x.fillRect(0,0,w,h);x.strokeStyle='#cfc8bb';x.lineWidth=3;x.strokeRect(6,6,w-12,h-12);x.beginPath();x.moveTo(6,h/2);x.lineTo(w-6,h/2);x.moveTo(w/2,h/2);x.lineTo(w/2,h-6);x.stroke();
       x.fillStyle='#f3eee4';x.font='bold 30px Anton, Impact, sans-serif';x.fillText('TROPEBRAWL',16,48);x.font='20px sans-serif';x.fillText('SCENE',16,h/2+30);x.fillText('TAKE',w/2+10,h/2+30);})})),0,-.05,.03)));}
   {const cable=new THREE.CatmullRomCurve3([[-7.6,-6.2],[-6.9,-4],[-7.6,-1],[-6.9,1.6],[-7.4,4.5]].map(([x,z])=>new THREE.Vector3(x,FL+.05,z)));g.add(arNo(mesh(new THREE.TubeGeometry(cable,60,.05,6),M('#111114'))));
     const c2=new THREE.CatmullRomCurve3([[7.6,-6.2],[7.0,-4.2],[7.7,-2.2]].map(([x,z])=>new THREE.Vector3(x,FL+.05,z)));g.add(arNo(mesh(new THREE.TubeGeometry(c2,30,.05,6),M('#111114'))));}
   const xm=M('#f2c230',{roughness:.7});for(const [x,z] of [[-7.2,-3.8],[7.1,3.2],[-7,1.2]])for(const r of [.78,-.78]){const t=arFlat(new THREE.PlaneGeometry(.7,.13),xm,x,FL+.01,z);t.rotation.z=r;g.add(t);}
   return g;}
+// ===== TRO-206: the soundstage around the board. The sides of the 3D arena used to be bare floor (empty on ultrawide);
+// now it's a film set: lighting rigs, a camera on a dolly, the director's chair, genre prop crates, a fan, a boom mic,
+// craft services, painted set flats that change by act (Western town, space station, haunted house, finale city),
+// crew and a small studio audience. It lives: lights sway, the fan spins, reels turn, crew bob, dust floats in the
+// beams; it reacts: the audience cheers on an enemy KO and gasps on yours, lights flash on a crit, the APPLAUSE sign
+// lights up, boss fights get red rigs. Click the clapperboard, a spotlight, the fan, the camera, the sign or a crew
+// member. Each side scales to the room the screen has (hidden on phones), so nothing covers the board.
+// Visual only: no rand(), no Math.random, nothing the fight reads.
+const ARS={g:null,L:null,R:null,act:-1,cheer:0,cheerBig:1,gasp:0,flash:0,boss:false,dA:-1,dE:-1,clk:[],heads:[],fans:[],reels:[],crew:[],fx:[],tally:null,sign:null,motes:null,flats:[],ftex:{},clap:0,fanB:0,camB:0,signT:0,s:1,hov:0};
+let arsSd=11;const arsR=()=>(arsSd=(arsSd*16807)%2147483647)/2147483647;
+function arSet(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,FL=-.62,g=new THREE.Group(),M=arMat;
+  const mk=(geo,mat,p,x,y,z)=>{const m=new THREE.Mesh(geo,mat);m.position.set(x||0,y||0,z||0);p.add(m);return m;},grp=(p,x,y,z,ry)=>{const o=new THREE.Group();o.position.set(x||0,y||0,z||0);o.rotation.y=ry||0;p.add(o);return o;};
+  const dk=M('#2a2a30',{metalness:.5,roughness:.5}),steel=M('#9a9ca6',{metalness:.55,roughness:.4}),wood=M('#a8743f'),woodD=M('#6e4a2a'),blk=M('#17161b'),eyeM=M('#0b0b0e',{roughness:.3});
+  const cyl=(r1,r2,h,n)=>new THREE.CylinderGeometry(r1,r2,h,n||10),box=(w,h,d)=>new THREE.BoxGeometry(w,h,d);
+  // floor: warm pools of light on each side so the set reads lit, not void
+  const pool=arTex(256,256,(x,w,h)=>{const r=x.createRadialGradient(w/2,h/2,4,w/2,h/2,w/2);r.addColorStop(0,'rgba(255,255,255,.9)');r.addColorStop(.5,'rgba(255,255,255,.3)');r.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=r;x.fillRect(0,0,w,h);});
+  const poolM=c=>new THREE.MeshBasicMaterial({map:pool,color:c,transparent:true,depthWrite:false,blending:2,opacity:.5});
+  const gaff=M('#b89a3a',{roughness:.8});
+  // one side: sx -1 = left of the screen, +1 = right. Local x = sx*u, u = distance out from the table edge.
+  const side=(sx)=>{const S=grp(g,sx*7.55,0,0),X=u=>sx*u,face=(u,z,tx,tz)=>Math.atan2((tx-sx*7.55)-X(u),tz-z);
+    for(const [u,z,c,r] of [[5,-2,'#ffd9a0',13],[9,5.5,sx<0?'#7fa2ff':'#ff8fc0',10],[3,6,'#ffe8c0',7]]){const p=arFlat(new THREE.PlaneGeometry(r,r),poolM(c),X(u),FL+.015,z);S.add(p);}
+    // lighting rig: a truss tower with a crossbar and two lamp heads aimed at the board
+    {const T=grp(S,X(7.5),FL,-6.6),tr=arTex(64,256,(x,w,h)=>{x.strokeStyle='#c9ccd4';x.lineWidth=7;x.strokeRect(4,0,w-8,h);x.lineWidth=4;for(let i=0;i<4;i++){x.beginPath();x.moveTo(4,i*64);x.lineTo(w-4,i*64+64);x.moveTo(w-4,i*64);x.lineTo(4,i*64+64);x.stroke();}});
+      tr.wrapT=THREE.RepeatWrapping;tr.repeat.set(1,5.6);const trM=M('#ffffff',{map:tr,transparent:true,alphaTest:.5,side:2,metalness:.5,roughness:.45});
+      arNo(mk(box(.55,6.4,.55),trM,T,0,3.2,0));arNo(mk(box(.55,.55,5.2),trM,T,-sx*1.3,6.0,1.9)).rotation.y=-sx*.6;mk(box(1.2,.16,1.2),dk,T,0,.08,0);
+      for(const [dx,dz] of [[-sx*2.4,3.6],[-sx*.4,.5]])arsHead(T,dx,5.55,dz,'#fff1c8',[-sx*12-dx*.2,.62,4.6]);}
+    // studio audience: a low bleacher in the front corner
+    {const Bl=grp(S,X(5.4),FL,9.3,sx*.28);(ARS.aud||(ARS.aud=[])).push(Bl);mk(new RB(7.2,.5,1.1,2,.08),woodD,Bl,0,.25,0);mk(new RB(7.2,.5,1.1,2,.08),woodD,Bl,0,.75,1.1);mk(box(7.2,.5,1.1),woodD,Bl,0,.25,1.1);
+      const shirts=['#e86a5a','#5ab0e8','#f2c230','#7bd36a','#c78af0','#ff9a5a','#5ae0c8'];
+      for(let row=0;row<2;row++)for(let i=0;i<6;i++){const p=arsPerson(Bl,-2.9+i*1.16+(row?.5:0),row?1.0:.5,row?1.15:-.05,shirts[(i*3+row*2+(sx>0?1:0))%7],row?.84:.86,{seat:1,cap:(i+row)%3===0,ry:Math.PI});p.aud=1;}}
+    return {S,X,bc:-sx*7.55};};
+  const L=side(-1),R=side(1);ARS.L=L.S;ARS.R=R.S;
+  // ---- left: camera dolly, director's chair, craft services ----
+  {const {S,X,bc}=L,D=grp(S,X(3.4),FL,1.6,1.25);
+    for(const ox of [-.55,.55])mk(box(.09,.07,9),steel,D,ox,.04,1.2);for(let i=0;i<10;i++)arNo(mk(box(1.5,.05,.18),woodD,D,0,.025,-3.1+i*.95));
+    const cart=grp(D,0,.12,0);mk(new RB(1.5,.28,1.4,2,.06),M('#3b3d46',{metalness:.4,roughness:.5}),cart,0,.22,0);for(const [wx,wz] of [[-.55,-.5],[.55,-.5],[-.55,.5],[.55,.5]]){const w=mk(cyl(.17,.17,.12,12),blk,cart,wx,.1,wz);w.rotation.z=Math.PI/2;}
+    mk(cyl(.09,.12,1.5),dk,cart,0,1.05,0);const cam=grp(cart,0,1.95,0);mk(new RB(.9,.95,1.5,2,.1),M('#26272e',{metalness:.35,roughness:.45}),cam,0,0,0);
+    const lens=mk(cyl(.3,.36,.7,16),blk,cam,0,0,1.05);lens.rotation.x=Math.PI/2;arNo(mk(new THREE.CircleGeometry(.24,16),M('#5a7cff',{metalness:.9,roughness:.1,emissive:'#1d2a66'}),cam,0,0,1.41));
+    for(const z of [-.38,.3]){const r=grp(cam,0,.82,z);mk(cyl(.42,.42,.12,20),M('#3a3b42',{metalness:.5,roughness:.4}),r).rotation.z=Math.PI/2;mk(box(.14,.08,.62),M('#c9ccd4',{metalness:.6}),r,0,0,0);ARS.reels.push(r);}
+    mk(box(.35,.3,.5),blk,cam,-.6,.15,-.55);const tl=M('#ff2a2a',{emissive:'#ff2a2a',emissiveIntensity:.2});mk(new THREE.SphereGeometry(.09,10,8),tl,cam,.3,.55,.7);ARS.tally=tl;
+    ARS.clk.push({o:D,k:'cam'});arsPerson(S,X(4.6),FL,3.4,'#3d7bd9',1,{look:[X(3.4),1.6],head:'set',k:'crew'});
+    // director's chair + megaphone
+    const C=grp(S,X(7.8),FL,5.2,-1.0),cn=M('#ffffff',{map:arTex(256,96,(x,w,h)=>{x.fillStyle='#b8242f';x.fillRect(0,0,w,h);x.fillStyle='#f6efe2';x.font='bold 44px Anton, Impact, sans-serif';x.textAlign='center';x.fillText('DIRECTOR',w/2,64);}),side:2});
+    for(const s2 of [-1,1]){for(const z of [-.3,.3]){mk(box(.07,1.0,.07),wood,C,s2*.45,.5,z);}mk(box(.08,.08,.8),wood,C,s2*.47,1.05,0);mk(box(.07,1.0,.07),wood,C,s2*.45,1.55,-.36);}
+    mk(box(.9,.04,.7),M('#b8242f',{side:2}),C,0,.98,0);mk(new THREE.PlaneGeometry(.95,.36),cn,C,0,1.75,-.37);
+    const mg=mk(cyl(.07,.28,.6,14,1),M('#f2c230',{metalness:.2,roughness:.5}),C,.9,.14,.5);mg.rotation.set(Math.PI/2,0,.6);
+    arsPerson(S,X(8.6),FL,3.6,'#2b2b33',1.02,{look:[bc,0],head:'beret',k:'crew',mega:1});
+    // craft services: a folding table with coffee and donuts
+    const K=grp(S,X(1.6),FL,-3.6,.15);mk(box(1.9,.07,1),M('#e8e2d6'),K,0,.95,0);for(const [a,b] of [[-.85,-.4],[.85,-.4],[-.85,.4],[.85,.4]])mk(box(.06,.95,.06),steel,K,a,.47,b);
+    const dn=new THREE.TorusGeometry(.13,.07,8,14),pk=M('#ff8fc0',{roughness:.6}),ch=M('#7a4a2a');for(let i=0;i<5;i++){const d=arNo(mk(dn,i%2?ch:pk,K,-.55+i*.22,1.03,-.15+(i%2)*.2));d.rotation.x=Math.PI/2;}
+    for(let i=0;i<3;i++)arNo(mk(cyl(.08,.06,.2),M('#f6efe2'),K,.4+i*.18,1.08,.25));mk(cyl(.22,.22,.5,12),M('#c0392b',{metalness:.4}),K,.6,1.23,-.25);
+    for(const [x,z,r] of [[X(2.8),7.6,.6],[X(6.5),-2.4,-.8]])for(const q of [.78,-.78]){const t=arFlat(new THREE.PlaneGeometry(.5,.09),gaff,x,FL+.012,z);t.rotation.z=q+r;S.add(t);}
+    const cb=new THREE.CatmullRomCurve3([[X(3.4),1.6],[X(4.6),-.8],[X(6.2),-2.6],[X(7.5),-6.6]].map(([x,z])=>new THREE.Vector3(x,FL+.05,z)));S.add(arNo(new THREE.Mesh(new THREE.TubeGeometry(cb,40,.05,6),M('#111114'))));}
+  // ---- right: genre prop crates, fan, boom mic, APPLAUSE sign ----
+  {const {S,X,bc}=R;
+    const crate=(u,y,z,ry,label,col)=>{const c=grp(S,X(u),FL+y,z,ry),t=arTex(256,256,(x,w,h)=>{x.fillStyle='#b07a45';x.fillRect(0,0,w,h);x.fillStyle='rgba(0,0,0,.25)';for(let i=0;i<5;i++)x.fillRect(0,i*52,w,4);x.strokeStyle='#6e4a2a';x.lineWidth=18;x.strokeRect(9,9,w-18,h-18);
+        x.beginPath();x.moveTo(18,18);x.lineTo(w-18,h-18);x.stroke();x.fillStyle=col;x.font='bold 40px Anton, Impact, sans-serif';x.textAlign='center';x.fillText(label,w/2,h/2+14);});
+      mk(new RB(1.5,1.3,1.4,2,.05),M('#ffffff',{map:t}),c,0,.65,0);return c;};
+    const cw=crate(2.2,0,-1.4,.25,'WILD WEST','#2a1a10'),cs=crate(3.9,0,-.6,-.2,'SPACE OPERA','#122a55'),ch=crate(2.6,0,.6,.1,'SLASHER','#5a0a12'),cu=crate(3.0,1.3,-1.0,.4,'UNDEAD','#2a2a2a');
+    // cowboy hat
+    {const h=grp(cw,0,1.3,0,.4),hm=M('#a8662e');h.scale.setScalar(1.45);mk(cyl(.62,.62,.05,20),hm,h,0,.03,0).scale.set(1,1,.8);mk(cyl(.28,.36,.42,16),hm,h,0,.25,0);mk(cyl(.37,.37,.07,16),M('#2a1a10'),h,0,.1,0);}
+    // ray gun
+    {const r=grp(cs,0,1.42,0,.9),gm=M('#e8e8f0',{metalness:.6,roughness:.3}),rm=M('#ff4d6d');const b=mk(cyl(.07,.12,.8,12),gm,r,0,0,.15);b.rotation.x=Math.PI/2;mk(new THREE.SphereGeometry(.2,14,10),rm,r,0,0,-.25);
+      for(const z of [0,.17,.34]){const q=mk(new THREE.TorusGeometry(.12,.035,6,14),M('#4dd9ff',{emissive:'#1a6a88'}),r,0,0,z);}const gr=mk(box(.1,.32,.14),rm,r,0,-.22,-.28);gr.rotation.x=-.3;}
+    // hockey mask
+    {const m=grp(ch,0,1.42,.1),mm=M('#f2efe6',{roughness:.5}),mask=mk(new THREE.SphereGeometry(.38,16,12,0,Math.PI*2,0,Math.PI*.62),mm,m,0,0,0);mask.scale.set(.8,1,.45);mask.rotation.x=-1.2;
+      for(const [x,z,r] of [[-.13,-.05,.07],[.13,-.05,.07],[0,.2,.04],[-.1,.25,.035],[.1,.25,.035]])arNo(mk(new THREE.CircleGeometry(r,10),M('#18161a'),m,x,.17+z*.1,z+.05)).rotation.x=-Math.PI/2+.35;
+      for(const [x,z] of [[-.12,.05],[.12,.05]]){const c=arNo(mk(new THREE.PlaneGeometry(.06,.18),M('#c4202e'),m,x,.19,z-.18));c.rotation.x=-Math.PI/2+.35;c.rotation.z=x>0?.6:-.6;}}
+    // skull
+    {const k=grp(cu,0,1.3,0,-.5),bm=M('#efe8d6');mk(new THREE.SphereGeometry(.3,14,10),bm,k,0,.32,0);mk(box(.32,.16,.26),bm,k,0,.1,.08);for(const x of [-.11,.11])mk(new THREE.SphereGeometry(.08,8,6),eyeM,k,x,.32,.24);}
+    // standing fan (spins; click for a gust)
+    {const F=grp(S,X(6.4),FL,3.6,-.9);mk(cyl(.5,.55,.12,18),dk,F,0,.06,0);mk(cyl(.06,.06,2.2),steel,F,0,1.15,0);const hd=grp(F,0,2.35,0),cg=M('#c9ccd4',{metalness:.6,roughness:.35});
+      mk(new THREE.TorusGeometry(.75,.035,6,32),cg,hd,0,0,.12);mk(new THREE.TorusGeometry(.75,.035,6,32),cg,hd,0,0,-.12);mk(new THREE.SphereGeometry(.2,12,8),dk,hd,0,0,-.18).scale.set(1,1,1.6);
+      const bl=grp(hd,0,0,.02),bm2=M('#5ab0e8',{side:2,roughness:.5});for(let i=0;i<3;i++){const b=mk(new THREE.CircleGeometry(.55,14,0,.9),bm2,bl);b.rotation.z=i*2.094;}mk(new THREE.SphereGeometry(.12,10,8),M('#f2c230'),hd,0,0,.1);
+      ARS.fans.push({hd,bl,ph:0});ARS.clk.push({o:F,k:'fan'});}
+    // boom mic over the board's edge
+    {const Bm=grp(S,X(2.6),FL,-5.2,0);for(let i=0;i<3;i++){const a=i*2.094,lg=mk(cyl(.035,.035,1.2,6),dk,Bm,Math.cos(a)*.35,.5,Math.sin(a)*.35);lg.rotation.set(Math.sin(a)*.5,0,-Math.cos(a)*.5);}
+      mk(cyl(.045,.045,2.6,8),dk,Bm,0,2,0);const arm=grp(Bm,0,3.25,0);arm.rotation.z=-.22*-1;arm.rotation.y=.0;const pole=mk(cyl(.035,.035,2.9,8),steel,arm,-1.35,0,0);pole.rotation.z=Math.PI/2;
+      const mic=mk(new THREE.CapsuleGeometry(.16,.55,6,10),M('#5c5f68',{roughness:1}),arm,-2.85,-.2,0);mic.rotation.z=Math.PI/2;ARS.fx.push({o:arm,k:'boom',b:arm.rotation.z});}
+    // APPLAUSE sign on a stand (lights on a KO; click it and the audience cheers)
+    {const A=grp(S,X(7.2),FL,-.6,-.85);mk(cyl(.05,.05,2.6,8),dk,A,0,1.3,0);mk(cyl(.4,.45,.1,14),dk,A,0,.05,0);mk(new RB(2.5,.75,.35,2,.06),M('#2a2a30',{metalness:.4}),A,0,2.9,0);
+      const sm=M('#ffffff',{map:arTex(256,72,(x,w,h)=>{x.fillStyle='#3a0b0f';x.fillRect(0,0,w,h);x.fillStyle='#ff6a5a';x.font='bold 50px Anton, Impact, sans-serif';x.textAlign='center';x.fillText('APPLAUSE',w/2,56);}),emissive:'#ff3020',emissiveIntensity:.05});
+      sm.emissiveMap=sm.map;arNo(mk(new THREE.PlaneGeometry(2.3,.6),sm,A,0,2.9,.18));ARS.sign=sm;ARS.clk.push({o:A,k:'sign'});
+      arsPerson(S,X(5),FL,1.3,'#e86a5a',.98,{look:[bc,0],head:'cap',k:'crew'});arsPerson(S,X(8.8),FL,1.6,'#7bd36a',1,{look:[X(6.4),3.6],head:'set',k:'crew',clip:1});}
+    const cb=new THREE.CatmullRomCurve3([[X(2.6),-5.2],[X(4.5),-4],[X(5.2),-1],[X(7.2),-.6]].map(([x,z])=>new THREE.Vector3(x,FL+.05,z)));S.add(arNo(new THREE.Mesh(new THREE.TubeGeometry(cb,30,.05,6),M('#111114'))));
+    for(const [x,z,r] of [[X(4.6),6.4,.3],[X(1.6),2.6,-.4]])for(const q of [.78,-.78]){const t=arFlat(new THREE.PlaneGeometry(.5,.09),gaff,x,FL+.012,z);t.rotation.z=q+r;S.add(t);}}
+  // painted set flats (by act) on wooden frames, at the outer edges
+  for(const [P,sx] of [[L,-1],[R,1]]){const F=grp(P.S,P.X(10.4),FL,-.6,sx*-.55),fm=M('#ffffff',{roughness:.95});
+    mk(new THREE.PlaneGeometry(8.6,5.2),fm,F,0,2.85,0);mk(box(8.9,.22,.18),woodD,F,0,5.5,-.05);mk(box(8.9,.22,.18),woodD,F,0,.2,-.05);for(const x of [-4.35,4.35])mk(box(.22,5.5,.18),woodD,F,x,2.85,-.05);
+    for(const x of [-3,3]){const b=mk(box(.14,4.4,.14),woodD,F,x,2.1,-1.1);b.rotation.x=-.47;}for(const x of [-3.1,3.1])mk(new THREE.SphereGeometry(.35,10,8),M('#8a7a5a',{roughness:1}),F,x,.12,-2.1).scale.set(1,.45,.7);
+    ARS.flats.push({m:fm,sx});}
+  // dust in the beams: small specks drifting up (one shared geometry + material, no outline)
+  {const n=28,geo=new THREE.IcosahedronGeometry(.045,0),pm=new THREE.MeshBasicMaterial({color:'#fff2cc',transparent:true,opacity:.32,depthWrite:false,blending:2}),sd=[];
+    for(let i=0;i<n;i++){const b=i%4,cx=[-9.6,9.6,-13.5,13.5][b],cz=b<2?-4.5:1,o=arNo(new THREE.Mesh(geo,pm));g.add(o);sd.push([cx+(arsR()-.5)*3,cz+(arsR()-.5)*6,arsR()*5,arsR()*6.28,o]);}ARS.motes={sd};}
+  ARS.g=g;arsAct(true);return g;}
+// a lamp head on a rig (aim = world offset it points along); returns the head group
+function arsHead(p,x,y,z,col,aim){const {THREE}=TBA,M=arMat,h=new THREE.Group();h.position.set(x,y,z);p.add(h);const yaw=Math.atan2(aim[0]-x,aim[2]-z),pit=Math.atan2(-(aim[1]-y),Math.hypot(aim[0]-x,aim[2]-z));h.rotation.order='YXZ';h.rotation.set(pit,yaw,0);
+  const yk=new THREE.Mesh(new THREE.TorusGeometry(.5,.04,6,16,Math.PI),M('#2a2a30',{metalness:.5}));yk.rotation.z=Math.PI;h.add(yk);
+  const can=new THREE.Mesh(new THREE.CylinderGeometry(.4,.32,.7,16),M('#1f1f24',{metalness:.4,roughness:.5}));can.rotation.x=Math.PI/2;h.add(can);
+  const fm=new THREE.MeshBasicMaterial({color:col}),fc=arNo(new THREE.Mesh(new THREE.CircleGeometry(.34,18),fm));fc.position.z=.36;h.add(fc);
+  const bm=new THREE.MeshBasicMaterial({color:col,transparent:true,opacity:.03,depthWrite:false,blending:2,side:2}),beam=arNo(new THREE.Mesh(new THREE.CylinderGeometry(.34,2.4,10,20,1,true),bm));beam.rotation.x=-Math.PI/2;beam.position.z=5.3;h.add(beam);
+  const H={h,fm,bm,col:new THREE.Color(col),bx:pit,by:yaw,ph:(x*7.3+z*3.1)%6.28,sw:0,swT:0};ARS.heads.push(H);ARS.clk.push({o:h,k:'lamp',H});return H;}
+// a crew / audience toy: body, head with eyes, arms that go up on a cheer
+const arsG=(k,f)=>(ARS.geo||(ARS.geo={}))[k]||(ARS.geo[k]=f()),arsM=(c)=>(ARS.mat||(ARS.mat={}))[c]||(ARS.mat[c]=arMat(c));
+function arsPerson(p,x,y,z,shirt,sc,o){const {THREE}=TBA,M=arMat,P=new THREE.Group();P.position.set(x,y,z);P.scale.setScalar(sc*.95);p.add(P);o=o||{};
+  const skin=['#f1c7a1','#c98e62','#8d5a3b','#e8b48a'][(Math.abs(x*3+z*5)|0)%4],sk=arsM(skin),sm=arsM(shirt),pm=arsM('#3a3b46');
+  if(!o.seat)for(const s of [-.15,.15])P.add(arAt(new THREE.Mesh(new THREE.CylinderGeometry(.11,.1,.7,8),pm),s,.35,0));
+  const body=arAt(new THREE.Mesh(arsG('body',()=>new THREE.CapsuleGeometry(.3,.45,4,10)),sm),0,o.seat?.42:1.05,0);P.add(body);
+  const hd=new THREE.Group();hd.position.set(0,o.seat?1.15:1.78,0);P.add(hd);hd.add(new THREE.Mesh(arsG('head',()=>new THREE.SphereGeometry(.3,14,10)),sk));
+  const q=o.seat?arNo:(m=>m);if(!o.seat)for(const s of [-.1,.1])hd.add(arAt(new THREE.Mesh(arsG('eye',()=>new THREE.SphereGeometry(.045,8,6)),arsM('#0b0b0e')),s,.04,.27));
+  if(o.head==='cap'||o.cap){hd.add(q(arAt(new THREE.Mesh(new THREE.SphereGeometry(.31,12,8,0,Math.PI*2,0,Math.PI/2),M(o.cap?'#f2c230':'#c0392b')),0,.06,0)));if(!o.seat)hd.add(arAt(new THREE.Mesh(new THREE.BoxGeometry(.36,.04,.28),M(o.cap?'#f2c230':'#c0392b')),0,.1,.3));}
+  if(o.head==='beret')hd.add(arAt(new THREE.Mesh(new THREE.CylinderGeometry(.32,.3,.1,14),M('#1a1a20')),.04,.27,0));
+  if(o.head==='set'){const t=new THREE.Mesh(new THREE.TorusGeometry(.32,.035,6,16,Math.PI),M('#1a1a20'));t.position.y=.02;hd.add(t);hd.add(arAt(new THREE.Mesh(new THREE.SphereGeometry(.09,8,6),M('#1a1a20')),.31,0,0));}
+  const arms=[];for(const s of [-1,1]){const a=new THREE.Group();a.position.set(s*.34,o.seat?.62:1.3,0);P.add(a);a.add(q(arAt(new THREE.Mesh(arsG('arm',()=>new THREE.CapsuleGeometry(.08,.38,3,6)),sm),0,-.26,0)));if(!o.seat)a.add(arAt(new THREE.Mesh(arsG('hand',()=>new THREE.SphereGeometry(.09,8,6)),sk),0,-.5,0));a.rotation.z=s*.12;arms.push(a);}
+  if(o.mega){const m=new THREE.Mesh(new THREE.CylinderGeometry(.05,.18,.4,12,1),M('#f2c230'));m.position.set(0,-.55,.12);m.rotation.x=Math.PI/2;arms[1].add(m);}
+  if(o.clip){const c=new THREE.Mesh(new THREE.BoxGeometry(.3,.4,.03),M('#c9a36a'));c.position.set(0,-.45,.12);c.rotation.x=-.5;arms[0].add(c);}
+  P.rotation.y=o.look?Math.atan2(o.look[0]-x,o.look[1]-z):o.ry||0;
+  const C={P,hd,arms,ph:(x*1.7+z*2.3)%6.28,aud:0,k:o.k,y0:y,wave:0,ry:P.rotation.y};ARS.crew.push(C);if(o.k)ARS.clk.push({o:P,k:'crew',C});return C;}
+// the set flats' paintings: one canvas per act and side
+function arsPaint(act,sx){const k=act+':'+sx;if(ARS.ftex[k])return ARS.ftex[k];
+  const t=arTex(640,384,(x,w,h)=>{let sd=act*97+(sx>0?13:5);const rn=()=>(sd=(sd*16807)%2147483647)/2147483647,sky=(a,b)=>{const g=x.createLinearGradient(0,0,0,h);g.addColorStop(0,a);g.addColorStop(1,b);x.fillStyle=g;x.fillRect(0,0,w,h);};
+    const sil=(c,pts)=>{x.fillStyle=c;x.beginPath();x.moveTo(0,h);pts.forEach(([a,b])=>x.lineTo(a*w,b*h));x.lineTo(w,h);x.fill();},disc=(cx,cy,r,c)=>{x.fillStyle=c;x.beginPath();x.arc(cx,cy,r,0,7);x.fill();};
+    if(act===1){sky('#ffb15a','#ffe3a0');disc(sx<0?w*.72:w*.3,h*.34,54,'#fff1c0');sil('#c9733f',[[0,.62],[.12,.62],[.16,.48],[.3,.48],[.34,.62],[.6,.64],[.66,.52],[.8,.52],[.84,.64],[1,.62]]);sil('#e3a05f',[[0,.82],[1,.78]]);
+      const bx=sx<0?.08:.5;x.fillStyle='#7a4526';x.fillRect(bx*w,h*.42,w*.4,h*.45);x.fillStyle='#5a311a';x.fillRect(bx*w-8,h*.38,w*.4+16,h*.06);x.fillStyle='#f6dfa8';x.font='bold 40px Anton, Impact, sans-serif';x.textAlign='center';x.fillText(sx<0?'SALOON':'SHERIFF',(bx+.2)*w,h*.54);
+      x.fillStyle='#2a1a10';x.fillRect((bx+.16)*w,h*.64,w*.08,h*.23);for(const q of [.05,.31])x.fillRect((bx+q)*w,h*.6,w*.05,h*.1);x.fillStyle='#3f7a3a';const cx=sx<0?.82:.16;x.fillRect(cx*w,h*.55,22,h*.35);x.fillRect(cx*w-26,h*.62,26,14);x.fillRect(cx*w-26,h*.5,14,h*.13);x.fillRect(cx*w+22,h*.66,22,14);x.fillRect(cx*w+30,h*.56,14,h*.11);}
+    else if(act===2){sky('#060818','#1a2050');for(let i=0;i<120;i++){x.fillStyle=`rgba(255,255,255,${.3+rn()*.7})`;x.fillRect(rn()*w,rn()*h*.7,2,2);}
+      const px=sx<0?w*.68:w*.3;disc(px,h*.36,70,'#e86a5a');x.fillStyle='#ff9a7a';x.beginPath();x.arc(px-14,h*.36-14,46,0,7);x.fill();x.strokeStyle='#ffd27a';x.lineWidth=7;x.beginPath();x.ellipse(px,h*.38,120,22,-.25,0,7);x.stroke();
+      sil('#2b3550',[[0,.74],[.2,.74],[.2,.64],[.36,.64],[.36,.72],[.6,.72],[.6,.58],[.7,.58],[.7,.72],[1,.72]]);x.fillStyle='#4dd9ff';for(let i=0;i<14;i++)x.fillRect((.03+i*.07)*w,h*(.79+(i%2)*.05),18,6);
+      x.strokeStyle='#8a93a8';x.lineWidth=16;x.strokeRect(8,8,w-16,h-16);x.beginPath();x.moveTo(w/2,8);x.lineTo(w/2,h*.62);x.stroke();}
+    else if(act===3){sky('#1d1030','#4a2a5e');disc(sx<0?w*.76:w*.24,h*.28,46,'#f3ecd0');for(let i=0;i<5;i++){const bx=rn()*w,by=rn()*h*.4+20;x.fillStyle='#120818';x.beginPath();x.moveTo(bx,by);x.quadraticCurveTo(bx+9,by-9,bx+18,by);x.quadraticCurveTo(bx+27,by-9,bx+36,by);x.quadraticCurveTo(bx+18,by+6,bx,by);x.fill();}
+      sil('#2a1838',[[0,.8],[1,.76]]);const hx=sx<0?.12:.42;x.fillStyle='#160c20';x.beginPath();x.moveTo(hx*w,h*.82);x.lineTo(hx*w,h*.44);x.lineTo((hx+.08)*w,h*.3);x.lineTo((hx+.14)*w,h*.44);x.lineTo((hx+.2)*w,h*.36);x.lineTo((hx+.28)*w,h*.18);x.lineTo((hx+.36)*w,h*.36);x.lineTo((hx+.44)*w,h*.44);x.lineTo((hx+.44)*w,h*.82);x.fill();
+      x.fillStyle='#ffcf5a';for(const [a,b] of [[.06,.5],[.2,.42],[.3,.6],[.36,.5]])x.fillRect((hx+a)*w,h*b,16,20);x.strokeStyle='#120818';x.lineWidth=9;const tx=sx<0?.82:.1;x.beginPath();x.moveTo(tx*w,h*.82);x.lineTo(tx*w,h*.5);x.lineTo((tx-.05)*w,h*.36);x.moveTo(tx*w,h*.56);x.lineTo((tx+.06)*w,h*.42);x.moveTo(tx*w,h*.62);x.lineTo((tx-.04)*w,h*.55);x.stroke();}
+    else{sky('#0a0820','#3a1650');const gl=x.createRadialGradient(w/2,h*.85,10,w/2,h*.85,w*.55);gl.addColorStop(0,'rgba(255,140,60,.75)');gl.addColorStop(1,'rgba(255,80,60,0)');x.fillStyle=gl;x.fillRect(0,0,w,h);
+      for(const [a,c] of [[-.35,'rgba(160,200,255,.18)'],[.3,'rgba(255,200,240,.16)']]){x.save();x.translate(w*(sx<0?.6:.4),h);x.rotate(a);x.fillStyle=c;x.beginPath();x.moveTo(-10,0);x.lineTo(-60,-h*1.3);x.lineTo(60,-h*1.3);x.lineTo(10,0);x.fill();x.restore();}
+      let bx=0;while(bx<w){const bw=40+rn()*60,bh=h*(.25+rn()*.4);x.fillStyle='#17122a';x.fillRect(bx,h-bh,bw,bh);x.fillStyle=['#ff4d9a','#4dd9ff','#ffcf5a'][(bx|0)%3];for(let i=0;i<5;i++)if(rn()<.6)x.fillRect(bx+6+rn()*(bw-14),h-bh+8+rn()*(bh-20),6,8);bx+=bw+4;}
+      x.fillStyle='#ffcf5a';x.font='bold 46px Anton, Impact, sans-serif';x.textAlign='center';x.fillText(sx<0?'THE FINALE':'TONIGHT',w/2,h*.2);}
+    // painted-flat feel: a little canvas grain and an edge shadow
+    for(let i=0;i<1400;i++){x.fillStyle=`rgba(0,0,0,${rn()*.08})`;x.fillRect(rn()*w,rn()*h,3,3);}x.strokeStyle='rgba(0,0,0,.35)';x.lineWidth=10;x.strokeRect(0,0,w,h);});
+  ARS.ftex[k]=t;return t;}
+function arsAct(force){let a=1;try{a=Math.max(1,Math.min(4,((SCHEDULE[S.round-1]||{}).act)|0||1));}catch(e){}
+  if(a===ARS.act&&!force)return;ARS.act=a;ARS.flats.forEach(F=>{F.m.map=arsPaint(a,F.sx);F.m.needsUpdate=true;});}
+// a new fight: backdrop by act, boss rigs red, counters reset
+// test links: #noset hides the set (before/after on the same build), #fps shows frames a second in a fight
+function arsFight(){try{if(ARS.g)ARS.g.visible=!/noset/.test(location.hash);arsAct();ARS.boss=!!(S&&S.enemy&&S.enemy.boss);ARS.dA=ARS.dE=-1;ARS.cheer=ARS.gasp=0;
+  ARS.heads.forEach(H=>{H.fm.color.copy(H.col);if(ARS.boss)H.fm.color.lerp(new TBA.THREE.Color('#ff3a3a'),.6);H.bm.color.copy(H.fm.color);});}catch(e){}}
+// each side gets the room the screen leaves beside the table; too little (phones) and it's hidden
+function arsFit(){if(!ARS.L||!AR.cam)return;const {THREE}=TBA,v=new THREE.Vector3(),c=AR.cam;c.updateMatrixWorld();let xe=99;
+  for(const z of [-2,4]){v.set(-10,0,z).project(c);const a=v.x;v.set(-20,0,z).project(c);const b=v.x,k=(b-a)/-10;if(Math.abs(k)>1e-6)xe=Math.min(xe,-(-1-a)/k+10);}
+  const room=xe-7.55,s=Math.max(.6,Math.min(1.2,room/10.5));ARS.s=s;for(const S of [ARS.L,ARS.R]){S.visible=room>2.2;S.scale.setScalar(s);}}
+function arsCheer(now,big){ARS.cheer=now;ARS.cheerBig=big;ARS.signT=now;}
+function arsFrame(now){if(!ARS.g)return;const t=now/1000,dt=AR.dt||.016;
+  if(/fps/.test(location.hash)&&now-(ARS.fpsT||0)>500){ARS.fpsT=now;let d=document.getElementById('arsfps');if(!d){d=document.createElement('div');d.id='arsfps';d.style.cssText='position:fixed;right:8px;bottom:8px;z-index:99;font:600 13px monospace;color:#fff;background:#000a;padding:3px 7px;border-radius:5px;pointer-events:none';document.body.appendChild(d);}
+    d.textContent=Math.round(1000/Math.max(1,AR.ema))+' fps'+(ARS.g.visible?' · set on':' · set off');}
+  // a slow device: the audience goes first (before the arena's own fallbacks take the outlines)
+  if(AR.q>=1&&ARS.aud&&ARS.aud[0].visible)ARS.aud.forEach(o=>{o.visible=false;});
+  // fight reactions, read only from what is already on screen: KOs, the end of the fight
+  if(typeof B!=='undefined'&&B&&B.units){let a=0,e=0;for(const u of B.units)if(!u.alive&&!u.summon){if(u.side==='A')a++;else e++;}
+    if(ARS.dE>=0&&e>ARS.dE)arsCheer(now,1);if(ARS.dA>=0&&a>ARS.dA)ARS.gasp=now;ARS.dA=a;ARS.dE=e;
+    const end=TBA.end&&now<TBA.end.until?TBA.end:null;if(end&&end.win&&now-ARS.cheer>1400)arsCheer(now,1.3);}
+  const fl=Math.max(0,1-(now-ARS.flash)/260);
+  for(const H of ARS.heads){const sw=H.swT?Math.exp(-(now-H.swT)/900)*Math.sin((now-H.swT)/150)*.5:0;H.h.rotation.y=H.by+Math.sin(t*.5+H.ph)*(ARS.boss?.09:.045)+sw;H.h.rotation.x=H.bx+Math.sin(t*.37+H.ph*2)*.025;
+    H.bm.opacity=.03+fl*.09+(ARS.boss?.015*Math.sin(t*3+H.ph):0);}
+  for(const F of ARS.fans){const bo=ARS.fanB>now?1:0;F.ph+=dt*(9+bo*22);F.bl.rotation.z=-F.ph;F.hd.rotation.y=Math.sin(t*.45)*.7;}
+  for(const r of ARS.reels)r.rotation.x-=dt*(ARS.camB>now?9:1.4);
+  for(const f of ARS.fx)if(f.k==='boom')f.o.rotation.z=f.b+Math.sin(t*.6)*.03;
+  if(ARS.tally)ARS.tally.emissiveIntensity=ARS.camB>now?(Math.sin(t*30)>0?3:.2):(Math.sin(t*2.2)>0?1.6:.2);
+  if(ARS.sign){const k=Math.max(0,1-(now-ARS.signT)/1800);ARS.sign.emissiveIntensity=.05+k*2.2*(Math.sin(t*14)>-.3?1:.5);}
+  for(const C of ARS.crew){const ck=(now-ARS.cheer)/1000-(C.aud?(C.ph%1)*.25:.1),gk=(now-ARS.gasp)/1000,wk=(now-C.wave)/1000;
+    let y=Math.sin(t*(C.aud?2.4:1.6)+C.ph)*.03,up=0;
+    if(ck>=0&&ck<1.2){const q=ck/1.2;y+=Math.abs(Math.sin(q*Math.PI*(C.aud?3:2)))*.35*ARS.cheerBig*(1-q*.5);up=Math.sin(q*Math.PI);}
+    if(gk>=0&&gk<.7)y-=Math.sin(gk/.7*Math.PI)*.08;
+    if(wk>=0&&wk<1.4){const q=wk/1.4;y+=Math.abs(Math.sin(q*Math.PI*2))*.25;C.arms[1].rotation.z=-2.6*Math.sin(q*Math.PI)+.12;C.arms[1].rotation.x=Math.sin(q*Math.PI*6)*.3;}
+    else{C.arms[1].rotation.z=.12-up*2.5;C.arms[1].rotation.x=0;}
+    C.arms[0].rotation.z=-.12+up*2.5;C.P.position.y=C.y0+Math.max(-.1,y);C.hd.rotation.y=Math.sin(t*.4+C.ph*3)*.35;C.hd.rotation.x=gk>=0&&gk<.7?-.25:0;}
+  if(ARS.motes)for(const d of ARS.motes.sd){const y=(d[2]+t*.18)%5;d[4].position.set(d[0]+Math.sin(t*.3+d[3])*.4,-.4+y,d[1]+Math.cos(t*.25+d[3])*.4);}
+  // the clapperboard (built with the board) claps when clicked
+  if(AR.clapTop){const q=(now-ARS.clap)/420;AR.clapTop.rotation.z=q>=0&&q<1?.32*(q<.25?1-q/.25:arEase((q-.25)/.75)):.32;}}
+// clicks on the set: the canvas never takes the pointer, so the page's own click is ray-cast into the scene, but only
+// when it didn't land on a button, a unit or a panel
+function arsPick(ev){if(!ARS.g||!AR.f||!AR.cam||UI.screen!=='battle')return null;const tg=ev.target;
+  if(tg&&tg.closest&&tg.closest('button,a,input,select,textarea,label,.unit,.bslot,.overlay,.resbar,.board,.syn,.chip,[onclick],[role=button],.tbx'))return null;
+  const {THREE}=TBA,bx=ARS.bx||(ARS.bx=new THREE.Box3()),v=new THREE.Vector3(),px=ev.clientX,py=ev.clientY;let best=null,ba=1e12;
+  const vis=ARS.clk.filter(c=>{let o=c.o;while(o){if(!o.visible)return false;o=o.parent;}return true;});if(AR.clapK)vis.push({o:AR.clapK,k:'clap'});
+  for(const c of vis){bx.setFromObject(c.o);if(bx.isEmpty())continue;let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+    for(let i=0;i<8;i++){v.set(i&1?bx.max.x:bx.min.x,i&2?bx.max.y:bx.min.y,i&4?bx.max.z:bx.min.z).project(AR.cam);const sx=(v.x+1)/2*innerWidth,sy=(1-v.y)/2*innerHeight;x0=Math.min(x0,sx);x1=Math.max(x1,sx);y0=Math.min(y0,sy);y1=Math.max(y1,sy);}
+    const a=(x1-x0)*(y1-y0);if(px>=x0&&px<=x1&&py>=y0&&py<=y1&&a<ba){ba=a;best=c;}}
+  return best;}
+function arsClick(ev){try{const c=arsPick(ev);if(!c)return;const now=performance.now();sfxUnlock();
+  if(c.k==='clap'){ARS.clap=now;sfxClack(1);}
+  else if(c.k==='lamp'){c.H.swT=now;ARS.flash=now;sfxClack(.35);}
+  else if(c.k==='fan')ARS.fanB=now+2200;
+  else if(c.k==='cam'){ARS.camB=now+1500;ARS.flash=now;sfxClack(.5);}
+  else if(c.k==='sign'){arsCheer(now,1.2);sfxClaps();}
+  else if(c.k==='crew')c.C.wave=now;}catch(e){}}
+function arsHover(ev){const now=performance.now();if(now-ARS.hov<90)return;ARS.hov=now;let on=false;try{on=!!arsPick(ev);}catch(e){}document.documentElement.classList.toggle('arshov',on);}
+// set sounds, made in Web Audio (no sample files, own noise generator)
+function sfxNoise(C,dur,seed){const n=Math.max(1,C.sampleRate*dur|0),b=C.createBuffer(1,n,C.sampleRate),d=b.getChannelData(0);let s=seed||7;for(let i=0;i<n;i++){s=(s*16807)%2147483647;d[i]=(s/1073741823.5-1)*Math.pow(1-i/n,3);}return b;}
+function sfxClack(v){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;const C=SFX.ctx,src=C.createBufferSource(),f=C.createBiquadFilter(),g=C.createGain();
+  src.buffer=sfxNoise(C,.07,31);f.type='bandpass';f.frequency.value=2600;f.Q.value=1.2;g.gain.value=.55*(v||1);src.connect(f);f.connect(g);g.connect(C.destination);src.start();}catch(e){}}
+function sfxClaps(){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;const C=SFX.ctx,t0=C.currentTime,out=C.createGain(),f=C.createBiquadFilter();out.gain.value=.22;f.type='bandpass';f.frequency.value=1800;f.Q.value=.7;f.connect(out);out.connect(C.destination);
+  const b=sfxNoise(C,.05,77);let s=5;for(let i=0;i<34;i++){s=(s*16807)%2147483647;const src=C.createBufferSource(),g=C.createGain();src.buffer=b;src.playbackRate.value=.8+(s%400)/1000;g.gain.value=1-i/40;src.connect(g);g.connect(f);src.start(t0+i*.035+(s%30)/1000);}}catch(e){}}
 // the camera frames the whole board and every toy's head; each square of the battle is then moved onto its toy
 function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelectorAll('.bslot')];slots.forEach(s=>{s.style.transform='';});
   const W=f.clientWidth,H0=f.clientHeight,top=Math.round(H0*AR_TOP),H=H0+top;Object.assign(AR,{W,H0,top});
@@ -25935,7 +26137,7 @@ function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelecto
 // widens the picture around it), so the stage, curtain and floor run to the screen edges
 function arView(force){const f=AR.f;if(!f)return;const r=f.getBoundingClientRect(),vw=innerWidth,vh=innerHeight,x=Math.round(r.left),y=Math.round(r.top)-AR.top;
   if(!force&&x===AR.vx&&y===AR.vy&&vw===AR.vw&&vh===AR.vh)return;Object.assign(AR,{vx:x,vy:y,vw,vh});
-  AR.cv.style.width=vw+'px';AR.cv.style.height=vh+'px';AR.R.setSize(vw,vh,false);AR.cam.setViewOffset(AR.W,AR.H,-x,-y,vw,vh);}
+  AR.cv.style.width=vw+'px';AR.cv.style.height=vh+'px';AR.R.setSize(vw,vh,false);AR.cam.setViewOffset(AR.W,AR.H,-x,-y,vw,vh);try{arsFit();}catch(e){}}
 function arDispose(o){AR.scene.remove(o);if(o.userData&&o.userData.fxO){o.userData.fxO.forEach(q=>q.dispose());o.userData.fxO=null;}o.traverse(x=>{if(x.geometry)x.geometry.dispose();const m=x.material;if(m)(Array.isArray(m)?m:[m]).forEach(q=>{if(q.map)q.map.dispose();q.dispose();});});}
 function arClear(){anClear();skcClear();AR.toys.forEach(T=>arDispose(T.root));AR.toys=[];AR.proj.forEach(p=>arDispose(p.g));AR.proj=[];}
 function arOff(){if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}if(!AR.f)return;const f=AR.f;AR.f=null;
@@ -25993,18 +26195,18 @@ function arProj(now){if(!AR.proj.length)return;const {THREE}=TBA,X=new THREE.Vec
 function arFrame(){AR.raf=0;const f=document.getElementById('field');
   if(!(SET.arena!==false&&!RM&&f&&UI.screen==='battle'&&typeof B!=='undefined'&&B&&!B.silent)){arOff();return;}
   if(!TBA.tried)tbaInit();if(!TBA.on||!arInit()){arOff();return;}
-  try{if(AR.f!==f||AR.B!==B){arOff();AR.f=f;AR.B=B;AR.last=0;AR.nf=0;f.classList.add('arena');arRvTint();document.body.appendChild(AR.cv);document.documentElement.classList.add('ar3d');AR.W=-1;}
+  try{if(AR.f!==f||AR.B!==B){arOff();AR.f=f;AR.B=B;AR.last=0;AR.nf=0;f.classList.add('arena');arRvTint();arsFight();document.body.appendChild(AR.cv);document.documentElement.classList.add('ar3d');AR.W=-1;}
     if(f.clientWidth!==AR.W||f.clientHeight!==AR.H0)arLayout();else arView();AR.cv.classList.toggle('shake',f.classList.contains('shake'));
     const now=performance.now(),gap=AR.last?now-AR.last:16;AR.dt=Math.min(.1,gap/1000);AR.last=now;
     // too slow (under ~20 frames a second): sharper pixels go first, then the ink outlines, then back to the flat board
     if(!AR.keep&&!document.hidden&&gap<1000){AR.ema=AR.nf?AR.ema*.92+gap*.08:gap;if(++AR.nf>45&&AR.ema>50){AR.nf=0;AR.q++;
       if(AR.q===1&&AR.R.getPixelRatio()>1){AR.R.setPixelRatio(1);AR.W=-1;}else if(AR.q<=2)AR.q=2;else{AR.dead=true;AR.why='too slow on this device';arOff();return;}}}
-    arUpdate(now);idcFrame(now);arProj(now);hfFrame(now);skcFrame(now);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
+    arUpdate(now);idcFrame(now);arProj(now);try{arsFrame(now);}catch(e){}hfFrame(now);skcFrame(now);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
   catch(e){AR.dead=true;AR.why=String(e&&e.message||e).slice(0,80);arOff();return;}
   AR.raf=requestAnimationFrame(arFrame);}
 (()=>{try{document.head.insertAdjacentHTML('beforeend',`<style>
 #field.arena{overflow:visible;background:radial-gradient(ellipse at 50% 38%,#2b2342 0%,#14111f 58%,#09080e 100%)}
-.arena3d{position:fixed;left:0;top:0;pointer-events:none;z-index:0}.arena3d.shake{animation:shake .22s}
+.arena3d{position:fixed;left:0;top:0;pointer-events:none;z-index:0}html.arshov #app{cursor:pointer}.arena3d.shake{animation:shake .22s}
 html.ar3d,html.ar3d body{background:#09080e}html.ar3d #app{position:relative;z-index:1}
 html.ar3d #field.arena{background:transparent!important;border-color:transparent!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 html.ar3d .bbq .board{background:rgba(10,9,14,.55)!important;-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px)}
@@ -26017,6 +26219,8 @@ html.ar3d .bbq .board{background:rgba(10,9,14,.55)!important;-webkit-backdrop-fi
 #field.arena .unit.t3d::before,#field.arena .unit.t3d::after{display:none}
 </style>`);
   const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
+  wrap('numFx',o=>function(u,v,k,c){const r=o.apply(this,arguments);try{if(c&&B&&!B.silent)ARS.flash=performance.now();}catch(e){}return r;}); // TRO-206
+  document.addEventListener('pointerdown',arsClick);document.addEventListener('pointermove',arsHover,{passive:true});
   wrap('drawBattle',o=>function(){const r=o.apply(this,arguments);if(!AR.raf&&SET.arena!==false&&!RM&&!AR.dead)AR.raf=requestAnimationFrame(arFrame);return r;});
   wrap('animAttack',o=>function(u,t){if(u)u.atkTgt=t;return o.apply(this,arguments);});
     wrap('projectile',o=>function(u,t,cls,glyph,size){if(AR.f&&B&&!B.silent&&!RM&&u&&t&&arShot(u,t,glyph,size,(arguments[5]||260)/(B.speed||1)))return;return o.apply(this,arguments);});
