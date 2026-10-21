@@ -34,6 +34,14 @@
   .board span { background:#ffffff0d; border-radius:5px; padding:1px 6px; font-size:12px; }
   .visit { color:var(--mut); font-size:12.5px; padding:3px 6px; }
   .empty { color:var(--mut); text-align:center; margin:40px 0; }
+  .errs { background:var(--card); border:1px solid var(--line); border-left:4px solid var(--lose); border-radius:10px; padding:8px 12px; margin:10px 0 4px; }
+  .errs summary { cursor:pointer; font-weight:650; color:var(--lose); }
+  .errs .none { color:var(--mut); font-weight:400; }
+  .eg { border-top:1px solid var(--line); padding:6px 0; }
+  .eg:first-of-type { border-top:0; }
+  .eg code { font:12.5px/1.35 ui-monospace, Consolas, monospace; word-break:break-word; }
+  .eg .n { float:right; font-weight:650; font-variant-numeric:tabular-nums; }
+  .tag.test { background:#ffffff14; color:var(--mut); }
 </style>
 </head>
 <body>
@@ -48,7 +56,7 @@
     <button data-v="1" id="vis">Show visits</button>
   </div>
 </header>
-<main id="list"></main>
+<main><div id="errs"></div><div id="list"></div></main>
 <script>
 // Data: summary.json on the runlog branch, rebuilt every hour by .github/workflows/runlog.yml.
 const SRC = 'https://raw.githubusercontent.com/philabella/tropebrawl-play/runlog/summary.json';
@@ -66,7 +74,23 @@ function resText(r) {
   if (r.res === 'quit') return 'Quit at round ' + r.round;
   return 'Left at round ' + (r.round || '?');
 }
+// TRO-288: JS errors from the game, grouped by message + place, newest first. #dev tests show only under Everyone.
+function renderErrs() {
+  const es = (data.errors || []).filter(e => keep(e) && (filt === 'all' || !e.test));
+  const g = new Map();
+  for (const e of es) { const k = e.m + '|' + e.loc; if (!g.has(k)) g.set(k, []); g.get(k).push(e); }
+  const wk = es.filter(e => Date.now() - Date.parse(e.at) < 7 * 864e5).length;
+  const body = [...g.values()].map(l => {
+    const e = l[0], ppl = new Set(l.map(x => x.pid)).size, vs = [...new Set(l.map(x => x.v))].slice(0, 4).join(', ');
+    const where = [e.scr && 'screen ' + e.scr, e.rd != null && 'round ' + e.rd, e.lv != null && 'Level ' + e.lv, e.build === 'itch' ? 'itch' : 'playtest page', e.dev].filter(Boolean).join(' · ');
+    return `<div class="eg"><span class="n">×${l.length}</span><code>${esc(e.m)}</code>
+      <div class="meta">${e.test ? '<span class="tag test">#dev test</span>' : ''}<span class="tag ${e.who}">${e.who === 'me' ? 'you' : e.who}</span>${esc(e.loc || 'no line')} · last ${ago(e.at)} · ${ppl} player${ppl > 1 ? 's' : ''} · v${esc(vs)}</div>
+      <div class="meta">Latest: ${esc(where)}</div></div>`;
+  }).join('');
+  document.getElementById('errs').innerHTML = `<details class="errs"${g.size ? ' open' : ''}><summary>Errors ${g.size ? `(${es.length}, ${g.size} kinds, ${wk} in 7 days)` : '<span class="none">none with this filter</span>'}</summary>${body}</details>`;
+}
 function render() {
+  renderErrs();
   document.querySelectorAll('.ctl button[data-f]').forEach(b => b.classList.toggle('on', b.dataset.f === filt));
   document.getElementById('vis').classList.toggle('on', showVis);
   const rows = data.rows.filter(keep);

@@ -10,9 +10,17 @@ for (const p of fs.readdirSync('runs')) for (const f of fs.readdirSync('runs/' +
 }
 const tester = new Set(all.filter(j => j.t || KNOWN[j.pid]).map(j => j.pid));
 const who = j => KNOWN[j.pid] ? 'me' : tester.has(j.pid) ? 'tester' : 'stranger';
-const rows = [];
+const rows = [], errors = [];
 for (const j of all) {
   if (j.pid === 'p_selftest') continue;
+  if (j.res === 'error') {   // TRO-288: a JS error note from the game (untrusted input: types forced, lengths capped)
+    const e = j.err && typeof j.err === 'object' ? j.err : {};
+    if (typeof e.m !== 'string' || !e.m) continue;
+    errors.push({ at: j.at, pid: j.pid, who: who(j), test: j.hd ? 1 : 0, build: j.build === 'demo' ? 'itch' : 'page', v: String(j.v || '').slice(0, 12),
+      dev: String(j.dev || '').slice(0, 10), m: String(e.m || '').slice(0, 200), loc: String(e.at || '').slice(0, 60),
+      scr: String(e.scr || '').slice(0, 20), rd: Number.isFinite(e.rd) ? e.rd : null, lv: Number.isFinite(e.lv) ? e.lv : null });
+    continue;
+  }
   const visit = j.res === 'visit';
   if (!visit && (j.ms < 10000 || isBot(j))) continue;
   const last = (j.r || []).filter(x => x.f).pop();
@@ -24,5 +32,6 @@ for (const j of all) {
 }
 rows.sort((a, b) => a.at < b.at ? 1 : -1);
 const built = all.map(j => j.recv || j.at).sort().pop();
-fs.writeFileSync('summary.json', JSON.stringify({ built, rows }));
-console.log('summary.json:', rows.length, 'rows');
+errors.sort((a, b) => a.at < b.at ? 1 : -1);
+fs.writeFileSync('summary.json', JSON.stringify({ built, rows, errors }));
+console.log('summary.json:', rows.length, 'rows,', errors.length, 'errors');
