@@ -24847,10 +24847,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.64',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.65',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.65',items:[["🎥", "New battle look: the fight is lit like a movie scene. A low amber spotlight from the side, teal shadows, real shadows under every toy and a warm pool of light on the board."], ["🎞️", "The film set around the board is quieter and darker so your team stands out, with a soft film grade at the edges of the screen."]]},
   {v:'20.64',items:[["✂️", "The Cut's text says what \"biggest genre\" means: the most copies (a ★★ counts 3, a ★★★ 6), and that only Fight the studio keeps the genre in the shop. When another bad event could come instead, the warning says \"if it is The Cut\"."], ["📱", "Phone: the coach tip no longer hides the first shop's genre/role line, and the final boss panel scrolls above the Fight bar instead of being cut off."]]},
   {v:'20.63',items:[["💀", "Ladder finales in numbers: the Mid-season finale now counts the Leader's cast (board, bench, ★★★, their carry) and says how much stronger it fights in the finale (×HP and ×damage). The Season finale panel uses the same name and count as the fight, and says whether your counters hit their carry."], ["🪙", "Lose the Season finale with gold in the bank and the tip now says to spend it in the rematch shop (it was telling you not to save)."]]},
   {v:'20.62',items:[["⚠️", "A bad random event right after an intermission is now announced too: the shop before the intermission warns you, and the intermission screen repeats it."]]},
@@ -26192,56 +26193,83 @@ function sfxClack(v){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='runni
   src.buffer=sfxNoise(C,.07,31);f.type='bandpass';f.frequency.value=2600;f.Q.value=1.2;g.gain.value=.55*(v||1);src.connect(f);f.connect(g);g.connect(C.destination);src.start();}catch(e){}}
 function sfxClaps(){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;const C=SFX.ctx,t0=C.currentTime,out=C.createGain(),f=C.createBiquadFilter();out.gain.value=.22;f.type='bandpass';f.frequency.value=1800;f.Q.value=.7;f.connect(out);out.connect(C.destination);
   const b=sfxNoise(C,.05,77);let s=5;for(let i=0;i<34;i++){s=(s*16807)%2147483647;const src=C.createBufferSource(),g=C.createGain();src.buffer=b;src.playbackRate.value=.8+(s%400)/1000;g.gain.value=1-i/40;src.connect(g);g.connect(f);src.start(t0+i*.035+(s%30)/1000);}}catch(e){}}
-// ===== TRO-231: the art-reset lab look (test link #look=lab, #look=lab+grade). What style frames A, B and C (TRO-219)
-// all share, so the build after Philippe's pick is short: one key light with a shadow map (the toys cast shadows on
-// the board), the set and props quieter and greyer than the toys (pieces get the saturation), thinner ink (one
-// tunable), one colour per side (rings, tape, mats), and a grade/vignette hook (off unless +grade). Without the hash
-// nothing here runs: the default look is unchanged. Tune live from the console: edit LOOK, then lkGrade(true/false).
-// Visual only: no rand(), nothing the fight reads.
-const lkHash=typeof location!=='undefined'?location.hash:'',LOOK={on:/[#&]look=lab/.test(lkHash),grade:/[#&]look=lab[^#&]*grade/.test(lkHash),
+// ===== TRO-231: the art-reset lab look, and TRO-241: look C "Cinema grade" (Philippe's pick on TRO-219) on top.
+// Default since TRO-241: the cinema look. `#look=lab` = TRO-231's shared base only (key light + shadows, quiet set, thin
+// ink, one colour per side; `#look=lab+grade` adds its grade). `#look=old` = the look before (nothing here runs), kept for
+// one version for comparison. The base: one key light with a shadow map (the toys cast shadows on the board), the set
+// and props quieter and greyer than the toys, thinner ink, one colour per side (rings, tape). Cinema adds a low amber
+// key from the side, teal fill/rim, ACES tone mapping, floor and set graded toward teal-dark with a warm pool of light
+// on the board, dark teal ink, and a CSS grade (teal vignette, light grain, soft blur on the canvas' top/bottom edges;
+// the HUD stays sharp). Phones: smaller shadow map, no edge blur. Tune live from the console: edit LOOK, lkGrade(on).
+// Visual only: no rand(), nothing the fight reads. Off outside a browser (fastsim runs this file in node).
+const lkHash=typeof location!=='undefined'?location.hash:'',LOOK={on:typeof document!=='undefined'&&!/[#&]look=old/.test(lkHash),cine:!/[#&]look=(lab|old)/.test(lkHash),
+  grade:!/[#&]look=(lab|old)/.test(lkHash)||/[#&]look=lab[^#&]*grade/.test(lkHash),
   outline:.0026,setSat:.3,setL:.72,floorSat:.35,matSat:.75,sideA:'#5aa9ff',sideE:'#ff4d5e',trim:'#1d1b21',ring:.6,blob:.14,
-  hemi:.6,key:3.2,keyCol:'#fff1dd',keyPos:[8,14,12],rim:.9,casterMin:.18,shadow:2048,shadowPhone:1024,
-  filter:'saturate(1.04) contrast(1.05)',vignette:'radial-gradient(ellipse 72% 85% at 50% 45%,transparent 55%,rgba(8,6,12,.55) 100%)'};
+  hemi:.6,key:3.2,keyCol:'#fff1dd',keyPos:[8,14,12],rim:.9,casterMin:.18,shadow:2048,shadowPhone:1024,shadowBox:15,
+  filter:'saturate(1.04) contrast(1.05)',vignette:'radial-gradient(ellipse 72% 85% at 50% 45%,transparent 55%,rgba(8,6,12,.55) 100%)',blur:0,
+  // look C: the frame docs/art/frames-2026-10-21/cinema-2560x1080.jpg (recipe tools/styleframes-looks.js -> cinema)
+  C:{hemiCol:'#8fd6e0',ground:'#0d3036',hemi:1.2,key:3.4,keyCol:'#ffb36b',keyPos:[-12,10,7],rimCol:'#4fc3c8',rim:1.8,exposure:1.15,shadowBox:20,
+    outline:.002,ink:[.03,.07,.08],tint:'#2a5a60',setSat:.25,setL:.7,setTint:.45,boardSat:.5,boardL:.75,boardTint:.15,
+    setTex:'saturate(.25) brightness(.7) sepia(.3) hue-rotate(150deg)',matTex:'saturate(.3) brightness(.85)',clashTex:'saturate(.4)',
+    tape:'#1b2426',tapeLine:'rgba(255,179,107,.5)',floorTeal:'#3f8f96',pool:'rgba(255,170,90,.28)',page:'#071315',
+    filter:'saturate(1.05) contrast(1.06)',blur:2.5,
+    vignette:'radial-gradient(ellipse 70% 80% at 50% 46%,transparent 55%,rgba(2,14,16,.6) 100%),url("data:image/svg+xml;utf8,<svg xmlns=%27http://www.w3.org/2000/svg%27 width=%27200%27 height=%27200%27><filter id=%27n%27><feTurbulence baseFrequency=%27.9%27 numOctaves=%272%27/></filter><rect width=%27200%27 height=%27200%27 filter=%27url(%23n)%27 opacity=%27.07%27/></svg>")'}};
+if(LOOK.cine)Object.assign(LOOK,{outline:LOOK.C.outline,filter:LOOK.C.filter,vignette:LOOK.C.vignette,blur:LOOK.C.blur,shadowBox:LOOK.C.shadowBox});
 const lkMats=g=>{const s=new Set();g.traverse(o=>{if(o.isMesh)[].concat(o.material).forEach(m=>m&&s.add(m));});return [...s];};
-const lkInk=m=>{const o=m.userData.outlineParameters;if(o&&o.visible===false)return;m.userData.outlineParameters=Object.assign({},o,{thickness:LOOK.outline});};
-// greyer and darker, once per material (the set animates some colours itself: those stay its own)
-function lkQuiet(m,s,l){if(!m.color||m.userData.lk)return;m.userData.lk=1;const h={};m.color.getHSL(h);m.color.setHSL(h.h,h.s*s,h.l*l);}
+const lkInk=m=>{const o=m.userData.outlineParameters;if(o&&o.visible===false)return;m.userData.outlineParameters=Object.assign({},o,{thickness:LOOK.outline},LOOK.cine?{color:LOOK.C.ink}:{});};
+// greyer and darker, once per material, optionally pulled toward a tint (the set animates some colours itself: those stay its own)
+function lkQuiet(m,s,l,tint,t){if(!m.color||m.userData.lk)return;m.userData.lk=1;const h={};m.color.getHSL(h);m.color.setHSL(h.h,h.s*s,h.l*l);if(tint&&t)m.color.lerp(m.color.clone().set(tint),t);}
 // repaint a canvas texture once: a 2D filter string or a draw function
 function lkTex(m,test,f){const t=m.map,im=t&&t.image;if(!im||!im.width||t.userData.lk||!test(im))return false;const c=document.createElement('canvas');c.width=im.width;c.height=im.height;
   const x=c.getContext('2d');if(typeof f==='string'){x.filter=f;x.drawImage(im,0,0);}else f(x,c.width,c.height,im);t.image=c;t.userData.lk=1;t.needsUpdate=true;return true;}
-const lkTrim=line=>(x,w,h)=>{x.fillStyle=LOOK.trim;x.fillRect(0,0,w,h);if(line){x.fillStyle=line;x.fillRect(0,h*.4,w,h*.2);}};
-function lkBoard(g){const isTape=i=>i.width===256&&i.height===32;
+const lkTrim=(line,col)=>(x,w,h)=>{x.fillStyle=col||LOOK.trim;x.fillRect(0,0,w,h);if(line){x.fillStyle=line;x.fillRect(0,h*.4,w,h*.2);}};
+// cinema floor: grey, multiplied teal, a warm pool of light in the middle
+const lkFloorC=(x,w,h,im)=>{const C=LOOK.C;x.filter='saturate(0) brightness(.55)';x.drawImage(im,0,0);x.filter='none';x.globalCompositeOperation='multiply';x.fillStyle=C.floorTeal;x.fillRect(0,0,w,h);
+  x.globalCompositeOperation='source-over';const r=x.createRadialGradient(w/2,h/2,0,w/2,h/2,w*.45);r.addColorStop(0,C.pool);r.addColorStop(1,'rgba(0,0,0,0)');x.fillStyle=r;x.fillRect(0,0,w,h);};
+function lkBoard(g){const isTape=i=>i.width===256&&i.height===32,C=LOOK.C,cine=LOOK.cine,matF=cine?C.matTex:`saturate(${LOOK.matSat})`;
   g.traverse(o=>{if(!o.isMesh)return;const m=o.material;o.receiveShadow=true;if(m.isMeshBasicMaterial)return;lkInk(m);
-    const im=m.map&&m.map.image;if(!im){lkQuiet(m,LOOK.setSat,LOOK.setL);return;}
-    if(isTape(im)&&Math.abs(o.rotation.z)<.1&&Math.abs(o.position.z)>1)lkTex(m,isTape,lkTrim(o.position.z<0?LOOK.sideE:LOOK.sideA)); // end tape: the side's colour
-    else if(isTape(im)&&m.map.repeat.x>1)lkTex(m,isTape,lkTrim(null)); // side tape: plain trim
-    else if(im.width===512&&im.height===32){lkTex(m,()=>true,lkTrim('rgba(243,238,228,.55)'));m.emissiveIntensity=0;} // clash line: one quiet line
-    else if(im.width===1024)lkTex(m,()=>true,`saturate(${LOOK.floorSat}) brightness(.8)`);
-    else if(im.width===256&&im.height===256)lkTex(m,()=>true,`saturate(${LOOK.matSat})`);
+    const im=m.map&&m.map.image;if(!im){cine?lkQuiet(m,C.boardSat,C.boardL,C.tint,C.boardTint):lkQuiet(m,LOOK.setSat,LOOK.setL);return;}
+    if(cine)lkQuiet(m,C.boardSat,C.boardL,C.tint,C.boardTint);
+    if(isTape(im)&&Math.abs(o.rotation.z)<.1&&Math.abs(o.position.z)>1)lkTex(m,isTape,lkTrim(o.position.z<0?LOOK.sideE:LOOK.sideA,cine&&C.tape)); // end tape: the side's colour
+    else if(isTape(im)&&m.map.repeat.x>1)lkTex(m,isTape,lkTrim(cine?C.tapeLine:null,cine&&C.tape)); // side tape: plain trim (cinema: an amber line)
+    else if(im.width===512&&im.height===32){if(cine)lkTex(m,()=>true,C.clashTex);else{lkTex(m,()=>true,lkTrim('rgba(243,238,228,.55)'));m.emissiveIntensity=0;}} // clash line
+    else if(im.width===1024)lkTex(m,()=>true,cine?lkFloorC:`saturate(${LOOK.floorSat}) brightness(.8)`);
+    else if(im.width===256&&im.height===256)lkTex(m,()=>true,matF);
     else if(!(im.width===512&&im.height===1024))lkTex(m,()=>true,`saturate(${LOOK.setSat}) brightness(${LOOK.setL})`);});
   // rival mats are made per fight: same treatment when they appear
-  if(AR.mat){const f=AR.mat;AR.mat=(a,b)=>{const m=f(a,b);lkTex(m,()=>true,`saturate(${LOOK.matSat})`);return m;};}}
-function lkSet(){if(!ARS.g)return;lkMats(ARS.g).forEach(m=>{if(m.isMeshBasicMaterial)return;lkInk(m);
-  if(m.map)lkTex(m,()=>true,`saturate(${LOOK.setSat}) brightness(${LOOK.setL})`);else lkQuiet(m,LOOK.setSat,LOOK.setL);});
+  if(AR.mat){const f=AR.mat;AR.mat=(a,b)=>{const m=f(a,b);lkTex(m,()=>true,matF);return m;};}}
+function lkSet(){if(!ARS.g)return;const C=LOOK.C,cine=LOOK.cine;lkMats(ARS.g).forEach(m=>{if(m.isMeshBasicMaterial){if(cine){if(m.map)lkTex(m,()=>true,C.setTex);lkQuiet(m,C.setSat,C.setL,C.tint,C.setTint);}return;} // cinema: light pools and beams graded too
+  lkInk(m);
+  if(m.map)lkTex(m,()=>true,cine?C.setTex:`saturate(${LOOK.setSat}) brightness(${LOOK.setL})`);
+  if(cine)lkQuiet(m,C.setSat,C.setL,C.tint,C.setTint);else if(!m.map)lkQuiet(m,LOOK.setSat,LOOK.setL);});
   ARS.g.traverse(o=>{if(o.isMesh)o.receiveShadow=!o.material.isMeshBasicMaterial;});}
-function lkInit(){if(!LOOK.on||!AR.R)return;try{const {R,scene}=AR,L=scene.getObjectByName('tbLights').children,[hemi,key,rim]=L,ph=innerWidth<700;
+function lkInit(){if(!LOOK.on||!AR.R)return;try{const {R,scene}=AR,L=scene.getObjectByName('tbLights').children,[hemi,key,rim]=L,ph=innerWidth<700,C=LOOK.C;
   hemi.intensity=LOOK.hemi;key.intensity=LOOK.key;key.color.set(LOOK.keyCol);key.position.set(...LOOK.keyPos);rim.intensity=LOOK.rim;
-  R.shadowMap.enabled=true;R.shadowMap.type=1;key.castShadow=true;const s=key.shadow,n=ph?LOOK.shadowPhone:LOOK.shadow;s.mapSize.set(n,n);
-  Object.assign(s.camera,{left:-15,right:15,top:15,bottom:-15,near:4,far:50});s.camera.updateProjectionMatrix();s.bias=-.0008;s.normalBias=.03;s.radius=3;
-  lkBoard(scene.children.find(c=>c.type==='Group'&&c.name!=='tbLights'&&c!==ARS.g));lkSet();lkGrade(LOOK.grade);}catch(e){LOOK.err=String(e&&e.message||e).slice(0,80);}}
+  if(LOOK.cine){hemi.color.set(C.hemiCol);hemi.groundColor.set(C.ground);hemi.intensity=C.hemi;key.color.set(C.keyCol);key.intensity=C.key;key.position.set(...C.keyPos);
+    rim.color.set(C.rimCol);rim.intensity=C.rim;R.toneMapping=4;R.toneMappingExposure=C.exposure;
+    document.head.insertAdjacentHTML('beforeend',`<style>html.ar3d,html.ar3d body{background:${C.page}}</style>`);}
+  R.shadowMap.enabled=true;R.shadowMap.type=1;key.castShadow=true;const s=key.shadow,n=ph?LOOK.shadowPhone:LOOK.shadow,b=LOOK.shadowBox;s.mapSize.set(n,n);
+  Object.assign(s.camera,{left:-b,right:b,top:b,bottom:-b,near:2,far:60});s.camera.updateProjectionMatrix();s.bias=-.0008;s.normalBias=.03;s.radius=3;
+  lkBoard(scene.children.find(c=>c.type==='Group'&&c.name!=='tbLights'&&c!==ARS.g));lkSet();lkMats(scene).forEach(m=>m.needsUpdate=true);lkGrade(LOOK.grade);}catch(e){LOOK.err=String(e&&e.message||e).slice(0,80);}}
 // a toy as it's made: casts a shadow (its bigger parts: eyes, buttons and props under LOOK.casterMin don't, each caster is a draw call), thin ink, the dark disc becomes a faint contact shadow, the ring takes the side colour
 function lkToy(T){if(!T||T.lk)return;T.lk=1;T.root.updateMatrixWorld(true);T.root.traverse(o=>{if(!o.isMesh)return;const m=o.material;
   if(m.isMeshBasicMaterial&&!m.map){if(o.geometry.type==='RingGeometry'){m.color.set(T.u.side==='A'?LOOK.sideA:LOOK.sideE);m.opacity=LOOK.ring;}else if(m.color.getHex()===0)m.opacity=LOOK.blob;return;}
   const g=o.geometry;if(!g.boundingSphere)g.computeBoundingSphere();o.castShadow=g.boundingSphere.radius*o.matrixWorld.getMaxScaleOnAxis()>=LOOK.casterMin;[].concat(m).forEach(lkInk);});}
-// the grade/vignette hook (off by default): a CSS filter on the arena canvas and a vignette over it, under the UI
-function lkGrade(on){LOOK.grade=!!on;if(!AR.cv)return;AR.cv.style.filter=on?LOOK.filter:'';let d=document.getElementById('lkgrade');
-  if(!d){d=document.createElement('div');d.id='lkgrade';document.body.appendChild(d);document.head.insertAdjacentHTML('beforeend','<style>html:not(.ar3d) #lkgrade{display:none}</style>');}
-  d.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;'+(on?'background:'+LOOK.vignette:'display:none');}
+// the grade: a CSS filter on the arena canvas, a vignette (+ grain) over it and a soft blur on its top/bottom edges, both
+// placed right after the canvas so they sit on the 3D arena and under the UI (#app is z-index 1). Phones: no edge blur.
+function lkGrade(on){LOOK.grade=!!on;if(!AR.cv)return;AR.cv.style.filter=on?LOOK.filter:'';let d=document.getElementById('lkgrade'),e=document.getElementById('lkblur');
+  if(!d){d=document.createElement('div');d.id='lkgrade';e=document.createElement('div');e.id='lkblur';document.body.append(d,e);
+    document.head.insertAdjacentHTML('beforeend','<style>html:not(.ar3d) #lkgrade,html:not(.ar3d) #lkblur{display:none}</style>');}
+  d.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;'+(on?'background:'+LOOK.vignette:'display:none');
+  const mk='linear-gradient(to bottom,#000 0%,transparent 16%,transparent 84%,#000 100%)';
+  e.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;'+(on&&LOOK.blur&&innerWidth>=700?`-webkit-backdrop-filter:blur(${LOOK.blur}px);backdrop-filter:blur(${LOOK.blur}px);-webkit-mask-image:${mk};mask-image:${mk}`:'display:none');lkOrder();}
+// the canvas is re-appended to body each fight: keep the grade layers right after it
+function lkOrder(){const d=document.getElementById('lkgrade'),e=document.getElementById('lkblur');if(d&&AR.cv&&AR.cv.parentNode&&AR.cv.nextElementSibling!==d)AR.cv.after(d,e);}
 if(LOOK.on)(()=>{try{const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
   wrap('arInit',o=>function(){const had=!!AR.R,r=o.apply(this,arguments);if(r&&!had)lkInit();return r;});
   wrap('arToy',o=>function(u){const T=o.apply(this,arguments);if(T&&LOOK.on)lkToy(T);return T;});
   wrap('arsAct',o=>function(){const r=o.apply(this,arguments);try{lkSet();}catch(e){}return r;}); // a new act paints new flats
-  wrap('arFrame',o=>function(){const r=o.apply(this,arguments);const d=document.getElementById('arsfps');if(d&&!/look/.test(d.textContent))d.textContent+=' · look lab';return r;});
+  wrap('arFrame',o=>function(){const r=o.apply(this,arguments);try{lkOrder();}catch(e){}const d=document.getElementById('arsfps');if(d&&!/look/.test(d.textContent))d.textContent+=LOOK.cine?' · look C':' · look lab';return r;});
 }catch(e){}})();
 // ===== /TRO-231
 // the camera frames the whole board and every toy's head; each square of the battle is then moved onto its toy
