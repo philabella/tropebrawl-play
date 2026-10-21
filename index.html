@@ -7,7 +7,7 @@
 <title>Tropebrawl</title>
 </head>
 <body>
-<div id="tbload" style="position:fixed;inset:0;z-index:99999;display:grid;place-content:center;gap:14px;text-align:center;background:#151317;color:#bdb6aa;font:600 15px/1.4 system-ui,sans-serif"><b style="font:900 clamp(40px,12vw,96px)/1 Impact,'Arial Narrow Bold',sans-serif;color:#ffcc2e;letter-spacing:.02em">TROPEBRAWL</b><span>An auto-battler of movie and TV tropes</span><i style="display:block;width:min(260px,70vw);height:6px;margin:6px auto 0;border-radius:3px;background:linear-gradient(90deg,#ffcc2e 0 30%,#3a3540 30%) 0 0/200% 100%;animation:tbl 1.1s linear infinite"></i><small>Loading the cast (about 6 MB, once)…</small><style>@keyframes tbl{to{background-position:-200% 0}}</style></div>
+<div id="tbload" style="position:fixed;inset:0;z-index:99999;display:grid;place-content:center;gap:14px;text-align:center;background:#151317;color:#bdb6aa;font:600 15px/1.4 system-ui,sans-serif"><b style="font:900 clamp(40px,12vw,96px)/1 Impact,'Arial Narrow Bold',sans-serif;color:#ffcc2e;letter-spacing:.02em">TROPEBRAWL</b><span>An auto-battler of movie and TV tropes</span><i style="display:block;width:min(260px,70vw);height:6px;margin:6px auto 0;border-radius:3px;background:linear-gradient(90deg,#ffcc2e 0 30%,#3a3540 30%) 0 0/200% 100%;animation:tbl 1.1s linear infinite"></i><small>Loading the cast (about 6 MB)…</small><style>@keyframes tbl{to{background-position:-200% 0}}</style></div>
 
 <style>
 /* fonts: Anton and Barlow (SIL Open Font License), latin, embedded */
@@ -2199,6 +2199,8 @@ html:not(.dt) .evscene.fbs .evpanel{padding-top:30px}
 .choices.lgitem{grid-template-columns:minmax(0,320px);justify-content:center}
 .choice.legend.armed{outline:2px solid var(--leg);outline-offset:2px}
 .rvtell.fintry{max-width:100%;color:var(--text,inherit)}
+html:not(.dt) .phd .vs.rvep:has(.fimg) .rvtell.fintry{max-width:68%} /* TRO-240 SMI-31: clear of the Leader figure */
+@media (min-width:1600px){.vs.feat .fhd small,.vs.rvep .rvtell{font-size:max(12px,.74rem)}} /* TRO-240 SMI-32 */
 /* TRO-124 polish v2: phones read at arm's length. 12 px floor, names wrap (never cut), MAX beside the stars */
 @media (max-width:760px){
   html:not(.dt) .res small,html:not(.dt) .res small i{font-size:12px}
@@ -21057,7 +21059,7 @@ const EVENTS={
   cursed:{name:'Cursed Script',e:'📜',d:'A free ★★ item, but enemies get stronger for the rest of the run.'},
   insurance:{name:'Stunt Insurance',e:'🛡️',d:'Pay now and your next lost fight costs no lives.'},
   reboot:{name:'Reboot',e:'🔁',d:'Your lowest-rarity character on the board is recast as a random character one rarity higher, back at ★.'},
-  cut:{name:'The Cut',e:'✂️',d:'The studio is over budget and goes after your biggest genre: it leaves the shop for the rest of the run. Pay to keep the cast, let them go, or fight it with lives.'},
+  cut:{name:'The Cut',e:'✂️',d:'The studio is over budget and goes after your biggest genre (the most copies: a ★★ counts 3, a ★★★ 6). Cut it (sold for half) or keep the cast (gold): either way the genre leaves the shop for the rest of the run. Or fight the studio with lives: nothing is cut.'},
   wheel:{name:'Buyback Wheel',e:'🎡',d:'Spin the wheel. If it lands on a rarity you own, those characters sell back at full price for the rest of the run. Rarities you don\'t own are Duds (no effect). A small ALL slice wins for every rarity except Mythic.'},
   merchant:{name:'Traveling Merchant',e:'🧳',d:'Buy 1 of 3 items for 🪙3-6 (more each act). It arrives one ★ higher (★★ when new). Or pass.'},
 };
@@ -21469,7 +21471,7 @@ function finaleGap(){if(!S||runActs()!==4)return null;let fr=0;SCHEDULE.forEach(
 function msGapLine(){const x=S.lead&&RIVAL[S.lead],L=x&&leadCast();
   if(L)return {t:`🎬 Dress rehearsal only: the Season finale is ${x.e} ${x.name}'s full cast${rule('finale2')?', and part 2 follows':''}. Today: ${leadCastT(L)}. In the finale each of them fights at ×${L.k} HP and ×${L.k} damage, and they shop for ${SCHEDULE.length-S.round} more episodes.`,sh:`Season finale: ${x.name}, ${L.n} on the board, ${L.s3} ★★★${L.c?', carry '+HERO[L.c.id].name:''}, ×${L.k}`,L};
   if(x)return {t:`🎬 Dress rehearsal only: the Season finale is ${x.e} ${x.name}'s full cast, not monsters${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready for them.`,sh:`the Season finale is ${x.name}'s full cast`};
-  const g=finaleGap();if(!g)return null;return {t:`🎬 The Season finale cast hits ${g}× harder than tonight's (HP × damage)${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready.`,sh:`the Season finale hits ${g}× harder`,g};}
+  const g=finaleGap();if(!g)return null;return {t:`🎬 The Season finale cast hits ${g}× harder than tonight's boss (HP × damage)${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready.`,sh:`the Season finale hits ${g}× harder`,g};}
 
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
 function newRun(){if(typeof UI!=='undefined'){UI.loadErr=0;UI._g=UI._l=UI._ng=UI._np=null;try{localStorage.setItem('tropebrawl-played','1');}catch(e){}UI._bk=null;}
@@ -22029,8 +22031,8 @@ function badNextHTML(){const ks=badNext();if(!ks)return '';const nm=ks.map(k=>EV
   const when=ks.gap?`after the intermission (round ${ks.r})`:'next round',ws=ks.gap?'after intermission':'next round';
   let t=`⚠️ Bad event ${when}: ${nm.length>1?nm.slice(0,-1).join(', ')+' or '+nm[nm.length-1]:nm[0]}.`;
   let sh=`⚠️ Bad event ${ws}: ${ks.map(k=>EVENTS[k].name).join(' / ')}`;
-  if(ks.includes('cut')){const g=cutTarget();if(g.length){const gn=g.map(x=>GENRES[x].e+' '+GENRES[x].name).join(' or '),c=Math.min(...g.map(cutCost));
-    t+=` The Cut takes your biggest genre (${gn}): keeping that cast costs 🪙${c}.`;sh=`⚠️ Bad event ${ws} · ✂️ Cut: ${gn}, keep 🪙${c}`;}}
+  if(ks.includes('cut')){const g=cutTarget();if(g.length){const gn=g.map(x=>GENRES[x].e+' '+GENRES[x].name).join(' or '),cs=g.map(cutCost),lo=Math.min(...cs),hi=Math.max(...cs),c=lo===hi?lo:lo+'–'+hi;
+    t+=ks.length>1?` If it is The Cut, it takes your biggest genre (${gn}); keeping that cast costs 🪙${c}.`:` The Cut takes your biggest genre (${gn}): keeping that cast costs 🪙${c}.`;sh=`⚠️ Bad event ${ws} · ✂️ Cut: ${gn}, keep 🪙${c}`;}}
   return `<p class="evnote badnext" role="status" title="${esc(t)}"><span class="bnl">${t}</span><span class="bns">${sh}</span></p>`;}
 function atRisk(){const live=Object.keys(GENRES).filter(g=>!gOut(g)),n=g=>ownedIn(g).length;
   const sorted=live.slice().sort((a,b)=>n(b)-n(a));if(sorted.length<=3)return sorted;const bar=n(sorted[2]);return sorted.filter(g=>n(g)>=bar);}
@@ -22860,7 +22862,7 @@ function leadCast(){const R=S&&S.lead&&S.lobby&&S.lobby.rv.find(x=>x.id===S.lead
   let c=null,cs=-1;f.forEach(u=>{const d=HERO[u.id];if(!d)return;const sc=u.level*10+d.tier;if(sc>cs){cs=sc;c=u;}});
   const k=Math.round(10*rvStrength()*leadK()*Math.pow(0.9,S.bossTries|0))/10,cg=c&&HERO[c.id].genre,hit=cg?ctrMine().filter(m=>ctrOn(m,cg)):[];
   return {x:RIVAL[R.id],n:f.length,bn:us.length-f.length,s3:f.filter(u=>u.level>=3).length,k,c,cn:c?HERO[c.id].e+' '+HERO[c.id].name+' '+'★'.repeat(c.level):'',cg,hit};}
-function leadCastT(L){return `${L.n} on the board${L.bn?` + ${L.bn} on the bench`:''}, ${L.s3} ★★★${L.c?`, carry ${L.cn}`:''}`;}
+function leadCastT(L){return `${L.n} on the board (${L.s3} of them ★★★)${L.bn?` + ${L.bn} on the bench`:''}${L.c?`, carry ${L.cn}`:''}`;}
 function leadEp(ev){const R=S.lobby&&S.lobby.rv.find(x=>x.id===S.lead);if(!R)return false;
   S.enemy.base=JSON.parse(JSON.stringify(S.enemy));
   Object.assign(S.enemy,{rival:R.id,tpl:'rival:'+R.id,title:RIVAL[R.id].name+"'s full cast",enc:[],gh:null,lead:1,sched:true,elite:false});
@@ -23061,7 +23063,7 @@ function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL
   const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
   return `<section class="vs feat boss rvep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${x.e}</span>`}
     <div class="fhd"><small>${L?'💀 Final boss · the Leader':'Rival episode'} · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s ${L?'full ':''}cast</b></div>
-    <div class="foes">${foes}</div>${L?`<p class="rvtell lcast">💀 <b>${L.n} fight</b>${L.bn?` (+${L.bn} benched)`:''} · ${L.s3} ★★★ · each ×${L.k} HP and damage${L.c?` · 🎯 carry <b>${esc(L.cn)}</b> (${esc(GENRES[L.cg]?GENRES[L.cg].name:'')})${L.hit.length?`: your ${esc(ctrNm(L.hit[0]))} counters it`:': none of your counters hits it'}`:''}</p>${ctrPanel()}`:''}${rvAlgo(e.rival)?`<p class="rvtell rvalgo">Plays by: <b>${esc(rvAlgo(e.rival))}</b></p>`:''}<p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p>${rvKit(R)}${L?'':ctrPanel()}</section>`;}
+    <div class="foes">${foes}</div>${L?`<p class="rvtell lcast">💀 <b>${L.n} fight</b>, ${L.s3} of them ★★★${L.bn?` (+${L.bn} benched)`:''} · each ×${L.k} HP and damage${L.c?` · 🎯 carry <b>${esc(L.cn)}</b> (${esc(GENRES[L.cg]?GENRES[L.cg].name:'')})${L.hit.length?`: your ${esc(ctrNm(L.hit[0]))} counters it`:': none of your counters hits it'}`:''}</p>${ctrPanel()}`:''}${rvAlgo(e.rival)?`<p class="rvtell rvalgo">Plays by: <b>${esc(rvAlgo(e.rival))}</b></p>`:''}<p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p>${rvKit(R)}${L?'':ctrPanel()}</section>`;}
 function advanceAfterFight(res){
   if(S.over)return;
   if(res.part2){S.part=2;S.bossTries=0;prepareFight();UI.screen='plan';return;} // straight on: no income, no new shop
@@ -23497,7 +23499,7 @@ function tbxVs(go,e,act,k){const id=e.rival,x=RIVAL[id],big=!!e.lead,me=rvMyAce(
   const el=tbxOpen('bump vs'+(big?' lead':'')+(k<1?' k5':''),`<div class="tbvs"><small class="tbvtag">${esc(runLong())} · Act ${act} · Episode ${S.round} · <b>${tag}</b></small>
     <div class="tbvrow"><div class="tbvside me"><div class="tbvfig">${me&&rvToy(me.id,'tbvimg')||'<span class="tbvemo">🎬</span>'}</div><b>Your cast</b><span>${me&&HERO[me.id]?esc(HERO[me.id].name):''}</span></div>
     <div class="tbvvs" aria-hidden="true">VS</div>
-    <div class="tbvside rv"><div class="tbvfig${rvRevealed(id)?'':' sh'}">${rvToy((RVX[id]||{}).m,'tbvimg')||`<span class="tbvemo">${x.e}</span>`}</div><b>${x.e} ${esc(x.name)}</b><span>${esc(st||'Rival studio')}</span>${(k=>k?`<span class="tbvkit">${k}</span>`:'')(rvKit(S.lobby&&S.lobby.rv.find(R=>R.id===id),1))}</div></div>
+    <div class="tbvside rv"><div class="tbvfig${rvRevealed(id)?'':' sh'}">${rvToy((RVX[id]||{}).m,'tbvimg')||`<span class="tbvemo">${x.e}</span>`}</div><b>${x.e} ${esc(x.name)}</b><span>${esc(st||'Rival studio')}</span>${(k=>k?`<span class="tbvkit" title="Took: ${esc(k.replace(/<[^>]*>/g,''))}">${k}</span>`:'')(rvKit(S.lobby&&S.lobby.rv.find(R=>R.id===id),1))}</div></div>
     <p class="tbvq">“${esc(rvTaunt(id,big))}”</p></div>`,tag+': '+rvFull(id),'Click to skip');
   el.style.setProperty('--rvc',rvCol(id));sfxStinger(big);const T=(big?1900:1450)*k;
   tbxRun([[16,()=>el.classList.add('on')],[T,go],[T+40,()=>tbxOut(320*k+40)]]);}
@@ -23949,7 +23951,7 @@ function pgGo(){const g=pgate();return !!(g.rk&&S.round<=2&&fielded().length);}
 // the first shop's key (in place of the rank row): what the two tags and Crowd mean, from a card on offer
 function pgKey(){if(!pgate().rk)return '';const o=S.shop.find(x=>x&&HERO[x.id]);if(!o)return '';const d=HERO[o.id],g=GENRES[d.genre],t=TRAITS[d.trait];
   const n=Math.min(g.tiers[0],t?t.tiers[0]:9),cr=S.shop.some(x=>x&&HERO[x.id]&&HERO[x.id].crowd);
-  return `<p class="pgkey">🏷️ <b>${g.e} ${esc(g.name)}</b> is a genre, <b>${esc(t?t.name:'')}</b> a role: ${n} with one tag on your board = a bonus.${cr?' <b>Crowd</b>: a squad with one HP bar, priced as one.':''}</p>`;}
+  return `<p class="pgkey">🏷️ <b>${g.e} ${esc(g.name)}</b> is a genre, <b>${esc(t?t.name:'')}</b> a role: ${n} characters sharing a tag on your board = a bonus.${cr?' <b>Crowd</b>: a squad with one HP bar, priced as one.':''}</p>`;}
 function tutLoad(){if(!TUT.seen){try{TUT.seen=JSON.parse(localStorage.getItem(TUT_KEY)||'[]')||[];}catch(e){TUT.seen=[];}if(!Array.isArray(TUT.seen))TUT.seen=[];}return TUT.seen;}
 function tutSee(id){const s=tutLoad();if(id&&!s.includes(id)){s.push(id);try{localStorage.setItem(TUT_KEY,JSON.stringify(s));}catch(e){}}}
 function tutReset(){TUT.seen=[];TUT.shown=null;try{localStorage.removeItem(TUT_KEY);}catch(e){}}
@@ -23982,7 +23984,11 @@ function tutPlace(){const b=document.getElementById('tut');if(!b||b.hidden)retur
   if(!tg){b.style.left=Math.round((W-w)/2)+'px';b.style.top=Math.round(H*.28)+'px';delete b.dataset.side;return;}
   const r=tg.getBoundingClientRect(),bh=b.offsetHeight,gap=12,upR=r.top-gap-8,dnR=H-r.bottom-gap-8;
   const low=r.top+r.height/2>H/2,below=low?upR<bh&&dnR>=upR:dnR>=bh||upR<bh&&dnR>=upR;
-  const top=Math.max(8,Math.min(H-bh-8,below?r.bottom+gap:r.top-gap-bh)),cx=r.left+r.width/2,left=Math.max(8,Math.min(W-w-8,cx-w/2));
+  let top=Math.max(8,Math.min(H-bh-8,below?r.bottom+gap:r.top-gap-bh));
+  // TRO-240 (SMI-30): never on the first shop's key line (.pgkey) just above the cards: go above it when it fits
+  const pk=!below&&[...document.querySelectorAll('.pgkey')].map(e=>e.getBoundingClientRect()).find(q=>q.height&&q.bottom<=r.top+2&&q.top<top+bh&&q.bottom>top);
+  if(pk&&pk.top-gap-bh>=8)top=pk.top-gap-bh;
+  const cx=r.left+r.width/2,left=Math.max(8,Math.min(W-w-8,cx-w/2));
   b.style.left=Math.round(left)+'px';b.style.top=Math.round(top)+'px';b.dataset.side=below?'b':'t';b.style.setProperty('--ax',Math.round(Math.max(16,Math.min(w-16,cx-left)))+'px');}
 try{if(typeof window!=='undefined'&&window.addEventListener){let q=0;const f=()=>{if(q)return;q=1;requestAnimationFrame(()=>{q=0;tutPlace();});};window.addEventListener('resize',f);window.addEventListener('scroll',f,{passive:true});}}catch(e){}
 // Skip to Level 4 (title "I know auto-battlers", or Settings during Levels 1-3)
@@ -24204,11 +24210,11 @@ if(typeof document!=='undefined'){
 SCR.event=()=>{
   const e=S.event;let body,art='🎬',title='Intermission',flav='Between scenes, the crew comes to you with a choice.';
   if(e.cut&&!e.subDone){
-    art='✂️';title='The Cut';flav='The studio is over budget. Your biggest storyline costs the most, so it is the one that has to go.';
+    art='✂️';title='The Cut';flav='The studio is over budget. Your biggest genre costs the most, so it is the one that has to go.';
     const one=e.sub.ids.length===1,costs=e.sub.ids.map(cutCost),lo=Math.min(...costs),hi=Math.max(...costs);
     const half=g=>ownedIn(g).reduce((t,u)=>t+sellValue(u),0);
     if(!UI.cutMode){
-      body=`<p class="evnote">${one?`The studio wants your biggest genre gone: ${GENRES[e.sub.ids[0]].e} ${GENRES[e.sub.ids[0]].name} (${ownedIn(e.sub.ids[0]).length} characters).`:`The studio wants one of your genres gone: ${e.sub.ids.map(g=>GENRES[g].e+' '+GENRES[g].name).join(' or ')}.`}</p><div class="evchoices">
+      body=`<p class="evnote">${one?`The studio wants your biggest genre gone (the most copies): ${GENRES[e.sub.ids[0]].e} ${GENRES[e.sub.ids[0]].name} (${((n)=>n+' character'+(n===1?'':'s'))(ownedIn(e.sub.ids[0]).length)}).`:`The studio wants one of your genres gone: ${e.sub.ids.map(g=>GENRES[g].e+' '+GENRES[g].name).join(' or ')}.`}</p><div class="evchoices">
         <button class="evcard" data-a="cut-mode" data-v="free"><span class="big">✂️</span><b>Cut it</b><span class="cost">Free</span><small>The genre leaves the shop for good. Your characters of that genre leave too, sold for half price.</small></button>
         <button class="evcard" data-a="cut-mode" data-v="keep" ${S.gold>=lo?'':'disabled'}><span class="big">🎬</span><b>Keep the cast</b><span class="cost">🪙${lo===hi?lo:lo+'–'+hi}</span><small>The genre leaves the shop for good, but you keep the characters you have. Costs 🪙${TUNE.cutPer} per character (🪙${TUNE.cutMin} at least).</small></button>
         <button class="evcard" data-a="event-sub" data-v="fight" ${S.lives>TUNE.cutFight?'':'disabled'}><span class="big">🥊</span><b>Fight the studio</b><span class="cost">−${TUNE.cutFight} lives</span><small>Nothing is cut. It just hurts.</small></button></div>`;
@@ -24499,7 +24505,7 @@ SCR.codex=()=>{
     <p><b>Crowds</b> (👥) are one card holding several bodies. They hit harder with more bodies left, and area attacks deal them double damage.</p>
     <p><b>Legendaries.</b> After the Act 1, 2 and 3 bosses you pick a Legendary, win or lose. Win: choose from 3, or take a bonus item instead. Lose: choose from 2, no bonus item. You hold one at a time.</p>
     
-    <p><b>The Cut.</b> A bad random event: the studio goes after your biggest genre and it leaves the shop for the rest of the run. Pay gold to keep your characters of that genre (🪙3 per character, 🪙6 at least), let them go (sold for half), or fight it with lives. Like every bad random event, it is announced in the shop one round before.</p>
+    <p><b>The Cut.</b> A bad random event: the studio goes after your biggest genre, the one with the most copies behind it (a ★ counts ${COPIES[0]}, a ★★ ${COPIES[1]}, a ★★★ ${COPIES[2]}). Cut it (your characters of that genre are sold for half) or keep the cast (🪙${TUNE.cutPer} per character, 🪙${TUNE.cutMin} at least): either way the genre leaves the shop for the rest of the run. Or fight the studio for ${TUNE.cutFight} lives: nothing is cut. Like every bad random event, it is announced in the shop one round before.</p>
     <p><b>Events.</b> The 3rd round of each act is an event round: pick 1 of 3 (❓ on the round track). On top of that, each act can bring one <b>random event</b>, somewhere between its first fight and its boss (rounds 2-8 of each act). It pops up at the start of a round, before the shop. Good ones and trade-offs are a surprise; a bad one is announced in the last shop before it (⚠️ on the round track), even when an intermission comes in between, so you can save gold for it. Random events are good (Crossover Cameo, Fan Mail, Craft Services), bad, where you pick your loss (Writers' Strike, Bad Review, Stolen Props, The Cut), or trade-offs (Buyback Wheel, Training Montage, Cursed Script, Stunt Insurance, Reboot). Each can happen once per run. Higher levels bring more of them, and more bad ones: a window fires 40% of the time in the Season, plus 6% per Ascension.</p>
     <p><b>Buyback Wheel.</b> A random event: spin for Common, Uncommon, Rare or Epic (never Mythic); a rarity you own none of is a Dud (no effect). A small gold ALL slice (6%) wins for every rarity except Mythic. If it hits, the characters of that rarity you own at that moment sell back for what you paid, for the rest of the run. Characters bought later and free ones still sell for half.</p>
     <p><b>Selling</b> refunds half of what a character cost, rounded down.</p>${TUNE.recast?`
@@ -24841,10 +24847,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.63',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.64',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.64',items:[["✂️", "The Cut's text says what \"biggest genre\" means: the most copies (a ★★ counts 3, a ★★★ 6), and that only Fight the studio keeps the genre in the shop. When another bad event could come instead, the warning says \"if it is The Cut\"."], ["📱", "Phone: the coach tip no longer hides the first shop's genre/role line, and the final boss panel scrolls above the Fight bar instead of being cut off."]]},
   {v:'20.63',items:[["💀", "Ladder finales in numbers: the Mid-season finale now counts the Leader's cast (board, bench, ★★★, their carry) and says how much stronger it fights in the finale (×HP and ×damage). The Season finale panel uses the same name and count as the fight, and says whether your counters hit their carry."], ["🪙", "Lose the Season finale with gold in the bank and the tip now says to spend it in the rematch shop (it was telling you not to save)."]]},
   {v:'20.62',items:[["⚠️", "A bad random event right after an intermission is now announced too: the shop before the intermission warns you, and the intermission screen repeats it."]]},
   {v:'20.61',items:[["🛠️", "Fixed a freeze: dropping a two-square character onto a full board could lose a character's square, freeze every button and break the save. Saves with that problem now load and put the character back on your bench."], ["💾", "If a saved run still can't be loaded, the title now says so and lets you start a new run, instead of a Continue button that does nothing."]]},
@@ -26185,6 +26192,58 @@ function sfxClack(v){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='runni
   src.buffer=sfxNoise(C,.07,31);f.type='bandpass';f.frequency.value=2600;f.Q.value=1.2;g.gain.value=.55*(v||1);src.connect(f);f.connect(g);g.connect(C.destination);src.start();}catch(e){}}
 function sfxClaps(){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;const C=SFX.ctx,t0=C.currentTime,out=C.createGain(),f=C.createBiquadFilter();out.gain.value=.22;f.type='bandpass';f.frequency.value=1800;f.Q.value=.7;f.connect(out);out.connect(C.destination);
   const b=sfxNoise(C,.05,77);let s=5;for(let i=0;i<34;i++){s=(s*16807)%2147483647;const src=C.createBufferSource(),g=C.createGain();src.buffer=b;src.playbackRate.value=.8+(s%400)/1000;g.gain.value=1-i/40;src.connect(g);g.connect(f);src.start(t0+i*.035+(s%30)/1000);}}catch(e){}}
+// ===== TRO-231: the art-reset lab look (test link #look=lab, #look=lab+grade). What style frames A, B and C (TRO-219)
+// all share, so the build after Philippe's pick is short: one key light with a shadow map (the toys cast shadows on
+// the board), the set and props quieter and greyer than the toys (pieces get the saturation), thinner ink (one
+// tunable), one colour per side (rings, tape, mats), and a grade/vignette hook (off unless +grade). Without the hash
+// nothing here runs: the default look is unchanged. Tune live from the console: edit LOOK, then lkGrade(true/false).
+// Visual only: no rand(), nothing the fight reads.
+const lkHash=typeof location!=='undefined'?location.hash:'',LOOK={on:/[#&]look=lab/.test(lkHash),grade:/[#&]look=lab[^#&]*grade/.test(lkHash),
+  outline:.0026,setSat:.3,setL:.72,floorSat:.35,matSat:.75,sideA:'#5aa9ff',sideE:'#ff4d5e',trim:'#1d1b21',ring:.6,blob:.14,
+  hemi:.6,key:3.2,keyCol:'#fff1dd',keyPos:[8,14,12],rim:.9,casterMin:.18,shadow:2048,shadowPhone:1024,
+  filter:'saturate(1.04) contrast(1.05)',vignette:'radial-gradient(ellipse 72% 85% at 50% 45%,transparent 55%,rgba(8,6,12,.55) 100%)'};
+const lkMats=g=>{const s=new Set();g.traverse(o=>{if(o.isMesh)[].concat(o.material).forEach(m=>m&&s.add(m));});return [...s];};
+const lkInk=m=>{const o=m.userData.outlineParameters;if(o&&o.visible===false)return;m.userData.outlineParameters=Object.assign({},o,{thickness:LOOK.outline});};
+// greyer and darker, once per material (the set animates some colours itself: those stay its own)
+function lkQuiet(m,s,l){if(!m.color||m.userData.lk)return;m.userData.lk=1;const h={};m.color.getHSL(h);m.color.setHSL(h.h,h.s*s,h.l*l);}
+// repaint a canvas texture once: a 2D filter string or a draw function
+function lkTex(m,test,f){const t=m.map,im=t&&t.image;if(!im||!im.width||t.userData.lk||!test(im))return false;const c=document.createElement('canvas');c.width=im.width;c.height=im.height;
+  const x=c.getContext('2d');if(typeof f==='string'){x.filter=f;x.drawImage(im,0,0);}else f(x,c.width,c.height,im);t.image=c;t.userData.lk=1;t.needsUpdate=true;return true;}
+const lkTrim=line=>(x,w,h)=>{x.fillStyle=LOOK.trim;x.fillRect(0,0,w,h);if(line){x.fillStyle=line;x.fillRect(0,h*.4,w,h*.2);}};
+function lkBoard(g){const isTape=i=>i.width===256&&i.height===32;
+  g.traverse(o=>{if(!o.isMesh)return;const m=o.material;o.receiveShadow=true;if(m.isMeshBasicMaterial)return;lkInk(m);
+    const im=m.map&&m.map.image;if(!im){lkQuiet(m,LOOK.setSat,LOOK.setL);return;}
+    if(isTape(im)&&Math.abs(o.rotation.z)<.1&&Math.abs(o.position.z)>1)lkTex(m,isTape,lkTrim(o.position.z<0?LOOK.sideE:LOOK.sideA)); // end tape: the side's colour
+    else if(isTape(im)&&m.map.repeat.x>1)lkTex(m,isTape,lkTrim(null)); // side tape: plain trim
+    else if(im.width===512&&im.height===32){lkTex(m,()=>true,lkTrim('rgba(243,238,228,.55)'));m.emissiveIntensity=0;} // clash line: one quiet line
+    else if(im.width===1024)lkTex(m,()=>true,`saturate(${LOOK.floorSat}) brightness(.8)`);
+    else if(im.width===256&&im.height===256)lkTex(m,()=>true,`saturate(${LOOK.matSat})`);
+    else if(!(im.width===512&&im.height===1024))lkTex(m,()=>true,`saturate(${LOOK.setSat}) brightness(${LOOK.setL})`);});
+  // rival mats are made per fight: same treatment when they appear
+  if(AR.mat){const f=AR.mat;AR.mat=(a,b)=>{const m=f(a,b);lkTex(m,()=>true,`saturate(${LOOK.matSat})`);return m;};}}
+function lkSet(){if(!ARS.g)return;lkMats(ARS.g).forEach(m=>{if(m.isMeshBasicMaterial)return;lkInk(m);
+  if(m.map)lkTex(m,()=>true,`saturate(${LOOK.setSat}) brightness(${LOOK.setL})`);else lkQuiet(m,LOOK.setSat,LOOK.setL);});
+  ARS.g.traverse(o=>{if(o.isMesh)o.receiveShadow=!o.material.isMeshBasicMaterial;});}
+function lkInit(){if(!LOOK.on||!AR.R)return;try{const {R,scene}=AR,L=scene.getObjectByName('tbLights').children,[hemi,key,rim]=L,ph=innerWidth<700;
+  hemi.intensity=LOOK.hemi;key.intensity=LOOK.key;key.color.set(LOOK.keyCol);key.position.set(...LOOK.keyPos);rim.intensity=LOOK.rim;
+  R.shadowMap.enabled=true;R.shadowMap.type=1;key.castShadow=true;const s=key.shadow,n=ph?LOOK.shadowPhone:LOOK.shadow;s.mapSize.set(n,n);
+  Object.assign(s.camera,{left:-15,right:15,top:15,bottom:-15,near:4,far:50});s.camera.updateProjectionMatrix();s.bias=-.0008;s.normalBias=.03;s.radius=3;
+  lkBoard(scene.children.find(c=>c.type==='Group'&&c.name!=='tbLights'&&c!==ARS.g));lkSet();lkGrade(LOOK.grade);}catch(e){LOOK.err=String(e&&e.message||e).slice(0,80);}}
+// a toy as it's made: casts a shadow (its bigger parts: eyes, buttons and props under LOOK.casterMin don't, each caster is a draw call), thin ink, the dark disc becomes a faint contact shadow, the ring takes the side colour
+function lkToy(T){if(!T||T.lk)return;T.lk=1;T.root.updateMatrixWorld(true);T.root.traverse(o=>{if(!o.isMesh)return;const m=o.material;
+  if(m.isMeshBasicMaterial&&!m.map){if(o.geometry.type==='RingGeometry'){m.color.set(T.u.side==='A'?LOOK.sideA:LOOK.sideE);m.opacity=LOOK.ring;}else if(m.color.getHex()===0)m.opacity=LOOK.blob;return;}
+  const g=o.geometry;if(!g.boundingSphere)g.computeBoundingSphere();o.castShadow=g.boundingSphere.radius*o.matrixWorld.getMaxScaleOnAxis()>=LOOK.casterMin;[].concat(m).forEach(lkInk);});}
+// the grade/vignette hook (off by default): a CSS filter on the arena canvas and a vignette over it, under the UI
+function lkGrade(on){LOOK.grade=!!on;if(!AR.cv)return;AR.cv.style.filter=on?LOOK.filter:'';let d=document.getElementById('lkgrade');
+  if(!d){d=document.createElement('div');d.id='lkgrade';document.body.appendChild(d);document.head.insertAdjacentHTML('beforeend','<style>html:not(.ar3d) #lkgrade{display:none}</style>');}
+  d.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;'+(on?'background:'+LOOK.vignette:'display:none');}
+if(LOOK.on)(()=>{try{const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
+  wrap('arInit',o=>function(){const had=!!AR.R,r=o.apply(this,arguments);if(r&&!had)lkInit();return r;});
+  wrap('arToy',o=>function(u){const T=o.apply(this,arguments);if(T&&LOOK.on)lkToy(T);return T;});
+  wrap('arsAct',o=>function(){const r=o.apply(this,arguments);try{lkSet();}catch(e){}return r;}); // a new act paints new flats
+  wrap('arFrame',o=>function(){const r=o.apply(this,arguments);const d=document.getElementById('arsfps');if(d&&!/look/.test(d.textContent))d.textContent+=' · look lab';return r;});
+}catch(e){}})();
+// ===== /TRO-231
 // the camera frames the whole board and every toy's head; each square of the battle is then moved onto its toy
 function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelectorAll('.bslot')];slots.forEach(s=>{s.style.transform='';});
   const W=f.clientWidth,H0=f.clientHeight,top=Math.round(H0*AR_TOP),H=H0+top;Object.assign(AR,{W,H0,top});
