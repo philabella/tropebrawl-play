@@ -20680,7 +20680,7 @@ function ctrTheir(){const e=S&&S.enemy;if(!e)return [];let ids=[];
 function ctrMine(){const c={};[...new Set(fielded().map(u=>u.id))].forEach(id=>{const g=HERO[id].genre;if(COUNTER[g])c[g]=(c[g]||0)+1;});return Object.keys(c).filter(g=>c[g]>=2);}
 function ctrPanel(){const T=ctrTheir();if(!T.length)return '';const mine=ctrMine(),L=[];
   T.forEach(([t])=>mine.forEach(m=>{if(ctrOn(t,m))L.push(`⚠️ Their ${ctrNm(t)} beats your ${ctrNm(m)}: ${ctrLc(ctrWhy(t,m))}.`);
-    if(ctrOn(m,t))L.push(`⚔️ Your ${ctrNm(m)} beats their ${ctrNm(t)}: ${ctrLc(ctrWhy(m,t))}.`);}));
+    if(ctrOn(m,t))L.push(`⚔️ Your ${ctrNm(m)} beats their ${ctrNm(t)}: ${ctrLc(ctrWhy(m,t))}.${S.enemy&&S.enemy.lead?' An edge, not a win: see their carry.':''}`);}));
   return `<p class="rvtell ctrl">Their main genres: ${T.map(([g,n])=>ctrNm(g)+' '+n).join(' · ')}.${L.length?'':' No counter between their genres and yours.'}</p>${L.slice(0,3).map(x=>`<p class="rvtell ctrl">${esc(x)}</p>`).join('')}`;}
 function ctrChip(g,T){const t=T.find(x=>ctrOn(g,x));return t?`<b class="ctr" title="${esc(`Beats their ${GENRES[t].name}: ${ctrWhy(g,t)}`)}">⚔</b>`:'';}
 function ctrSVG(){const G=ctrG(),N=G.length,C=220,RAD=150,P={};G.forEach((g,i)=>{const a=-Math.PI/2+2*Math.PI*i/N;P[g]=[C+RAD*Math.cos(a),C+RAD*Math.sin(a),a];});
@@ -21466,7 +21466,9 @@ function finaleGap(){if(!S||runActs()!==4)return null;let fr=0;SCHEDULE.forEach(
   const mr=SCHEDULE.findIndex(x=>x.act===3&&x.type==='boss')+1;if(!fr||!mr)return null;const r0=S.round,b0=S.bossTries;
   try{const st=n=>{S.round=n;S.bossTries=0;const ev=curRound(),m=roundMult();return m*m*ACT_REF[ev.act]*TUNE.bossF[ev.act-1];};
     return Math.round(10*st(fr)/st(mr))/10;}catch(e){return null;}finally{S.round=r0;S.bossTries=b0;}}
-function msGapLine(){const x=S.lead&&RIVAL[S.lead];if(x)return {t:`🎬 Dress rehearsal only: the Season finale is ${x.e} ${x.name}'s full cast, not monsters${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready for them.`,sh:`the Season finale is ${x.name}'s full cast`};
+function msGapLine(){const x=S.lead&&RIVAL[S.lead],L=x&&leadCast();
+  if(L)return {t:`🎬 Dress rehearsal only: the Season finale is ${x.e} ${x.name}'s full cast${rule('finale2')?', and part 2 follows':''}. Today: ${leadCastT(L)}. In the finale each of them fights at ×${L.k} HP and ×${L.k} damage, and they shop for ${SCHEDULE.length-S.round} more episodes.`,sh:`Season finale: ${x.name}, ${L.n} on the board, ${L.s3} ★★★${L.c?', carry '+HERO[L.c.id].name:''}, ×${L.k}`,L};
+  if(x)return {t:`🎬 Dress rehearsal only: the Season finale is ${x.e} ${x.name}'s full cast, not monsters${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready for them.`,sh:`the Season finale is ${x.name}'s full cast`};
   const g=finaleGap();if(!g)return null;return {t:`🎬 The Season finale cast hits ${g}× harder than tonight's (HP × damage)${rule('finale2')?', and part 2 follows':''}. Winning tonight doesn't mean you're ready.`,sh:`the Season finale hits ${g}× harder`,g};}
 
 setInterval(()=>{if(typeof S!=='undefined'&&S&&!S.over&&typeof document!=='undefined'&&document.visibilityState==='visible')S.playMs=(S.playMs||0)+1000;},1000);
@@ -22738,6 +22740,7 @@ function step(dt){
 function lossTip(){
   if(fieldCount()<boardSize())return 'You had empty board slots. Fill every slot before the fight.';
   if((S.lv|0)>=9&&fielded().length>=5&&S.gold<TUNE.bankTip){const gs=new Set(fielded().map(u=>HERO[u.id].genre));if(gs.size<=2)return `Your board had only ${gs.size===1?'one genre':'two genres'}. At this level, mixing 3 or more pays: more 🔗 crossovers, and trait bonuses stack across genres.`;}
+  if(S.gold>=TUNE.bankTip&&(curRound()||{}).type==='boss'&&(curRound()||{}).act===runActs())return `You lost with 🪙${S.gold} unspent. You get one more shop before the rematch, and gold left after the finale is worth nothing: spend it all now (⬆️ Train, copies for ★★★, rerolls for the copy you need).`;
   if(S.gold>=TUNE.bankTip){const cap=intCap(),top=TUNE.intPer*cap;return `You lost with 🪙${S.gold} unspent. Interest pays at most 🪙${cap} a round${S.gold>top?` and nothing past 🪙${top}`:''}. ⬆️ Train first (rarer characters), then buy copies for ★★; save rerolls for hunting a copy you need.`;}
   if(S.round>=6&&fielded().filter(u=>HERO[u.id].tier<=2).length>=Math.ceil(fielded().length*.6))return 'Commons and Uncommons stop at ★★ and fall behind late. Rank up and buy Rare or better.';
   const lv1=fielded().filter(u=>u.level===1).length;
@@ -22851,6 +22854,13 @@ function ladTier(id){for(let n=TUNE.leadFrom;n<=TUNE.ladderTo;n++)if(ladLead(n)=
 function leadK(){const a=TUNE.leadBossK,i=Math.max(0,Math.min(a.length-1,(S.lv|0)-6));return a[i]||2.8;}
 // the Leader's genre for the top bar: its Gym signature genre, crossovers for Ivy, else how it plays
 function leadTag(id){const G=GYMS.find(g=>g.id===id),x=RIVAL[id];if(G&&G.g&&GENRES[G.g])return GENRES[G.g].e+' '+GENRES[G.g].name;if(G)return '🔀 Crossovers';return x?'plays by '+x.style.toLowerCase():'';}
+// TRO-226: the Leader's cast in numbers, as the finale fields it: board (fights), bench (stays out), ★★★ on the board,
+// carry (most ★, then rarest) and the boost every one of them fights with (rvStrength x leadK x 0.9 per retry). Reads only.
+function leadCast(){const R=S&&S.lead&&S.lobby&&S.lobby.rv.find(x=>x.id===S.lead);if(!R||!R.st)return null;const us=R.st.units||[],f=us.filter(u=>u.slot&&u.slot[0]!=='n');
+  let c=null,cs=-1;f.forEach(u=>{const d=HERO[u.id];if(!d)return;const sc=u.level*10+d.tier;if(sc>cs){cs=sc;c=u;}});
+  const k=Math.round(10*rvStrength()*leadK()*Math.pow(0.9,S.bossTries|0))/10,cg=c&&HERO[c.id].genre,hit=cg?ctrMine().filter(m=>ctrOn(m,cg)):[];
+  return {x:RIVAL[R.id],n:f.length,bn:us.length-f.length,s3:f.filter(u=>u.level>=3).length,k,c,cn:c?HERO[c.id].e+' '+HERO[c.id].name+' '+'★'.repeat(c.level):'',cg,hit};}
+function leadCastT(L){return `${L.n} on the board${L.bn?` + ${L.bn} on the bench`:''}, ${L.s3} ★★★${L.c?`, carry ${L.cn}`:''}`;}
 function leadEp(ev){const R=S.lobby&&S.lobby.rv.find(x=>x.id===S.lead);if(!R)return false;
   S.enemy.base=JSON.parse(JSON.stringify(S.enemy));
   Object.assign(S.enemy,{rival:R.id,tpl:'rival:'+R.id,title:RIVAL[R.id].name+"'s full cast",enc:[],gh:null,lead:1,sched:true,elite:false});
@@ -22858,7 +22868,7 @@ function leadEp(ev){const R=S.lobby&&S.lobby.rv.find(x=>x.id===S.lead);if(!R)ret
 function leadChip(){if(!S.lead||!RIVAL[S.lead])return '';const x=RIVAL[S.lead],t=leadTag(S.lead);
   return `<span class="fbl" title="Final boss of this run: ${esc(x.name)}'s full cast. ${esc(x.d)}"><i>💀</i><b class="fbw">Final boss:</b> ${x.e} ${esc(x.name)}<small>${esc(t)}</small></span>`;}
 function leadNote(){if(!S||!S.lead||!RIVAL[S.lead])return '';const x=RIVAL[S.lead],G=GYMS.find(g=>g.id===S.lead);
-  return `<p class="lvlead">💀 <b>Final boss: ${x.e} ${esc(x.name)}'s full cast</b> (${esc(leadTag(S.lead))}). ${esc(x.d)} You meet them in the lobby all run; beat their full cast in the last episode to win${G?` and earn the ${esc(G.be+' '+G.badge)} badge`:''}.</p>`;}
+  return `<p class="lvlead">💀 <b>Final boss: ${x.e} ${esc(x.name)}'s full cast</b> (${esc(leadTag(S.lead))}). ${esc(x.d)} You meet them in the lobby all run (the Mid-season finale counts their cast for you); beat their full cast in the last episode to win${G?` and earn the ${esc(G.be+' '+G.badge)} badge`:''}.</p>`;}
 const GYM_OPEN=7; // the circuit opens with Ascension 3 (four rivals met)
 function gymOf(){return S&&S.gym?GYMS[S.gym.n-1]||null:null;}
 function gymSig(id){const G=GYMS.find(g=>g.id===id);return G?G.g:null;}
@@ -23045,13 +23055,13 @@ function rvStrip(){if(!S||!S.lobby)return '';if(LADON&&TUNE.ladderLobby&&TUNE.la
 function rvKit(R,short){const st=R&&R.st;if(!st)return '';const L=st.legend&&LEGENDS[st.legend],its=(st.trinkets||[]).filter(t=>TR[t]),sl=t=>'★'.repeat((st.tlv||{})[t]||1);if(!L&&!its.length)return '';
   if(short)return (L?`${L.e} ${esc(L.name)}`:'')+(L&&its.length?' · ':'')+its.map(t=>TR[t].e).join('');
   return `<p class="rvtell rvkit">${esc(RIVAL[R.id].name)} took: ${[L?`<b title="${esc(L.d)}">${L.e} ${esc(L.name)}</b>`:''].concat(its.map(t=>`<span title="${esc(TR[t].d)}">${TR[t].e} ${esc(TR[t].name)} ${sl(t)}</span>`)).filter(Boolean).join(' · ')}</p>`;}
-function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL[e.rival],f=R?R.st.units.filter(u=>u.slot[0]!=='n'):[];
+function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL[e.rival],f=R?R.st.units.filter(u=>u.slot[0]!=='n'):[],L=e.lead?leadCast():null;
   const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1;
   const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
   const foes=f.map(u=>`<span class="foe" title="${esc(HERO[u.id].name)} ${'★'.repeat(u.level)}">${foePt(null,'sm',u.id)||pt({e:HERO[u.id].e,foe:true},'sm')}<small>${'★'.repeat(u.level)}</small></span>`).join('');
   return `<section class="vs feat boss rvep">${img?`<span class="fart fimg" aria-hidden="true"><img src="${img}" alt="" draggable="false"></span>`:`<span class="fart emo" aria-hidden="true">${x.e}</span>`}
-    <div class="fhd"><small>Rival episode · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s cast</b></div>
-    <div class="foes">${foes}</div>${rvAlgo(e.rival)?`<p class="rvtell rvalgo">Plays by: <b>${esc(rvAlgo(e.rival))}</b></p>`:''}<p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p>${rvKit(R)}${ctrPanel()}</section>`;}
+    <div class="fhd"><small>${L?'💀 Final boss · the Leader':'Rival episode'} · Act ${act} · Ep ${S.round} of ${SCHEDULE.length}</small><b>${x.e} ${esc(x.name)}'s ${L?'full ':''}cast</b></div>
+    <div class="foes">${foes}</div>${L?`<p class="rvtell lcast">💀 <b>${L.n} fight</b>${L.bn?` (+${L.bn} benched)`:''} · ${L.s3} ★★★ · each ×${L.k} HP and damage${L.c?` · 🎯 carry <b>${esc(L.cn)}</b> (${esc(GENRES[L.cg]?GENRES[L.cg].name:'')})${L.hit.length?`: your ${esc(ctrNm(L.hit[0]))} counters it`:': none of your counters hits it'}`:''}</p>${ctrPanel()}`:''}${rvAlgo(e.rival)?`<p class="rvtell rvalgo">Plays by: <b>${esc(rvAlgo(e.rival))}</b></p>`:''}<p class="rvtell">${esc(x.style)}: ${esc(x.tell)}</p>${rvKit(R)}${L?'':ctrPanel()}</section>`;}
 function advanceAfterFight(res){
   if(S.over)return;
   if(res.part2){S.part=2;S.bossTries=0;prepareFight();UI.screen='plan';return;} // straight on: no income, no new shop
@@ -24093,8 +24103,8 @@ function isWide(){return typeof matchMedia==='function'&&matchMedia('(min-width:
 function phFold(){if(UI.phR!==S.round){UI.phR=S.round;UI.phOpen='';UI.phMenu=false;}
   const e=S.enemy,vs=finTry(vsStrip0()),rv=rvStrip(),tip=coachHTML(),it=itemIcons(),T=[];
   if(vs){const x=e.rival&&RIVAL[e.rival],ld=e.enc&&e.enc[0]&&EN[e.enc[0].key];
-    const ic=x?x.e:e.gh?'📼':e.boss?'💀':e.elite?'🌟':'⚔️',k=x?'Rival':e.gh?'Rerun':e.part?'Boss 2/2':e.boss?'Boss':e.elite?'Mini-boss':e.trial?'Trial':'Next';
-    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+'\'s cast':String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,(topBar.st?`<div class="strip phstrip" aria-label="Round ${S.round} of ${SCHEDULE.length}">${topBar.st}</div>`:'')+vs]);}
+    const ic=x?x.e:e.gh?'📼':e.boss?'💀':e.elite?'🌟':'⚔️',k=x?(e.lead?'💀 Final boss':'Rival'):e.gh?'Rerun':e.part?'Boss 2/2':e.boss?'Boss':e.elite?'Mini-boss':e.trial?'Trial':'Next';
+    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+(e.lead?'\'s full cast':'\'s cast'):String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,(topBar.st?`<div class="strip phstrip" aria-label="Round ${S.round} of ${SCHEDULE.length}">${topBar.st}</div>`:'')+vs]);}
   if(rv)T.push(['rv','🏁','<span class="phl">Rivals</span>',rv]);
   if(tip)T.push(['tip','💡','<span class="phl">Tip</span>',tip]);
   if(it)T.push(['it','🎒',`<span class="phl">${S.trinkets.length+(S.legend?1:0)}</span>`,`<div class="items phitems">${it}</div>`]);
@@ -24831,10 +24841,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.62',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.63',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.63',items:[["💀", "Ladder finales in numbers: the Mid-season finale now counts the Leader's cast (board, bench, ★★★, their carry) and says how much stronger it fights in the finale (×HP and ×damage). The Season finale panel uses the same name and count as the fight, and says whether your counters hit their carry."], ["🪙", "Lose the Season finale with gold in the bank and the tip now says to spend it in the rematch shop (it was telling you not to save)."]]},
   {v:'20.62',items:[["⚠️", "A bad random event right after an intermission is now announced too: the shop before the intermission warns you, and the intermission screen repeats it."]]},
   {v:'20.61',items:[["🛠️", "Fixed a freeze: dropping a two-square character onto a full board could lose a character's square, freeze every button and break the save. Saves with that problem now load and put the character back on your bench."], ["💾", "If a saved run still can't be loaded, the title now says so and lets you start a new run, instead of a Continue button that does nothing."]]},
   {v:'20.60',items:[["👋", "First run: the first shop now shows just the cards, your gold and your board. Reroll, Lock, shop ranks and the Pool appear as the tutorial gets to them, and Fight pulses once someone is on your board."], ["🏷️", "The first shop explains the card tags (a genre and a role) and Crowd cards; the board count says it grows as your shop ranks up; the tutorial tip no longer sits on the first card."], ["🎬", "The first-visit title says what the game is (an auto-battler of movie and TV tropes), with bigger Buy / Combine / Brawl steps and labelled buttons."]]},
