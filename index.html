@@ -6950,14 +6950,14 @@ const CAST = [
 // ---------- Kaiju (v19.55) ----------
 { id: 'tanks', name: 'Sky Screamers', genre: 'kaiju', crowd: true, build({ variant: v = 0, pose = 'idle' } = {}) {
   // TRO-273/312 (version C): game id 'tanks' (was Defense Force Tanks), baby pterosaurs mid-scream. v: crest size / colour shift. atk = wings swept back, diving.
-  const g = G(), dive = pose === 'atk', sk = ['#e8602c', '#d94a2a', '#f08a38'][v], dk = ['#b8381c', '#a82a1c', '#c4501c'][v], bel = ['#ffd2a0', '#ffc4a0', '#ffe0a8'][v], mem = ['#f0784a', '#e85a4a', '#f89a50'][v], cr = [.62, .9, .42][v];
+  const g = G(), dive = pose === 'atk', sk = ['#e8602c', '#d94a2a', '#f08a38'][v], dk = ['#b8381c', '#a82a1c', '#c4501c'][v], bel = ['#ffd2a0', '#ffc4a0', '#ffe0a8'][v], mem = ['#f0784a', '#e85a4a', '#f89a50'][v], cr = [.62, .9, .42][v], ws = [.72, .62, .8][v], bk = [.52, .44, .6][v];
   const body = at(g, [0, dive ? 1.0 : .95, 0], [dive ? .95 : .12, 0, 0]);
   body.add(P(sphere(.42), sk, { s: [1, 1.05, 1.15] })); body.add(P(sphere(.34), bel, { p: [0, -.08, .2], s: [1, 1.1, .7] }));
   for (let i = 0; i < 3; i++) body.add(P(torus(.3 - i * .02, .02), dk, { p: [0, -.12 - i * .12, .22 - i * .02], r: [PI / 2 - .3, 0, 0], s: [1, 1, .7], noOutline: 1 }));
   body.add(P(cone(.14, .5), dk, { p: [0, -.12, -.58], r: [-PI / 2 - .35, 0, 0] })); body.add(P(cone(.1, .2), dk, { p: [0, -.3, -.9], r: [PI / 2 + .2, 0, 0] }));
   // wings: a leathery membrane with scalloped edge on bone fingers
   for (const s of [-1, 1]) {
-    const w = at(body, [s * .3, .22, -.02], dive ? [-.2, s * 1.25, s * -.25] : [0, s * .12, s * .4]); w.userData.joint = s < 0 ? 'shoulderR' : 'shoulderL';
+    const w = at(body, [s * .3, .22, -.02], dive ? [-.2, s * 1.25, s * -.25] : [0, s * .12, s * (.4 + v * .18)]); w.scale.setScalar(ws); w.userData.joint = s < 0 ? 'shoulderR' : 'shoulderL';
     const sh = new THREE.Shape(), X = x => x * s; sh.moveTo(0, .02); sh.lineTo(X(.6), .55); sh.lineTo(X(1.5), .95); sh.lineTo(X(1.33), .12);
     sh.quadraticCurveTo(X(1.2), .22, X(1.05), .0); sh.quadraticCurveTo(X(1.0), .16, X(.86), -.2); sh.quadraticCurveTo(X(.62), -.02, X(.4), -.36); sh.lineTo(X(.04), -.3); sh.closePath();
     extrude(w, sh, .05, mem, { p: [0, 0, 0] });
@@ -6971,10 +6971,12 @@ const CAST = [
   // head: crest swept back, open beak, screaming
   const head = at(body, [0, .6, .45], [dive ? -.85 : -.1, 0, 0]); head.userData.joint = 'neck'; limb(body, [0, .25, .2], [0, .52, .38], .17, sk);
   head.add(P(sphere(.4), sk, { s: [1, 1, 1.05] }));
-  head.add(P(cone(.16, .8), sk, { p: [0, .14, .74], r: [PI / 2, 0, 0] })); head.add(P(cone(.14, .66), bel, { p: [0, -.28, .6], r: [PI / 2 + .75, 0, 0] }));
+  head.add(P(cone(.17, bk), sk, { p: [0, .12, .4 + bk * .5], r: [PI / 2, 0, 0] })); head.add(P(cone(.15, bk * .8), bel, { p: [0, -.2, .38 + bk * .4], r: [PI / 2 + .55, 0, 0] }));
   head.add(P(sphere(.13), '#8a1c1c', { p: [0, -.1, .52], s: [1.2, .8, 1.6], noOutline: 1 })); head.add(P(sphere(.04), '#ff7a8a', { p: [0, -.1, .52], s: [1, .5, 1.5], noOutline: 1 }));
   head.add(P(cone(.07 + cr * .08, .5 + cr * .8), dk, { p: [0, .26 + cr * .1, -.3 - cr * .22], r: [-PI / 2 - .5, 0, 0] }));
   if (v === 1) for (const s of [-1, 1]) head.add(P(cone(.05, .36), dk, { p: [s * .2, .26, -.18], r: [-PI / 2 - .6, 0, s * .5] }));
+  if (v === 2) { body.scale.setScalar(.9); for (const s of [-1, 1]) head.add(P(cone(.07, .3), dk, { p: [s * .36, .0, -.05], r: [0, 0, -s * PI / 2 + s * .3] })); }
+  if (v === 1) head.rotation.y = .18;
   eyes(head, { r: .4, white: 1, y: .1, dx: .17, sizes: [1.3, 1.3] }); brows(head, { r: .41, y: .27, ang: .5 });
   g.userData.hover = 1;
   return g; } },
@@ -24959,10 +24961,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.94',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.95',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.95',items:[["🦅", "Classic look: the Sky Screamers have a shorter beak, smaller wings and a more different crowd."]]},
   {v:'20.94',items:[["👁️", "Easier to read for colour-blind players: enemy health bars are striped and yours are teal, and the fight recap marks dealt ▲, taken ▼ and healed ✚ with a symbol as well as a colour."]]},
   {v:'20.93',items:[["👏", "The studio audience beside the board sits in a warm spill of light now, so you can see them, and they react: the stands light up and jump when an enemy goes down, go wild for a boss KO, and go quiet when you lose one."]]},
   {v:'20.92',items:[["🏁", "Winning the Pilot now takes you straight into Part 2 (it used to offer the Pilot again)."], ["⬆️", "Train is in the Pilot: gold buys shop rank, so more board slots and rarer characters. Pilot fights hit harder to match."], ["🌟", "Pilot, Part 2 has two mini-bosses, one per act."]]},
@@ -25159,7 +25162,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.94',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival."], ["❤️", "The Codex shows the real lives and loss cost for the level you play."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.95',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival."], ["❤️", "The Codex shows the real lives and loss cost for the level you play."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
