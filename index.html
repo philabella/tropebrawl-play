@@ -555,6 +555,7 @@ html:not(.dt) .plan>.syns>.syn.xlist{order:-1;margin-left:0;flex:none}
 .proj.healp{background:#4dff7c;box-shadow:0 0 12px #4dff7c}
 .unit .slashfx{position:absolute;left:50%;top:45%;width:70%;height:6px;margin:-3px 0 0 -35%;border-radius:3px;background:linear-gradient(90deg,transparent,#fff 35%,var(--sc,#fff) 65%,transparent);box-shadow:0 0 10px var(--sc,#fff);pointer-events:none;z-index:7;animation:slashfx .34s ease-out forwards}
 @keyframes slashfx{0%{opacity:0;transform:rotate(-35deg) scaleX(.2)}35%{opacity:1;transform:rotate(-35deg) scaleX(1.1)}100%{opacity:0;transform:rotate(-35deg) scaleX(1.25) translateY(4px)}}
+.proj.bncp{width:7px;height:7px;left:-3.5px;top:-3.5px;opacity:.92}
 .proj.ballp{width:auto;height:auto;background:none;box-shadow:none;font-family:var(--f-emoji);left:-10px;top:-10px;line-height:1}
 .streak{display:inline-flex;align-items:center;gap:6px;font-family:var(--f-display);font-size:.9rem;color:var(--leg);padding:.15em .6em;border:1px solid var(--leg);border-radius:999px}
 .clock{font-variant-numeric:tabular-nums;color:var(--muted);font-size:.85rem}
@@ -22759,13 +22760,13 @@ function attack(u,t){
   animAttack(u,t);
   B.fxCrit=crit;B.wsk=TUNE.westShield&&u.genre==='west'&&(crit||(nm&&TUNE.westShield>=2));const d=dealDamage(u,t,dmg,'attack');B.fxCrit=false;B.wsk=false;
   if(d>0&&u.side==='A')horrorHit(u,t,crit);
-  if(u.splash&&d>0)beside(t).forEach(x=>dealDamage(u,x,dmg*u.splash,'bounce'));
+  if(u.splash&&d>0){const lb=B._lag||0,l0=B.silent?0:Math.max(lb,fxWait(t));beside(t).forEach(x=>{const ch=[];ch.a=[];const fl=bncFx(u,x,t,0,l0,ch),q0=FXQ.q,t0=FXQ.t;if(fl){B._lag=fl;FXQ.q=ch.a[0]=[];FXQ.t=B.t;}try{dealDamage(u,x,dmg*u.splash,'bounce');}finally{FXQ.q=q0;FXQ.t=t0;if(fl)B._lag=lb;}});}
   if(u.kscare&&d>0)terrify(t,2);
   if(u.pierce){const bk=B.units.find(x=>x!==t&&x.alive&&Z(x)===Z(t)&&sameCol(x,t)&&x.row!==t.row);if(bk)dealDamage(u,bk,dmg*u.pierce,'bounce');}
   if(u.genre==='ball'&&u.side==='A'&&legend('press'))t.mana=Math.max(0,(t.mana||0)-TUNE.pressDrain);
   if(u.genre==='bug'&&u.side==='A'&&t.alive&&legend('pheromone'))t.pheroT=B.t+TUNE.pheroFor;
   if(u.genre==='west'&&u.side==='A'&&legend('sixgun')){u.shots=(u.shots||0)+1;if(u.shots%TUNE.sixEvery===0){sideUnits('E').filter(x=>x!==t&&targetable(x)).forEach(x=>dealDamage(u,x,dmg*TUNE.sixPct,'bounce'));float(u,'Fan the hammer!','sp');}}
-  if(crit&&u.ricochet){const nx=nearestOther(t,[t]);if(nx)dealDamage(u,nx,dmg,'bounce');}
+  if(crit&&u.ricochet){const nx=nearestOther(t,[t]);if(nx){const lb=B._lag||0,ch=[];ch.a=[];const fl=bncFx(u,nx,t,0,B.silent?0:Math.max(lb,fxWait(t)),ch),q0=FXQ.q,t0=FXQ.t;if(fl){B._lag=fl;FXQ.q=ch.a[0]=[];FXQ.t=B.t;}try{dealDamage(u,nx,dmg,'bounce');}finally{FXQ.q=q0;FXQ.t=t0;if(fl)B._lag=lb;}}}
   if(u.crowd&&u.side==='A'&&B.syn.X.locusts&&t.alive)t.mana=Math.max(0,(t.mana||0)-TUNE.xLocust);
   if(u.manaMax)u.mana=Math.min(u.manaMax,u.mana+10+(crit?u.critRefund:0));
   if(u.stackAtk)u.atkStack=Math.min(u.stackCap,u.atkStack+u.stackAtk);
@@ -22774,7 +22775,7 @@ function attack(u,t){
 // bounces: a share of the hit jumps to nearby enemies; they give no energy to anyone (attacks and Game Ball throws)
 function bounceHits(u,t,dmg){
   if(TUNE.fearNoBounce&&u.fearT>B.t)return;if(TUNE.shieldBounce&&t.shield>0&&t.genre==='space')return;
-  if(u.bounces){const hy=allies(u).some(a=>a.hype&&a.taunt>0)?2:1;let from=t;const hit=[t];for(let i=0;i<u.bounces;i++){const nx=markOf(u,hit)||nearestOther(from,hit);if(!nx)break;if(u.genre==='ball')ballFx(u,nx,from);dealDamage(u,nx,dmg*(TUNE.ballGiant&&u.genre==='ball'&&nx.wide?1:Math.min(1,u.bouncePct*hy)),'bounce');if(u.genre==='ball'&&u.side==='A'&&legend('press'))nx.mana=Math.max(0,(nx.mana||0)-TUNE.pressDrain);hit.push(nx);from=nx;if(TUNE.shieldBounce&&nx.shield>0&&nx.genre==='space')break;}}
+  if(u.bounces){const hy=allies(u).some(a=>a.hype&&a.taunt>0)?2:1;let from=t;const hit=[t];const lb=B._lag||0,l0=B.silent?0:Math.max(lb,fxWait(t)),ch=[];ch.a=[];for(let i=0;i<u.bounces;i++){const nx=markOf(u,hit)||nearestOther(from,hit);if(!nx)break;const fl=bncFx(u,nx,from,i,l0,ch),q0=FXQ.q,t0=FXQ.t;if(fl){B._lag=fl;FXQ.q=ch.a[i]=[];FXQ.t=B.t;}try{dealDamage(u,nx,dmg*(TUNE.ballGiant&&u.genre==='ball'&&nx.wide?1:Math.min(1,u.bouncePct*hy)),'bounce');}finally{FXQ.q=q0;FXQ.t=t0;}if(u.genre==='ball'&&u.side==='A'&&legend('press'))nx.mana=Math.max(0,(nx.mana||0)-TUNE.pressDrain);hit.push(nx);from=nx;if(TUNE.shieldBounce&&nx.shield>0&&nx.genre==='space')break;}if(!B.silent)B._lag=lb;}
 }
 // ---- Game Ball ----
 function ballOrder(){return B.units.filter(u=>u.side==='A'&&u.alive&&u.genre==='ball').sort((a,b)=>(a.row===b.row?0:a.row==='front'?-1:1)||a.col-b.col);}
@@ -23343,6 +23344,20 @@ function castShot(u,t,isHeal){if(!B||B.silent||RM||!B._cs||!u.el||!t||!t.el||t==
   if(st==='melee'){const i=document.createElement('i');i.className='slashfx';i.style.setProperty('--sc',getComputedStyle(u.el).getPropertyValue('--gc')||'#fff');t.el.appendChild(i);setTimeout(()=>i.remove(),Math.max(200,380/(B.speed||1)));return;}
   if(st==='throw'){projectile(u,t,'ballp',BALLS[u.twin?u.tid:u.id]||'⚾',18,300);return;}
   projectile(u,t,u.genre?'g-'+u.genre:'g-foe',null,0,300);}
+// v20.106 (TRO-370): fxWait(u) = ms until the shot launched at u in this fight tick lands (0 = none in flight).
+// bncFx: hop i of a bounce leaves its last target when hop i-1 lands (l0 = when the first shot lands) and returns when
+// it lands = when its number and HP drop show. Hops of one bounce share ch: one flight after a hop leaves, its own
+// number, spark and HP drop (ch.a[i], collected while it is dealt) show and the next hop leaves, so a slow frame
+// delays the whole chain instead of bunching hops and numbers. Sportsball throws its ball; others fire their own shot from the last
+// target (a stand-in object, _fxOf = the shooter). Visual only.
+function fxWait(u){if(typeof B==='undefined'||!B||B.silent||RM||!u||u._fxBt!==B.t)return 0;const d=u._fxArr-performance.now();return d>0?d:0;}
+function bncMs(u){const sp=(B&&B.speed)||1;return typeof AR!=='undefined'&&AR.f&&u&&u._ar?Math.max(260,364/sp):260/sp;}
+function bncFx(u,nx,from,i,l0,ch){if(!B||B.silent||RM||!nx||!from)return 0;const d=bncMs(from),at=(l0||0)+i*d;
+  const go=()=>{if(!from.el||!nx.el)return;if(u.genre==='ball')ballFx(u,nx,from);
+    else projectile({el:from.el,_ar:from._ar,side:u.side,id:u.id,genre:u.genre,twin:u.twin,tid:u.tid,key:u.key,summon:1,_fxOf:u,_fxAt:from},nx,'bncp '+(u.side==='A'&&u.genre?'g-'+u.genre:'g-foe'),null,0);};
+  if(!ch){if(at>0)hfLater(go,at);else go();return Math.round(at+d);}
+  ch[i]=go;if(i===0){const run=k=>{if(!ch[k])return;try{ch[k]();}catch(e){}hfLater(()=>{(ch.a[k]||[]).forEach(f=>{try{f();}catch(e){}});run(k+1);},d);};if(at>0){if(FXQ.q&&FXQ.t===B.t)FXQ.q.push(()=>run(0));else hfLater(()=>run(0),at);}else run(0);}
+  return Math.round(at+d);}
 function ballFx(u,t,from,mult){if(!B||B.silent)return;if(mult){gbFly(from||u,t,14+mult*7);return;}projectile(from||u,t,'ballp',BALLS[u.id]||'⚾',18);}
 function gbClear(){if(typeof B!=='undefined'&&B&&B.gbT){clearTimeout(B.gbT);B.gbT=0;}if(typeof document==='undefined')return;document.querySelectorAll('.gball').forEach(e=>{e.getAnimations().forEach(a=>a.cancel());e.remove();});if(typeof AR!=='undefined'&&AR.scene)arGbClear();}
 function gbFly(u,t,size,dur){gbClear();const el=projectile(u,t,'ballp','⚽',size,dur);if(el)el.classList.add('gball');}
@@ -23420,7 +23435,7 @@ function drawBattle(){
     if(!u.el){if(u.alive)mountUnit(u);else continue;}
     if(u.alive)placeUnit(u);
     if(u.wide&&u.el)wideSize(u);
-    const hp=Math.max(0,u.hp);
+    const hp=Math.min(u.maxHp,Math.max(0,Math.max(0,u.hp)+(u._hpl||0)));
     u.$hf.style.width=(hp/u.maxHp*100)+'%';if(u.$hg)u.$hg.style.width=(hp/u.maxHp*100)+'%';
     {const sp=Math.min(100,Math.max(0,u.shield)/u.maxHp*100),sl=Math.max(0,Math.min(hp/u.maxHp*100,100-sp));u.$sf.style.width=sp+'%';u.$sf.style.left=sl+'%';if(sp>0)u._shw=[sl,sp];
       if(u._shp!=null&&u.alive&&u.shield-u._shp>=1)numFx(u,u.shield-u._shp,'shield');u._shp=u.alive?Math.max(0,u.shield):0;}
@@ -23430,7 +23445,7 @@ function drawBattle(){
     // a character with an <id>_up sprite (Burrow Lurker) switches to it once it has tunneled into the enemy side
     if(u.side==='A'&&!u.summon&&SPRITES[u.id+'_up']){const im=u.el.querySelector('img.spr'),wk=(u.zone||u.side)!==u.side?u.id+'_up':u.id;if(im&&(im._tbk!==undefined?im._tbk||im._wk:TBA.rev&&TBA.rev.get(im.getAttribute('src')))!==wk){im._tbk=undefined;im._cur=null;im._wk=wk;im.setAttribute('src',SPRITES[wk]);}}
     if(u.$cs&&+u.$cs.dataset.n!==Math.min(3,bodies(u))){const n=Math.min(3,bodies(u));u.$cs.dataset.n=n;u.$cs.innerHTML=crowdImgs(u.art||u.id,n);}
-    u.el.classList.toggle('dead',!u.alive);u.el.classList.toggle('low',u.alive&&hp<u.maxHp*.25);
+    u.el.classList.toggle('dead',!u.alive&&!(u._hpl>0));u.el.classList.toggle('low',u.alive&&hp<u.maxHp*.25);
     u.el.classList.toggle('hidden',u.alive&&!targetable(u));
     if(u.manaMax){if(u._cast)u._cast=0;else if(u._mp!=null&&u.alive&&u.mana<u._mp-1)u._drT=B.t+1.5;u._mp=u.mana;}
     const st=[];
@@ -25129,10 +25144,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.106',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.107',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.107',items:[["🏐", "Bounces travel: a Sportsball bounce, Killer Bees, Wide Shot and a ricochet leave only when the shot before them lands, and damage numbers and health bars drop when a shot arrives, not when it is thrown."]]},
   {v:'20.106',items:[["🎬", "Episode 1 is now the same fight at every Level: from Level 12 up, three starting Commons lost it about half the time, costing lives before you had made a single choice."]]},
   {v:'20.105',items:[["🖱️", "On a computer, right-click any character, item, Legendary, genre or episode to see its details (your own characters show their Sell button). Right-click empty space to close. The game also has its own cursors and scroll bars now."]]},
   {v:'20.104',items:[["🎬", "The act strip at the top tells you more: hover, tap or Tab to any episode, act or 👑 marker to see the enemy and its family, the gold a win pays, the lives a loss costs and the Legendary offer. Played episodes show how they went."]]},
@@ -25338,7 +25354,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.106',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.107',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -25677,7 +25693,8 @@ function sfxUnlock(){sfxInit();try{if(SFX.ctx&&SFX.ctx.state==='suspended')SFX.c
 // around attack(); numbers, sparks, flashes, sounds and the KO wait that long, so the hit shows when the shot lands.
 // 3D arena: white body flash (~110 ms), knockback away from the attacker + squash, particle puff by damage type.
 // Hit-stop (2-4 frames, at most one per 220 ms) + small camera shake only on crits, big hits (25% of max HP) and KOs.
-function hfLater(fn){const b=typeof B!=='undefined'?B:null,ms=b&&b._lag;if(!(ms>0)||RM){fn();return;}setTimeout(()=>{if(B===b&&!b.silent)fn();},ms);}
+const FXQ={q:null,t:-1};
+function hfLater(fn,d){if(d==null&&FXQ.q){if(typeof B!=='undefined'&&B&&FXQ.t===B.t){FXQ.q.push(fn);return;}FXQ.q=null;}const b=typeof B!=='undefined'?B:null,ms=d!=null?d:b&&b._lag;if(!(ms>0)||RM){fn();return;}setTimeout(()=>{if(B===b&&!b.silent)fn();},ms);}
 const HF={list:[],fl:new Set(),hs:0,B:null};
 function hfFlash(T,col,a,now,sp){try{skcMats(T);const c=new TBA.THREE.Color(col);T._hf={t0:now,dur:Math.max(90,120/sp),r:c.r,g:c.g,b:c.b,a};HF.fl.add(T);}catch(e){}}
 function hfPuff(T,dx,dz,type,lv,crit){try{if(HF.list.length>40||!skcInit())return;const o=skcGet('pts');if(!o)return;const sp=B.speed||1,m=o.material;
@@ -27397,6 +27414,42 @@ globalThis.SYMF = globalThis.SYMF || (function () {
     PS, ZSYN, lvlS, ct, counters: () => Object.assign({}, CNT), capture, attachE, hookRuns, RUN, COPIES: SYMF, ORIG };
 })();
 SYMF.hookRuns({ on: !!TUNE.symFoes });
+// ===== v20.106 (TRO-370): hits show when the shot that causes them lands. Visual only: nothing here writes the battle
+// or calls rand(). Every projectile() remembers when it reaches its target (_fxBt = fight tick, _fxArr = real time);
+// in that tick, numbers, sparks, texts, the shield crack, the HP drop and the KO on that target wait for it. A unit hit
+// in the same tick it shoots or casts fires once that hit lands (The Editor's Final Cut).
+(()=>{try{
+  const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
+  const on=()=>typeof B!=='undefined'&&B&&!B.silent&&!RM;
+  const withLag=(d,f)=>{if(!(d>(B._lag||0)))return f();const l=B._lag;B._lag=d;try{return f();}finally{B._lag=l;}};
+  const mark=(t,at)=>{if(t._fxBt!==B.t||!(t._fxArr>at)){t._fxBt=B.t;t._fxArr=at;}};
+  // the same flight times as the v20.35 attack lag
+  const atkFl=(u,t)=>{const sp=B.speed||1,a3=!!(typeof AR!=='undefined'&&AR.f&&u._ar&&t._ar);if(atkStyle(u)!=='melee')return a3?Math.max(260,364/sp):260/sp;
+    if(a3){const em=u.atkK&&TBA.lib&&TBA.lib.EMOTES&&TBA.lib.EMOTES[u.atkK];return (em?em.dur*1000:600)*.45/sp;}
+    const ra=u.el.getBoundingClientRect(),rb=t.el.getBoundingClientRect(),d=Math.hypot(rb.left-ra.left,rb.top-ra.top);return Math.max(180,Math.min(420,d*1.3))/sp*.47;};
+  wrap('projectile',o=>function(u,t,cls,glyph){const r=o.apply(this,arguments);
+    try{if(on()&&u&&t&&u.el&&t.el){const sp=B.speed||1,base=arguments[5]||260,a3=typeof AR!=='undefined'&&AR.f&&u._ar&&t._ar&&tbaProjFor(u,glyph);
+      mark(t,performance.now()+(a3?(glyph==='⚽'?Math.max(40,base/sp):Math.max(260,base/sp*1.4)):base/sp));}}catch(e){}
+    return r;});
+  wrap('numFx',o=>function(u,v,k){if(!on()||!u||!u.el||!(v>=.5))return o.apply(this,arguments);const d=Math.max(B._lag||0,fxWait(u));if(!(d>0))return o.apply(this,arguments);
+    const hv=k==='phys'||k==='spell'||k==='true'||k==='tick'?v:k==='heal'||k==='heal2'?-v:0;
+    if(hv){u._hpl=(u._hpl||0)+hv;const rel=()=>{u._hpl=(u._hpl||0)-hv;if(Math.abs(u._hpl)<1e-6)u._hpl=0;};if(FXQ.q)FXQ.q.push(rel);else setTimeout(rel,d);}
+    u._koWait=Math.max(u._koWait||0,performance.now()+d);const a=arguments;return withLag(d,()=>o.apply(this,a));});
+  wrap('hitFx',o=>function(src,t){const a=arguments;return on()&&t?withLag(fxWait(t),()=>o.apply(this,a)):o.apply(this,a);});
+  wrap('float',o=>function(u){const a=arguments;return on()&&u?withLag(fxWait(u),()=>o.apply(this,a)):o.apply(this,a);});
+  wrap('shCrack',o=>function(u){const d=on()&&u?Math.max(B._lag||0,fxWait(u)):0;if(!(d>0))return o.apply(this,arguments);if(FXQ.q)FXQ.q.push(()=>o(u));else hfLater(()=>o(u),d);});
+  // a waited attack / cast: its numbers, sparks and HP drop show one flight after the delayed shot really leaves
+  const flush=q=>q.forEach(f=>{try{f();}catch(e){}});
+  const hold=()=>{const q=[];FXQ.q=q;FXQ.t=B.t;return q;};
+  const keep=name=>wrap(name,o=>function(){const q0=FXQ.q,t0=FXQ.t;try{return o.apply(this,arguments);}finally{FXQ.q=q0;FXQ.t=t0;}});
+  keep('attack');keep('spell');keep('heal');keep('act');
+  wrap('animAttack',o=>function(u,t){const w=on()&&u&&t&&u.el&&t.el?fxWait(u):0;if(!(w>0))return o.apply(this,arguments);
+    const a=arguments,b=B,fl=atkFl(u,t),ms=Math.round(w+fl),q=hold();hfLater(()=>{const l=b._lag;try{o.apply(null,a);}finally{b._lag=l;}hfLater(()=>flush(q),fl);},w);
+    B._lag=ms;t._koWait=performance.now()+ms;mark(t,performance.now()+ms);});
+  wrap('castShot',o=>function(u,t,isHeal){const w=on()&&u&&u.el&&t&&t.el&&t!==u&&B._cs&&!B._cs.has(t)&&B._cs.size<8?fxWait(u):0;if(!(w>0))return o.apply(this,arguments);
+    B._cs.add(t);const b=B,fl=300/(B.speed||1),q=hold();hfLater(()=>{const cs=b._cs;b._cs=new Set();try{o.call(null,u,t,isHeal);}finally{b._cs=cs;}hfLater(()=>flush(q),fl);},w);
+    mark(t,performance.now()+w+fl);});
+}catch(e){}})();
 // ---- v19.98: battle predictor (fastsim/pred/feat.js, embedded verbatim) and the rival placement brain ----
 // Battle predictor, in-page part (loaded after the game, like smartbot core.js). PRED.feat() turns the battle that
 // startBattle(true) has just set up (B at t=0, before any step) into a fixed-length number vector; PRED.predict(x)
