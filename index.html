@@ -2072,8 +2072,8 @@ html.dt .dshop .shopwrap{box-shadow:0 -14px 30px -18px rgba(0,0,0,.9)}
 html.dt .dshop .actions .btn{min-height:44px}
 html.dt .dshop .actions [data-a="fight"]{min-height:min(84px,9vh)}
 /* v20.15: Fight! with an empty board is a dashed yellow outline (was the yellow fill at 40%: a dull olive block) */
-.actions .btn.primary[data-a="fight"]:disabled{opacity:1;background:rgba(255,204,46,.06);border:2px dashed rgba(255,204,46,.6);color:rgba(255,214,90,.85);box-shadow:none;filter:none}
-.actions .btn.primary[data-a="fight"]:disabled .kh{opacity:.5}
+.actions .btn.primary[data-a="fight"]:disabled,.actions .btn.primary[data-a="fight"][aria-disabled="true"]{opacity:1;background:rgba(255,204,46,.06);border:2px dashed rgba(255,204,46,.6);color:rgba(255,214,90,.85);box-shadow:none;filter:none}
+.actions .btn.primary[data-a="fight"]:disabled .kh,.actions .btn.primary[data-a="fight"][aria-disabled="true"] .kh{opacity:.5}
 /* v20.15: the shop portrait shows the whole toy, fitted to the portrait height (same framing at every screen size) */
 html.dt .dshop .shop .scard>.sart img,html.dt .dshop .shop .scard.w2>.sart img,html.dt .dshop .shop .scard>.sart.crowd img{top:auto;bottom:0;height:100%;transform:translateX(-50%)}
 html.dt .dshop .shop .scard>.sart.crowd>:nth-child(2){z-index:1}
@@ -2253,7 +2253,8 @@ html:not(.dt) .phd .vs.rvep:has(.fimg) .rvtell.fintry{max-width:68%} /* TRO-240 
   html:not(.dt) .plan .shop .scard>.pr .prc{font-size:12px}
   html:not(.dt) .plan .shop .scard>.pr{transform:translateX(calc(-50% - 1px))}
   html:not(.dt) .scard .gch .x2s{font-size:12px}
-  html:not(.dt) .shop>div>button.info{right:2px;bottom:3px;width:16px;height:16px;font-size:12px;line-height:16px}
+  html:not(.dt) .shop>div>button.info{right:2px;bottom:3px;width:22px;height:22px;font-size:13px;line-height:22px;z-index:4}
+  html:not(.dt) .shop>div>button.info::after{content:'';position:absolute;inset:-7px}
   html:not(.dt) .evchoices .evcard:not(:has(>.big)){grid-template-columns:minmax(0,1fr) auto}
   html:not(.dt) .evchoices .evcard:not(:has(>.big))>b{grid-column:1}
   html:not(.dt) .evchoices .evcard:not(:has(>.big))>small{grid-column:1/-1}
@@ -21626,7 +21627,7 @@ function chalEndHTML(){const c=S&&S.chal;if(!c)return '';const N=SCHEDULE.length
 function dlyLabel(){return S&&S.daily?`Daily ${dlyMD(S.daily)} · ${twName(S.tw)}`:'';}
 function dlyStrip(){const j=dlyLoad();return `<span class="dlydots" aria-label="Days played in the last 7 days">${dlyDays().slice().reverse().map(d=>`<i class="${j.d[d]?'on':''}" title="${dlyMD(d)}${j.d[d]?': '+dlyRes(j.d[d]):''}"></i>`).join('')}</span>`;}
 function dlyPilot(p){return (p.won||[]).some(n=>n>=3);} // the Pilot is won (every tier is open by default: SET.allLv)
-function dlyShow(p){return dlyPilot(p)||!!DAILY_LINK||DEV.on;}
+function dlyShow(p){return true;} // TRO-294: always on the title (our posts promise it; it waited for a won Pilot)
 function dlyTitleHTML(p,sv){if(!dlyShow(p))return '';const d=dlyToday(),t=dlyTw(d),n=dlyPlayed();
   return `<div class="dlyt"><button class="btn ${DAILY_LINK&&!sv?'primary big tbig':''}" data-a="${DAILY_LINK&&!sv?'daily':'daily-menu'}" data-v="${DAILY_LINK||d}"><span>📅 Daily Episode ${dlyMD(DAILY_LINK||d)}</span></button>
     <div class="tlv" title="${esc(twRule(dlyTw(DAILY_LINK||d)))}">${dlyTw(DAILY_LINK||d).e} ${esc(twName(dlyTw(DAILY_LINK||d)))} ${dlyStrip()}${n?` · Days played: ${n}`:''}</div></div>`;}
@@ -23786,7 +23787,7 @@ function shopHTML(){
     ${pgKey()}<button class="oddsrow" data-a="rank-info" aria-label="Shop rank ${S.rank}: see every rank, its odds and board slots" title="See every shop rank: odds, board slots and unlocks">Rank ${S.rank}<span class="odds">${od.map((p,i)=>p?`<i class="tier${i+1}" style="flex:${p}" title="${RARITY[i]} ${p}%"></i>`:'').join('')}</span>${nx?`<span>Next: ${nxNew?`<span class="tier${nxT}" style="color:var(--tc)">${RARITY[nxT-1]}</span>`:`Rank ${nx}`}${RANK.board[nx-1]>boardSize()?' +1 slot':''} · ${xp}/${need} XP</span>`:'<span>Max</span>'}<span class="oddsgo">All ranks ›</span></button>
     <div class="shop${deal?' deal':''}">${cards}</div>
     ${badNextHTML()}${S.units.some(buybackOn)?`<p class="evnote">🎡 ${S.units.filter(buybackOn).length} of your characters sell back at full price (Buyback Wheel).</p>`:''}
-    <p class="holdhint">${canHover?'Click a card to buy it; hover to see details.':'Tap a card to see what it does, then Buy.'} Drag a card onto a slot to buy it there; drag characters (or tap one, then an empty slot) to move them, or drag onto the shop to sell.</p>
+    <p class="holdhint">${canHover?'Click a card to buy it; hover to see details.':'Tap a card to hire it; tap its i to see what it does.'} Drag a card onto a slot to buy it there; drag characters (or tap one, then an empty slot) to move them, or drag onto the shop to sell.</p>
     ${(()=>{const it=itemIcons();return it?`<div class="items shopitems" aria-label="Your Legendary and items">${it}</div>`:'';})()}
     <div class="actions">
       <span class="goldpill" title="Your gold">🪙 ${gnum('p',S.gold)}</span>
@@ -23796,7 +23797,7 @@ function shopHTML(){
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
       <button class="btn sm poolbtn" data-a="poolview" aria-label="Character pool: copies left of every character" title="Character pool: how many copies of each character are left (P)">🃏<span class="rbl"> Pool</span>${DESK?'<kbd class="kh">P</kbd>':''}</button>
       <span class="grow"></span>
-      <button class="btn primary big${pgGo()?' go':''}" data-a="fight" ${fielded().length?'':'disabled title="Put a character on your board first"'}>Fight!</button>
+      <button class="btn primary big${pgGo()?' go':''}" data-a="fight" ${fielded().length?'':'aria-disabled="true" title="Put a character on your board first"'}>Fight!</button>
     </div></section>`;
 }
 // Game Level picker: one chip per level; the newest rule in one line, the dials below, the earlier rules folded away
@@ -23832,7 +23833,7 @@ function titleFreshHTML(){UI.lv=lvMin();
     <h1 class="title-word">${TITLE}</h1>
     <p class="muted tline">Hire a cast, combine copies into stars, then watch them brawl on their own.<span class="tplot"> Every story is falling into a hole in the plot: fight your way out.</span></p>
     <div class="steps tsteps"><div><span class="emo">🛒</span><b>Buy</b>characters</div><div><span class="emo">✨</span><b>Combine</b>3 → ★★</div><div><span class="emo">⚔️</span><b>Brawl</b>${lvRounds(UI.lv|0)} rounds</div></div>
-    <div class="row tgo"><button class="btn primary big tbig" data-a="new">▶ Play</button></div>
+    <div class="tplay tfplay"><button class="btn primary big tbig" data-a="new"><span>🎬 Play the Pilot</span></button><div class="tlv">A 5-minute tutorial, then the Season</div>${dlyTitleHTML(lvLoad(),null)}</div>
     <div class="row ticons">
       <span class="tic"><button class="btn sm ghost" data-a="codex" aria-label="Codex" title="Codex: every rule and character">📖</button><small>Codex</small></span>
       <span class="tic"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><small>Settings</small></span>
@@ -23992,7 +23993,7 @@ const tutEpic=()=>{for(let i=1;i<=RMAX;i++)if(topTier(i)>=4)return i;return RMAX
 const tutBoss=()=>{const r=curRound();return r&&r.type==='boss'?r:null;};
 const COACH=[
  {id:'c1-hello',lv:1,w:'plan',nx:1,on:()=>S.round===1,t:()=>'🎬 You run the studio. Hire a cast, line them up, and they fight the episode on their own.'},
- {id:'c1-buy',lv:1,w:'plan',on:()=>S.round===1,ok:()=>S.units.length>0,at:'.shop .scard:not(.poor):not([disabled])',t:()=>'Tap a card to hire that character. The price is on the card.'},
+ {id:'c1-buy',lv:1,w:'plan',on:()=>S.round===1,ok:()=>S.units.length>0,at:'.shop .scard:not(.poor):not([disabled])',t:()=>(canHover?'Click':'Tap')+' a card to hire that character. The price is on the card.'},
  {id:'c1-boss',lv:1,w:'plan',on:()=>!!tutBoss(),at:'.vs.feat',t:()=>'Next: the boss. Tap 🔭 Lineup to see where its cast stands, then set your rows.'},
  {id:'c1-three',lv:1,w:'plan',on:()=>!!document.querySelector('.shop .scard.ready'),ok:()=>!!tutStar(),at:'.shop .scard.ready',t:()=>'Three copies of one character combine into a ★★. This card makes your third.'},
  {id:'c1-star',lv:1,w:'plan',on:()=>!!tutStar(),at:()=>`.board .slot[data-v="${tutStar().slot}"]`,t:()=>'★★: one character, much stronger. Commons and Uncommons stop here; Rares can reach ★★★.'},
@@ -24750,7 +24751,7 @@ case 'nextep':{const k=S&&!S.newLv&&!S.gym?S.lv|0:-1;if(k>=lvMin()&&k<=lvLoad().
   UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);tlAct('n');go();tbxCard();break;}
     case 'renew':UI.renew=!UI.renew;render();break;
     case 'continue':{const sv=loadSave();if(sv){try{restore(sv);if(S.inFight)resumeFight();else{go();tbxCard();}}catch(e){loadFail(e,sv);}}break;}
-    case 'pick':{hoverCard(null);if(!canHover&&S.shop[+v]){sheet(shopPreview(+v));break;}if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
+    case 'pick':{hoverCard(null);if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;}
     case 'buy':UI.pick=null;if(UI.sheetOpen)closeSheet();if(buy(+v)){UI.armSell=null;if(UI.insp&&UI.insp.kind==='hero')UI.insp=null;go();}else render();break;
     case 'reroll':if(reroll())go();break;
     case 'lock':S.locked=!S.locked;go();break;
@@ -24768,7 +24769,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'codex-clear':{UI.codexQ='';const i=document.getElementById('cxq');if(i){i.value='';i.focus();}cxFilter();break;}
     case 'codex-back':UI.screen=UI.codexBack&&UI.codexBack!=='codex'?UI.codexBack:(S?'plan':'title');render();break;
     case 'quit':if(!UI.armQuit){UI.armQuit=true;render();setTimeout(()=>{if(UI.armQuit){UI.armQuit=false;if(UI.screen!=='battle')render();}},3000);}else{UI.armQuit=false;if(S&&S.round>1)tlEnd(true);clearSave();S=null;UI.screen='title';render();}break;
-    case 'fight':if(!fielded().length||tbxBusy())return;tbxFight(()=>{if(!S||S.over||UI.screen!=='plan'||!fielded().length)return;UI.screen='battle';UI.sel=null;render();startBattle(false);drawBattle();requestAnimationFrame(battleLoop);});break;
+    case 'fight':if(!fielded().length){if(!tbxBusy())toast(S.units.length?'Your board is empty: move a character from the bench onto a square, then Fight.':'Your board is empty: hire a character from the shop first.');return;}if(tbxBusy())return;tbxFight(()=>{if(!S||S.over||UI.screen!=='plan'||!fielded().length)return;UI.screen='battle';UI.sel=null;render();startBattle(false);drawBattle();requestAnimationFrame(battleLoop);});break;
     case 'speed':UI.speed=Math.min(3,+v||1);SET.speed=UI.speed;setSave();if(B)B.speed=UI.speed;document.querySelectorAll('.speed [data-a="speed"]').forEach(b=>b.classList.toggle('on',+b.dataset.v===UI.speed));break;
     case 'pause':if(B){B.paused=!B.paused;el.textContent=B.paused?'▶':'⏸';}break;
     case 'skip':skipBattle();break;
@@ -24809,7 +24810,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'trinket':UI.armItem=null;showInfo({kind:'trinket',id:v});break;
     case 'twin':showInfo({kind:'twin'});break;
     case 'nextfoes':sheet(nextFoesHTML());break;
-    case 'phd':phSet(v&&UI.phOpen!==v?v:'');break;
+    case 'phd':if(v&&UI.phOpen!==v&&el&&UI.pdEl&&Date.now()-UI.pdT<1500&&!el.contains(UI.pdEl))break;phSet(v&&UI.phOpen!==v?v:'');break; // TRO-294: no fall-through taps
     case 'phmenu':{const on=!UI.phMenu;phSet('');phMenu(on);const w=document.querySelector('.phw');if(w)w.classList.toggle('open',on);break;}
     case 'nextfoe':sheet(nextFoeDetail(+v));break;
     case 'lv-info':showInfo({kind:'lv'});break;
@@ -24894,6 +24895,7 @@ function ptEnd(e){
 document.addEventListener('pointerup',ptEnd);
 document.addEventListener('pointercancel',()=>{clearTimeout(PT.t);dragRow(null);if(PT.ghost){PT.ghost.remove();PT.ghost=null;}PT.src=null;});
 document.addEventListener('contextmenu',e=>{if(e.target.closest&&e.target.closest('.scard,.slot'))e.preventDefault();});
+document.addEventListener('pointerdown',e=>{UI.pdEl=e.target;UI.pdT=Date.now();},true); // TRO-294: where a tap began
 document.addEventListener('click',e=>{
   if(PT.suppress&&Date.now()-PT.suppress<600){PT.suppress=0;e.preventDefault();e.stopPropagation();return;}
   if(e.target.id==='scrim'||e.target.id==='sheet'){if(UI.sheetOpen==='info')closeSheet();else if(UI.pendOpen&&!fresh())onAction('pend-hide');else if(!fresh()&&document.querySelector('#sheet [data-a="swap-back"]'))onAction('swap-back');return;}
@@ -24935,10 +24937,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.85',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.86',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.86',items:[["📱", "Phones: one tap on a shop card hires that character. Tap the card's small i to read what it does."], ["📅", "The Daily Episode is on the title screen for everyone, and the first Play button says it starts the Pilot, a 5-minute tutorial."], ["⚔️", "Fight with an empty board now tells you what to do first."]]},
   {v:'20.85',items:[["📜", "What's New now has one card per day: a few plain lines on what changed for you, with the biggest change marked. Every update one by one is still at the bottom."]]},
   {v:'20.84',items:[["🦅", "The Defense Force Tanks are now the Sky Screamers: a flock of baby pterosaurs. Dive Bomb: every flyer dives at a front-row enemy for 7. Kaiju's job is the front line."]]},
   {v:'20.83',items:[["🪱", "The Burrow Lurker now tunnels into the enemy FRONT row and hits the weakest enemy there. The Swarm's job is the front line; the back row is Slasher's."], ["🐛", "Acid Spitters no longer melt armor (that is Heist's job). Instead, every spit that lands regrows one of them: the swarm keeps coming."], ["👻", "The Wraith now uses Grave Call: the last enemy that fell gets up as a skeleton on your side for 5s, with its attack and half its HP. Nobody down yet: it drains the nearest front-row enemy."], ["🦇", "The Vampire Bat now bites the enemy in front and heals itself that much. Bat Swarm: the first time it falls, it splits into 3 bats."]]},
@@ -25126,7 +25129,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-21',from:'20.45',to:'20.85',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with and switch to a genre that beats it. A 🎯 on the Lobby strip shows who is countering you. Levels 17 and 18 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
+  {d:'2026-10-21',from:'20.45',to:'20.86',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with and switch to a genre that beats it. A 🎯 on the Lobby strip shows who is countering you. Levels 17 and 18 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
 ];
@@ -25301,7 +25304,7 @@ function render(){
   feel();
   if(UI.screen!=='battle'&&!UI.sheetOpen&&!peeking())showPending();
   try{tutPaint();}catch(e){}pgPaint();
-  if(peeking()){const fb=document.querySelector('#app [data-a="fight"]');if(fb){fb.innerHTML=S.pending[0].kind==='legend'?'🏆 Choose Legendary':'🎁 Choose item';fb.classList.add('peekbtn');fb.disabled=false;}}
+  if(peeking()){const fb=document.querySelector('#app [data-a="fight"]');if(fb){fb.innerHTML=S.pending[0].kind==='legend'?'🏆 Choose Legendary':'🎁 Choose item';fb.classList.add('peekbtn');fb.disabled=false;fb.removeAttribute('aria-disabled');}}
 }
 function save(){tlSave();try{if(S&&!S.over)repairSlots();}catch(e){}try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
 function loadSave(){try{const j=localStorage.getItem(SAVE_KEY)||localStorage.getItem(OLD_SAVE_KEY);return j?JSON.parse(j):null;}catch(e){return null;}}
