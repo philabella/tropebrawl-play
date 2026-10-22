@@ -47,3 +47,33 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then echo "nothing new"; else git commit -q -m "runlog: $(date -u +%Y-%m-%dT%H:%MZ)" && git push -q origin HEAD:runlog; fi
+  # The real-player board pool (TRO-401, async PvP part 1, built dark: the game doesn't read it yet). Verified runs only,
+  # calibrated per board, consented boards only -> pool.json + pool-status.json on the runlog branch. Code: runlog/sim/
+  # (copied from the dev repo by its runlog/sync-play.sh). Older builds come from this repo's index.html history.
+  pool:
+    needs: collect
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          path: src
+          fetch-depth: 0
+      - uses: actions/checkout@v4
+        with:
+          ref: runlog
+          path: data
+      - uses: actions/cache@v4
+        with:
+          path: builds
+          key: pool-builds-${{ github.run_id }}
+          restore-keys: pool-builds-
+      - name: Board pool
+        run: cd data && node ../src/runlog/sim/runlog/pool.mjs --build ../src/index.html --gitrepo ../src --gitfile index.html --scan --builds ../builds --workers 4 --max 1500
+      - name: Commit
+        run: |
+          cd data
+          git config user.name "runlog collector"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add pool.json pool-status.json pool/cache.json
+          if git diff --cached --quiet; then echo "nothing new"; else git commit -q -m "pool: $(date -u +%Y-%m-%dT%H:%MZ)" && git push -q origin HEAD:runlog; fi

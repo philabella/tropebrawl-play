@@ -12,7 +12,7 @@ const tester = new Set(all.filter(j => j.t || KNOWN[j.pid]).map(j => j.pid));
 const who = j => KNOWN[j.pid] ? 'me' : tester.has(j.pid) ? 'tester' : 'stranger';
 const rows = [], errors = [];
 for (const j of all) {
-  if (j.pid === 'p_selftest') continue;
+  if (j.pid === 'p_selftest' || j.res === 'bp') continue;   // bp: the board-sharing switch note (TRO-401), not a run
   if (j.res === 'error') {   // TRO-288: a JS error note from the game (untrusted input: types forced, lengths capped)
     const e = j.err && typeof j.err === 'object' ? j.err : {};
     if (typeof e.m !== 'string' || !e.m) continue;
