@@ -6933,14 +6933,36 @@ const CAST = [
   h.armL.rotation.set(-1.4, 0, .3); return g; } },
 // ---------- end Space Opera ----------
 // ---------- Kaiju (v19.55) ----------
-{ id: 'tanks', name: 'Defense Force Tanks', genre: 'kaiju', crowd: true, build({ variant: v = 0 } = {}) {
-  const g = G(), hull = ['#7a8a4a', '#8a8a92', '#b8a070'][v], dark = ['#4a5a2a', '#5a5a62', '#8a7448'][v];
-  for (const s of [-1, 1]) { g.add(P(box(.26, .3, 1.2, .1), '#2a2a30', { p: [s * .4, .2, 0] })); for (let i = 0; i < 4; i++) g.add(P(cyl(.11, .11, .27), '#4a4a52', { p: [s * .4, .16, -.42 + i * .28], r: [0, 0, PI / 2] })); }
-  g.add(P(box(.66, .3, 1.1, .08), hull, { p: [0, .45, 0] }));
-  g.add(P(cyl(.3, .34, .26), dark, { p: [0, .72, -.05] })); g.add(P(cyl(.06, .06, .9), dark, { p: [0, .74, .45], r: [PI / 2, 0, 0] }));
-  g.add(P(cyl(.08, .08, .06), '#ffcc2e', { p: [0, .88, -.15] })); badge(g, [-.2, .46, .56], '#f3eee4', .08);
-  // v19.85: a tank is bigger than a person: about shoulder height, much longer and bulkier (it was toy-car sized)
-  g.rotation.y = (v - 1) * .25; g.scale.setScalar(2.2); return g; } },
+{ id: 'tanks', name: 'Sky Screamers', genre: 'kaiju', crowd: true, build({ variant: v = 0, pose = 'idle' } = {}) {
+  // TRO-273/312 (version C): game id 'tanks' (was Defense Force Tanks), baby pterosaurs mid-scream. v: crest size / colour shift. atk = wings swept back, diving.
+  const g = G(), dive = pose === 'atk', sk = ['#e8602c', '#d94a2a', '#f08a38'][v], dk = ['#b8381c', '#a82a1c', '#c4501c'][v], bel = ['#ffd2a0', '#ffc4a0', '#ffe0a8'][v], mem = ['#f0784a', '#e85a4a', '#f89a50'][v], cr = [.62, .9, .42][v];
+  const body = at(g, [0, dive ? 1.0 : .95, 0], [dive ? .95 : .12, 0, 0]);
+  body.add(P(sphere(.42), sk, { s: [1, 1.05, 1.15] })); body.add(P(sphere(.34), bel, { p: [0, -.08, .2], s: [1, 1.1, .7] }));
+  for (let i = 0; i < 3; i++) body.add(P(torus(.3 - i * .02, .02), dk, { p: [0, -.12 - i * .12, .22 - i * .02], r: [PI / 2 - .3, 0, 0], s: [1, 1, .7], noOutline: 1 }));
+  body.add(P(cone(.14, .5), dk, { p: [0, -.12, -.58], r: [-PI / 2 - .35, 0, 0] })); body.add(P(cone(.1, .2), dk, { p: [0, -.3, -.9], r: [PI / 2 + .2, 0, 0] }));
+  // wings: a leathery membrane with scalloped edge on bone fingers
+  for (const s of [-1, 1]) {
+    const w = at(body, [s * .3, .22, -.02], dive ? [-.2, s * 1.25, s * -.25] : [0, s * .12, s * .4]); w.userData.joint = s < 0 ? 'shoulderR' : 'shoulderL';
+    const sh = new THREE.Shape(), X = x => x * s; sh.moveTo(0, .02); sh.lineTo(X(.6), .55); sh.lineTo(X(1.5), .95); sh.lineTo(X(1.33), .12);
+    sh.quadraticCurveTo(X(1.2), .22, X(1.05), .0); sh.quadraticCurveTo(X(1.0), .16, X(.86), -.2); sh.quadraticCurveTo(X(.62), -.02, X(.4), -.36); sh.lineTo(X(.04), -.3); sh.closePath();
+    extrude(w, sh, .05, mem, { p: [0, 0, 0] });
+    limb(w, [0, .03, 0], [X(.62), .56, 0], .055, dk); limb(w, [X(.62), .56, 0], [X(1.5), .95, 0], .04, dk);
+    for (const f of [[1.33, .12], [1.05, 0], [.86, -.2]]) limb(w, [X(.62), .56, .0], [X(f[0]), f[1] + .02, 0], .028, dk);
+    w.add(P(cone(.05, .16), '#f6f2e6', { p: [X(.62), .66, .04], r: [0, 0, s * -.4] }));
+  }
+  // legs and talons: dangle to the ground line
+  for (const s of [-1, 1]) { const top = new THREE.Vector3(s * .2, -.3, -.05); const l = at(body, [0, 0, 0]); limb(l, [top.x, top.y, top.z], [s * .24, -.62, dive ? .0 : .1], .1, dk);
+    const f = at(body, [s * .24, -.66, dive ? .02 : .12]); for (let i = -1; i <= 1; i++) f.add(P(cone(.04, .2), '#f6f2e6', { p: [i * .08, -.05, .1], r: [PI / 2 + .4, 0, i * -.2] })); f.add(P(sphere(.09), dk, { s: [1, .7, 1.2] })); }
+  // head: crest swept back, open beak, screaming
+  const head = at(body, [0, .6, .45], [dive ? -.85 : -.1, 0, 0]); head.userData.joint = 'neck'; limb(body, [0, .25, .2], [0, .52, .38], .17, sk);
+  head.add(P(sphere(.4), sk, { s: [1, 1, 1.05] }));
+  head.add(P(cone(.16, .8), sk, { p: [0, .14, .74], r: [PI / 2, 0, 0] })); head.add(P(cone(.14, .66), bel, { p: [0, -.28, .6], r: [PI / 2 + .75, 0, 0] }));
+  head.add(P(sphere(.13), '#8a1c1c', { p: [0, -.1, .52], s: [1.2, .8, 1.6], noOutline: 1 })); head.add(P(sphere(.04), '#ff7a8a', { p: [0, -.1, .52], s: [1, .5, 1.5], noOutline: 1 }));
+  head.add(P(cone(.07 + cr * .08, .5 + cr * .8), dk, { p: [0, .26 + cr * .1, -.3 - cr * .22], r: [-PI / 2 - .5, 0, 0] }));
+  if (v === 1) for (const s of [-1, 1]) head.add(P(cone(.05, .36), dk, { p: [s * .2, .26, -.18], r: [-PI / 2 - .6, 0, s * .5] }));
+  eyes(head, { r: .4, white: 1, y: .1, dx: .17, sizes: [1.3, 1.3] }); brows(head, { r: .41, y: .27, ang: .5 });
+  g.userData.hover = 1;
+  return g; } },
 { id: 'babykaiju', name: 'Baby Kaiju', genre: 'kaiju', crowd: true, build({ variant: v = 0 } = {}) {
   // v19.58: a proper little monster: big head with a snout, banded belly, jagged back plates, toes and claws, a tapering tail
   const g = G(), sk = ['#6ab85a', '#5aa8c8', '#c89a4a'][v], dk = ['#3c8a48', '#357896', '#93652a'][v], bel = ['#dcf2ae', '#d2ecf6', '#f7e4ac'][v], pl = ['#a8e86a', '#9adcf0', '#f0c86a'][v];
@@ -7650,7 +7672,7 @@ function pauldron(h, s, o = {}) {
 const B = {};
 
 // ===== cast/_proto.js =====
-// Prototype batch (the 7 figures Philippe approved, 2026-10-18): riot, fieldmed, pitcher, sheriff, chainsaw, starknight, tanks.
+// Prototype batch (the 7 figures Philippe approved, 2026-10-18): riot, fieldmed, pitcher, sheriff, chainsaw, starknight (+ tanks, since moved to kaiju.js).
 // Reference for every other cast file: same kit, same proportions, same rules.
 {
 
@@ -7909,38 +7931,7 @@ B.starknight = function () {
   return h.done();
 };
 
-// ----- Defense Force Tanks (kaiju): long faceted hull, tracks with road wheels, sloped turret, long gun (no legs)
-B.tanks = function ({ variant: v = 0 } = {}) {
-  const P = { od: '#5f6a45', odD: '#454c33', track: '#2e2f2f', wheel: '#4b5238', metal: '#55595d', band: ['#d8cf9f', '#d8cf9f', '#c9c3bd'][v % 3], lamp: '#a99d6c', dark: '#262628' };
-  const g = new THREE.Group(), body = G(g);
-  // lower hull between the tracks, sloped upper hull overhanging them
-  add(body, loft([[.22, .6, 1.6, 1.55], [.62, .64, 1.95, 1.8]], { n: 8, sq: 8 }), P.odD);
-  add(body, loft([[.6, 1.0, 1.9, 1.82], [.72, 1.0, 1.88, 1.82], [1.02, .82, 1.38, 1.68]], { n: 8, sq: 9 }), P.od);
-  for (const s of [-1, 1]) {
-    const tr = mk(plate([[-1.6, 0], [1.5, 0], [1.88, .3], [1.78, .56], [-1.82, .56], [-1.92, .3]], .36, { bev: .03 }), P.track); tr.rotation.y = -PI / 2; tr.position.set(s * .8, .03, 0); body.add(tr);
-    for (let i = 0; i < 6; i++) { const z = -1.3 + i * .52; add(body, cyl(.2, .2, .07, 10), P.wheel, { p: [s * .99, .24, z], r: [0, 0, PI / 2] }); add(body, cyl(.08, .08, .09, 8), P.metal, { p: [s * 1.0, .24, z], r: [0, 0, PI / 2] }); }
-    add(body, cyl(.16, .16, .08, 8), P.wheel, { p: [s * .99, .36, 1.68], r: [0, 0, PI / 2] });
-    add(body, cbox(.12, .07, .06, .01), P.odD, { p: [s * .66, .96, 1.62], r: [-.5, 0, 0] }); add(body, cbox(.07, .035, .02, .005), P.lamp, { p: [s * .66, .965, 1.65], r: [-.5, 0, 0] });
-    for (let i = 0; i < 3; i++) add(body, cbox(.24, .1, .5, .02), i % 2 ? P.odD : P.metal, { p: [s * .84, .78, -.3 - i * .55] });
-  }
-  add(body, cbox(1.1, .14, .3, .03), P.odD, { p: [0, 1.0, -1.45] });
-  for (let i = 0; i < 4; i++) add(body, cbox(.9, .02, .04, .005), P.dark, { p: [0, 1.075, -1.2 - i * .1] });
-  // turret (neck joint: it nods and rolls with the emotes) + gun (shoulderR: it elevates on a shot)
-  const tu = J('neck', body, [0, 1.0, -.25]);
-  add(tu, loft([[0, .66, .82, .75], [.22, .64, .78, .78, -.02], [.5, .5, .48, .66, -.05], [.56, .42, .36, .58, -.05]], { n: 8, sq: 3 }), P.od);
-  add(tu, ring(.18, .26, .655, .8, .78, { n: 8, sq: 3 }), P.band);
-  add(tu, cbox(.9, .3, .4, .04), P.odD, { p: [0, .26, -.85] });
-  for (const s of [-1, 1]) for (let i = 0; i < 3; i++) add(tu, cyl(.04, .04, .16, 6), P.metal, { p: [s * .62, .35, .35 - i * .09], r: [PI / 2 - .4, 0, s * .3] });
-  add(tu, cyl(.17, .19, .14, 8), P.odD, { p: [.24, .62, -.25] }); add(tu, cyl(.15, .15, .04, 8), P.od, { p: [.24, .7, -.25] });
-  if (v !== 1) { add(tu, cyl(.018, .018, .45, 6), P.dark, { p: [.24, .72, .0], r: [PI / 2, 0, 0] }); add(tu, cbox(.07, .07, .14, .01), P.dark, { p: [.24, .72, -.2] }); }
-  add(tu, cyl(.008, .012, .6, 4), P.dark, { p: [-.45, .7, -.6], r: [-.15, 0, .1] });
-  add(tu, cbox(.44, .32, .28, .04), P.odD, { p: [0, .26, .78] });
-  const gun = J('shoulderR', tu, [0, .27, .85]);
-  add(gun, cyl(.06, .075, 1.9, 10), P.od, { p: [0, 0, .95], r: [PI / 2, 0, 0] });
-  add(gun, cyl(.1, .1, .3, 10), P.odD, { p: [0, 0, .9], r: [PI / 2, 0, 0] });
-  add(gun, cbox(.18, .13, .2, .02), P.odD, { p: [0, 0, 1.92] });
-  return finish(g, null);
-};
+// (Defense Force Tanks became the Sky Screamers, TRO-312: B.tanks now lives in cast/kaiju.js; the game id stays 'tanks'.)
 }
 
 
@@ -12041,6 +12032,53 @@ B.kingmonster = function () {
   bake(tg);
   return finish(g, { hipY, legX });
 };
+
+// ----- Sky Screamers (kaiju, crowd of 3; TRO-312, replaces the Defense Force Tanks, game id stays 'tanks'): baby pterosaurs mid-scream.
+// Mid-tone orange-red hide, pale cream belly, a scalloped leathery wing on a long finger bone, an open beak with a dark red mouth,
+// a swept-back crest, talons hanging. v0 orange-red with a tall crest, v1 deeper red with a big crest and two side spikes, v2 amber
+// with a short crest. build({ pose: 'atk' }) = diving: wings swept back, head down (sprite only). Hovers (nothing touches the ground).
+B.tanks = function ({ variant: v = 0, pose = 'idle' } = {}) {
+  const P = { sk: ['#dd6a3a', '#cc4a36', '#e88e40'][v], skD: ['#a8442a', '#98332a', '#b4622a'][v], bel: ['#f6d2a2', '#f2c4a2', '#f8e0a8'][v], mem: ['#e8825a', '#dc6a56', '#f0a45c'][v],
+    bone: ['#b0452a', '#9c382c', '#bc6a2c'][v], mouth: '#8a2424', beak: '#f2dcb0', claw: '#f4efe0' };
+  const dive = pose === 'atk', cr = [.62, .9, .42][v];
+  const g = new THREE.Group(), sp = J('spine', g, [0, 1.25, 0]); sp.rotation.x = dive ? .85 : .22;
+  // body: a plump upright torso, cream belly with faint ribs, a short spiked tail trailing down and back
+  const BD = [[-.4, .05, .05, .05, -.03], [-.3, .15, .15, .15, -.03], [-.12, .27, .26, .26], [.08, .3, .27, .27, .01], [.26, .22, .2, .2, .03], [.38, .1, .1, .1, .05]];
+  add(sp, loft(BD, { n: 9, fn: lump(.01) }), P.sk);
+  add(sp, loft([[-.3, .09, .09, .04, .13], [-.12, .2, .2, .06, .14], [.08, .23, .22, .06, .13], [.26, .15, .15, .05, .1]], { n: 8, sq: 2, fn: lump(.008) }), P.bel);
+  add(sp, merge([-.2, -.06, .08, .22].map(y => [band(BD, y - .015, y + .015, .01, { n: 9 }), {}])), P.skD);
+  add(sp, merge([[tongue(.08, .55, .18, 5), { p: [0, -.34, -.1], r: [PI / 2 + .1 + (dive ? .25 : 0), 0, 0] }], [tongue(.05, .22, .1, 5), { p: [0, -.5, -.6], r: [PI / 2 + .3 + (dive ? .25 : 0), 0, 0] }]]), P.skD);
+  // head (neck): wedge skull, long open beak (upper + dropped lower), dark red mouth, a swept crest, dot eyes
+  const nk = J('neck', sp, [0, .4, .1]); nk.rotation.x = dive ? -.95 : -.28;
+  add(nk, loft([[-.05, .13, .13, .12], [.06, .19, .18, .16], [.18, .2, .18, .17, -.005], [.28, .15, .13, .13, -.01], [.33, .06, .05, .06, -.01], [.35, 0, 0, 0, -.01]], { n: 9, fn: lump(.008) }), P.sk);
+  add(nk, merge([[tongue(.095, .62, 0, 5), { p: [0, .2, .06], r: [PI / 2 + .02, 0, 0], s: [1, 1, .55] }]]), P.beak);
+  add(nk, merge([[tongue(.085, .5, 0, 5), { p: [0, .13, .08], r: [PI / 2 + .62, 0, 0], s: [1, 1, .5] }]]), P.bel);
+  add(nk, merge([[gem(.1, 0), { p: [0, .165, .17], s: [1.1, .55, 1.5] }]]), P.mouth, { noOutline: 1 });
+  add(nk, merge([-1, 1].map(s => [tongue(.012, .06, 0, 4), { p: [s * .035, .17, .36], r: [PI, 0, 0] }])), P.claw);
+  const cl = .35 + cr * .55;
+  add(nk, merge([[tongue(.075 + cr * .04, cl, -.2, 5), { p: [0, .26, -.09], r: [-1.05, 0, 0], s: [.55, 1, 1] }]]), P.skD);
+  if (v === 1) add(nk, merge([-1, 1].map(s => [tongue(.035, .32, -.12, 4), { p: [s * .17, .23, -.04], r: [-1.1, 0, s * .45] }])), P.skD);
+  for (const s of [-1, 1]) dot(nk, [s * .155, .2, .08], s * .2);
+  // wings: a long finger bone to the tip, a scalloped membrane that trails back, a pale claw at the wrist
+  for (const [side, s] of [['R', -1], ['L', 1]]) {
+    const w = J('wing' + side, sp, [s * .22, .16, -.04]); w.rotation.z = dive ? s * -.1 : s * .3;
+    const f = G(w, [0, 0, 0], [0, s * (dive ? 1.15 : .08), 0]);
+    const out = [[0, .08], [.55, .46], [1.72, .78], [1.42, .2], [1.26, .34], [1.06, -.06], [.9, .12], [.64, -.3], [.44, -.1], [.12, -.3], [0, -.1]];
+    const X = pts => s > 0 ? pts : flipX(pts);
+    f.add(mk(plate(X(out), .022, { bev: .006, fn: q => { q.z -= .07 * q.x * q.x * (s > 0 ? 1 : 1); } }), P.mem));
+    const wr = [s * .55, .47, .01];
+    const bones = [seg([0, .08, .0], wr, .05, .04), seg(wr, [s * 1.72, .78, -.2], .04, .014)];
+    for (const tp of [[1.42, .2], [1.06, -.06], [.64, -.3]]) bones.push(seg(wr, [s * tp[0], tp[1], -.07 * tp[0] * tp[0]], .018, .01, 4));
+    f.add(mk(merge(bones), P.bone));
+    f.add(mk(merge([[tongue(.04, .15, 0, 4), { p: [s * .57, .5, .03], r: [0, 0, -s * .5] }]]), P.claw));
+    bake(f);
+  }
+  // legs and talons dangling below (they step when it moves)
+  for (const [side, s] of [['R', -1], ['L', 1]]) { const st = J('step' + side, g, [0, 0, 0]);
+    st.add(mk(merge([seg([s * .14, .98, -.05], [s * .18, .66, .0], .07, .05), seg([s * .18, .66, .0], [s * .17, .5, .08], .045, .03)]), P.skD));
+    st.add(mk(merge([-1, 0, 1].map(k => [tongue(.02, .12, .02, 4), { p: [s * .17 + k * .045, .5, .08], r: [PI - .55, 0, k * .15] }])), P.claw)); }
+  return finish(g, null);
+};
 }
 
 
@@ -14871,60 +14909,7 @@ B.fieldmed = function () {
   return h.done();
 };
 
-// ----- Defense Force Tanks (crowd of 3, kaiju, atkShoot; machine, not hero()): a long bevelled hull with sloped glacis,
-// chunky tracks and road wheels, a sloped turret (neck: it nods and traverses) with a long gun (shoulderR: it recoils).
-// v0 sand turret band + machine gun + a painted number block; v1 two-tone camo patches + side skirts + open hatch;
-// v2 white band + rear-deck jerry cans and crates + a tall whip antenna
-B.tanks = function ({ variant: v = 0 } = {}) {
-  v = ((v % 3) + 3) % 3;
-  const P = { od: ['#71813f', '#5d7a38', '#878e5c'][v], odD: ['#556131', '#455c29', '#686e44'][v], odL: '#8d9c56', track: '#35363b', trackL: '#55575e', wheel: '#4f5a30', hub: '#6b7078',
-    metal: '#5c6168', band: ['#e7d39a', '#e7d39a', '#f2f0ea'][v], lamp: '#ffe9a0', dark: '#26262a', camo: '#6b4e2c', can: '#5d6a33', crate: '#9a7a4a' };
-  const g = new THREE.Group(), body = G(g), BV = 4;
-  // lower hull between the tracks, sloped upper hull overhanging them, glacis plate, rear engine deck
-  add(body, loft([[.24, .58, 1.62, 1.56], [.62, .62, 1.95, 1.8]], { n: 8, sq: 6 }), P.odD);
-  add(body, loft([[.6, 1.0, 1.9, 1.82], [.73, 1.0, 1.88, 1.82], [1.0, .84, 1.4, 1.7]], { n: 8, sq: 7 }), P.od);
-  add(body, cbox(1.12, .16, .34, .04), P.odD, { p: [0, 1.0, -1.48] });
-  add(body, merge([0, 1, 2, 3].map(i => [cbox(.86, .025, .05, .008), { p: [0, 1.085, -1.24 - i * .1] }])), P.dark);
-  // tracks: a thick bevelled track run with a lighter tread band, track guards, road wheels + hubs (merged)
-  const wheels = [], hubs = [], guards = [], lamps = [];
-  for (const s of [-1, 1]) {
-    const tr = mk(plate([[-1.62, 0], [1.52, 0], [1.9, .3], [1.8, .58], [-1.84, .58], [-1.94, .3]], .38, { bev: .04 }), P.track); tr.rotation.y = -PI / 2; tr.position.set(s * .8, .03, 0); body.add(tr);
-    for (let i = 0; i < 6; i++) { const z = -1.3 + i * .52; wheels.push([cyl(.21, .21, .08, 10), { p: [s * 1.0, .25, z], r: [0, 0, PI / 2] }]); hubs.push([cyl(.085, .085, .1, 8), { p: [s * 1.01, .25, z], r: [0, 0, PI / 2] }]); }
-    wheels.push([cyl(.17, .17, .09, 10), { p: [s * 1.0, .37, 1.68], r: [0, 0, PI / 2] }]); wheels.push([cyl(.17, .17, .09, 10), { p: [s * 1.0, .37, -1.72], r: [0, 0, PI / 2] }]);
-    guards.push([cbox(.44, .06, 3.7, .02), { p: [s * .82, .64, -.02] }]);
-    lamps.push([cbox(.08, .045, .03, .008), { p: [s * .68, .97, 1.64], r: [-.5, 0, 0] }]);
-    add(body, cbox(.14, .09, .07, .02), P.odD, { p: [s * .68, .96, 1.61], r: [-.5, 0, 0] });
-  }
-  add(body, merge(wheels), P.wheel); add(body, merge(hubs), P.hub); add(body, merge(guards), P.odD); add(body, merge(lamps), P.lamp, { glow: 1 });
-  if (v !== 1) add(body, merge([-1, 1].flatMap(s => [0, 1, 2].map(i => [cbox(.24, .12, .48, .025), { p: [s * .84, .74, -.3 - i * .55] }]))), P.metal);
-  // turret (neck joint) + gun (shoulderR)
-  const tu = J('neck', body, [0, 1.0, -.25]);
-  add(tu, loft([[0, .68, .84, .76], [.22, .66, .8, .8, -.02], [.48, .52, .5, .68, -.05], [.56, .44, .38, .6, -.05]], { n: 8, sq: 3.2 }), P.od);
-  add(tu, ring(.18, .27, .675, .82, .8, { n: 8, sq: 3.2 }), P.band);
-  add(tu, cbox(.92, .32, .42, .05), P.odD, { p: [0, .26, -.86] });
-  add(tu, merge([-1, 1].flatMap(s => [0, 1, 2].map(i => [cyl(.045, .045, .17, 6), { p: [s * .64, .36, .36 - i * .1], r: [PI / 2 - .4, 0, s * .3] }]))), P.metal);
-  add(tu, cyl(.18, .2, .15, 8), P.odD, { p: [.24, .62, -.25] });
-  add(tu, cyl(.16, .16, .045, 8), P.od, { p: [.24, .71, -.25] });
-  if (v === 0) { add(tu, merge([[cyl(.022, .022, .5, 6), { p: [.24, .76, .02], r: [PI / 2, 0, 0] }], [cbox(.08, .08, .16, .015), { p: [.24, .76, -.2] }]]), P.dark);
-    add(tu, merge([[cbox(.1, .14, .02, .005), { p: [-.18, .2, .82], r: [-.2, 0, 0] }], [cbox(.1, .14, .02, .005), { p: [-.34, .2, .79], r: [-.2, 0, 0] }]]), P.band); }
-  add(tu, cyl(.01, .014, v === 2 ? .78 : .55, 4), P.dark, { p: [-.46, v === 2 ? .79 : .67, -.6], r: [-.15, 0, .1] });
-  add(tu, cbox(.46, .34, .3, .05), P.odD, { p: [0, .26, .79] });
-  const gun = J('shoulderR', tu, [0, .27, .86]);
-  add(gun, cyl(.065, .08, 1.9, 10), P.od, { p: [0, 0, .95], r: [PI / 2, 0, 0] });
-  add(gun, cyl(.11, .11, .32, 10), P.odD, { p: [0, 0, .9], r: [PI / 2, 0, 0] });
-  add(gun, cbox(.2, .14, .22, .03), P.odD, { p: [0, 0, 1.92] });
-  // variant dressing (each read at board size: v1 brown camo blotches + side skirts, v2 khaki-grey with stowage on the turret)
-  if (v === 1) { const pt = (w, d) => [[-w, -d * .6], [-w * .3, -d], [w * .8, -d * .7], [w, d * .2], [w * .2, d], [-w * .7, d * .7]];
-    add(body, merge([[plate(pt(.34, .24), .02, { bev: .006 }), { p: [.3, 1.012, .55], r: [-PI / 2, 0, .4] }], [plate(pt(.3, .22), .02, { bev: .006 }), { p: [-.35, 1.012, -.75], r: [-PI / 2, 0, -.3] }],
-      [plate(pt(.3, .12), .02, { bev: .006 }), { p: [-.3, .88, 1.66], r: face([0, .87, .49]) }], [plate(pt(.26, .11), .02, { bev: .006 }), { p: [.42, .86, 1.7], r: face([0, .87, .49]) }],
-      [plate(pt(.5, .1), .02, { bev: .006 }), { p: [1.112, .52, .5], r: [0, PI / 2, 0] }], [plate(pt(.5, .1), .02, { bev: .006 }), { p: [-1.112, .52, -.6], r: [0, -PI / 2, 0] }]]), P.camo);
-    add(tu, merge([[plate(pt(.24, .2), .02, { bev: .006 }), { p: [-.15, .565, .05], r: [-PI / 2, 0, .5] }], [plate(pt(.16, .12), .02, { bev: .006 }), { p: [.12, .565, -.3], r: [-PI / 2, 0, -.4] }]]), P.camo);
-    add(body, merge([-1, 1].map(s => [cbox(.07, .3, 3.1, .025), { p: [s * 1.075, .52, -.08] }])), P.odD); }
-  if (v === 2) { add(body, merge([[cbox(.36, .2, .28, .03), { p: [-.32, 1.11, -1.15] }], [cbox(.3, .18, .26, .03), { p: [.34, 1.1, -1.12] }]]), P.crate);
-    add(tu, merge([-1, 1].flatMap(s => [-.15, .12].map(zz => [cbox(.1, .26, .17, .025), { p: [s * .72, .22, zz - .3], r: [0, 0, -s * .12] }]))), P.can);
-    add(tu, merge([-1, 1].map(s => [cbox(.06, .05, .5, .015), { p: [s * .71, .36, -.36] }])), P.metal); }
-  return finish(g, null);
-};
+// (Defense Force Tanks became the Sky Screamers, TRO-312: B.tanks now lives in cast/kaiju.js; the game id stays 'tanks'.)
 }
 
 
@@ -18714,6 +18699,52 @@ B.mecha = function () {
   return finish(g, { hipY, legX });
 };
 
+// ----- Sky Screamers (kaiju, crowd of 3; TRO-312, Polygon look, replaces the Defense Force Tanks, game id stays 'tanks'): baby pterosaurs mid-scream.
+// Mid-tone orange-red hide, pale cream belly, a scalloped leathery wing on a long finger bone, an open beak with a dark red mouth,
+// a swept-back crest, talons hanging. v0 orange-red with a tall crest, v1 deeper red with a big crest and two side spikes, v2 amber
+// with a short crest. build({ pose: 'atk' }) = diving: wings swept back, head down (sprite only). Hovers (nothing touches the ground).
+B.tanks = function ({ variant: v = 0, pose = 'idle' } = {}) {
+  const P = { sk: ['#dd6a3a', '#cc4a36', '#e88e40'][v], skD: ['#a8442a', '#98332a', '#b4622a'][v], bel: ['#f6d2a2', '#f2c4a2', '#f8e0a8'][v], mem: ['#e8825a', '#dc6a56', '#f0a45c'][v],
+    bone: ['#b0452a', '#9c382c', '#bc6a2c'][v], mouth: '#8a2424', beak: '#f2dcb0', claw: '#f4efe0' };
+  const dive = pose === 'atk', cr = [.62, .9, .42][v];
+  const g = new THREE.Group(), sp = J('spine', g, [0, 1.25, 0]); sp.rotation.x = dive ? .85 : .22;
+  // body: a plump upright torso, cream belly with faint ribs, a short spiked tail trailing down and back
+  const BD = [[-.4, .05, .05, .05, -.03], [-.3, .15, .15, .15, -.03], [-.12, .27, .26, .26], [.08, .3, .27, .27, .01], [.26, .22, .2, .2, .03], [.38, .1, .1, .1, .05]].map(q => [q[0], q[1] * 1.3, q[2] * 1.25, q[3] * 1.2, q[4]]);
+  add(sp, loft(BD, { sq: 2.7, n: 9, fn: lump(.01) }), P.sk);
+  add(sp, loft([[-.3, .11, .1, .04, .2], [-.12, .23, .22, .06, .24], [.08, .26, .24, .06, .23], [.26, .17, .17, .05, .17]], { n: 8, sq: 2, fn: lump(.008) }), P.bel);
+  add(sp, merge([-.2, -.06, .08, .22].map(y => [band(BD, y - .015, y + .015, .01, { sq: 2.7, n: 9 }), {}])), P.skD);
+  add(sp, merge([[tongue(.08, .55, .18, 5), { p: [0, -.34, -.1], r: [PI / 2 + .1 + (dive ? .25 : 0), 0, 0] }], [tongue(.05, .22, .1, 5), { p: [0, -.5, -.6], r: [PI / 2 + .3 + (dive ? .25 : 0), 0, 0] }]]), P.skD);
+  // head (neck): wedge skull, long open beak (upper + dropped lower), dark red mouth, a swept crest, dot eyes
+  const nk = J('neck', sp, [0, .4, .1]); nk.rotation.x = dive ? -.95 : -.28; nk.scale.setScalar(1.55);
+  add(nk, loft([[-.05, .13, .13, .12], [.06, .19, .18, .16], [.18, .2, .18, .17, -.005], [.28, .15, .13, .13, -.01], [.33, .06, .05, .06, -.01], [.35, 0, 0, 0, -.01]], { sq: 2.7, n: 9, fn: lump(.008) }), P.sk);
+  add(nk, merge([[tongue(.095, .62, 0, 5), { p: [0, .2, .06], r: [PI / 2 + .02, 0, 0], s: [1, 1, .55] }]]), P.beak);
+  add(nk, merge([[tongue(.085, .5, 0, 5), { p: [0, .13, .08], r: [PI / 2 + .62, 0, 0], s: [1, 1, .5] }]]), P.bel);
+  add(nk, merge([[gem(.1, 0), { p: [0, .165, .17], s: [1.1, .55, 1.5] }]]), P.mouth, { noOutline: 1 });
+  add(nk, merge([-1, 1].map(s => [tongue(.012, .06, 0, 4), { p: [s * .035, .17, .36], r: [PI, 0, 0] }])), P.claw);
+  const cl = .35 + cr * .55;
+  add(nk, merge([[tongue(.075 + cr * .04, cl, -.2, 5), { p: [0, .26, -.09], r: [-1.4, 0, 0], s: [.55, 1, 1] }]]), P.skD);
+  if (v === 1) add(nk, merge([-1, 1].map(s => [tongue(.035, .32, -.12, 4), { p: [s * .17, .23, -.04], r: [-1.1, 0, s * .45] }])), P.skD);
+  for (const s of [-1, 1]) dot(nk, [s * .155, .2, .08], s * .2);
+  // wings: a long finger bone to the tip, a scalloped membrane that trails back, a pale claw at the wrist
+  for (const [side, s] of [['R', -1], ['L', 1]]) {
+    const w = J('wing' + side, sp, [s * .22, .16, -.04]); w.rotation.z = dive ? s * -.1 : s * .14;
+    const f = G(w, [0, 0, 0], [0, s * (dive ? 1.15 : .08), 0]);
+    const out = [[0, .08], [.55, .46], [1.72, .78], [1.42, .2], [1.26, .34], [1.06, -.06], [.9, .12], [.64, -.3], [.44, -.1], [.12, -.3], [0, -.1]];
+    const X = pts => s > 0 ? pts : flipX(pts);
+    f.add(mk(plate(X(out), .03, { bev: .01, fn: q => { q.z -= .07 * q.x * q.x * (s > 0 ? 1 : 1); } }), P.mem));
+    const wr = [s * .55, .47, .01];
+    const bones = [seg([0, .08, .0], wr, .05, .04), seg(wr, [s * 1.72, .78, -.2], .04, .014)];
+    for (const tp of [[1.42, .2], [1.06, -.06], [.64, -.3]]) bones.push(seg(wr, [s * tp[0], tp[1], -.07 * tp[0] * tp[0]], .018, .01, 4));
+    f.add(mk(merge(bones), P.bone));
+    f.add(mk(merge([[tongue(.04, .15, 0, 4), { p: [s * .57, .5, .03], r: [0, 0, -s * .5] }]]), P.claw));
+    bake(f);
+  }
+  // legs and talons dangling below (they step when it moves)
+  for (const [side, s] of [['R', -1], ['L', 1]]) { const st = J('step' + side, g, [0, 0, 0]);
+    st.add(mk(merge([seg([s * .15, 1.0, -.05], [s * .2, .8, .0], .08, .06), seg([s * .2, .8, .0], [s * .19, .68, .08], .055, .035)]), P.skD));
+    st.add(mk(merge([-1, 0, 1].map(k => [tongue(.02, .12, .02, 4), { p: [s * .19 + k * .05, .68, .08], r: [PI - .55, 0, k * .15] }])), P.claw)); }
+  return finish(g, null);
+};
 }
 
 
@@ -20827,7 +20858,7 @@ const HEROES_ALL=[
  ['captain','Starship Captain','space','brawler',3,0,'engage','🧭','Fights with his fists, then gives a speech about it.'],
  ['starknight','Star Knight','space','guardian',4,0,'deflect','🗡️','Last of an ancient order. Mentions it constantly.'],
  ['darklord','The Dark Lord','space','mystic',5,0,'darklightning','⚡','Monologues a lot. Has a very good cape.'],
- ['tanks','Defense Force Tanks','kaiju','gunner',1,1,'barrage','💥','"Open fire!" They have never once hit the monster.'],
+ ['tanks','Sky Screamers','kaiju','gunner',1,1,'barrage','🦅','Hatched in a volcano. Screams at every plane.'],
  ['babykaiju','Baby Kaiju','kaiju','brawler',1,1,'tantrum','🦎','A clutch of future city-enders. Currently toddlers.'],
  ['reporter','TV Reporter','kaiju','medic',1,0,'breaking','🎤','"I\'m standing in front of the monster now—"'],
  ['scientist','The Scientist','kaiju','mystic',2,0,'weakness','🔬','Has a theory. The theory is always radiation.'],
@@ -21324,7 +21355,7 @@ function nearHTML(){if(!S||!S.over)return '';const N=SCHEDULE.length,win=S.resul
 // ================= skills =================
 // p = power (tier x level for singles; tier x bodies/3 for crowds). Spells ignore armor.
 const SK={
- barrage:{name:'Barrage',d:p=>`Every tank shells a random enemy for 7 (${bodiesFromP(p)} tanks).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,7*u.tierM);}}},
+ barrage:{name:'Dive Bomb',d:p=>`Every flyer dives at a front-row enemy for 7 (${bodiesFromP(p)} flyers).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const fr=targetFoes(u).filter(x=>x.row==='front'),t=fr.length?pick(fr):randFoe(u);if(!t)break;spellFlat(u,t,7*u.tierM);}}},
  tantrum:{name:'Tantrum',d:p=>`Every baby stomps the enemy in front for 8, and the babies deal +10% damage for the rest of the fight, stacking with each cast (${bodiesFromP(p)} babies).`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;const n=bodies(u);for(let i=0;i<n&&t.alive;i++)spellFlat(u,t,8*u.tierM);u.dmgMult*=1.1;}},
  breaking:{name:'Breaking News',d:p=>`Heals your 2 most wounded characters for ${R(30*p)}, and they attack 20% faster for 3s.`,cast(u){wounded(u,2).forEach(a=>{heal(u,a,30*u.p);a.hastes.push({m:.2,t:3});});}},
  weakness:{name:'I Found Its Weakness!',d:p=>`${R(40*p)} damage to the toughest enemy, which takes 25% more damage from everything for 5s.`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.maxHp>a.maxHp?b:a);spell(u,t,40);t.vuln=Math.max(t.vuln||0,5);}},
@@ -24893,10 +24924,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.83',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.84',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.84',items:[["🦅", "The Defense Force Tanks are now the Sky Screamers: a flock of baby pterosaurs. Dive Bomb: every flyer dives at a front-row enemy for 7. Kaiju's job is the front line."]]},
   {v:'20.83',items:[["🪱", "The Burrow Lurker now tunnels into the enemy FRONT row and hits the weakest enemy there. The Swarm's job is the front line; the back row is Slasher's."], ["🐛", "Acid Spitters no longer melt armor (that is Heist's job). Instead, every spit that lands regrows one of them: the swarm keeps coming."], ["👻", "The Wraith now uses Grave Call: the last enemy that fell gets up as a skeleton on your side for 5s, with its attack and half its HP. Nobody down yet: it drains the nearest front-row enemy."], ["🦇", "The Vampire Bat now bites the enemy in front and heals itself that much. Bat Swarm: the first time it falls, it splits into 3 bats."]]},
   {v:'20.82',items:[["📿", "The Priest now throws Holy Water at the enemy back row: a little damage and 2.5s of terror for each. Slasher's job is the back row."], ["🧸", "Creepy Kids now play tag with the weakest enemy in the back row (no back row: the weakest anywhere)."], ["🪚", "The Chainsaw Maniac's Rev It Up now stops healing: while revved, every hit stops its target healing for 4s."], ["🚗", "The Getaway Driver now Ram Raids the enemy with the most HP: breaks its shield, 40 damage. A knockout still steals 🪙1."], ["⚡", "The Dark Lord now uses Force Choke: lifts one enemy (70 damage, stunned 1.5s) and the Force hits 3 more enemies and drains their energy. Space Opera's job is control, not blasting."]]},
   {v:'20.81',items:[["👀", "Rival cast portraits now show each character in its own colours inside a genre-coloured ring (they were dark red), with bigger star labels."], ["🖥️", "Smaller desktop windows (1280x720): the crossover chips and the shop bar no longer overlap, and board names are readable."], ["🎯", "The rival's tell lines no longer run under its picture."]]},
@@ -25977,8 +26009,8 @@ const AR={f:null,cv:null,R:null,E:null,scene:null,cam:null,B:null,toys:[],proj:[
 // size by what the character is, not just its box: big creatures read bigger, a mascot costume a bit smaller
 // people (and anything not listed) stand at AR_BASE, all the same height; big creatures and bosses are sized against
 // them, so a Bone Dragon or a boss towers over a person instead of matching one
-const AR_BASE=.78,AR_BOSS=1.18,AR_SIZE={tanks:.58,babykaiju:.8,giantmoth:1.5,mecha:1.6,kingmonster:1.75,hatch:.7,risen:.78,bonedragon:1.5,gravegolem:1.3,hivemind:1.25,scorpion:1.05,queen:1.08,lurker:.92,wraith:.88,mascot:.72,vampbat:.82,shared:1.25,deus:1.2};
-const AR_NXB=.86,AR_NX={tanks:.42,babykaiju:.86,giantmoth:1.12,mecha:1.32,kingmonster:1.3,hatch:.75,risen:.86,bonedragon:1.5,gravegolem:1.3,hivemind:1.1,scorpion:1.05,queen:1.08,lurker:.95,wraith:.92,mascot:.76,vampbat:.9,shared:1.22,deus:1.15};
+const AR_BASE=.78,AR_BOSS=1.18,AR_SIZE={tanks:.6,babykaiju:.8,giantmoth:1.5,mecha:1.6,kingmonster:1.75,hatch:.7,risen:.78,bonedragon:1.5,gravegolem:1.3,hivemind:1.25,scorpion:1.05,queen:1.08,lurker:.92,wraith:.88,mascot:.72,vampbat:.82,shared:1.25,deus:1.2};
+const AR_NXB=.86,AR_NX={tanks:.6,babykaiju:.86,giantmoth:1.12,mecha:1.32,kingmonster:1.3,hatch:.75,risen:.86,bonedragon:1.5,gravegolem:1.3,hivemind:1.1,scorpion:1.05,queen:1.08,lurker:.95,wraith:.92,mascot:.76,vampbat:.9,shared:1.22,deus:1.15};
 const AR_X=3.3,AR_Z={Eb:-5.5,Ef:-2.1,Af:2.1,Ab:5.5},AR_TOP=.16;
 function arWorld(k){return {x:(+k[2]-1.5)*AR_X,z:AR_Z[k[0]+k[1]]};}
 function arKey(u){return Z(u)+u.row[0]+u.col;}
@@ -26367,7 +26399,7 @@ const AR_SPAWN={'Risen Skeletons':'risen','Hatchlings':'hatch'};
 function arToy(u){if(u._ar!==undefined)return u._ar;u._ar=null;const sp=!u.art&&AR_SPAWN[u.name],p=sp?{spawn:1,id:sp,v:0}:u.art&&tbaParse(u.art);if(!p)return null;
   const {THREE,lib}=TBA,c=(p.spawn?lib.SPAWNS||[]:p.foe?lib.FOES:lib.CAST).find(x=>x.id===p.id);if(!c)return null;
   try{const root=new THREE.Group(),body=new THREE.Group(),n=u.crowd?3:1,figs=[];root.add(body);
-    const spots=n>1?(p.id==='tanks'?[[0,.9],[-1.1,-.9],[1.1,-.9]]:[[0,.62],[-1.02,-.5],[1.02,-.5]]):[[0,0]];
+    const spots=n>1?[[0,.62],[-1.02,-.5],[1.02,-.5]]:[[0,0]];
     for(let i=0;i<n;i++){const fig=c.build({variant:u.crowd?i%3:p.v}),h=new THREE.Group();h.add(fig);h.position.set(spots[i][0],0,spots[i][1]);body.add(h);figs.push({fig,h});}
     const bx=new THREE.Box3().setFromObject(figs[0].h),ht=bx.max.y-bx.min.y,wd=Math.max(bx.max.x-bx.min.x,bx.max.z-bx.min.z);
     // one scale for everyone: the models share a human height (2.3-2.6), so a human in a crowd is as tall as a human on
