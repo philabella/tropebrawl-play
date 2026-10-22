@@ -112,6 +112,27 @@ button{font:inherit;color:inherit}
 .ic{position:relative}
 .ipip{position:absolute;left:0;right:0;bottom:-6px;font:800 8px/1 var(--f-body);font-style:normal;color:var(--gold);letter-spacing:-1px;text-align:center;text-shadow:0 0 3px var(--bg),0 0 2px var(--bg)}
 .ic.leg{border-color:var(--leg);box-shadow:0 0 0 1px var(--leg),0 0 12px color-mix(in srgb,var(--leg) 45%,transparent)}
+/* TRO-378: Legendary slot (gold frame, holds 1) + 5 item sockets */
+.items:has(.slotg){gap:12px;flex-wrap:nowrap;align-items:flex-end}
+.slotg{display:inline-flex;flex-direction:column;gap:3px;align-items:flex-start;min-width:0}
+.slotg .slots{display:flex;gap:5px;padding:3px;border-radius:12px;border:1px solid var(--line)}
+.legg .slots{border-color:color-mix(in srgb,var(--leg) 60%,transparent);background:color-mix(in srgb,var(--leg) 12%,transparent)}
+.slbl{font:800 .6rem/1 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--dim);white-space:nowrap}
+.legg .slbl,.lgslot .slbl{color:var(--leg)}
+.ic.sock{cursor:default;border:1px dashed var(--line);background:transparent;opacity:.6}
+.ic.legsock{border-color:var(--leg);opacity:.5;filter:grayscale(1)}
+.slh{font:800 .66rem/1 var(--f-body);letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:4px 0 0}
+.slh.leg{color:var(--leg)}.slh small{font-size:inherit;opacity:.75;margin-left:4px}
+.irow.sock{cursor:default;background:transparent;border-style:dashed;opacity:.6;padding:5px 8px;min-height:30px;align-items:center}
+.irow.sock .emo{width:1.3rem}
+.irow>span:not(.emo){min-width:0;overflow-wrap:anywhere}.irow .emo{flex:none}
+.imore{display:block;font-style:normal;font-size:.72rem;font-weight:800;color:var(--gold);margin-top:2px}
+.choice{min-width:0;overflow-wrap:anywhere}
+.lgshort{font-weight:700;color:var(--ink)}
+.fullrule{font-size:.82rem;color:var(--muted);border-left:3px solid var(--leg);padding-left:8px;max-width:62ch;margin:6px 0;overflow-wrap:anywhere}
+.lgmore{flex-wrap:wrap;gap:6px}.lgmore .btn.on{border-color:var(--leg);color:var(--leg)}
+.lgslot{font-size:.84rem;margin:4px 0 8px;padding:6px 9px;border:1px solid color-mix(in srgb,var(--leg) 60%,transparent);border-radius:10px;background:color-mix(in srgb,var(--leg) 10%,transparent)}
+.ifull{font-size:.84rem;margin:4px 0 8px;padding:6px 9px;border:1px dashed var(--gold);border-radius:10px}
 
 /* portrait */
 .pt{position:relative;flex:none;display:inline-grid;place-items:center;width:44px;height:44px;border-radius:50%;border:2px solid var(--gc);background:radial-gradient(circle at 35% 30%,color-mix(in srgb,var(--gc) 35%,var(--panel)),var(--bg2) 75%);font-family:var(--f-emoji);font-size:1.4rem;line-height:1}
@@ -1866,6 +1887,7 @@ html:not(.dt) .phd[data-k="it"]{display:none}
   html:not(.dt) .phd{display:none;position:absolute;left:0;right:0;top:calc(100% + 5px);z-index:32;max-height:min(70vh,560px);overflow:auto;overscroll-behavior:contain}
   html:not(.dt) .phd.on{display:block}
   html:not(.dt) .phd>.vs,html:not(.dt) .phd>.coach{box-shadow:0 14px 30px -8px rgba(0,0,0,.8),4px 4px 0 var(--inkline)}
+  html:not(.dt) .phd>.phitems:has(.slotg){flex-wrap:nowrap;gap:12px;align-items:flex-end}
   html:not(.dt) .phd>.rvstrip,html:not(.dt) .phd>.phitems{margin:0;padding:10px;background:var(--panel);border:2px solid var(--inkline);border-radius:3px;box-shadow:0 14px 30px -8px rgba(0,0,0,.8);display:flex;flex-wrap:wrap;gap:6px;align-items:center}
   html:not(.dt) .phd .rvc,html:not(.dt) .phitems .ic{min-height:40px;min-width:40px}
   html:not(.dt) .phw.open .phbg{display:block;position:fixed;inset:0;z-index:31;border:0;padding:0;margin:0;background:rgba(6,5,9,.55);cursor:default}
@@ -21001,6 +21023,9 @@ const TRINKETS=[
 ];
 const TR={};TRINKETS.forEach(a=>TR[a[0]]={id:a[0],name:a[1],rar:a[2],e:a[3],t:a[4],v:a[5],d:a[4].replace('{v}',a[5].join(' / '))});
 const TRINKET_CAP=5, ITEM_MAX=3;
+// TRO-378: short item lines (cards, slots, tooltips) for items whose full text is long; the full text stays in .t/.d (Details, Codex)
+const TR_SHORT={"extralife": "Your first character to fall each fight revives at {v} HP (summons don't count).", "understudy": "When a board character falls, your best bench character of the same or lower rarity steps in, up to {v} per fight."};Object.keys(TR_SHORT).forEach(k=>{if(TR[k])TR[k].s=TR_SHORT[k];});
+function trS(id){const t=TR[id];return (t.s||t.t).replace('{v}',t.v.join(' / '));}
 // legendaries: one held at a time, offered after the Act 1, 2 and 3 bosses
 const LEGENDS_ALL={
   gameball:{name:'Game Ball',e:'⚽',genre:'ball',d:'With 2 or more different Sportsball characters on your board, they pass one ball instead of attacking. The holder throws it at an enemy for the team\'s combined attack (each different Sportsball character adds its attack once; a second copy of the same character only adds a body), and it bounces to the next Sportsball teammate: +15% per pass (up to 2.5×). The catcher throws once the ball lands, after half its attack time, so faster characters keep it moving. A stunned or knocked-out holder fumbles and the streak resets.'},
@@ -21049,6 +21074,9 @@ const LEGENDS_ALL={
   extuniv:{name:'Extended Universe',e:'🌌',genre:null,d:'Up to 3 characters on your bench (leftmost first) also count for genre bonuses and crossovers, not traits. A copy of a board character doesn\'t count again.'},
   blockbuster:{name:'Blockbuster',e:'🍿',genre:null,d:'Your rarest character on the board gets +60% HP and damage.'},
 };
+// TRO-378: short Legendary lines (cards, the slot, tooltips); the full rules stay in .d (Details panel, Codex, Full rules on offers)
+const LEG_SHORT={"gameball": "2+ different Sportsball characters pass one ball: each throw hits for their combined attack, +15% per pass (up to 2.5×).", "halftime": "Once a fight, below half your team's HP (or at 10s): everyone heals 40% of max HP and Sportsball attacks 50% faster.", "feeding": "Swarm deals +25% damage, +10% more for each enemy that falls (up to 6 times), and each fall regrows 3 bodies per Swarm crowd.", "bloodline": "Undead characters heal for 30% of the damage they deal; healing past full HP becomes a shield (up to 50% of max HP).", "mothership": "8s into every fight, a beam hits every enemy for 22% of its max HP (needs the 2-character Space Opera bonus).", "sequel": "Your Slasher characters come back once at 70% HP, even without 6 (twice with 6).", "lightsout": "Every 8s: every enemy is terrified for 2s and your Slashers' next attack deals double damage (needs 2 Slasher).", "vault": "Interest goes up to 🪙10 at 🪙100; Heist Crew's gold damage bonus counts your gold double, up to +100% (at 🪙50).", "quickdraw": "Every 7s, High Noon again: your Wild West characters' next shot is instant and deals double damage (needs 2 Wild West).", "spinoff": "Commons and Uncommons can reach ★★★, count as 2 for their genre at ★★★, and get +20% HP and damage.", "scout": "Your shop can offer ready-made ★★ characters of any rarity (about 1 card in 8), for 2× the price.", "indie": "With 4 or fewer board squares filled, your characters get +30% HP and damage per empty square (up to +90%).", "extuniv": "Up to 3 bench characters (leftmost first) also count for genre bonuses and crossovers, not traits."};Object.keys(LEG_SHORT).forEach(k=>{if(LEGENDS_ALL[k])LEGENDS_ALL[k].s=LEG_SHORT[k];});
+function legS(id){const L=LEGENDS_ALL[id];return L?L.s||L.d:'';}
 const LEGENDS=Object.fromEntries(Object.entries(LEGENDS_ALL).filter(([,L])=>!L.genre||live(L.genre)));
 
 // ---- enemies ----
@@ -23183,7 +23211,7 @@ function rvTopG(id){const sc=scoutSnap(),x=sc&&sc.rv.find(v=>v.id===id);if(!x||x
 // TRO-191: what a rival took (its Legendary and items) for the rival panel (full) and the VS card (short)
 function rvKit(R,short){const st=R&&R.st;if(!st)return '';const L=st.legend&&LEGENDS[st.legend],its=(st.trinkets||[]).filter(t=>TR[t]),sl=t=>'★'.repeat((st.tlv||{})[t]||1);if(!L&&!its.length)return '';
   if(short)return (L?`${L.e} ${esc(L.name)}`:'')+(L&&its.length?' · ':'')+its.map(t=>TR[t].e).join('');
-  return `<p class="rvtell rvkit">${esc(RIVAL[R.id].name)} took: ${[L?`<b title="${esc(L.d)}">${L.e} ${esc(L.name)}</b>`:''].concat(its.map(t=>`<span title="${esc(TR[t].d)}">${TR[t].e} ${esc(TR[t].name)} ${sl(t)}</span>`)).filter(Boolean).join(' · ')}</p>`;}
+  return `<p class="rvtell rvkit">${esc(RIVAL[R.id].name)} took: ${[L?`<b title="${esc(L.s||L.d)}">${L.e} ${esc(L.name)}</b>`:''].concat(its.map(t=>`<span title="${esc(trS(t))}">${TR[t].e} ${esc(TR[t].name)} ${sl(t)}</span>`)).filter(Boolean).join(' · ')}</p>`;}
 function rvEpHTML(e){const R=S.lobby&&S.lobby.rv.find(x=>x.id===e.rival),x=RIVAL[e.rival],f=R?R.st.units.filter(u=>u.slot[0]!=='n'):[],L=e.lead?leadCast():null;
   const act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1;
   const top=f.slice().sort((a,b)=>HERO[b.id].tier-HERO[a.id].tier||b.level-a.level)[0],img=top&&(SPRITES[top.id+'_f']||SPRITES[top.id]);
@@ -23696,11 +23724,10 @@ function tbxCleared(items,instant){const n=S.lv|0,win=S.result==='win',k=tbxK(),
 // ================= screens =================
 const SCR={};
 // Legendary + item icons (top bar, and on phones also next to the shop buttons)
-function itemIcons(){return [
-    S.legend?`<button class="ic leg" data-a="legend-info" title="${esc(LEGENDS[S.legend].name)}">${LEGENDS[S.legend].e}</button>`:'',
-    ...S.trinkets.map(t=>`<button class="ic${TR[t].rar==='R'?' rare':''}" data-a="trinket" data-v="${t}" title="${esc(TR[t].name)} ${'★'.repeat(ilv(t))}">${TR[t].e}<i class="ipip">${'★'.repeat(ilv(t))}</i></button>`),
-    S.trinkets.length?`<span class="itemcount" style="font-size:.72rem">${S.trinkets.length}/${TRINKET_CAP}</span>`:''
-  ].join('');}
+// TRO-378: the Legendary has its own gold slot (holds 1) and all 5 item sockets always show, so the limits read at a glance
+function itemIcons(){if(pgate().items)return '';const lg=lvHas('l')||!!S.legend,it=lvHas('i')||S.trinkets.length>0,n=S.trinkets.length;if(!lg&&!it)return '';
+  return (lg?`<span class="slotg legg" role="group" aria-label="Legendary slot: holds 1"><small class="slbl">Legendary (1)</small><span class="slots">${S.legend&&LEGENDS[S.legend]?`<button class="ic leg" data-a="legend-info" title="${esc(LEGENDS[S.legend].name+': '+legS(S.legend))}">${LEGENDS[S.legend].e}</button>`:`<span class="ic sock legsock" role="img" aria-label="No Legendary yet" title="No Legendary yet. One is offered after the Act 1, 2 and 3 bosses; you hold one at a time.">🏆</span>`}</span></span>`:'')
+    +(it?`<span class="slotg itg" role="group" aria-label="Items: ${n} of ${TRINKET_CAP} slots used"><small class="slbl">Items ${n}/${TRINKET_CAP}</small><span class="slots">${S.trinkets.map(t=>`<button class="ic${TR[t].rar==='R'?' rare':''}" data-a="trinket" data-v="${t}" title="${esc(TR[t].name)} ${'★'.repeat(ilv(t))}: ${esc(trS(t))}">${TR[t].e}<i class="ipip">${'★'.repeat(ilv(t))}</i></button>`).join('')}${'<span class="ic sock" title="Empty item slot" aria-hidden="true"></span>'.repeat(Math.max(0,TRINKET_CAP-n))}</span></span>`:'');}
 function topBar(){
   const p2=S.part===2;
   const bnx=badNext();const stripI=SCHEDULE.map((r,i)=>{const n=i+1;const mini=!!r.m&&r.type==='fight';const sp=null,cutR=false,bw=n===(bnx&&bnx.r);const fl=S.lead&&r.type==='boss'&&n===SCHEDULE.length&&RIVAL[S.lead];const ic=fl?RIVAL[S.lead].e:r.type==='boss'?'💀':bw?'⚠️':sp?EVENTS[sp].e:r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${bw?': starts with a bad random event (see the warning line)':''}${mini?': mini-boss':fl?': final boss, '+esc(RIVAL[S.lead].name)+"'s full cast":r.type==='boss'?': boss':sp?': special event: '+EVENTS[sp].name:r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;});
@@ -24379,7 +24406,7 @@ SCR.event=()=>{
     if(e.sub.kind==='trinket'&&e.sub.ids.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){e.sub.ids=trinketChoices(3,false);save();}
     if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span>${ownLine(id)}</button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
     else if(UI.swap&&UI.swap.a==='event-sub'&&S.trinkets.length>=TRINKET_CAP)body=swapHTML();
-    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It arrives one ★ higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':e.picked==='supply'?'Skip the item: 🪙3 more':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
+    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It arrives one ★ higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p>${fullNote()}<div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div>${moreRow(e.sub.ids.map(t=>'t:'+t))}<div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':e.picked==='supply'?'Skip the item: 🪙3 more':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
   }else{art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav='';body=(e.wheel?wheelHTML(e.wheel):'')+`<p class="evresult${e.wheel&&!RM?' late':''}">${esc(e.msg||'Done.')}</p><div class="row" style="justify-content:center"><button class="btn primary big" data-a="event-done">Continue</button></div>`;}
   const sk=e.cut?'cut':e.picked||'intermission',sc=evScene(sk,{res:body.includes('data-a="event-done"')});
   return `${topBar()}<section class="screen evstage${sc?' evscene'+(EVBREAK.has(sk)?' fbs':''):''}" style="margin-top:12px">${sc||`<div class="evart">${art}</div>`}<div class="evpanel"><h2 class="evtitle">${sc?`<span class="evem">${art}</span> `:''}${title}</h2>${flav?`<p class="evflav">${flav}</p>`:''}<div class="evbody">${body}</div></div></section>${evTeamHTML(e)}`;
@@ -24522,9 +24549,14 @@ function synDetail(k){
     <p class="muted" style="font-size:.78rem">Counts different characters on your board.${isG?' Rare, Epic and Mythic characters count as 2 from ★★.':''}</p>`;
 }
 // item text with every level's number and the current one highlighted ("10% / 15% / 20%"), or a level-up preview ("10% → 15%")
-function trText(id,cur){const t=TR[id];return esc(t.t).replace('{v}',t.v.map((x,i)=>i+1===cur?`<strong class="lvon">${x}</strong>`:x).join(' / '));}
-function trUp(id,from,to){const t=TR[id];return esc(t.t).replace('{v}',`${t.v[from-1]} → <strong class="lvon">${t.v[(to||from+1)-1]}</strong>`);}
+function trText(id,cur,sh){const t=TR[id];return esc(sh&&t.s||t.t).replace('{v}',t.v.map((x,i)=>i+1===cur?`<strong class="lvon">${x}</strong>`:x).join(' / '));}
+function trUp(id,from,to,sh){const t=TR[id];return esc(sh&&t.s||t.t).replace('{v}',`${t.v[from-1]} → <strong class="lvon">${t.v[(to||from+1)-1]}</strong>`);}
 const istars=n=>`<span class="istars">${'★'.repeat(n)}</span>`;
+// TRO-378: offer cards show short lines; these buttons open the full rules of a shortened Legendary ('l:id') or item ('t:id') under the cards
+function moreRow(keys){const xs=keys.filter(k=>{const id=k.slice(2);return k[0]==='l'?LEGENDS_ALL[id]&&LEGENDS_ALL[id].s:TR[id]&&TR[id].s;});if(!xs.length)return '';
+  const o=k=>k[0]==='l'?LEGENDS_ALL[k.slice(2)]:TR[k.slice(2)],open=xs.includes(UI.more)?UI.more:'';
+  return `<div class="row lgmore">${xs.map(k=>`<button class="btn sm ghost${open===k?' on':''}" data-a="more" data-v="${k}" aria-expanded="${open===k}">📖 Full rules: ${o(k).e} ${esc(o(k).name)}</button>`).join('')}</div>${xs.map(k=>`<p class="fullrule" data-k="${k}"${open===k?'':' hidden'}><b>${o(k).e} ${esc(o(k).name)}:</b> ${k[0]==='l'?esc(o(k).d):trText(k.slice(2),0)}</p>`).join('')}`;}
+function fullNote(){return S.trinkets.length>=TRINKET_CAP?`<p class="ifull">🎒 All ${TRINKET_CAP} item slots are full. A new item replaces one you choose (that one is sold for gold). A copy of an item you hold levels it up instead.</p>`:'';}
 // one offered item: a copy you hold shows its level-up; a new one shows all its levels; with 5 items a new one asks what it replaces
 // bonus: extra levels on top of the normal pick (Traveling Merchant)
 // v19.57: Prop Master's reroll: its price, +🪙1 for each reroll already made on this pick (★★★ was free and endless)
@@ -24532,21 +24564,21 @@ function propCost(){const sb=UI.screen==='event'&&S.event&&S.event.sub&&S.event.
 function itemCard(id,a,pre,bonus){
   const t=TR[id],L=ilv(id),full=!L&&S.trinkets.length>=TRINKET_CAP,to=Math.min(ITEM_MAX,L+1+(bonus||0)),ns=bonus?' '+'★'.repeat(to):'';
   const nb=L?'':newB('i',id),lab=L?`Level up ${'★'.repeat(L)} → ${'★'.repeat(to)}`:full?`New${ns} · replaces one`:(t.rar==='R'?'New · Rare':'New')+ns;
-  return `<button class="choice${t.rar==='R'?' rare':''}${L?' up':' new'}" data-a="${full?'swap':a}" data-v="${full?`${a}|${pre||''}|${id}`:(pre||'')+id}"><span class="rar">${nb?lab.replace(/^New( · )?/,'')||'Item':lab}</span>${nb}<span class="big">${t.e}</span><b>${esc(t.name)}</b><span>${L?trUp(id,L,to):trText(id,to)}</span></button>`;
+  return `<button class="choice${t.rar==='R'?' rare':''}${L?' up':' new'}" data-a="${full?'swap':a}" data-v="${full?`${a}|${pre||''}|${id}`:(pre||'')+id}"><span class="rar">${nb?lab.replace(/^New( · )?/,'')||'Item':lab}</span>${nb}<span class="big">${t.e}</span><b>${esc(t.name)}</b><span>${L?trUp(id,L,to,1):trText(id,to,1)}</span></button>`;
 }
 // step 2 of taking a new item with 5 items: tap the one to sell; the new item takes its place at ★
 function swapHTML(){const w=UI.swap,t=TR[w.id];
   return `<div class="eyebrow">Items full · ${S.trinkets.length}/${TRINKET_CAP}</div><h3 style="color:var(--gold)"><span class="emo">${t.e}</span> ${esc(t.name)} replaces…</h3>
     <p class="muted" style="font-size:.85rem">Tap the item to sell. ${esc(t.name)} takes its place at ★.</p>
-    <div class="ilist">${S.trinkets.map(o=>`<button class="irow${TR[o].rar==='R'?' rare':''}" data-a="${w.a}" data-v="${w.pre}${w.id}>${o}"><span class="emo">${TR[o].e}</span><span><b>${esc(TR[o].name)} ${istars(ilv(o))} · sell 🪙${itemSellValue(o)}</b>${trText(o,ilv(o))}</span></button>`).join('')}</div>
+    <div class="ilist">${S.trinkets.map(o=>`<button class="irow${TR[o].rar==='R'?' rare':''}" data-a="${w.a}" data-v="${w.pre}${w.id}>${o}"><span class="emo">${TR[o].e}</span><span><b>${esc(TR[o].name)} ${istars(ilv(o))} · sell 🪙${itemSellValue(o)}</b>${trText(o,ilv(o),1)}</span></button>`).join('')}</div>
     <div class="row"><button class="btn ghost" data-a="swap-back">Back</button></div>`;}
 function trinketDetail(id){const t=TR[id],L=S?ilv(id):0;
-  return `<div class="eyebrow">${t.rar==='R'?'Rare':'Common'} item</div><h3 style="color:var(--gold)"><span class="emo">${t.e}</span> ${esc(t.name)} ${L?istars(L):''}</h3><p>${trText(id,L)}</p>`
+  return `<div class="eyebrow">${t.rar==='R'?'Rare':'Common'} item</div><h3 style="color:var(--gold)"><span class="emo">${t.e}</span> ${esc(t.name)} ${L?istars(L):''}</h3>${t.s?`<p class="lgshort">${trText(id,L,1)}</p><div class="eyebrow">Full rules</div>`:''}<p>${trText(id,L)}</p>`
     +(L&&!itemUseful(id)?`<p style="font-size:.8rem;color:var(--red)">Does nothing on your board right now.</p>`:'')
     +(L?`<p class="muted" style="font-size:.78rem">${L<ITEM_MAX?'Pick it again later to level it up.':'Max level.'}</p>`:'')
     +(L&&(UI.screen==='plan'||UI.screen==='event')?`<div class="row">${itemSellBtn(id)}</div>`:'');}
 function itemSellBtn(id){return `<button class="btn sm danger" data-a="sell-item" data-v="${id}">${UI.armItem===id?'Tap again to sell for ':'Sell for '}🪙${itemSellValue(id)}</button>`;}
-function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3><p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is one of your biggest genres (2 or more).</p>`:''}`;}
+function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+GENRES[L.genre].e+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${L.e}</span> ${esc(L.name)}</h3>${L.s?`<p class="lgshort">${esc(L.s)}</p><div class="eyebrow">Full rules</div>`:''}<p>${esc(L.d)}</p>${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is one of your biggest genres (2 or more).</p>`:''}`;}
 function comboDetail(id){const x=CROSSOVERS.find(c=>c.id===id);return `<div class="eyebrow">Crossover</div><h3 style="color:var(--gold)">🔗 ${esc(x.name)}</h3><p>${esc(x.d)}</p><p class="muted" style="font-size:.82rem">Needs ${legend('crossep')?1:2} ${GENRES[x.a].e} ${GENRES[x.a].name} + ${legend('crossep')?1:2} ${GENRES[x.b].e} ${GENRES[x.b].name} characters on your board (Rare and up count as 2 from ★★).</p><div class="row"><button class="btn sm" data-a="xlist">🔗 All crossovers</button></div>`;}
 function enemyDetail(key,st){
   const d=EN[key];
@@ -24557,10 +24589,14 @@ function enemyDetail(key,st){
 }
 function itemsList(){
   const rows=[];
-  if(S.legend){const L=LEGENDS[S.legend];rows.push(`<button class="irow leg" data-a="legend-info"><span class="emo">${L.e}</span><span><b>${esc(L.name)}</b>${esc(L.d)}</span></button>`);}
+  const n=S.trinkets.length;
+  if(lvHas('l')||S.legend){rows.push('<div class="slh leg">Legendary <small>holds 1</small></div>');const L=S.legend&&LEGENDS[S.legend];
+    rows.push(L?`<button class="irow leg" data-a="legend-info"><span class="emo">${L.e}</span><span><b>${esc(L.name)}</b>${esc(legS(S.legend))}${L.s?'<i class="imore">Full rules ›</i>':''}</span></button>`:'<div class="irow leg sock"><span class="emo">🏆</span><span><b>No Legendary yet</b>One is offered after the Act 1, 2 and 3 bosses. Taking a new one replaces the one you hold.</span></div>');}
+  rows.push(`<div class="slh">Items <small>${n}/${TRINKET_CAP}</small></div>`);
   S.trinkets.forEach(t=>{const on=UI.screen==='plan'&&UI.insp&&UI.insp.kind==='trinket'&&UI.insp.id===t;
-    rows.push(`<button class="irow${TR[t].rar==='R'?' rare':''}${on?' on':''}" data-a="trinket" data-v="${t}"><span class="emo">${TR[t].e}</span><span><b>${esc(TR[t].name)} ${istars(ilv(t))}</b>${trText(t,ilv(t))}</span></button>`+(on?`<div class="row" style="justify-content:flex-end">${itemSellBtn(t)}</div>`:''));});
-  return rows.length?`<div class="ilist">${rows.join('')}</div>`:'<p class="muted" style="font-size:.85rem">No items yet. You pick one when a Rare, Epic or Mythic character first reaches ★★ or ★★★, at the Supply Drop, and after an Act 1, 2 or 3 boss win.</p>';
+    rows.push(`<button class="irow${TR[t].rar==='R'?' rare':''}${on?' on':''}" data-a="trinket" data-v="${t}"><span class="emo">${TR[t].e}</span><span><b>${esc(TR[t].name)} ${istars(ilv(t))}</b>${trText(t,ilv(t),1)}${TR[t].s?'<i class="imore">Full rules ›</i>':''}</span></button>`+(on?`<div class="row" style="justify-content:flex-end">${itemSellBtn(t)}</div>`:''));});
+  for(let k=n;k<TRINKET_CAP;k++)rows.push('<div class="irow sock" aria-hidden="true"><span class="emo"></span><span>Empty item slot</span></div>');
+  return `<div class="ilist">${rows.join('')}</div>`+(n?'':'<p class="muted" style="font-size:.8rem">You pick an item when a Rare, Epic or Mythic character first reaches ★★ or ★★★, at the Supply Drop, and after an Act 1, 2 or 3 boss win.</p>');
 }
 function rankDetail(){
   const row=(r,on)=>`<tr class="${on?'on':''}"><td style="text-align:left">${r}</td><td>${RANK.board[r-1]}</td>${RANK.odds[r-1].map(p=>`<td>${p?p+'%':'·'}</td>`).join('')}<td>${r>1?xpFor(r-2):''}</td></tr>`;
@@ -24600,7 +24636,7 @@ function inspHTML(){
 // right-hand panel on wide screens: your Legendary and items (phones show them as icons in the top bar)
 function itemsPanel(){
   if(pgate().items)return '<aside class="insp" id="items" aria-label="Your items"><h4>YOUR ITEMS</h4><p class="muted" style="font-size:.85rem">None yet. Items come later in the run; each one helps your whole team.</p></aside>';
-  return `<aside class="insp" id="items" aria-label="Your items"><h4>YOUR ITEMS <span class="itemcount">${S.trinkets.length}/${TRINKET_CAP}</span></h4>${itemsList()}<ul class="irules"><li>Items help your whole team.</li><li>Picking an item you have levels it up (max ★★★).</li><li>Tap an item to see or sell it.</li><li>Full? A new item replaces one (that one is sold).</li></ul></aside>`;
+  return `<aside class="insp" id="items" aria-label="Your items"><h4>YOUR LEGENDARY AND ITEMS</h4>${itemsList()}<ul class="irules"><li>Items help your whole team.</li><li>Picking an item you have levels it up (max ★★★).</li><li>Tap an item to see or sell it.</li><li>Full? A new item replaces one (that one is sold).</li></ul></aside>`;
 }
 // TRO-361: desktop left column scrolls (foe strip above Details): bring an opened Details panel to the top of it
 function inspView(){if(!DESK)return;const el=$('#insp'),c=el&&el.closest('.dcol.l');if(c&&el.querySelector('.x'))c.scrollTop+=el.getBoundingClientRect().top-c.getBoundingClientRect().top-4;}
@@ -24755,23 +24791,24 @@ function showPending(){
     if(!p.choices){p.choices=legendChoices(p.win?3:2);p.rare=p.win?(trinketChoices(3,true)[0]||null):null;save();}
     if(p.rare&&(!TR[p.rare]||ilv(p.rare)>=ITEM_MAX)){p.rare=trinketChoices(3,true)[0]||null;save();}
     if(UI.swap&&UI.swap.a==='pend-leg'){sheet(swapHTML(),true);return;}
-    const cards=p.choices.map(id=>`<button class="choice legend${UI.armLeg===id?' armed':''}" data-a="pend-leg" data-v="${id}"><span class="rar">${S.legend?(UI.armLeg===id?'Tap again to replace ':'Replaces ')+`${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)}`:'Legendary'}</span>${newB('l',id)}<span class="big">${LEGENDS[id].e}</span><b>${esc(LEGENDS[id].name)}</b><span>${esc(LEGENDS[id].d)}</span>${legendClash(id)?`<span class="clash">${esc(legendClash(id))}</span>`:''}</button>`).join('')
+    const cards=p.choices.map(id=>`<button class="choice legend${UI.armLeg===id?' armed':''}" data-a="pend-leg" data-v="${id}"><span class="rar">${S.legend?(UI.armLeg===id?'Tap again to replace ':'Replaces ')+`${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)}`:'Legendary'}</span>${newB('l',id)}<span class="big">${LEGENDS[id].e}</span><b>${esc(LEGENDS[id].name)}</b><span>${esc(legS(id))}</span>${legendClash(id)?`<span class="clash">${esc(legendClash(id))}</span>`:''}</button>`).join('')
       ,item=p.rare?`<div class="lgor"><span>or take the bonus item${S.legend?` and keep ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)}`:''}</span></div><div class="choices lgitem">${itemCard(p.rare,'pend-leg','t:')}</div>`:'';
     sheet(`${(s=>s?`<div class="evscene lgscene fbs">${s}</div>`:'')(evScene('legendary'))}<div class="eyebrow">${p.win?'Boss beaten':'The show goes on'}</div><h3 style="color:var(--leg)">Choose a Legendary</h3>
-      <p class="muted" style="font-size:.85rem">You hold one at a time.${p.rare?' Or take the bonus item instead.':''}${p.win?'':' Lost the boss: 2 choices and no bonus item (a win offers 3 and an item).'}${S.legend?` Taking a new one replaces ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)}.`:''}</p>
-      <div class="choices">${cards}</div>${item}<div class="row">${S.legend?`<button class="btn ghost" data-a="pend-leg" data-v="">Keep ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)} · +🪙3</button>`:''}${rpBtn('l',p.rp)}<button class="btn ghost" data-a="pend-hide">👀 See my team first</button></div>`,true);UI.pendOpen=true;
+      <p class="muted" style="font-size:.85rem">You hold one at a time.${p.rare?' Or take the bonus item instead.':''}${p.win?'':' Lost the boss: 2 choices and no bonus item (a win offers 3 and an item).'}</p>
+      ${S.legend&&LEGENDS[S.legend]?`<p class="lgslot"><span class="slbl">Your Legendary slot (1)</span> ${LEGENDS[S.legend].e} <b>${esc(LEGENDS[S.legend].name)}</b>: a new Legendary replaces it.</p>`:''}
+      <div class="choices">${cards}</div>${moreRow(p.choices.map(id=>'l:'+id))}${item}${p.rare?moreRow(['t:'+p.rare]):''}<div class="row">${S.legend?`<button class="btn ghost" data-a="pend-leg" data-v="">Keep ${LEGENDS[S.legend].e} ${esc(LEGENDS[S.legend].name)} · +🪙3</button>`:''}${rpBtn('l',p.rp)}<button class="btn ghost" data-a="pend-hide">👀 See my team first</button></div>`,true);UI.pendOpen=true;
     return;
   }
   // offers are re-checked against what you own, so a restored or older offer never repeats an item
   if(!p.choices||p.choices.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){p.choices=trinketChoices(p.level,false);save();}
   if(UI.swap&&UI.swap.a==='pend'){sheet(swapHTML(),true);return;}
   sheet(`<div class="eyebrow">Item pick</div><h3 style="color:var(--gold)">${p.kind==='elite'?'🌟 Mini-boss beaten!':p.kind==='trial'?'🔥 Trial by Fire won!':`${HERO[p.id].e} ${esc(HERO[p.id].name)} reached ${'★'.repeat(p.level)}!`}</h3>
-    <p class="muted" style="font-size:.85rem">Pick an item for your whole team, not just this character.</p>
-    <div class="choices">${p.choices.map(t=>itemCard(t,'pend')).join('')}</div>
+    <p class="muted" style="font-size:.85rem">Pick an item for your whole team, not just this character.</p>${fullNote()}
+    <div class="choices">${p.choices.map(t=>itemCard(t,'pend')).join('')}</div>${moreRow(p.choices.map(t=>'t:'+t))}
     <div class="row"><button class="btn ghost" data-a="pend" data-v="">Take 🪙3 instead</button>${has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}<button class="btn ghost" data-a="pend-hide">👀 See my team first</button></div>`,true);UI.pendOpen=true;
 }
 function resolvePending(v){
-  const p=S.pending.shift();if(!p)return;UI.swap=null;UI.legPeek=false;UI.armLeg=null;tlAct(p.kind==='legend'?'l':'i',v||'-');
+  const p=S.pending.shift();if(!p)return;UI.swap=null;UI.legPeek=false;UI.armLeg=null;UI.more=null;tlAct(p.kind==='legend'?'l':'i',v||'-');
   if(p.kind==='legend'){
     if(!v)S.gold+=3;
     else if(v.startsWith('t:')){toast(itemMsg(v.slice(2)));takeTrinket(v.slice(2));}
@@ -24790,11 +24827,12 @@ function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=fals
 // ================= input =================
 function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}let r_;try{r_=onAction0(a,v,el);}catch(e){if(!(S&&repairSlots()))throw e;render();}try{tutPaint();}catch(e){}pgPaint();try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
 function onAction0(a,v,el){
-  if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x'&&a!=='repitch')return;
+  if(UI.sheetOpen==='modal'&&a!=='pend'&&a!=='pend-leg'&&a!=='swap'&&a!=='swap-back'&&a!=='pend-hide'&&a!=='item-reroll'&&a!=='tut-x'&&a!=='repitch'&&a!=='more')return;
   if(a==='fight'&&peeking()){UI.legPeek=false;render();return;}
   if((a==='pend'||a==='pend-leg'||a==='event-sub'||(a==='sell-item'&&UI.armItem===v))&&fresh())return;
   if(a!=='sell-item')UI.armItem=null; // an armed Sell disarms on any other tap
   switch(a){
+    case 'more':UI.more=UI.more===v?null:v;document.querySelectorAll('.fullrule[data-k]').forEach(e=>e.hidden=e.dataset.k!==UI.more);document.querySelectorAll('[data-a=more]').forEach(e=>{const on=e.dataset.v===UI.more;e.classList.toggle('on',on);e.setAttribute('aria-expanded',on);});break; // TRO-378: Full rules under offer cards, toggled in place (a re-render would replay the cards' entrance)
     case 'pend-hide':if(!UI.pendOpen)break;UI.legPeek=true;UI.swap=null;closeSheet();render();break;
     case 'pend-show':UI.legPeek=false;closeSheet();render();break;
     case 'new':UI.pick=0;UI.legPeek=false;clearSave();UI.insp=null;UI.sel=null;UI.swap=null;UI.real=1;newRun(false);go();tbxCard();break;
@@ -24994,10 +25032,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.102',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.103',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.103',items:[["🎒", "Your Legendary has its own gold slot (you hold one at a time), and all 5 item slots always show, empty or full. Long Legendary and item texts have a short line now; tap Full rules for the rest."]]},
   {v:'20.99',items:[["🎯", "Rival counter tags: two rivals no longer gang up with the same counter genre; the tag always names a genre you still field; Echo now shows its tag too."]]},
   {v:'20.98',items:[["🏆", "Ascension 18 (Series Finale): rival casts hit a little less hard, so it is a step harder than Ascension 17 again, not a cliff."]]},
   {v:'20.97',items:[["✏️", "Clearer wording for the rival and Swarm notes of v20.96."]]},
@@ -25199,7 +25238,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.102',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.103',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Long Legendary and item texts are short now, with the full rules one tap away."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -28174,8 +28213,8 @@ function scoutBody(x){const n=scoutWho(x.id);
     const gh=gs.map(k=>{const on=s.G[k]||0,t=GENRES[k].tiers;return chip(on,'g-'+k,`${GENRES[k].name}: ${c.g[k]} counted${on?`, bonus at ${t[on-1]} on`:`, first bonus at ${t[0]}`}`,`${GENRES[k].e} ${esc(GENRES[k].name)} <b>${c.g[k]}</b>${on?` <small>✓ ${t[on-1]}</small>`:` <small>/ ${t[0]}</small>`}`);}).join('');
     const th=ts.map(k=>{const on=s.T[k]||0,t=TRAITS[k].tiers;return chip(on,'',`${TRAITS[k].name}: ${c.t[k]}${on?`, bonus at ${t[on-1]} on`:`, first bonus at ${t[0]}`}`,`${tsvg(k)} ${esc(TRAITS[k].name)} <b>${c.t[k]}</b>${on?` <small>✓ ${t[on-1]}</small>`:` <small>/ ${t[0]}</small>`}`);}).join('');
     const xh=CROSSOVERS.filter(o=>s.X[o.id]).map(o=>chip(1,'',o.d,`🔗 ${esc(o.name)} <small>${GENRES[o.a]?GENRES[o.a].e:''}${GENRES[o.b]?GENRES[o.b].e:''}</small>`)).join('');
-    const it=[st.legend&&LEGENDS[st.legend]?chip(1,'',LEGENDS[st.legend].name,`${LEGENDS[st.legend].e} ${esc(LEGENDS[st.legend].name)} <small>Legendary</small>`):'',
-      ...(st.trinkets||[]).filter(t=>TR[t]).map(t=>chip(0,'',TR[t].d,`${TR[t].e} ${esc(TR[t].name)} <small>${'★'.repeat(ilv(t)||1)}</small>`))].join('');
+    const it=[st.legend&&LEGENDS[st.legend]?chip(1,'',LEGENDS[st.legend].name+': '+legS(st.legend),`${LEGENDS[st.legend].e} ${esc(LEGENDS[st.legend].name)} <small>Legendary</small>`):'',
+      ...(st.trinkets||[]).filter(t=>TR[t]).map(t=>chip(0,'',trS(t),`${TR[t].e} ${esc(TR[t].name)} <small>${'★'.repeat(ilv(t)||1)}</small>`))].join('');
     const fs=f.reduce((t,u)=>t+(twoSlot(u.id)?2:1),0);
     return `<p class="scmeta"><span>❤️ <b>${Math.max(0,st.lives|0)}</b>${st.maxLives?'/'+st.maxLives:''} lives</span><span>📊 Shop rank <b>${st.rank}</b></span><span>Board <b>${fs}/${bs}</b></span>${x.last?`<span>Last episode (Ep ${x.last.r}): <b class="${x.last.w?'scw':'scl'}">${x.last.w?'won':'lost'}</b></span>`:''}${x.done?'<span><b class="scw">Finished the season</b></span>':''}</p>
       <div class="scgrid" aria-label="Board"><div class="scrl">Back row</div>${row('b')}<div class="scrl">Front row</div>${row('f')}</div>
