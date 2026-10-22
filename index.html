@@ -791,6 +791,8 @@ h1,h2,h3,.evtitle{letter-spacing:.02em;font-weight:400;text-transform:uppercase}
 .evteam .ichip{font-size:.74rem;font-weight:700;padding:3px 7px;border:2px solid var(--inkline);background:var(--panel2);border-radius:2px}
 .evteam .ichip.rare{border-top-color:var(--r3)}
 .choice .own{display:block;margin-top:2px;color:var(--gold);font-weight:800;font-size:.72rem}
+.choice .nofit{display:block;margin-top:2px;color:#ff8a7a;font-weight:800;font-size:.72rem}
+.evsell{flex-wrap:wrap;justify-content:center;gap:6px;margin:8px 0 0}
 .shop .scard:not(.sold){border-top:5px solid var(--tc);background:linear-gradient(180deg,color-mix(in srgb,var(--tc) 22%,var(--panel2)) 0,var(--panel2) 62%)}
 .scard .rarl{font-size:.5rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase;color:var(--tc);line-height:1}
 .lvrow{display:flex;flex-wrap:wrap;gap:4px 12px;font-size:.74rem;color:var(--muted);margin:8px 0 2px;align-items:baseline}
@@ -21211,6 +21213,12 @@ const EVFLAV={fanmail:'Sacks of fan mail block the stage door. Some of it has mo
 // Free Agent / Cameo cards: copies you already own of that character, and whether this one completes a merge
 function ownLine(id){const own=S.units.filter(u=>u.id===id);if(!own.length)return '';const n1=own.filter(u=>u.level===1).length;
   return `<span class="own">${n1>=2&&maxLv(id)>=2?'Completes ★★ (you own 2 at ★)':`You own ${own.length}: ${own.map(u=>'★'.repeat(u.level)).join(' ')}`}</span>`;}
+// TRO-410: a Free Agent pick fits if it has a square or merges into ★★ (else it turns into its price in gold)
+function faFits(id){return !!freeSlotFor(id)||S.units.filter(u=>u.id===id&&u.level===1).length>=2;}
+function faFull(e){return !e.sub.ids.every(faFits);}
+function faNoteHTML(e){return faFull(e)?`<p class="ifull">🪑 Board and bench are full: a pick with no room turns into its price in gold.${S.units.some(u=>benchSlots.includes(u.slot))?' Sell a bench character below to keep it.':''}</p>`:'';}
+function faSellHTML(e){if(!faFull(e))return '';const bn=S.units.filter(u=>benchSlots.includes(u.slot));
+  return bn.length?`<div class="row evsell">${bn.map(u=>`<button class="btn sm${UI.armSell===u.uid?' danger':''}" data-a="event-sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell':'Sell'} ${esc(HERO[u.id].name)} ${'★'.repeat(u.level)} · +🪙${sellValue(u)}</button>`).join('')}</div>`:'';}
 // read-only team panel under event screens; tags mark the characters the current options would affect
 function evMarks(e){const m={},add=(u,txt,tip)=>{if(u&&u.slot)(m[u.slot]=m[u.slot]||[]).push({txt,tip});};
   if(!e)return m;
@@ -22317,7 +22325,7 @@ function eventSub(id){
   if(e.sub.kind==='recruit'){
     if(!id){S.gold+=3;e.msg='+3 gold.';return;}
     const slot=freeSlotFor(id);
-    if(!slot&&S.units.filter(u=>u.id===id&&u.level===1).length<2){S.gold+=PRICE[HERO[id].tier-1];e.msg='No room: you get the gold instead.';return;}
+    if(!slot&&S.units.filter(u=>u.id===id&&u.level===1).length<2){S.gold+=PRICE[HERO[id].tier-1];e.msg=`No room for ${HERO[id].name}: you get 🪙${PRICE[HERO[id].tier-1]} instead.`;return;}
     S.units.push({uid:S.uid++,id,level:1,slot:slot||'tmp'});poolTake(id,1);checkMerges();
     S.units.forEach(u=>{if(u.slot==='tmp')u.slot=freeSlotFor(u.id)||'n0';});
     e.msg=`${HERO[id].name} joins.`;
@@ -24516,7 +24524,7 @@ SCR.event=()=>{
   }else if(e.sub&&!e.subDone){
     art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav=EVFLAV[e.picked]||flav;
     if(e.sub.kind==='trinket'&&e.sub.ids.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){e.sub.ids=trinketChoices(3,false);save();}
-    if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span>${ownLine(id)}</button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
+    if(e.sub.kind==='recruit')body=`${faNoteHTML(e)}<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span>${ownLine(id)}${faFits(id)?'':`<span class="nofit">No room: 🪙${PRICE[d.tier-1]} instead</span>`}</button>`;}).join('')}</div>${faSellHTML(e)}<div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
     else if(UI.swap&&UI.swap.a==='event-sub'&&S.trinkets.length>=TRINKET_CAP)body=swapHTML();
     else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It arrives one ★ higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p>${fullNote()}<div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div>${moreRow(e.sub.ids.map(t=>'t:'+t))}<div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':e.picked==='supply'?'Skip the item: 🪙3 more':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
   }else{art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav='';body=(e.wheel?wheelHTML(e.wheel):'')+`<p class="evresult${e.wheel&&!RM?' late':''}">${esc(e.msg||'Done.')}</p><div class="row" style="justify-content:center"><button class="btn primary big" data-a="event-done">Continue</button></div>`;}
@@ -24984,7 +24992,9 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'event':eventPick(v);UI.freshAt=Date.now();go();break;
     case 'repitch':if(fresh())return;if(repitch(v)){toast('🎬 Re-pitched: a whole new offer.');if(v==='l')showPending();else go();}break;
     case 'cut-mode':UI.cutMode=v||null;render();break;
-    case 'event-sub':eventSub(v||null);UI.cutMode=null;go();break;
+    case 'event-sub':UI.armSell=null;eventSub(v||null);UI.cutMode=null;go();break;
+    case 'event-sell':{const e=S.event,uid=+v,u=S.units.find(x=>x.uid===uid);if(!e||!e.sub||e.sub.kind!=='recruit'||e.subDone||!u||!benchSlots.includes(u.slot)||fresh())break;
+      if(UI.armSell!==uid){UI.armSell=uid;render();break;}sell(uid);UI.armSell=null;toast(`Sold ${HERO[u.id].name}: there is room now.`);go();break;}
     case 'item-reroll':{const c=propCost();if(!has('prop')||S.gold<c)break;S.gold-=c;runStats().spend.reroll+=c;
       const p=S.pending[0];if(UI.screen!=='event'&&p&&p.kind!=='legend'){p.rr=(p.rr|0)+1;p.choices=trinketChoices(p.level,false);save();showPending();}
       else if(S.event&&S.event.sub&&S.event.sub.kind==='trinket'){S.event.sub.rr=(S.event.sub.rr|0)+1;S.event.sub.ids=trinketChoices(3,false);go();}break;}
@@ -25144,10 +25154,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.107',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.108',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.108',items:[["🤝", "Free Agent with a full board and bench: each card now says when it has no room (you would get its price in gold), and you can sell a bench character right there to keep your pick."]]},
   {v:'20.107',items:[["🏐", "Bounces travel: a Sportsball bounce, Killer Bees, Wide Shot and a ricochet leave only when the shot before them lands, and damage numbers and health bars drop when a shot arrives, not when it is thrown."]]},
   {v:'20.106',items:[["🎬", "Episode 1 is now the same fight at every Level: from Level 12 up, three starting Commons lost it about half the time, costing lives before you had made a single choice."]]},
   {v:'20.105',items:[["🖱️", "On a computer, right-click any character, item, Legendary, genre or episode to see its details (your own characters show their Sell button). Right-click empty space to close. The game also has its own cursors and scroll bars now."]]},
@@ -25354,7 +25365,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.107',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.108',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
