@@ -435,7 +435,16 @@ strong.lvon{color:var(--gold);font-weight:800}
 #field.arena{height:max(360px,calc(100vh - 300px));grid-template-rows:1fr 1fr auto 1fr 1fr}
 #field.arena .bslot{min-height:0}.bbq .slot.bq{cursor:default}
 .foe.lineup{font-size:1.15rem;line-height:1;display:inline-flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;min-width:44px}.foe.lineup small{font:800 .58rem/1 var(--f-body);letter-spacing:.06em;text-transform:uppercase}
-.nearmiss{margin:6px 0 2px;font-size:1rem}.nearmiss p{margin:2px 0}.nearmiss .nm2{font-size:.86rem;opacity:.88}
+.nearmiss{margin:6px 0 2px;font-size:1rem}
+/* TRO-372 */
+.nxgoal{margin:8px 0 4px;display:grid;gap:6px;max-width:62ch}
+.nxgoal p{margin:0}
+.nxg{font-size:1.02rem}
+.nxm{color:var(--muted,#bbb)}
+.nxs{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px}
+.nxs .muted{font-size:.85rem}
+.tfirst{margin-top:6px}
+.nearmiss p{margin:2px 0}.nearmiss .nm2{font-size:.86rem;opacity:.88}
 .stknew{margin:4px 0 2px;font-size:.95rem;color:var(--gold,#f5c542)}.stknew b{color:var(--ink)}.gchips .stk{font-size:.72rem;font-weight:800;opacity:.95}.ccard .stkl{margin:2px 0 0;font-size:.8rem}
 .shrpic{margin:8px 0;min-height:80px;display:grid;place-items:center}.shrpic img{width:100%;max-width:600px;height:auto;border-radius:10px;border:1px solid var(--line,#333)}.shrbtns{gap:8px;flex-wrap:wrap}.shrtxt{margin:8px 0 4px;font-size:.82rem;word-break:break-word}.shrtxt code{white-space:normal;font-family:var(--f-body)}
 .lvnext{margin:8px 0;padding:8px 10px;border:1px dashed var(--line);border-radius:6px;font-size:.88rem}
@@ -21386,6 +21395,17 @@ function nearHTML(){if(!S||!S.over)return '';const N=SCHEDULE.length,win=S.resul
   if(S.real&&S.epsAfter!=null){const e=epsNext(S.epsAfter);if(e){const k=e.at-S.epsAfter;nx.push(`📺 <b>${esc(epsName(e))}</b>: ${k} more episode${k===1?'':'s'}`);}}
   return `<div class="nearmiss"><p>${a}${best}</p>${nx.length?`<p class="nm2">Next unlock: ${nx.join(' · ')}</p>`:''}</div>`;}
 
+// TRO-372 (hook audit 2 + 4): the end screen names what the primary button starts and how close the last fight was;
+// a won run offers the share card. True numbers only: the level's own schedule, the last fight's survivors.
+function nxEps(n){const d=lvDef(n),lad=lvLadder(n),o={m:0,b:0};let i=0;
+  for(let a=1;a<=d.acts;a++){const tp=Array.isArray(d.sched)?d.sched[a-1]||d.sched[0]:d.sched;if(typeof tp!=='string')return o;
+    for(const c of tp){i++;if(!o.m&&(c==='M'||c==='R'&&n>3&&!lad))o.m=i;if(!o.b&&c==='B')o.b=i;}}return o;}
+function nxGoalHTML(){if(!S||!S.over)return '';const win=S.result==='win',h=[];
+  if(!S.daily&&!S.chal&&!S.gym){const n=S.newLv||(S.lv|0),same=n===(S.lv|0),e=nxEps(n);
+    h.push(`<p class="nxg">${same?'▶ Next: <b>'+esc(lvTitle(n))+'</b> again':'▶ Next: <b>'+esc(lvTitle(n))+'</b>'} · ${lvRounds(n)} episodes · ${e.m?'first mini-boss at Ep '+e.m:e.b?'first boss at Ep '+e.b:''}</p>`);}
+  const r=UI.lastRes;if(!win&&r&&!r.win&&r.left&&r.left.n>0)h.push(`<p class="nxm">💥 Your last fight: ${r.left.n===1?'1 enemy was still standing with '+fmtN(r.left.hp)+' HP':r.left.n+' enemies were still standing, '+fmtN(r.left.hp)+' HP between them'}.</p>`);
+  if(win)h.push(`<p class="nxs"><button class="btn" data-a="share">📤 Share this run</button><span class="muted">A picture of your team and result to send a friend.</span></p>`);
+  return h.length?`<div class="nxgoal">${h.join('')}</div>`:'';}
 // ================= skills =================
 // p = power (tier x level for singles; tier x bodies/3 for crowds). Spells ignore armor.
 const SK={
@@ -22866,6 +22886,7 @@ function settle(){if(S&&S.seed!=null)FR=null;
   const win=B.win;if(!B.silent)tlRes(win);const ev=curRound();const res={win,boss:ev.type==='boss',act:ev.act,gold:0,lives:0};
   S.stats.fights++;
   const A=B.units.filter(u=>u.side==='A'&&!u.summon);
+  const EL=B.units.filter(u=>u.side==='E'&&u.alive&&!u.summon);res.left={n:EL.length,hp:Math.round(EL.reduce((a,u)=>a+Math.max(0,u.hp||0),0))}; // TRO-372: the real margin
   const rs=runStats();const seen=new Set();
   rs.heal=rs.heal||{};rs.block=rs.block||{};
   A.forEach(u=>{if(u.healDone)rs.heal[u.id]=(rs.heal[u.id]||0)+u.healDone;if(u.blocked)rs.block[u.id]=(rs.block[u.id]||0)+u.blocked;});
@@ -23856,8 +23877,8 @@ function titleFreshHTML(){UI.lv=lvMin();
     <div class="eyebrow">An auto-battler of movie and TV tropes</div>
     <h1 class="title-word">${TITLE}</h1>
     <p class="muted tline">Hire a cast, combine copies into stars, then watch them brawl on their own.<span class="tplot"> Every story is falling into a hole in the plot: fight your way out.</span></p>
+    <div class="tplay tfplay tfirst"><button class="btn primary big tbig" data-a="new"><span>🎬 Play the Pilot</span></button><div class="tlv">A 5-minute tutorial, then the Season</div><button class="lnk tnew" data-a="tut-skip">I know auto-battlers: skip to the Season</button>${dlyTitleHTML(lvLoad(),null)}</div>
     <div class="steps tsteps"><div><span class="emo">🛒</span><b>Buy</b>characters</div><div><span class="emo">✨</span><b>Combine</b>3 → ★★</div><div><span class="emo">⚔️</span><b>Brawl</b>${lvRounds(UI.lv|0)} rounds</div></div>
-    <div class="tplay tfplay"><button class="btn primary big tbig" data-a="new"><span>🎬 Play the Pilot</span></button><div class="tlv">A 5-minute tutorial, then the Season</div><button class="lnk tnew" data-a="tut-skip">I know auto-battlers: skip to the Season</button>${dlyTitleHTML(lvLoad(),null)}</div>
     <div class="row ticons">
       <span class="tic"><button class="btn sm ghost" data-a="codex" aria-label="Codex" title="Codex: every rule and character">📖</button><small>Codex</small></span>
       <span class="tic"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><small>Settings</small></span>
@@ -24397,7 +24418,7 @@ SCR.end=()=>{
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${LEGENDS[S.legend].e}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${TR[t].e}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.daily?esc(dlyLabel())+' · ':S.chal?'🎯 Challenge · '+esc(lvNmC(S.lv))+' · ':S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
-    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${dlyEndHTML()}${chalEndHTML()}${S.daily||S.chal?'':nearHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
+    <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${dlyEndHTML()}${chalEndHTML()}${S.daily||S.chal?'':nearHTML()}${nxGoalHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
     ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. Its Leader now waits on the Ladder.</p>`:`<p class="lvwin">🏟️ No badge this time. Gyms are now part of the Ladder: Play, then pick ${esc(lvLong(ladTier(gymOf().id)||gymOf().lv))}.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}${S.newLv===2?'<p class="lvnext">🎯 Two more levels to the Season: more genres, Legendaries and rival studios.</p>':S.newLv===3?'<p class="lvnext">🎯 Last stop before the Season.</p>':''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
@@ -24968,7 +24989,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.100',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.101',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -25173,7 +25194,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.100',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["❤️", "The Codex shows the real lives and loss cost for the level you play."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.101',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
