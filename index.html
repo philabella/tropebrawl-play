@@ -1450,6 +1450,17 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .nwl .emo{flex:none;width:1.5em;text-align:center}
 .nwl b{color:var(--ink)}
 .nwv{font-size:.75rem;letter-spacing:.12em;color:var(--muted);font-weight:800;margin-top:10px}
+.nwd{margin-top:12px;padding:10px 12px;background:var(--panel);border:2px solid var(--inkline);border-radius:3px}
+.nwd.fresh{border-color:var(--gold)}
+.nwdh{display:flex;justify-content:space-between;align-items:baseline;gap:8px;flex-wrap:wrap}
+.nwdh b{color:var(--gold);font-size:1rem}
+.nwdh span{font-size:.75rem;color:var(--muted)}
+.nwdh i{font-style:normal;font-weight:800;color:var(--gold)}
+.nwd .nwl{margin-top:6px}
+.nwl li.big{font-weight:700}
+.nwbig{display:inline-block;font-style:normal;font-size:.66rem;font-weight:800;letter-spacing:.08em;text-transform:uppercase;background:var(--gold);color:#1a1206;padding:1px 6px;border-radius:3px;margin-right:6px;vertical-align:1px}
+.nwold{margin-top:14px}
+.nwold summary{cursor:pointer;color:var(--muted);font-weight:800;font-size:.85rem}
 .verl{margin-top:12px;color:var(--muted);font-size:.78rem}
 .tstb{color:var(--gold);font-weight:700}
 .settst{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--muted);font-size:.8rem;padding:6px 4px 0}
@@ -23872,7 +23883,7 @@ function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.mi
       ${typeof window!=='undefined'&&window.tbApp?'<button class="btn sm ghost" data-a="appquit">Quit game</button>':''}
       <button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('sm ghost')}
     </div>
-    ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 New in v${esc(ns[0].v)}: see what changed</button></section>`:''}`;}
+    ${ns.length?`<section class="news nw1" aria-label="What's new"><button class="lnk" data-a="news">📜 ${newsLink()}</button></section>`:''}`;}
 // the start menu's texture (#tbg, outside #app so re-renders don't touch it)
 function titleBg(on){try{const el=document.getElementById('tbg');if(!el)return;const pl=!on&&typeof UI!=='undefined'&&UI.screen==='plan';document.documentElement.classList.toggle('ontitle',!!on);document.documentElement.classList.toggle('onplan',pl);el.hidden=!(on||pl);if(on){if(typeof BDS!=='undefined'&&BDS.raf){cancelAnimationFrame(BDS.raf);BDS.raf=0;}}else if(!el.hidden)bdSwirl();}catch(e){}}
 // ================= desktop (v19.11): big screens with a mouse, and the Windows app =================
@@ -24819,7 +24830,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'mus':if(MUS_SHOP.some(x=>x[0]===v)){SET.mus=v;setSave();sheet(settingsHTML());try{musTick();}catch(e){}}break;
     case 'bd':if(['sun','swirl','curt','violet'].includes(v)){SET.bd=v;SET.bdPick=true;BDS.last=0;setSave();applyLook();sheet(settingsHTML());}break;
     case 'tst-off':tlUnmark();sheet(settingsHTML());if(UI.screen==='title')render();break;
-    case 'news':newsSeen();sheet(newsHTML());if(UI.screen==='title')render();break;
+    case 'news':{const sv=newsFresh().length?(newsLast()||'0'):'';newsSeen();sheet(newsHTML(sv));}if(UI.screen==='title')render();break;
     case 'news-x':newsSeen();render();break;
     case 'foeteam':if(v!=null&&v!=='')sheet(foeDetailHTML(+v));else{if(!UI.sheetOpen)tlAct('v');sheet(foeTeamHTML());}break;
     case 'sheet-close':closeSheet();break;
@@ -24924,10 +24935,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.84',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.85',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.85',items:[["📜", "What's New now has one card per day: a few plain lines on what changed for you, with the biggest change marked. Every update one by one is still at the bottom."]]},
   {v:'20.84',items:[["🦅", "The Defense Force Tanks are now the Sky Screamers: a flock of baby pterosaurs. Dive Bomb: every flyer dives at a front-row enemy for 7. Kaiju's job is the front line."]]},
   {v:'20.83',items:[["🪱", "The Burrow Lurker now tunnels into the enemy FRONT row and hits the weakest enemy there. The Swarm's job is the front line; the back row is Slasher's."], ["🐛", "Acid Spitters no longer melt armor (that is Heist's job). Instead, every spit that lands regrows one of them: the swarm keeps coming."], ["👻", "The Wraith now uses Grave Call: the last enemy that fell gets up as a skeleton on your side for 5s, with its attack and half its HP. Nobody down yet: it drains the nearest front-row enemy."], ["🦇", "The Vampire Bat now bites the enemy in front and heals itself that much. Bat Swarm: the first time it falls, it splits into 3 bats."]]},
   {v:'20.82',items:[["📿", "The Priest now throws Holy Water at the enemy back row: a little damage and 2.5s of terror for each. Slasher's job is the back row."], ["🧸", "Creepy Kids now play tag with the weakest enemy in the back row (no back row: the weakest anywhere)."], ["🪚", "The Chainsaw Maniac's Rev It Up now stops healing: while revved, every hit stops its target healing for 4s."], ["🚗", "The Getaway Driver now Ram Raids the enemy with the most HP: breaks its shield, 40 damage. A knockout still steals 🪙1."], ["⚡", "The Dark Lord now uses Force Choke: lifts one enemy (70 damage, stunned 1.5s) and the Force hits 3 more enemies and drains their energy. Space Opera's job is control, not blasting."]]},
@@ -25111,8 +25123,25 @@ const WHATS_NEW=[
   {v:'19.14',items:[['💡','Coaching tips from Game Level 5 (unspent gold, too few genres). Turn them off in Settings.'],
     ['🏹','Ranged attackers kick back when they shoot, so you can see who is attacking.'],
     ['📺','A fullscreen button on the start menu and in Settings.']]}];
+// What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
+// Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
+const NEWS_DAYS=[
+  {d:'2026-10-21',from:'20.45',to:'20.85',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with and switch to a genre that beats it. A 🎯 on the Lobby strip shows who is countering you. Levels 17 and 18 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
+  {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
+  {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
+];
 const NEWS_KEY='tropebrawl-news';
 function verN(v){const p=String(v||'0').split('.');return (+p[0]||0)*1000+(+p[1]||0);}
+function newsLast(){try{return localStorage.getItem(NEWS_KEY)||'';}catch(e){return '';}}
+const NEWS_MON=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+function newsDays(seen){const top=NEWS_DAYS[0],late=WHATS_NEW.filter(n=>!top||verN(n.v)>verN(top.to)),out=[];
+  if(late.length)out.push({d:'',h:'',from:late[late.length-1].v,to:late[0].v,items:late.reduce((a,n)=>a.concat(n.items),[]).slice(0,5)});
+  return out.concat(NEWS_DAYS).map(x=>Object.assign({},x,{fresh:!!seen&&verN(x.to)>verN(seen)}));}
+function newsDay(x){const n=WHATS_NEW.filter(w=>verN(w.v)>=verN(x.from)&&verN(w.v)<=verN(x.to)).length,p=x.d.split('-');
+  return `<section class="nwd${x.fresh?' fresh':''}"><div class="nwdh"><b>${x.d?NEWS_MON[+p[1]-1]+' '+(+p[2]):'Latest'}</b>`
+    +`<span>${n} update${n===1?'':'s'}${x.fresh?' · <i>new for you</i>':''}</span></div><ul class="nwl">`
+    +x.items.map(([e,t,big])=>`<li${big?' class="big"':''}><span class="emo" aria-hidden="true">${e}</span><span>${big?'<em class="nwbig">Biggest change</em>':''}${t}</span></li>`).join('')+'</ul></section>';}
+function newsLink(){const x=newsDays(newsLast()||'0').find(d=>d.fresh);return x&&x.h?`New since your last visit: ${esc(x.h)} and more`:'New since your last visit: see what changed';}
 function newsSeen(){try{localStorage.setItem(NEWS_KEY,TB_VERSION);}catch(e){}}
 function newsFresh(){let seen='';try{seen=localStorage.getItem(NEWS_KEY)||'';}catch(e){return [];}
   if(verN(seen)>=verN(TB_VERSION))return [];
@@ -25122,7 +25151,10 @@ function newsFresh(){let seen='';try{seen=localStorage.getItem(NEWS_KEY)||'';}ca
 function newsList(ns,heads){return ns.map((n,i)=>`${heads||i?`<div class="nwv">v${esc(n.v)}</div>`:''}<ul class="nwl">${n.items.map(([e,t])=>`<li><span class="emo" aria-hidden="true">${e}</span><span>${t}</span></li>`).join('')}</ul>`).join('');}
 function newsCard(){const ns=newsFresh();if(!ns.length)return '';
   return `<section class="news" aria-label="What's new"><div class="nwh"><b>📜 New in v${esc(ns[0].v)}</b><button class="btn sm ghost" data-a="news-x">Got it</button></div>${newsList(ns)}</section>`;}
-function newsHTML(){return `<div class="eyebrow">Tropebrawl v${TB_VERSION}</div><h3 style="color:var(--gold)">📜 What's new</h3>${newsList(WHATS_NEW,true)}`;}
+function newsHTML(seen){const ds=newsDays(seen),fr=ds.filter(x=>x.fresh),show=(fr.length?fr:ds).slice(0,3),rest=ds.filter(x=>show.indexOf(x)<0);
+  return `<div class="eyebrow">Tropebrawl v${TB_VERSION}</div><h3 style="color:var(--gold)">📜 ${fr.length?'New since your last visit':"What's new"}</h3>`
+    +show.map(newsDay).join('')+(rest.length?`<details class="nwold"><summary>Earlier days</summary>${rest.map(newsDay).join('')}</details>`:'')
+    +`<details class="nwold"><summary>Every update, one by one</summary>${newsList(WHATS_NEW,true)}</details>`;}
 // copies outside claude.ai (the GitHub playtest page) have no database: runs go to a relay topic that a GitHub
 // Action collects every hour (tropebrawl repo, runlog branch). Anonymous.
 // which build recorded the run ('full' here; tools/make_demo.py sets 'demo'). Read by runlog/validate.mjs.
