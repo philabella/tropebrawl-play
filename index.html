@@ -416,8 +416,8 @@ strong.lvon{color:var(--gold);font-weight:800}
 .unit .pt{width:40px;height:40px;font-size:1.3rem}
 .unit .meta{display:flex;gap:4px;align-items:center;min-height:12px}
 .hpb{position:relative;width:100%;height:11px;border-radius:3px;background:var(--bg);border:1px solid var(--line);overflow:hidden;margin-top:auto}
-.hpb .hf{position:absolute;inset:0 auto 0 0;background:var(--good)}
-.unit.foe .hpb .hf{background:var(--red)}
+.hpb .hf{position:absolute;inset:0 auto 0 0;background:#3fc8b4}
+.unit.foe .hpb .hf{background:repeating-linear-gradient(135deg,var(--red) 0 4px,#8f1f16 4px 8px)}
 .hpb .sf{position:absolute;inset:0 auto 0 0;background:var(--shield);opacity:.7}
 .mpb{width:100%;height:4px;border-radius:2px;background:var(--bg);overflow:hidden}
 .mpb i{display:block;height:100%;background:var(--mana)}
@@ -1478,7 +1478,8 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .rcap{flex:1 1 100%;min-width:0;margin:0;contain:inline-size}
 .rch{display:flex;flex-wrap:wrap;gap:2px 12px;align-items:center;font-size:.66rem;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);margin:0 0 9px}
 .rch span{display:inline-flex;align-items:center;gap:4px;letter-spacing:.02em;text-transform:none;font-weight:700;color:var(--muted)}
-.rch span:before{content:'';width:8px;height:8px;border-radius:2px;background:var(--c)}
+.rch span:before{content:var(--g);font-size:.62rem;line-height:1;color:var(--c)}
+.rcl b:before{content:var(--g);font-size:.55rem;margin-right:2px;color:var(--c);vertical-align:1px}
 .rcg{display:grid;grid-template-columns:repeat(auto-fit,minmax(128px,1fr));gap:6px}
 .rc{position:relative;display:flex;align-items:center;gap:7px;min-width:0;padding:5px 7px;border-radius:8px;background:var(--bg2);border:1px solid var(--line);animation:resin .3s ease-out both;animation-delay:calc(var(--i)*60ms)}
 .rc.mvp{border-color:var(--gold);box-shadow:0 0 0 1px var(--gold) inset,0 0 12px color-mix(in srgb,var(--gold) 35%,transparent)}
@@ -1492,7 +1493,7 @@ html.dt .dshop .scard:has(.mk) .own{display:none}
 .rcl i{display:block;height:100%;width:var(--w);min-width:2px;border-radius:3px;background:var(--c);transform-origin:left;animation:rcgrow .6s cubic-bezier(.2,.8,.2,1) both;animation-delay:calc(var(--i)*60ms + .15s)}
 .rcl b{text-align:right;font-weight:800;font-variant-numeric:tabular-nums;color:var(--ink)}
 .rcl.z{opacity:.35}.rcl.z i{visibility:hidden}
-.rcd{--c:#ff9f43}.rct{--c:var(--red)}.rch2{--c:var(--good)}
+.rcd{--c:#ff9f43;--g:'▲'}.rct{--c:var(--red);--g:'▼'}.rch2{--c:#3fc8b4;--g:'✚'}
 @keyframes rcgrow{from{transform:scaleX(0)}to{transform:none}}
 @media (max-width:700px){.rcg{grid-template-columns:none;grid-auto-flow:column;grid-auto-columns:118px;overflow-x:auto;scroll-snap-type:x proximity;padding-bottom:2px}.rc{scroll-snap-align:start}.rch{margin-bottom:8px}.rcn{font-size:.68rem}.rcl{font-size:.62rem}}
 @keyframes resin{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}}
@@ -24958,10 +24959,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.93',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.94',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.94',items:[["👁️", "Easier to read for colour-blind players: enemy health bars are striped and yours are teal, and the fight recap marks dealt ▲, taken ▼ and healed ✚ with a symbol as well as a colour."]]},
   {v:'20.93',items:[["👏", "The studio audience beside the board sits in a warm spill of light now, so you can see them, and they react: the stands light up and jump when an enemy goes down, go wild for a boss KO, and go quiet when you lose one."]]},
   {v:'20.92',items:[["🏁", "Winning the Pilot now takes you straight into Part 2 (it used to offer the Pilot again)."], ["⬆️", "Train is in the Pilot: gold buys shop rank, so more board slots and rarer characters. Pilot fights hit harder to match."], ["🌟", "Pilot, Part 2 has two mini-bosses, one per act."]]},
   {v:'20.91',items:[["🐞", "If the game hits a bug, it now sends us a short error note (what broke, on which screen and round, nothing about you), so we can fix it even if you just close the tab. It follows Settings → Share anonymous run data."]]},
@@ -25157,7 +25159,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.92',h:"a Pilot that leads into Part 2",items:[["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival."], ["❤️", "The Codex shows the real lives and loss cost for the level you play."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.94',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival."], ["❤️", "The Codex shows the real lives and loss cost for the level you play."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
