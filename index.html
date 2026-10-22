@@ -1393,6 +1393,7 @@ html[data-dragrow=back] .board .frow.rb .slot.empty::after{content:"Prefers\A ba
 @keyframes tutp{50%{outline-offset:7px;outline-color:color-mix(in srgb,var(--gold) 45%,transparent)}}
 .tutwrap p{margin:4px 0}
 html.dt .dcol.l .coach{margin:0;flex-direction:column;gap:6px}
+html.dt .dcol.l:has(#insp>.x) .coach{display:none} /* TRO-361: the tip no longer covers an open Details panel */
 html.dt .dcol.l .coach .btn{align-self:flex-end}
 
 /* phone shop cards (v19.15): nothing spills out of a card or hides under the i button */
@@ -24118,6 +24119,8 @@ function tutPaint(){if(typeof document==='undefined'||!document.body)return;let 
     if(c.fade)TUT.t=setTimeout(()=>{if(TUT.cur===c.id){tutSee(c.id);TUT.shown=null;tutPaint();}},c.fade*1000);}
   b.innerHTML=`<div class="coach tutb" role="note"><span class="ci" aria-hidden="true">💡</span><p>${c.t()}</p><button class="btn sm ${c.nx?'primary':'ghost'}" data-a="tut-x" data-v="${c.id}">${c.nx?'Next':'Got it'}</button></div>`;
   b.hidden=false;if(tg)tg.classList.add('tutring');tutPlace();clearTimeout(TUT.pt);TUT.pt=setTimeout(()=>{tutPlace();TUT.pt=setTimeout(tutPlace,500);},420);}
+// TRO-361: never cover an open Details panel (Sell button and text): hide the bubble while they overlap, it returns when Details closes
+function tutClear(b,l,t,w,h){const d=document.querySelector('#insp>.x'),q=d&&d.parentNode.getBoundingClientRect();b.style.visibility=q&&q.width&&l<q.right&&l+w>q.left&&t<q.bottom&&t+h>q.top?'hidden':'';}
 // docks above or below the target (where it fits; never on it), arrow pointing at the target's centre
 function tutPlace(){const b=document.getElementById('tut');if(!b||b.hidden)return;const tg=document.querySelector('.tutring');
   const W=innerWidth,H=innerHeight,w=Math.min(340,W-16);b.style.width=w+'px';
@@ -24129,7 +24132,7 @@ function tutPlace(){const b=document.getElementById('tut');if(!b||b.hidden)retur
   const pk=!below&&[...document.querySelectorAll('.pgkey')].map(e=>e.getBoundingClientRect()).find(q=>q.height&&q.bottom<=r.top+2&&q.top<top+bh&&q.bottom>top);
   if(pk&&pk.top-gap-bh>=8)top=pk.top-gap-bh;
   const cx=r.left+r.width/2,left=Math.max(8,Math.min(W-w-8,cx-w/2));
-  b.style.left=Math.round(left)+'px';b.style.top=Math.round(top)+'px';b.dataset.side=below?'b':'t';b.style.setProperty('--ax',Math.round(Math.max(16,Math.min(w-16,cx-left)))+'px');}
+  b.style.left=Math.round(left)+'px';b.style.top=Math.round(top)+'px';b.dataset.side=below?'b':'t';tutClear(b,left,top,w,bh);b.style.setProperty('--ax',Math.round(Math.max(16,Math.min(w-16,cx-left)))+'px');}
 try{if(typeof window!=='undefined'&&window.addEventListener){let q=0;const f=()=>{if(q)return;q=1;requestAnimationFrame(()=>{q=0;tutPlace();});};window.addEventListener('resize',f);window.addEventListener('scroll',f,{passive:true});}}catch(e){}
 // Skip to Level 4 (title "I know auto-battlers", or Settings during Levels 1-3)
 function tutSkipHTML(){const mid=S&&!S.over&&(S.lv|0)<=3;
@@ -24376,7 +24379,7 @@ SCR.event=()=>{
     if(e.sub.kind==='trinket'&&e.sub.ids.some(t=>!TR[t]||ilv(t)>=ITEM_MAX)){e.sub.ids=trinketChoices(3,false);save();}
     if(e.sub.kind==='recruit')body=`<div class="choices">${e.sub.ids.map(id=>{const d=HERO[id];return `<button class="choice" data-a="event-sub" data-v="${id}">${heroPt(id,'lg')}<b>${esc(d.name)}</b><span><span class="tier${d.tier}" style="color:var(--tc)">${RARITY[d.tier-1]}</span> · ${GENRES[d.genre].e} ${GENRES[d.genre].name} · ${TRAITS[d.trait].name}</span>${ownLine(id)}</button>`;}).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">Take 🪙3 instead</button></div>`;
     else if(UI.swap&&UI.swap.a==='event-sub'&&S.trinkets.length>=TRINKET_CAP)body=swapHTML();
-    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It arrives one ★ higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
+    else body=`<p class="muted" style="font-size:.85rem">${e.sub.price?`Buy one for 🪙${e.sub.price}. It arrives one ★ higher than a normal pick and helps your whole team.`:'Pick one for your whole team.'}</p><div class="choices">${e.sub.ids.map(t=>itemCard(t,'event-sub','',e.sub.price?1:0)).join('')}</div><div class="row"><button class="btn ghost" data-a="event-sub" data-v="">${e.sub.price?'Pass':e.picked==='supply'?'Skip the item: 🪙3 more':'Take 🪙3 instead'}</button>${!e.sub.price&&has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}</div>`;
   }else{art=EVENTS[e.picked].e;title=EVENTS[e.picked].name;flav='';body=(e.wheel?wheelHTML(e.wheel):'')+`<p class="evresult${e.wheel&&!RM?' late':''}">${esc(e.msg||'Done.')}</p><div class="row" style="justify-content:center"><button class="btn primary big" data-a="event-done">Continue</button></div>`;}
   const sk=e.cut?'cut':e.picked||'intermission',sc=evScene(sk,{res:body.includes('data-a="event-done"')});
   return `${topBar()}<section class="screen evstage${sc?' evscene'+(EVBREAK.has(sk)?' fbs':''):''}" style="margin-top:12px">${sc||`<div class="evart">${art}</div>`}<div class="evpanel"><h2 class="evtitle">${sc?`<span class="evem">${art}</span> `:''}${title}</h2>${flav?`<p class="evflav">${flav}</p>`:''}<div class="evbody">${body}</div></div></section>${evTeamHTML(e)}`;
@@ -24419,7 +24422,7 @@ SCR.end=()=>{
   return `<section class="endwrap">
     <div><div class="eyebrow">${S.daily?esc(dlyLabel())+' · ':S.chal?'🎯 Challenge · '+esc(lvNmC(S.lv))+' · ':S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
     <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${dlyEndHTML()}${chalEndHTML()}${S.daily||S.chal?'':nearHTML()}${nxGoalHTML()}${stkHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
-    ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. Its Leader now waits on the Ladder.</p>`:`<p class="lvwin">🏟️ No badge this time. Gyms are now part of the Ladder: Play, then pick ${esc(lvLong(ladTier(gymOf().id)||gymOf().lv))}.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} unlocked!</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}${S.newLv===2?'<p class="lvnext">🎯 Two more levels to the Season: more genres, Legendaries and rival studios.</p>':S.newLv===3?'<p class="lvnext">🎯 Last stop before the Season.</p>':''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
+    ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. Its Leader now waits on the Ladder.</p>`:`<p class="lvwin">🏟️ No badge this time. Gyms are now part of the Ladder: Play, then pick ${esc(lvLong(ladTier(gymOf().id)||gymOf().lv))}.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} ${epsAll()?'is next!':'unlocked!'}</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}${S.newLv===2?'<p class="lvnext">🎯 Two more levels to the Season: more genres, Legendaries and rival studios.</p>':S.newLv===3?'<p class="lvnext">🎯 Last stop before the Season.</p>':''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run at this level')}
     ${epsHTML()}
     <div class="kpis">${kpis}</div>
     <div class="endgrid">
@@ -24599,9 +24602,11 @@ function itemsPanel(){
   if(pgate().items)return '<aside class="insp" id="items" aria-label="Your items"><h4>YOUR ITEMS</h4><p class="muted" style="font-size:.85rem">None yet. Items come later in the run; each one helps your whole team.</p></aside>';
   return `<aside class="insp" id="items" aria-label="Your items"><h4>YOUR ITEMS <span class="itemcount">${S.trinkets.length}/${TRINKET_CAP}</span></h4>${itemsList()}<ul class="irules"><li>Items help your whole team.</li><li>Picking an item you have levels it up (max ★★★).</li><li>Tap an item to see or sell it.</li><li>Full? A new item replaces one (that one is sold).</li></ul></aside>`;
 }
+// TRO-361: desktop left column scrolls (foe strip above Details): bring an opened Details panel to the top of it
+function inspView(){if(!DESK)return;const el=$('#insp'),c=el&&el.closest('.dcol.l');if(c&&el.querySelector('.x'))c.scrollTop+=el.getBoundingClientRect().top-c.getBoundingClientRect().top-4;}
 // open details: in the side panel on the planning screen, otherwise in a sheet
 function showInfo(I){
-  if(UI.screen==='plan'){UI.insp=I;render();if(!isWide()){const el=$('#insp');if(el&&el.scrollIntoView)el.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});}return;}
+  if(UI.screen==='plan'){UI.insp=I;render();inspView();if(!isWide()){const el=$('#insp');if(el&&el.scrollIntoView)el.scrollIntoView({block:'nearest',behavior:RM?'auto':'smooth'});}return;}
   const body=I.kind==='enemy'?infoBody(I):I.kind==='hero'?heroDetail(I.id,I.level||1):infoBody(I);
   if(body)sheet(body);
 }
@@ -24891,11 +24896,11 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
 }
 function clickSlot(slot){
   const sel=UI.sel;UI.armSell=null;
-  if(!sel){const u=unitAt(slot);if(u){UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};}render();return;}
+  if(!sel){const u=unitAt(slot);if(u){UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};}render();inspView();return;}
   if(sel===slot){UI.sel=null;UI.insp=null;render();return;}
-  if(!unitAt(sel)){const u=unitAt(slot);UI.sel=u?slot:null;UI.insp=u?{kind:'unit',uid:u.uid}:null;render();return;}
+  if(!unitAt(sel)){const u=unitAt(slot);UI.sel=u?slot:null;UI.insp=u?{kind:'unit',uid:u.uid}:null;render();inspView();return;}
   // tapping another character shows it; tapping an empty slot moves the selected one there (TRO-141; drag still works)
-  if(unitAt(slot)){const u=unitAt(slot);UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};render();return;}
+  if(unitAt(slot)){const u=unitAt(slot);UI.sel=slot;UI.insp={kind:'unit',uid:u.uid};render();inspView();return;}
   const ok=move(sel,slot);UI.sel=null;UI.insp=null;if(ok)go();else render();
 }
 function go(){save();render();if(DEV.on)devPaint();}
@@ -24989,7 +24994,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.101',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.102',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -25194,7 +25199,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.101',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.102',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["📝", "Texts checked against the rules: Ascensions 8, 10, 13 and 14, Wild West, Double Feature and Typecast."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
