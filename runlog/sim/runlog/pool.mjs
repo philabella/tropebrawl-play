@@ -20,8 +20,9 @@
 //    the round's 95th percentile dropped, at most 15% of a round from one player (newest kept), at most 30 boards
 //    (newest kept). One copy per board id (TRO-318: the game never shows the same board twice in a run).
 // 6. Consent: a board is served only if its run says `bp:1` ("Let other players fight my saved boards"; the field
-//    arrives with the game patch). Runs from before the switch never go in pool.json; --legacy writes them to a
-//    snapshot for the labs only (fastsim/pvp/, never published).
+//    arrives with the game patch) and the player's latest record or switch note ({res:'bp', bp:0}) didn't turn it
+//    off since (off withdraws every earlier board). Runs from before the switch never go in pool.json; --legacy
+//    writes them to a snapshot for the labs only (fastsim/pvp/, never published).
 // Out: pool.json (served; `ready` per band = every fight round has 20+ boards from 8+ players) and pool-status.json
 // (counts for docs/design/async-pvp-status.md, consented and not-yet-consented boards).
 import fs from 'fs'; import path from 'path'; import os from 'os'; import crypto from 'crypto';
@@ -78,6 +79,8 @@ async function main() {
   const all = [];
   for (const f of files) { try { const t = fs.readFileSync(f, 'utf8'); if (t.length < 4e6) all.push({ f, t, j: JSON.parse(t) }); } catch (e) { } }
   const tester = new Set(all.filter(x => x.j.t || KNOWN[x.j.pid]).map(x => x.j.pid));
+  // the player's latest choice wins: a run or a switch note ({res:'bp', bp:0}) with bp:0 withdraws every earlier board
+  const lastBp = {}; all.forEach(({ j }) => { if ((j.bp === 0 || j.bp === 1) && (!lastBp[j.pid] || String(j.at) > lastBp[j.pid].at)) lastBp[j.pid] = { at: String(j.at), bp: j.bp }; });
   const real = all.filter(({ j }) => Array.isArray(j.r) && j.res !== 'visit' && j.res !== 'error' && j.pid !== 'p_selftest' && !isBot(j) && j.ms >= 10000 && !tester.has(j.pid));
   // duplicates (same rounds under another id): keep the first by start time
   real.sort((a, b) => String(a.j.at) < String(b.j.at) ? -1 : 1);
@@ -105,7 +108,7 @@ async function main() {
   for (const x of withState) {
     const j = x.j; if (cache.ver[j.rid].s !== 'verified') { no('run not verified'); continue; }
     const band = bandOf(j.lv | 0); if (!band) { no('Pilot / tutorial level'); continue; }
-    const consent = j.bp === 1 ? 'yes' : j.bp === 0 ? 'no' : 'before';
+    const consent = j.bp === 0 || (lastBp[j.pid] && lastBp[j.pid].bp === 0) ? 'no' : j.bp === 1 ? 'yes' : 'before';
     for (const r of j.r) {
       const f = r.f; if (!f || !f.st || !Array.isArray(f.st.units)) continue;
       const s = f.st, round = s.round != null ? s.round : r.n;
