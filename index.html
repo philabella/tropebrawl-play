@@ -22307,7 +22307,7 @@ function eventSub(id){
   }else{e.msg=itemMsg(id);takeTrinket(id);UI.swap=null;}
 }
 function finishEvent(){if(S.event&&S.event.pre){runStats().rounds.push({r:S.round,t:'random',k:S.event.picked});S.event=null;startRound();return;}
-  runStats().rounds.push({r:S.round,t:'event',k:S.event&&S.event.picked});S.round++;nextRound();}
+  runStats().rounds.push({r:S.round,t:'event',k:S.event&&S.event.picked});tlLog({r:S.round,k:'e',ev:S.event&&S.event.picked||undefined,m:S.event&&S.event.msg||undefined});S.round++;nextRound();}
 
 // ================= synergies =================
 // Extended Universe: up to 3 bench characters (leftmost first, not copies of a counted character) count for genres
@@ -22912,7 +22912,7 @@ function lossWhy(res){let th=B.threat;if(!Object.keys(th).length){th={};B.units.
 function lossWhyHTML(res){if(!res||res.win)return '';const t=res.threat,k=res.ctr;
   return `${t?`<div class="why">${foePt(t.k,'md')||`<span class="emo" style="font-size:1.6rem">${t.e}</span>`}<span><b>${esc(t.name)}</b> hurt you most<br><span class="muted">${t.pct!=null?t.pct+'% of the damage you took · ':''}${t.dmg} damage</span></span></div>`:''}${k?`<p class="lwctr">⚠️ Their ${ctrNm(k.t)} beats your ${ctrNm(k.m)}: ${esc(ctrLc(ctrWhy(k.t,k.m)))}.</p>`:''}${S&&(S.lv|0)<=3&&S.gold-(res.gold|0)>=20?`<p class="lwctr">💰 Lost with 🪙${S.gold-(res.gold|0)} unspent. Train or reroll before the fight.</p>`:''}<div class="tip">💡 ${esc(res.tip)}</div>`;}
 function settle(){if(S&&S.seed!=null)FR=null;
-  const win=B.win;if(!B.silent)tlRes(win);const ev=curRound();const res={win,boss:ev.type==='boss',act:ev.act,gold:0,lives:0};
+  const win=B.win;if(!B.silent)tlRes(win);const ev=curRound();const res={win,boss:ev.type==='boss',act:ev.act,gold:0,lives:0};const tl0=S.lives;
   S.stats.fights++;
   const A=B.units.filter(u=>u.side==='A'&&!u.summon);
   const EL=B.units.filter(u=>u.side==='E'&&u.alive&&!u.summon);res.left={n:EL.length,hp:Math.round(EL.reduce((a,u)=>a+Math.max(0,u.hp||0),0))}; // TRO-372: the real margin
@@ -22960,6 +22960,7 @@ function settle(){if(S&&S.seed!=null)FR=null;
   if(S.lives<=0&&LOBBY.busy&&LADON&&!(TUNE.ladderKO&&LOBBY.rid!==S.lead))S.lives=1; // TRO-80: on the Ladder a rival is never knocked out
   if(S.lives<=0){S.over=true;S.result='lose';}
   else if(last&&!res.part2){S.over=true;S.result='win';}
+  if(!LOBBY.busy){const e=S.enemy||{};tlLog({r:S.part===2?SCHEDULE.length+1:S.round,k:win?'w':'l',l0:tl0,l1:S.lives,g:res.gold,f:tlFoeName(e),fk:tlLead(e)||undefined,rv:e.rival||undefined});}
   if(!LOBBY.busy&&lobbyN())rivalsTurn();
   return res;
 }
@@ -23728,14 +23729,71 @@ const SCR={};
 function itemIcons(){if(pgate().items)return '';const lg=lvHas('l')||!!S.legend,it=lvHas('i')||S.trinkets.length>0,n=S.trinkets.length;if(!lg&&!it)return '';
   return (lg?`<span class="slotg legg" role="group" aria-label="Legendary slot: holds 1"><small class="slbl">Legendary (1)</small><span class="slots">${S.legend&&LEGENDS[S.legend]?`<button class="ic leg" data-a="legend-info" title="${esc(LEGENDS[S.legend].name+': '+legS(S.legend))}">${LEGENDS[S.legend].e}</button>`:`<span class="ic sock legsock" role="img" aria-label="No Legendary yet" title="No Legendary yet. One is offered after the Act 1, 2 and 3 bosses; you hold one at a time.">🏆</span>`}</span></span>`:'')
     +(it?`<span class="slotg itg" role="group" aria-label="Items: ${n} of ${TRINKET_CAP} slots used"><small class="slbl">Items ${n}/${TRINKET_CAP}</small><span class="slots">${S.trinkets.map(t=>`<button class="ic${TR[t].rar==='R'?' rare':''}" data-a="trinket" data-v="${t}" title="${esc(TR[t].name)} ${'★'.repeat(ilv(t))}: ${esc(trS(t))}">${TR[t].e}<i class="ipip">${'★'.repeat(ilv(t))}</i></button>`).join('')}${'<span class="ic sock" title="Empty item slot" aria-hidden="true"></span>'.repeat(Math.max(0,TRINKET_CAP-n))}</span></span>`:'');}
+// ================= TRO-381: act timeline cards =================
+// S.eph: one entry per played episode {r, k:'w'|'l'|'e'|'L', l0/l1 lives before/after, g gold, f foe name, fk lead foe key,
+// rv rival id, ev event key, m event result, v Legendary taken}. Part 2 of the Two-Part Finale is r = SCHEDULE.length+1.
+function tlLog(x){if(typeof LOBBY!=='undefined'&&LOBBY.busy)return;(S.eph=S.eph||[]).push(x);}
+function tlLead(e){if(!e||e.gh||e.rival||!e.enc||!e.enc.length)return null;return e.enc.map(x=>EN[x.key]).filter(Boolean).sort((a,b)=>(b.x.boss?1e6:0)+b.hp-(a.x.boss?1e6:0)-a.hp)[0].key||null;}
+function tlFoeName(e){if(!e)return '';if(e.rival&&RIVAL[e.rival])return RIVAL[e.rival].name+(e.lead?"'s full cast":"'s cast");const k=tlLead(e);return String(e.title||(k&&EN[k]?EN[k].name:''));}
+// results per episode: old saves only have S.stats.rounds (won/lost/event, no lives)
+function tlEpRes(){const m={};((S.stats&&S.stats.rounds)||[]).forEach(x=>{if(x.t==='random')return;m[x.r]={r:x.r,k:x.t==='event'?'e':x.w?'w':'l',ev:x.k,n:1};});
+  (S.eph||[]).forEach(x=>{if(x.k==='L')return;const o=m[x.r],old=o&&o.l0!=null;m[x.r]=Object.assign({},x,{n:old?o.n+1:1,l0:old?o.l0:x.l0});});return m;}
+function tlRow(n){const N=SCHEDULE.length;return n>N?Object.assign({},SCHEDULE[N-1],{p2:1}):SCHEDULE[n-1];}
+function tlKind(r){return r.type==='boss'?'boss':r.type==='event'?'event':r.m?'mini':'fight';}
+function tlState(n){const N=SCHEDULE.length,p2=S.part===2;if(n>N)return p2?'now':'';return n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':'';}
+function tlFams(a){const P=GEN_POOL[a];if(!P||!TUNE.efamOn)return [];return [...new Set(P.own.concat(P.prev).map(k=>EFAM_OF[k]).filter(Boolean))].map(f=>EFAM[f].e+' '+EFAM[f].n);}
+function tlStrip(){if(UI.tlR!==S.round){UI.tlR=S.round;UI.tlAct=0;} // a new episode shows its own act again (phone tabs)
+  const N=SCHEDULE.length,A=runActs(),fin=rule('finale2'),bnx=badNext(),R=tlEpRes(),curAct=(SCHEDULE[Math.min(S.round,N)-1]||{}).act||1,show=UI.tlAct>0&&UI.tlAct<=A?UI.tlAct:curAct,gl=lvHas('l');
+  const chip=n=>{const r=tlRow(n),st=tlState(n),k=tlKind(r),bw=n===(bnx&&bnx.r),fl=!r.p2&&S.lead&&r.type==='boss'&&n===N&&RIVAL[S.lead],x=st==='done'&&R[n];
+    const ic=r.p2?'💀':fl?RIVAL[S.lead].e:r.type==='boss'?'💀':bw?'⚠️':r.type==='event'?'❓':k==='mini'?'🌟':'⚔️';
+    const nm=r.p2?'finale part 2':fl?'final boss, '+RIVAL[S.lead].name+"'s full cast":k==='mini'?'mini-boss':r.type;
+    return `<i class="${st}${r.type==='boss'?' bossp':''}${k==='mini'?' mini':''}${r.type==='event'?' evt':''}${x?' '+x.k:''}" data-tl="${n}" role="button" tabindex="${st==='now'?0:-1}" aria-label="Episode ${r.p2?N+', part 2':n}: ${esc(nm)}${x?(x.k==='w'?', won':x.k==='l'?', lost':', done'):st==='now'?', next':''}${bw?', starts with a bad random event':''}">${ic}</i>`;};
+  let h='';
+  for(let a=1;a<=A;a++){const ns=SCHEDULE.map((r,i)=>r.act===a?i+1:0).filter(Boolean);if(a===A&&fin)ns.push(N+1);
+    const pl=ns.filter(n=>tlState(n)==='done'&&R[n]&&R[n].k!=='e'),w=pl.filter(n=>R[n].k==='w').length;
+    h+=`<span class="act${a===curAct?' cur':''}${a===show?' show':''}"><button type="button" class="ah" data-tl="a${a}" tabindex="-1" aria-label="Act ${a} of ${A}${pl.length?`: ${w} won, ${pl.length-w} lost`:''}"><span>Act ${a}</span>${pl.length?`<b>${w}W ${pl.length-w}L</b>`:''}</button><span class="chips">${ns.map(chip).join('')}</span></span>`;
+    if(a<A)h+=`<button type="button" class="tlgap${a<curAct?' done':''}" data-tl="g${a}" tabindex="-1" aria-label="Between Act ${a} and Act ${a+1}${gl?': Legendary offer':''}"><span>${gl?'👑':'🎬'}</span></button>`;}
+  return h.includes('tabindex="0"')?h:h.replace('tabindex="-1"','tabindex="0"');}
+function tlFoeBox(fk,name,rv){const img=fk&&foeSpr(fk)?`<img src="${SPRITES[foeSpr(fk)]}" alt="" draggable="false">`:`<span class="emo">${rv&&RIVAL[rv]?RIVAL[rv].e:fk&&EN[fk]?EN[fk].e:/^Rerun/.test(name)?'📼':'⚔️'}</span>`;
+  const f=fk&&EFAM_OF[fk]&&TUNE.efamOn?EFAM[EFAM_OF[fk]]:null,sub=rv?'AI rival':/^Rerun/.test(name)?"Another studio's cast":f?f.e+' '+f.n+' family':'';
+  return `<div class="tlfoe">${img}<p><b>${esc(name)}</b>${sub}</p></div>`;}
+function tlCard(key){const N=SCHEDULE.length,A=runActs(),R=tlEpRes(),gl=lvHas('l'),curAct=(SCHEDULE[Math.min(S.round,N)-1]||{}).act||1;
+  const hd=(ic,t,sub)=>`<div class="tlk"><span class="tlic">${ic}</span><span><b class="tlt">${t}</b><small class="tls">${sub}</small></span></div>`;
+  const dl=rows=>`<dl>${rows.filter(Boolean).map(([a,b])=>`<dt>${a}</dt><dd>${b}</dd>`).join('')}</dl>`;
+  if(key[0]==='g'){const a=+key.slice(1);if(!(a>=1&&a<A))return '';
+    if(!gl)return hd('🎬','Act break',`BETWEEN ACT ${a} AND ACT ${a+1}`)+dl([['Next',`Act ${a+1}: tougher enemies.`],['A loss',`costs ❤️${lossOf(a+1)} in Act ${a+1}.`]]);
+    const L=(S.eph||[]).filter(x=>x.k==='L')[a-1],t=L&&L.v&&L.v.startsWith('t:')&&TR[L.v.slice(2)];
+    const took=!L?'':L.v===''?'You took 🪙3 instead.':t?`You took the item ${t.e} ${esc(t.name)}.`:LEGENDS[L.v]?`You took ${LEGENDS[L.v].e} ${esc(LEGENDS[L.v].name)}.`:'';
+    return hd('👑','Intermission: Legendary offer',`AFTER THE ACT ${a} BOSS`)+dl([['Win',`pick 1 of 3 Legendaries (or a rare item)`],['Lose',`pick 1 of 2 (if you have lives left)`],['Slot','You hold one Legendary: a new one replaces it.'],['Next',`Act ${a+1}: a loss costs ❤️${lossOf(a+1)}.`]])+
+      (took?`<div class="tlres e">${took}</div>`:a<curAct?'':`<p class="tlhint">You get here after the Act ${a} boss.</p>`);}
+  if(key[0]==='a'){const a=+key.slice(1);if(!(a>=1&&a<=A))return '';const ns=SCHEDULE.map((r,i)=>r.act===a?i+1:0).filter(Boolean),c={fight:0,mini:0,event:0,boss:0};ns.forEach(n=>c[tlKind(SCHEDULE[n-1])]++);
+    const pl=ns.concat(a===A&&rule('finale2')?[N+1]:[]).filter(n=>tlState(n)==='done'&&R[n]&&R[n].k!=='e'),w=pl.filter(n=>R[n].k==='w').length,fam=tlFams(a);
+    const parts=[c.fight&&`${c.fight} fight${c.fight>1?'s':''}`,c.mini&&`${c.mini} mini-boss${c.mini>1?'es':''}`,c.event&&`${c.event} event${c.event>1?'s':''}`,c.boss&&'the boss',a===A&&rule('finale2')&&'the finale, part 2'].filter(Boolean);
+    return hd('🎬',`Act ${a} of ${A}`,`EPISODES ${ns[0]}-${ns[ns.length-1]}`)+dl([['Episodes',parts.join(', ')],['A loss',`costs ❤️${lossOf(a)} (the boss ❤️${lossOf(a)+1})`],fam.length&&['Enemies',fam.join(', ')],pl.length&&['So far',`${w} won, ${pl.length-w} lost`]])+
+      (a===curAct&&!S.over?'<p class="tlhint">You are in this act.</p>':'');}
+  const n=+key,r=n>=1&&n<=N+(rule('finale2')?1:0)?tlRow(n):null;if(!r)return '';
+  const st=tlState(n),k=tlKind(r),x=st==='done'?R[n]:null,now=st==='now',bnx=badNext(),bw=n===(bnx&&bnx.r),fl=!r.p2&&S.lead&&r.type==='boss'&&n===N&&RIVAL[S.lead];
+  const ic=r.p2?'💀':fl?RIVAL[S.lead].e:r.type==='boss'?'💀':r.type==='event'?'❓':k==='mini'?'🌟':'⚔️';
+  const ttl=r.p2?'Season finale, part 2':r.type==='boss'?(r.act>=A?'Season finale':r.act===3&&A===4?'Mid-season finale':`Act ${r.act} boss`):k==='mini'?'Mini-boss':r.type==='event'?'Event':'Fight';
+  const ia=SCHEDULE.filter((q,j)=>q.act===r.act&&j<n).length,na=SCHEDULE.filter(q=>q.act===r.act).length;
+  const sub=(r.p2?`ACT ${r.act}, AFTER EPISODE ${na}`:`ACT ${r.act}, EPISODE ${ia} OF ${na}`)+(x?' · PLAYED':now?' · NEXT':'');
+  let body='';
+  if(r.type==='event'){const E=x&&x.ev&&EVENTS[x.ev];
+    body=x?`<div class="tlres e">${E?`You picked ${E.e} ${esc(E.name)}${x.m?': '+esc(x.m):''}`:'Done.'}</div>`:dl([['What','Pick one of the events offered: gold, items, lives or a better character.'],['Fight','None this episode.']]);}
+  else{const e=now&&S.enemy&&!S.event?S.enemy:null,fam=tlFams(r.act);
+    const foe=x&&x.f?tlFoeBox(x.fk,x.f,x.rv):e?tlFoeBox(tlLead(e),tlFoeName(e),e.rival):fl?tlFoeBox(null,RIVAL[S.lead].name+"'s full cast",S.lead):x?'':
+      `<div class="tlfoe"><p class="mut">Enemy picked when this episode comes up.${fam.length?` Act ${r.act} sends ${fam.join(', ')}.`:''}</p></div>`;
+    const wg=1+tv('coin')+(r.type==='boss'?3:0)+(k==='mini'?TUNE.lvEliteGold:0),ll=lossOf(r.act)+(r.type==='boss'?1:0),fin=!r.p2&&r.type==='boss'&&n===N;
+    body=foe+dl([['Win',`+🪙${wg}, plus streak gold`],['Lose',`−❤️${ll}, +🪙${TUNE.lossGold} and a free reroll`],k==='mini'&&['Harder','Tougher enemies than a normal fight.'],
+      r.type==='boss'&&r.act<A&&gl&&['After','👑 Legendary offer, win or lose'],fin&&['Rematch','Lose with lives left: one more shop round, then the finale again, 10% weaker each try.'],
+      (fin||r.p2)&&['Win it',fin&&rule('finale2')?'Part 2 starts at once.':'You win the run.']]);
+    if(bw)body+='<p class="tlwarn">⚠️ Starts with a bad random event (see the warning line).</p>';
+    if(x)body+=x.k==='w'?`<div class="tlres w">✔ Won${x.g!=null?` · +🪙${x.g}`:''}${x.l1!=null?` · lives stayed ❤️${x.l1}`:''}</div>`:`<div class="tlres l">✖ Lost${x.l0!=null?` · ❤️${x.l0} → ${x.l1}`:''}${x.n>1?` · ${x.n} tries`:''}</div>`;
+    if(now&&!S.over)body+=`<p class="tlwarn">This is your next fight. ${DESK?'Press':'Tap'} FIGHT when your board is ready.</p>`;}
+  return hd(ic,`Ep ${r.p2?N+' · part 2':n} · ${ttl}`,sub)+body;}
 function topBar(){
   const p2=S.part===2;
-  const bnx=badNext();const stripI=SCHEDULE.map((r,i)=>{const n=i+1;const mini=!!r.m&&r.type==='fight';const sp=null,cutR=false,bw=n===(bnx&&bnx.r);const fl=S.lead&&r.type==='boss'&&n===SCHEDULE.length&&RIVAL[S.lead];const ic=fl?RIVAL[S.lead].e:r.type==='boss'?'💀':bw?'⚠️':sp?EVENTS[sp].e:r.type==='event'?'❓':mini?'🌟':'⚔️';return `<i class="${n<S.round||(p2&&n===S.round)?'done':n===S.round?'now':''}${r.type==='boss'?' bossp':''}" title="Round ${n}${bw?': starts with a bad random event (see the warning line)':''}${mini?': mini-boss':fl?': final boss, '+esc(RIVAL[S.lead].name)+"'s full cast":r.type==='boss'?': boss':sp?': special event: '+EVENTS[sp].name:r.type==='event'?': event (pick 1 of 3)':''}">${ic}</i>`;});
-  if(rule('finale2'))stripI.push(`<i class="${p2?'now':''} bossp" title="Finale, part 2">💀</i>`);
-  // the strip in act groups of 7 (the Two-Part Finale joins the last act); the current act is highlighted
-  const curAct=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act;
-  const strip=Array.from({length:runActs()},(_,k)=>{const a=k+1,ix=SCHEDULE.map((r,i)=>r.act===a?i:-1).filter(i=>i>=0);if(a===SCHEDULE[SCHEDULE.length-1].act&&rule('finale2'))ix.push(SCHEDULE.length);
-    return `<span class="act${a===curAct?' cur':''}" title="Act ${a} of ${runActs()}">${ix.map(i=>stripI[i]).join('')}</span>`;}).join('');
+  const strip=tlStrip(); // TRO-381: act timeline cards (tlCard)
   topBar.st=strip; // TRO-61: phones show it inside the next-enemy tab
   const inc=income();const next=inc.base+inc.interest+inc.coin+inc.ledger;
   const items=itemIcons();
@@ -23744,7 +23802,7 @@ function topBar(){
       <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${gnum('g',S.gold)}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${S.gym?gymChipHTML():lvChipHTML(S.lv)}${S.lead&&RIVAL[S.lead]?`<span class="lvlead2">💀 ${RIVAL[S.lead].e} ${esc(RIVAL[S.lead].name)}</span>`:''}</button></div>
       <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost phonly" data-a="poolview" aria-label="Character pool: copies left of every character">🃏<span class="cxw"> Pool</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
-    <div class="strip${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" aria-label="Round ${S.round} of ${SCHEDULE.length}">${strip}${leadChip()}</div>
+    <div class="strip tl${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" role="toolbar" aria-label="Season: episode ${Math.min(S.round,SCHEDULE.length)} of ${SCHEDULE.length}. Arrow keys move, Enter keeps a card open.">${strip}${leadChip()}</div>
     ${items?`<div class="items">${items}</div>`:''}
   </header>`;
 }
@@ -24280,7 +24338,7 @@ function phFold(){if(UI.phR!==S.round){UI.phR=S.round;UI.phOpen='';UI.phMenu=fal
   const e=S.enemy,vs=finTry(vsStrip0()),rv=rvStrip(),tip=coachHTML(),it=itemIcons(),T=[];
   if(vs){const x=e.rival&&RIVAL[e.rival],ld=e.enc&&e.enc[0]&&EN[e.enc[0].key];
     const ic=x?x.e:e.gh?'📼':e.boss?'💀':e.elite?'🌟':'⚔️',k=x?(e.lead?'💀 Final boss':'Rival'):e.gh?'Rerun':e.part?'Boss 2/2':e.boss?'Boss':e.elite?'Mini-boss':e.trial?'Trial':'Next';
-    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+(e.lead?'\'s full cast':'\'s cast'):String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,(topBar.st?`<div class="strip phstrip" aria-label="Round ${S.round} of ${SCHEDULE.length}">${topBar.st}</div>`:'')+vs]);}
+    T.push(['vs',ic,`<span class="phl"><small>${k}</small>${esc(x?x.name+(e.lead?'\'s full cast':'\'s cast'):String(e.title||(ld?ld.name:'Next episode')).replace(/^Rerun:\s*/,''))}</span>`,(topBar.st?`<div class="strip phstrip tl" style="--tla:${runActs()}" role="toolbar" aria-label="Season: episode ${Math.min(S.round,SCHEDULE.length)} of ${SCHEDULE.length}">${topBar.st}</div>`:'')+vs]);}
   if(rv)T.push(['rv','🏁','<span class="phl">Rivals</span>',rv]);
   if(tip)T.push(['tip','💡','<span class="phl">Tip</span>',tip]);
   if(it)T.push(['it','🎒',`<span class="phl">${S.trinkets.length+(S.legend?1:0)}</span>`,`<div class="items phitems">${it}</div>`]);
@@ -24809,7 +24867,7 @@ function showPending(){
 }
 function resolvePending(v){
   const p=S.pending.shift();if(!p)return;UI.swap=null;UI.legPeek=false;UI.armLeg=null;UI.more=null;tlAct(p.kind==='legend'?'l':'i',v||'-');
-  if(p.kind==='legend'){
+  if(p.kind==='legend'){tlLog({r:S.round,k:'L',v:v||''});
     if(!v)S.gold+=3;
     else if(v.startsWith('t:')){toast(itemMsg(v.slice(2)));takeTrinket(v.slice(2));}
     else S.legend=v;
@@ -25032,10 +25090,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.103',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.104',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.104',items:[["🎬", "The act strip at the top tells you more: hover, tap or Tab to any episode, act or 👑 marker to see the enemy and its family, the gold a win pays, the lives a loss costs and the Legendary offer. Played episodes show how they went."]]},
   {v:'20.103',items:[["🎒", "Your Legendary has its own gold slot (you hold one at a time), and all 5 item slots always show, empty or full. Long Legendary and item texts have a short line now; tap Full rules for the rest."]]},
   {v:'20.99',items:[["🎯", "Rival counter tags: two rivals no longer gang up with the same counter genre; the tag always names a genre you still field; Echo now shows its tag too."]]},
   {v:'20.98',items:[["🏆", "Ascension 18 (Series Finale): rival casts hit a little less hard, so it is a step harder than Ascension 17 again, not a cliff."]]},
@@ -25238,7 +25297,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.103',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Long Legendary and item texts are short now, with the full rules one tap away."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.104',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -28323,6 +28382,98 @@ button.rvc{font:inherit;font-size:.72rem;color:inherit;cursor:pointer}button.rvc
 `;document.head.appendChild(st);}catch(e){}})();
 window.claude?.hot?.snapshot?.(snapshot);
 window.claude?.hot?.ready?window.claude.hot.ready(start):start(window.claude?.hot?.data??{});
+
+// TRO-381: the act timeline card (#tlc). Desktop: hover or focus opens it at once under the chip, a click or Enter keeps it
+// open, Esc or a click outside closes it. Phones (no .dt, under 700px): a tap opens a bottom card with Close; tapping an
+// act header in the NEXT panel also shows that act's episodes. render() re-anchors a kept card or hides it.
+(function(){
+  const st=document.createElement('style');st.id='tlcss';st.textContent=`.strip.tl{column-gap:4px;align-items:flex-end}
+.strip.tl .act{flex-direction:column;align-items:stretch;gap:2px;padding:2px 4px 3px;border-radius:5px}
+.strip.tl .chips{display:flex;gap:3px}
+.strip.tl .ah{all:unset;cursor:pointer;display:flex;justify-content:space-between;gap:6px;font:800 .56rem/1.25 var(--f-body);letter-spacing:.06em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.strip.tl .ah b{color:var(--ink);font-weight:800}
+.strip.tl i{position:relative;cursor:pointer;opacity:.8}
+.strip.tl i.done{opacity:.62}
+.strip.tl i.done::after{content:"";position:absolute;right:-3px;bottom:-3px;width:8px;height:8px;border-radius:50%;border:2px solid var(--panel)}
+.strip.tl i.done.w::after{background:var(--good)}.strip.tl i.done.l::after{background:var(--red)}.strip.tl i.done.e::after{background:var(--mana)}
+.strip.tl i.mini{box-shadow:inset 0 0 0 1px #b8922a}
+.strip.tl i.now{opacity:1}
+.strip.tl i:focus-visible,.strip.tl .ah:focus-visible,.tlgap:focus-visible,.strip.tl .tlsel{outline:2px solid var(--ink);outline-offset:1px;z-index:2}
+.tlgap{all:unset;cursor:pointer;flex:none;width:15px;height:15px;margin:0 2px 4px;transform:rotate(45deg);border-radius:3px;display:grid;place-items:center;background:#2a2213;border:1px solid #8a6a1e}
+.tlgap>span{transform:rotate(-45deg);font:.58rem/1 var(--f-emoji)}
+.tlgap.done{opacity:.6}
+.strip.tl .tlgap.tlsel,.tlgap:focus-visible{outline-color:var(--gold);outline-offset:2px}
+html.dt .top .strip.tl .act.cur i{width:20px;height:22px}
+html.dt .top .strip.tl .act:not(.cur) .chips{gap:2px}
+html.dt .top .strip.tl .act:not(.cur) i{width:6px;height:22px;font-size:0;border-radius:2px}
+html.dt .top .strip.tl .act:not(.cur) i.evt{background:#1d2a40}
+html.dt .top .strip.tl .act:not(.cur) i.done::after{inset:0;width:auto;height:auto;border:0;border-radius:2px;opacity:.8}
+html.dt .top .strip.tl .act.cur{background:color-mix(in srgb,var(--gold) 12%,transparent);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--gold) 40%,transparent)}
+html:not(.dt) .top .strip.tl .ah,html:not(.dt) .top .strip.tl .tlgap{display:none}
+html:not(.dt) .phd .phstrip.tl{display:grid;grid-template-columns:repeat(var(--tla,4),1fr);gap:6px 4px}
+.phstrip.tl .act{display:contents}
+.phstrip.tl .ah{grid-row:1;justify-content:center;gap:5px;padding:6px 0;border-radius:5px;background:var(--panel2);font-size:.66rem}
+.phstrip.tl .act.show .ah{color:var(--gold);box-shadow:inset 0 0 0 1px var(--gold)}
+.phstrip.tl .chips{display:none;grid-row:2;grid-column:1/-1;justify-content:space-between}
+.phstrip.tl .act.show .chips{display:flex}
+html:not(.dt) .phd .phstrip.tl i{width:30px;height:34px;font-size:.95rem}
+.phstrip.tl .tlgap{display:none}
+#tlc{position:fixed;z-index:45;width:290px;max-width:calc(100vw - 16px);background:#19181d;color:var(--ink);border:1px solid #4a4752;border-radius:8px;box-shadow:0 10px 30px rgba(0,0,0,.6);padding:10px 12px 11px;font:13px/1.35 var(--f-body);text-align:left}
+#tlc::before{content:"";position:absolute;top:-7px;left:var(--ax,30px);width:12px;height:12px;background:#19181d;border-left:1px solid #4a4752;border-top:1px solid #4a4752;transform:rotate(45deg)}
+#tlc.up::before{top:auto;bottom:-7px;transform:rotate(225deg)}
+#tlc.ph{left:8px;right:8px;top:auto;bottom:calc(8px + env(safe-area-inset-bottom,0px));width:auto;max-width:none;border-radius:14px;padding:14px;font-size:14px}
+#tlc.ph::before{display:none}
+#tlc .tlk{display:flex;align-items:center;gap:8px}
+#tlc .tlic{width:34px;height:34px;border-radius:7px;display:grid;place-items:center;font:19px/1 var(--f-emoji);background:#26252c;flex:none}
+#tlc .tlt{display:block;font:400 19px/1.1 var(--f-display);letter-spacing:.01em}
+#tlc .tls{display:block;font:700 11px var(--f-body);color:var(--muted);letter-spacing:.04em}
+#tlc .tlfoe{display:flex;gap:10px;align-items:center;margin:9px 0 2px;padding:6px;border-radius:6px;background:rgba(255,255,255,.04)}
+#tlc .tlfoe img{width:46px;height:46px;object-fit:contain;object-position:top;flex:none}
+#tlc .tlfoe .emo{font:28px/46px var(--f-emoji);width:46px;text-align:center;flex:none}
+#tlc .tlfoe p{margin:0}#tlc .tlfoe p b{display:block;font-size:14px}#tlc .tlfoe p.mut{color:var(--muted)}
+#tlc dl{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;margin:8px 0 0}
+#tlc dt{color:var(--muted);font-weight:700}#tlc dd{margin:0}
+#tlc .tlres{margin-top:8px;padding:5px 8px;border-radius:5px;font-weight:700}
+#tlc .tlres.w{background:rgba(108,196,122,.13);color:#9fe0aa}#tlc .tlres.l{background:rgba(255,77,61,.12);color:#ff9a8f}#tlc .tlres.e{background:rgba(93,149,230,.13);color:#a9c6f2}
+#tlc .tlwarn{margin:8px 0 0;color:var(--gold)}
+#tlc .tlhint{margin:7px 0 0;font-size:11px;color:var(--dim)}
+#tlc .tlx{display:none}#tlc.ph .tlx{display:block;margin-top:10px;width:100%}`;document.head.appendChild(st);
+  let c=null,pin=null,cur=null;
+  const mk=()=>{if(c)return c;c=document.createElement('div');c.id='tlc';c.hidden=true;c.setAttribute('role','tooltip');document.body.appendChild(c);return c;};
+  const phone=()=>!DESK&&!(typeof matchMedia==='function'&&matchMedia('(min-width:700px)').matches);
+  const find=k=>[...document.querySelectorAll('[data-tl]')].find(e=>e.dataset.tl===k&&e.offsetParent);
+  const tgt=ev=>ev.target&&ev.target.closest?ev.target.closest('[data-tl]'):null;
+  function hide(){if(c)c.hidden=true;cur=null;document.querySelectorAll('.tlsel').forEach(x=>x.classList.remove('tlsel'));}
+  function open(k,el){el=el&&el.offsetParent?el:find(k);if(!el||!S||UI.sheetOpen){hide();return;}const h=tlCard(k);if(!h){hide();return;}mk();
+    document.querySelectorAll('.tlsel').forEach(x=>x.classList.remove('tlsel'));el.classList.add('tlsel');cur=k;
+    const ph=phone();c.className=ph?'ph':'';c.innerHTML=h+'<button type="button" class="btn sm tlx" data-tlx="1">Close</button>';c.hidden=false;
+    if(ph){c.style.left=c.style.top='';return;}
+    const b=el.getBoundingClientRect(),sr=(el.closest('.strip')||el).getBoundingClientRect(),w=c.offsetWidth,hh=c.offsetHeight;let x=Math.max(8,Math.min(b.left+b.width/2-30,innerWidth-w-8)),y=Math.max(b.bottom,sr.bottom)+10;
+    const up=y+hh>innerHeight-8&&Math.min(b.top,sr.top)-10-hh>=8;if(up)y=Math.min(b.top,sr.top)-10-hh;c.classList.toggle('up',up);
+    c.style.left=Math.round(x)+'px';c.style.top=Math.round(Math.max(8,y))+'px';c.style.setProperty('--ax',Math.round(Math.max(6,Math.min(w-18,b.left+b.width/2-x-6)))+'px');}
+  window.tlOpen=(k,keep)=>{pin=keep===false?null:k;open(k);return !!(c&&!c.hidden);};window.tlHide=()=>{pin=null;hide();};
+  document.addEventListener('mouseover',ev=>{if(phone())return;const t=tgt(ev);
+    if(t){if(!pin||pin===t.dataset.tl)open(t.dataset.tl,t);return;}
+    if(cur&&!pin&&!(ev.target.closest&&ev.target.closest('#tlc'))&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('[data-tl]')))hide();});
+  document.addEventListener('click',ev=>{
+    if(c&&!c.hidden&&ev.target.closest&&ev.target.closest('#tlc')){if(ev.target.closest('[data-tlx]')){pin=null;hide();}ev.stopPropagation();return;}
+    const t=tgt(ev);
+    if(t){const k=t.dataset.tl,ps=t.closest('.phstrip');
+      if(ps&&k[0]==='a'){UI.tlAct=+k.slice(1);ps.querySelectorAll('.act').forEach(a=>a.classList.toggle('show',a.contains(t)));}
+      pin=pin===k&&!phone()?null:k;open(k,t);return;}
+    if(pin||cur){pin=null;hide();}},true);
+  document.addEventListener('keydown',ev=>{const t=tgt(ev);
+    if(ev.key==='Escape'&&c&&!c.hidden&&!UI.sheetOpen){pin=null;hide();ev.stopPropagation();return;}
+    if(!t)return;
+    if(ev.key==='ArrowRight'||ev.key==='ArrowLeft'||ev.key==='Home'||ev.key==='End'){const all=[...t.closest('.strip').querySelectorAll('[data-tl]')].filter(e=>e.offsetParent),i=all.indexOf(t);
+      const j=Math.max(0,Math.min(all.length-1,ev.key==='Home'?0:ev.key==='End'?all.length-1:i+(ev.key==='ArrowRight'?1:-1)));
+      all.forEach(e=>e.tabIndex=-1);all[j].tabIndex=0;all[j].focus();ev.preventDefault();ev.stopPropagation();}
+    else if(ev.key==='Enter'||ev.key===' '){const k=t.dataset.tl;pin=pin===k?null:k;open(k,t);ev.preventDefault();ev.stopPropagation();}},true);
+  document.addEventListener('focusin',ev=>{const t=tgt(ev);if(t&&(!pin||pin===t.dataset.tl))open(t.dataset.tl,t);});
+  document.addEventListener('focusout',ev=>{const t=tgt(ev),n=ev.relatedTarget;if(t&&!pin&&!(n&&n.closest&&n.closest('[data-tl]')))hide();});
+  addEventListener('resize',()=>{if(cur)open(cur);});
+  const R0=render;render=function(){const out=R0.apply(this,arguments);try{if(cur){const k=cur;if(pin===k&&find(k))open(k);else hide();}}catch(x){}return out;};
+})();
 </script>
 
 <script>(function(){var e=document.getElementById("tbload");if(e)e.remove();})();</script>
