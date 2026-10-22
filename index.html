@@ -24958,10 +24958,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.92',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.93',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.93',items:[["👏", "The studio audience beside the board sits in a warm spill of light now, so you can see them, and they react: the stands light up and jump when an enemy goes down, go wild for a boss KO, and go quiet when you lose one."]]},
   {v:'20.92',items:[["🏁", "Winning the Pilot now takes you straight into Part 2 (it used to offer the Pilot again)."], ["⬆️", "Train is in the Pilot: gold buys shop rank, so more board slots and rarer characters. Pilot fights hit harder to match."], ["🌟", "Pilot, Part 2 has two mini-bosses, one per act."]]},
   {v:'20.91',items:[["🐞", "If the game hits a bug, it now sends us a short error note (what broke, on which screen and round, nothing about you), so we can fix it even if you just close the tab. It follows Settings → Share anonymous run data."]]},
   {v:'20.90',items:[["🔭", "A rival switching genres to beat yours now shows a 🔭 on the Lobby strip (🎯 means Taunt), and only once it has bought one. Every rival is marked <b>AI rival</b>: the studios are bots, never real players."], ["❤️", "The Codex now gives the real lives and loss cost for your level: on the Ladder a lost fight costs 1 life (a boss 2), and you start with 10, 9 or 8. Ascensions 8 and 10 show the right lobby size (7)."], ["📝", "Clearer texts: Ascension 13 and 14 explain their episodes, Wild West's first shot pierces shields, Double Feature stacks with Full Cast, and Typecast's bonus is in the Codex."]]},
@@ -26429,7 +26430,7 @@ function lkInit(){if(!LOOK.on||!AR.R)return;try{const {R,scene}=AR,L=scene.getOb
     document.head.insertAdjacentHTML('beforeend',`<style>html.ar3d,html.ar3d body{background:${C.page}}</style>`);}
   R.shadowMap.enabled=true;R.shadowMap.type=1;key.castShadow=true;const s=key.shadow,n=ph?LOOK.shadowPhone:LOOK.shadow,b=LOOK.shadowBox;s.mapSize.set(n,n);
   Object.assign(s.camera,{left:-b,right:b,top:b,bottom:-b,near:2,far:60});s.camera.updateProjectionMatrix();s.bias=-.0008;s.normalBias=.03;s.radius=3;
-  lkBoard(scene.children.find(c=>c.type==='Group'&&c.name!=='tbLights'&&c!==ARS.g));lkSet();lkMats(scene).forEach(m=>m.needsUpdate=true);lkGrade(LOOK.grade);}catch(e){LOOK.err=String(e&&e.message||e).slice(0,80);}}
+  lkBoard(scene.children.find(c=>c.type==='Group'&&c.name!=='tbLights'&&c!==ARS.g));lkCrowd();lkSet();lkMats(scene).forEach(m=>m.needsUpdate=true);lkGrade(LOOK.grade);}catch(e){LOOK.err=String(e&&e.message||e).slice(0,80);}}
 // a toy as it's made: casts a shadow (its bigger parts: eyes, buttons and props under LOOK.casterMin don't, each caster is a draw call), thin ink, the dark disc becomes a faint contact shadow, the ring takes the side colour
 function lkToy(T){if(!T||T.lk)return;T.lk=1;T.root.updateMatrixWorld(true);T.root.traverse(o=>{if(!o.isMesh)return;const m=o.material;
   if(m.isMeshBasicMaterial&&!m.map){if(o.geometry.type==='RingGeometry'){m.color.set(T.u.side==='A'?LOOK.sideA:LOOK.sideE);m.opacity=LOOK.ring;}else if(m.color.getHex()===0)m.opacity=LOOK.blob;return;}
@@ -26444,7 +26445,34 @@ function lkGrade(on){LOOK.grade=!!on;if(!AR.cv)return;AR.cv.style.filter=on?LOOK
   e.style.cssText='position:fixed;inset:0;pointer-events:none;z-index:0;'+(on&&LOOK.blur&&innerWidth>=700?`-webkit-backdrop-filter:blur(${LOOK.blur}px);backdrop-filter:blur(${LOOK.blur}px);-webkit-mask-image:${mk};mask-image:${mk}`:'display:none');lkOrder();}
 // the canvas is re-appended to body each fight: keep the grade layers right after it
 function lkOrder(){const d=document.getElementById('lkgrade'),e=document.getElementById('lkblur');if(d&&AR.cv&&AR.cv.parentNode&&AR.cv.nextElementSibling!==d)AR.cv.after(d,e);}
+// ===== TRO-283: the studio audience in look C. The cinema grade made the stands teal-dark (you couldn't see them, or
+// their cheer). Now they keep more of their colour (own copies of their materials, a milder grade), sit in a warm amber
+// spill (a floor pool + a faint glow card behind them, both additive, no extra light), and react: an enemy KO = the
+// stands flash warm and jump higher, a boss KO = a bigger, longer flash and three jumps, your KO = the stands go dim.
+const LKC={sat:.95,l:.95,tint:.05,glow:'#ff9a50',em:.06,emKO:.55,emBoss:1.1,pool:'#ffb36b',poolA:.22,cardA:.1,jump:.22,ko:900,bossT:2400,bossAt:0,cheer:0,big:1,gasp:0,dB:-1,mats:[],pools:[]};
+function lkCrowd(){if(!LOOK.cine||!ARS.aud||LKC.done)return;LKC.done=1;const {THREE}=TBA,cl=new Map();
+  const glow=arTex(256,256,(x,w,h)=>{const r=x.createRadialGradient(w/2,h/2,4,w/2,h/2,w/2);r.addColorStop(0,'rgba(255,255,255,1)');r.addColorStop(.55,'rgba(255,255,255,.35)');r.addColorStop(1,'rgba(255,255,255,0)');x.fillStyle=r;x.fillRect(0,0,w,h);});
+  // the people only (the bleacher keeps the set's grade and catches the spill)
+  for(const C of ARS.crew)if(C.aud)C.P.traverse(o=>{if(!o.isMesh||o.material.isMeshBasicMaterial)return;const m0=o.material;let m=cl.get(m0);
+      if(!m){m=m0.clone();m.userData=Object.assign({},m0.userData);lkQuiet(m,LKC.sat,LKC.l,LOOK.C.tint,LKC.tint);m.emissive=new THREE.Color(LKC.glow);m.emissiveIntensity=LKC.em;cl.set(m0,m);LKC.mats.push(m);}
+      o.material=m;});
+  for(const Bl of ARS.aud){// the spill: a pool on the floor under the stands and a soft card behind them (additive, graded by hand, so lkSet skips them)
+    const add=(geo,a,y,z,rx)=>{const m=new THREE.MeshBasicMaterial({map:glow,color:LKC.pool,transparent:true,opacity:a,depthWrite:false,blending:2});m.userData.lk=1;
+      const p=arNo(new THREE.Mesh(geo,m));p.position.set(0,y,z);p.rotation.x=rx;Bl.add(p);LKC.pools.push({m,a});};
+    add(new THREE.PlaneGeometry(10,5.5),LKC.poolA,.03,.6,-Math.PI/2);add(new THREE.PlaneGeometry(10,3.4),LKC.cardA,1.5,2.1,0);}}
+function lkCrowdFrame(now){if(!LKC.mats.length)return;
+  // a boss KO (read from what's on screen, like the set's own cheer): a bigger, longer cheer
+  if(typeof B!=='undefined'&&B&&B.units){let b=0;for(const u of B.units)if(!u.alive&&u.boss&&u.side!=='A')b++;if(LKC.dB>=0&&b>LKC.dB){LKC.bossAt=now;arsCheer(now,1.6);}LKC.dB=b;}
+  else LKC.dB=-1;
+  const bq=LKC.bossAt?(now-LKC.bossAt)/LKC.bossT:-1,ck=(now-ARS.cheer)/LKC.ko,gk=(now-ARS.gasp)/600,boss=bq>=0&&bq<1;
+  let k=0;if(boss)k=LKC.emBoss*(1-bq)*(.75+.25*Math.sin(now/70));else if(ck>=0&&ck<1)k=LKC.emKO*(1-ck)*(1-ck);
+  const hush=gk>=0&&gk<1?Math.sin(gk*Math.PI)*.8:0,em=Math.max(0,(LKC.em+k)*(1-hush));
+  for(const m of LKC.mats)m.emissiveIntensity=em;for(const p of LKC.pools)p.m.opacity=p.a*(1+k*.9)*(1-hush*.6);
+  // higher jumps than the crew's (they sit far from the camera): on top of the set's own bounce, three hops on a boss KO
+  const jq=boss?bq:((now-ARS.cheer)/1200);if(jq>=0&&jq<1)for(const C of ARS.crew)if(C.aud)C.P.position.y+=Math.abs(Math.sin(jq*Math.PI*3+C.ph%1))*LKC.jump*(boss?1.6:1)*(1-jq*.5);}
 if(LOOK.on)(()=>{try{const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
+  wrap('arsFrame',o=>function(now){const r=o.apply(this,arguments);try{lkCrowdFrame(now);}catch(e){}return r;});
+  wrap('arsFight',o=>function(){const r=o.apply(this,arguments);LKC.dB=-1;LKC.bossAt=0;return r;});
   wrap('arInit',o=>function(){const had=!!AR.R,r=o.apply(this,arguments);if(r&&!had)lkInit();return r;});
   wrap('arToy',o=>function(u){const T=o.apply(this,arguments);if(T&&LOOK.on)lkToy(T);return T;});
   wrap('arsAct',o=>function(){const r=o.apply(this,arguments);try{lkSet();}catch(e){}return r;}); // a new act paints new flats
