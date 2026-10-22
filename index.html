@@ -23855,7 +23855,7 @@ function topBar(){
   return `<header class="top${UI.phMenu?' mopen':''}">
     <div class="r1">
       <div class="res"><span title="Lives">❤️ ${S.lives}${dfl('l',S.lives)}</span><span title="Gold. Next round: +${inc.base} base${inc.interest?` +${inc.interest} interest`:''}${inc.ledger?` +${inc.ledger} Interest Ledger`:''}">🪙 ${gnum('g',S.gold)}${dfl('g',S.gold)}<small>+${inc.base}${inc.interest?`<i>+${inc.interest}</i>`:''}${inc.ledger?`<i>+${inc.ledger}</i>`:''}</small></span>${intMeter(inc)}${Math.abs(S.streak||0)>=2?`<span class="stk ${S.streak>0?'w':'l'}" title="${Math.abs(S.streak)} ${S.streak>0?'wins':'losses'} in a row. One more pays +🪙${streakGold(Math.abs(S.streak)+1)} streak gold.">${S.streak>0?'🔥':'🧊'}${Math.abs(S.streak)}</span>`:''}<span title="Shop rank ${S.rank} of ${RMAX}: up to ${RARITY[topTier(S.rank)-1]} characters" class="tier${topTier(S.rank)}" style="color:var(--tc)">⬆️ ${S.rank}</span><button class="lvb" data-a="lv-info" title="${lvNm(S.lv)}: tap for its rules and the next one" aria-label="${lvNm(S.lv)}: see its rules">${S.gym?gymChipHTML():S.late?`<span class="lvl">🌙 Late Show · ${esc(lvLong(S.lv))}</span><span class="lvs">🌙 ${esc(lvShort(S.lv))}</span>`:lvChipHTML(S.lv)}${S.lead&&RIVAL[S.lead]?`<span class="lvlead2">💀 ${RIVAL[S.lead].e} ${esc(RIVAL[S.lead].name)}</span>`:''}</button></div>
-      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost phonly" data-a="poolview" aria-label="Character pool: copies left of every character">🃏<span class="cxw"> Pool</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
+      <span class="row" style="gap:6px"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${DESK?fsBtn('sm ghost'):''}<button class="btn sm" data-a="codex" aria-label="Open the Codex">📖<span class="cxw"> Codex</span></button><button class="btn sm ghost phonly" data-a="poolview" aria-label="Casting pool: shop odds, copies left and who holds them">🃏<span class="cxw"> Pool</span></button><button class="btn sm ghost" data-a="quit">${UI.armQuit?'Tap again to quit':'Quit'}</button></span>
     </div>
     <div class="strip tl${SCHEDULE.length+(rule('finale2')?1:0)>15?' long':''}" role="toolbar" aria-label="Season: episode ${Math.min(S.round,SCHEDULE.length)} of ${SCHEDULE.length}. Arrow keys move, Enter keeps a card open.">${strip}${leadChip()}</div>
     ${items?`<div class="items">${items}</div>`:''}
@@ -23982,7 +23982,7 @@ function shopHTML(){
       <button class="btn sm${S.locked?' on':''}" data-a="lock" aria-pressed="${S.locked}" aria-label="Lock the shop" title="${S.locked?'Locked: these cards stay until your next shop, through any intermission. Click to unlock.':'Lock: keep these cards for your next shop.'}">${S.locked?'🔒':'🔓'}<span class="blbl">${S.locked?'Locked':'Lock'}</span></button>
       <button class="btn sm rankbtn" data-a="rank" ${noTrain()?'hidden ':''}${rc!=null&&S.gold>=rc?'':'disabled'} title="${nx?`Train: 🪙${rc} for +${trXp()} shop XP. ${xp}/${need} XP to Rank ${nx} (${nxNew?'unlocks '+RARITY[nxT-1]:'better odds'}${RANK.board[nx-1]>boardSize()?', +1 board slot':''}). +${income().xp} XP free each round.`:'Max rank'}" aria-label="${nx?`Train the shop: ${rc} gold for ${trXp()} XP. ${xp} of ${need} XP to rank ${nx}`:`Shop rank ${RMAX}, the max`}">${gauge}${rc==null?'':'<span class="blbl">Train</span>'}<span class="lbl">${rc==null?'Max':'🪙'+rc}</span></button>
       <button class="btn sm ranksbtn" data-a="rank-info" aria-label="Shop ranks: odds, board slots and unlocks" title="Shop ranks: what each rank unlocks, its odds and board slots">📊<span class="rbl"> Ranks</span></button>
-      <button class="btn sm poolbtn" data-a="poolview" aria-label="Character pool: copies left of every character" title="Character pool: how many copies of each character are left (P)">🃏<span class="rbl"> Pool</span>${DESK?'<kbd class="kh">P</kbd>':''}</button>
+      <button class="btn sm poolbtn" data-a="poolview" aria-label="Casting pool: shop odds, copies left and who holds them" title="Casting pool: shop odds, copies left and who holds them (P)">🃏<span class="rbl"> Pool</span>${DESK?'<kbd class="kh">P</kbd>':''}</button>
       <span class="grow"></span>
       <button class="btn primary big${pgGo()?' go':''}" data-a="fight" ${fielded().length?'':'aria-disabled="true" title="Put a character on your board first"'}>Fight!</button>
     </div></section>`;
@@ -24417,7 +24417,7 @@ function phFold(){if(UI.phR!==S.round){UI.phR=S.round;UI.phOpen='';UI.phMenu=fal
   if(tip)T.push(['tip','💡','<span class="phl">Tip</span>',tip]);
   if(it)T.push(['it','🎒',`<span class="phl">${S.trinkets.length+(S.legend?1:0)}</span>`,`<div class="items phitems">${it}</div>`]);
   const o=T.some(t=>t[0]===UI.phOpen)?UI.phOpen:'';
-  return `<div class="phw${o||UI.phMenu?' open':''}"><div class="phbar">${T.map(([k,ic,l])=>`<button type="button" class="phtab ph-${k}${o===k?' on':''}" data-a="phd" data-v="${k}" aria-expanded="${o===k}"><span class="phi" aria-hidden="true">${ic}</span>${l}<i class="phc" aria-hidden="true">▾</i></button>`).join('')}<button type="button" class="phtab ph-pool" data-a="poolview" aria-label="Character pool: copies left of every character"><span class="phi" aria-hidden="true">🃏</span><span class="phl">Pool</span></button><button type="button" class="phtab ph-menu${UI.phMenu?' on':''}" data-a="phmenu" aria-expanded="${!!UI.phMenu}" aria-label="Menu: Settings, Sound, Codex, Quit"><span class="phi" aria-hidden="true">☰</span></button></div>${T.map(([k,,,h])=>`<div class="phd${o===k?' on':''}" data-k="${k}">${h}</div>`).join('')}<button type="button" class="phbg" data-a="phd" data-v="" aria-label="Close the panel" tabindex="-1"></button></div>`;}
+  return `<div class="phw${o||UI.phMenu?' open':''}"><div class="phbar">${T.map(([k,ic,l])=>`<button type="button" class="phtab ph-${k}${o===k?' on':''}" data-a="phd" data-v="${k}" aria-expanded="${o===k}"><span class="phi" aria-hidden="true">${ic}</span>${l}<i class="phc" aria-hidden="true">▾</i></button>`).join('')}<button type="button" class="phtab ph-pool" data-a="poolview" aria-label="Casting pool: shop odds, copies left and who holds them"><span class="phi" aria-hidden="true">🃏</span><span class="phl">Pool</span></button><button type="button" class="phtab ph-menu${UI.phMenu?' on':''}" data-a="phmenu" aria-expanded="${!!UI.phMenu}" aria-label="Menu: Settings, Sound, Codex, Quit"><span class="phi" aria-hidden="true">☰</span></button></div>${T.map(([k,,,h])=>`<div class="phd${o===k?' on':''}" data-k="${k}">${h}</div>`).join('')}<button type="button" class="phbg" data-a="phd" data-v="" aria-label="Close the panel" tabindex="-1"></button></div>`;}
 // opens one tab's panel (or closes them all with ''), in place: no re-render
 function phMenu(on){UI.phMenu=!!on;const t=document.querySelector('.top'),b=document.querySelector('.ph-menu');if(t)t.classList.toggle('mopen',UI.phMenu);if(b){b.classList.toggle('on',UI.phMenu);b.setAttribute('aria-expanded',UI.phMenu);}}
 function phSet(k){UI.phOpen=k||'';if(UI.phMenu)phMenu(false);const w=document.querySelector('.phw');if(!w)return;w.classList.toggle('open',!!UI.phOpen);
@@ -25168,10 +25168,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.112',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.113',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.113',items:[["🃏", "The Casting pool (P, or the 🃏 button in the shop) is rebuilt: your rank's rarity odds on top (click one to filter, preview Rank +1 and +2), every genre as a row of portraits with copies left, your stars and the rivals holding one. Click a character to see how often it shows up in your shop, whether its top star is still reachable and who holds the other copies. My hunt lists only the characters you own."]]},
   {v:'20.112',items:[["🎨", "Every little picture in the game is now drawn for Tropebrawl in the same chunky faceted look as the characters: gold, lives, rerolls, ranks, genres, events, settings. The old one-colour stock icons and the phone's own emoji are gone; where an emoji only decorated a sentence, the sentence stays and the emoji goes."]]},
   {v:'20.111',items:[["🧸", "Items and Legendaries now have their own little pictures, in the same chunky look as the characters, instead of plain emoji."]]},
   {v:'20.110',items:[["🎬", "Finale check: from Act 3 the Season finale card (and the first Act 3 episode) shows the finale cast's ★★★ next to yours. At Level 18 it also says how often boards like yours won the finale in our test runs: ★★★ is what the finale asks for."]]},
@@ -25383,7 +25384,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.112',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.113',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, fights hit harder to match, and winning it takes you straight into Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -26297,7 +26298,7 @@ function tbaTick(){
   if(!TBA.shown)document.documentElement.classList.add('tba3d');TBA.shown=true;
   const now=performance.now(),end=TBA.end&&now<TBA.end.until?TBA.end:null,fight=typeof B!=='undefined'&&B&&!B.done&&!B.silent;
   document.querySelectorAll('img').forEach(img=>{
-    let k=img._tbk;if(k===undefined){k=img._tbk=TBA.rev.get(img.getAttribute('src'))||null;img._tbp=Math.random();if(k&&img.closest('.pt'))k=img._tbk=null;}
+    let k=img._tbk;if(k===undefined){k=img._tbk=TBA.rev.get(img.getAttribute('src'))||null;img._tbp=Math.random();if(k&&img.closest('.pt,.cpf'))k=img._tbk=null;}
     if(!k||!img.isConnected||!img.offsetParent||img.closest('#field.arena .t3d'))return;
     const u=img.closest('.unit'),foe=!!(u&&u.classList.contains('foe')),uu=u&&u._u;let anim='idle',t0=0,sp=1;
     if(end&&u&&end.win!==foe){anim=tbaPick(k,foe?TBA_FOE:TBA_WIN);t0=end.t0;}
@@ -27053,7 +27054,7 @@ function tlFrame(t){LV3.raf=requestAnimationFrame(tlFrame);
   if(t-LV3.last<1000/LV3.fps-2)return;const gap=LV3.last?t-LV3.last:16;LV3.last=t;
   if(!tlInit())return;const t0=performance.now();
   // swap in canvases for toy pictures outside fights (the 3D arena and the flipbooks handle fights)
-  document.querySelectorAll('img').forEach(img=>{if(img._tlx||!img.isConnected)return;let k=img._tbk;if(k===undefined){k=img._tbk=TBA.rev.get(img.getAttribute('src'))||null;img._tbp=Math.random();if(k&&img.closest('.pt'))k=img._tbk=null;}
+  document.querySelectorAll('img').forEach(img=>{if(img._tlx||!img.isConnected)return;let k=img._tbk;if(k===undefined){k=img._tbk=TBA.rev.get(img.getAttribute('src'))||null;img._tbp=Math.random();if(k&&img.closest('.pt,.cpf'))k=img._tbk=null;}
     if(!k||img.closest('#field')||!tbaParse(k))return;tlSwap(img);});
   const vw=innerWidth,vh=innerHeight,list=[];
   document.querySelectorAll('canvas.toylive').forEach(c=>{if(!c.offsetParent)return;const r=c.getBoundingClientRect();if(r.bottom<0||r.top>vh||r.right<0||r.left>vw||r.width<2)return;list.push(c);});
@@ -28415,34 +28416,84 @@ function scoutHTML(sel){const sc=scoutSnap();
     <p class="muted scnote">Rivals shop and fight after your fight, so this is their team before they act this round. It never updates mid-round and never shows their gold, their shop or what they pick next.</p>
     <div class="sctabs" role="group" aria-label="Rivals">${tabs}</div>
     <h4 class="scwho">${n.e} ${esc(n.name)}${n.style?` <small>${esc(n.style)}</small>`:''}</h4>${(()=>{const R=S.lobby.rv.find(v=>v.id===cur.id);return R&&RIVAL[R.id]?rvPivLine(R):'';})()}${scoutBody(cur)}</div>`;}
-// ---- the pool viewer
-function poolHTML(){const od=shopOdds(),cap=S.cap||5,all=!!UI.poolAll,mx=maxedIds(),sc=scoutSnap();
-  const hold={};if(sc)sc.rv.forEach(x=>{if(x.out)return;new Set((x.st.units||[]).map(u=>u.id)).forEach(id=>{hold[id]=(hold[id]||0)+1;});});
-  const own={};S.units.forEach(u=>{(own[u.id]=own[u.id]||[]).push(u.level);});
-  const hs=HEROES.map(h=>h[0]).filter(id=>HERO[id]&&!gOut(HERO[id].genre));
-  const tiers=[1,2,3,4,5].filter(t=>hs.some(id=>HERO[id].tier===t)&&(all||(od[t-1]>0&&t<=cap)));
-  const gs=[...new Set(hs.filter(id=>tiers.includes(HERO[id].tier)).map(id=>HERO[id].genre))].filter(g=>GENRES[g]);
-  if(UI.poolG&&!gs.includes(UI.poolG))UI.poolG='';
-  const row=id=>{const d=HERO[id],left=poolLeft(id),max=poolMax(id),o=own[id]||[],cp=o.reduce((t,l)=>t+COPIES[l-1],0),h=hold[id]||0,G=GENRES[d.genre],T=TRAITS[d.trait];
-    return `<div class="plr g-${d.genre}${left?'':' gone'}" data-g="${d.genre}" data-n="${esc((d.name+' '+(G?G.name:'')+' '+(T?T.name:'')).toLowerCase())}">${heroPt(id,'sm')}<span class="pln"><b>${esc(d.name)}</b><small>${G?gico(d.genre)+' '+esc(G.name):''} · ${T?esc(T.name):''}</small></span>
-      <span class="plc" title="${left} of ${max} copies left in the pool"><b>${left}</b>/${max}<i class="plbar" aria-hidden="true"><i style="width:${max?Math.round(100*left/max):0}%"></i></i></span>
-      <span class="plx">${o.length?`<span class="plo" title="Yours: ${cp} cop${cp===1?'y':'ies'}">You ${o.sort((a,b)=>b-a).map(l=>'★'.repeat(l)).join(' ')}</span>`:''}${h?`<span class="plv" title="${h} rival${h>1?'s':''} held at least one copy at the start of this round">${h} rival${h>1?'s':''}</span>`:''}${mx.has(id)?'<span class="plm" title="Your copy is maxed: it no longer shows in your shop">Maxed</span>':''}</span></div>`;};
-  const sec=tiers.map(t=>{const ids=hs.filter(id=>HERO[id].tier===t).sort((a,b)=>HERO[a].genre.localeCompare(HERO[b].genre)||HERO[a].name.localeCompare(HERO[b].name));
-    const left=ids.reduce((n,id)=>n+poolLeft(id),0);
-    return `<section class="plsec"><h4 class="plh"><span class="tier${t}" style="color:var(--tc)">${RARITY[t-1]}</span> <small>${od[t-1]?od[t-1]+'% per shop card at Rank '+S.rank:'not at Rank '+S.rank}${t>cap?' (above this level\'s cap)':''} · ${left} copies left</small></h4><div class="plgrid">${ids.map(row).join('')}</div></section>`;}).join('');
-  const chips=`<button type="button" class="plg${UI.poolG?'':' on'}" data-a="poolg" data-v="" aria-pressed="${!UI.poolG}">All genres</button>`+gs.map(g=>`<button type="button" class="plg g-${g}${UI.poolG===g?' on':''}" data-a="poolg" data-v="${g}" aria-pressed="${UI.poolG===g}" title="${esc(GENRES[g].name)}">${gico(g)}<span class="plgn"> ${esc(GENRES[g].name)}</span></button>`).join('');
-  return `<div class="poolsh"><div class="eyebrow">Character pool${lobbyN()?` · shared with ${lobbyN()} rival${lobbyN()>1?'s':''}`:''}</div><h3 style="color:var(--gold);margin:0">🃏 Copies left per character</h3>
-    <p class="muted plnote">Everyone buys from one pool: buying takes copies out, selling puts them back. ★★ takes 3 copies, ★★★ takes 6.${sc?' "2 rivals" = how many rivals held a copy at the start of this round (see 📸 Scouting).':''}</p>
-    <div class="plbar0"><input id="poolq" type="search" autocomplete="off" placeholder="Search a name, genre or role" aria-label="Search characters" value="${esc(UI.poolQ||'')}">
-      <button type="button" class="btn sm" data-a="poolall" aria-pressed="${all}">${all?'Only my shop\'s rarities':'All rarities'}</button>${S.lobby?'<button type="button" class="btn sm" data-a="scout">📸 Scouting</button>':''}</div>
-    <div class="plgs" role="group" aria-label="Filter by genre">${chips}</div>${sec}<p class="muted plnone" hidden>No character matches.</p></div>`;}
-function poolFilter(){try{const q=(UI.poolQ||'').trim().toLowerCase(),g=UI.poolG||'';let any=0;
-  document.querySelectorAll('#sheet .plsec').forEach(sec=>{let n=0;sec.querySelectorAll('.plr').forEach(e=>{const ok=(!g||e.dataset.g===g)&&(!q||e.dataset.n.includes(q));e.hidden=!ok;if(ok)n++;});sec.hidden=!n;any+=n;});
-  const no=document.querySelector('#sheet .plnone');if(no)no.hidden=!!any;}catch(e){}}
+// ---- the casting pool (TRO-382): odds bar = rarity filter, genre rows of portraits, a card per character, My hunt
+// cpShopP(id,rank,rr) = the chance one shop shows the character, worked out from rollShop's own rules: rarity roll
+// (level cap folds into the top rarity), one Mythic per shop, Typecast/spotlight slots, the owned nudge (TUNE.ownBias,
+// at most TUNE.ownCap per shop), then any character of that rarity with copies left. fastsim/poolodds.js checks it.
+function cpShopP(id,rk,rr){const d=HERO[id];if(!S||!d||gOut(d.genre))return 0;const mx=maxedIds();if(mx.has(id)||poolLeft(id)<=0)return 0;
+  const o=RANK.odds[Math.max(1,Math.min(RMAX,rk))-1],cap=S.cap||5,to=[0,0,0,0,0];o.forEach((p,i)=>{to[Math.min(i,cap-1)]+=p/100;});
+  const ok=h=>!mx.has(h[0])&&!gOut(h[2])&&poolLeft(h[0])>0,pools=[1,2,3,4,5].map(t=>HEROES.filter(h=>h[4]===t&&ok(h)).map(h=>h[0])),all=HEROES.filter(ok).map(h=>h[0]);
+  const own=new Set(S.units.map(u=>u.id)),tc0=typecast(),tsp=twv('spot'),tc=tc0||(tsp&&!gOut(tsp)?tsp:null),tcK=!tc?0:tc0?TUNE.tcSlots*(rr?TUNE.tcRoll:1):twv('spotK')*(rr?twv('spotRoll'):1);
+  const top=topTier(rk),hit=P=>P.includes(id)?1/P.length:0;
+  let st={'0,0':1}; // key 'owned nudges used,Mythic shown' -> chance the character has not shown yet
+  for(let i=0;i<SHOP_SLOTS;i++){const pTc=i<Math.floor(tcK)?1:i===Math.floor(tcK)?tcK%1:0,ns={},add=(n,m,p)=>{if(p>0){const k=n+','+m;ns[k]=(ns[k]||0)+p;}};
+    for(const k in st){const [n,m]=k.split(',').map(Number),pr=st[k];
+      for(let t=1;t<=5;t++){if(!to[t-1])continue;const t2=t===5&&m?4:t,pool=pools[t2-1],m2=m||(t2===5&&pool.length?1:0),w=pr*to[t-1];
+        const plain=w=>{const mine=pool.filter(x=>own.has(x)),P=pool.length?pool:all;
+          if(mine.length&&n<TUNE.ownCap){add(n+1,m2,w*TUNE.ownBias*(1-hit(mine)));add(n,m2,w*(1-TUNE.ownBias)*(1-hit(P)));}else add(n,m2,w*(1-hit(P)));};
+        if(pTc>0){const tp=pool.filter(x=>HERO[x].genre===tc),any=HEROES.filter(h=>h[2]===tc&&h[4]<=top&&!(m&&h[4]===5)&&ok(h)).map(h=>h[0]);
+          if(tp.length||any.length)add(n,m2,w*pTc*(1-hit(tp.length?tp:any)));else plain(w*pTc);}
+        if(pTc<1)plain(w*(1-pTc));}}
+    st=ns;}
+  return Math.max(0,Math.min(1,1-Object.values(st).reduce((a,b)=>a+b,0)));}
+function cpOneIn(p){return p<=0?'never':p>=.75?'almost every shop':p>=.45?'about every other shop':`about 1 in ${Math.round(1/p)} shops`;}
+function cpOdds(rk){const o=RANK.odds[Math.max(1,Math.min(RMAX,rk))-1],cap=S.cap||5,f=[0,0,0,0,0];o.forEach((p,i)=>{f[Math.min(i,cap-1)]+=p;});return f.map(v=>Math.round(v*10)/10);}
+function cpRankFor(t){if(t>(S.cap||5))return 0;for(let r=1;r<=RMAX;r++)if(RANK.odds[r-1][t-1]>0)return r;return 0;}
+function cpMine(id){return S.units.filter(u=>u.id===id).reduce((t,u)=>t+COPIES[u.level-1],0);}
+function cpHold(){const h={},sc=scoutSnap();if(sc)sc.rv.forEach(x=>{if(x.out)return;const c={};(x.st.units||[]).forEach(u=>{c[u.id]=(c[u.id]||0)+COPIES[(u.level||1)-1];});for(const id in c)(h[id]=h[id]||[]).push([x.id,c[id]]);});return h;}
+function cpFace(id){const src=SPRITES[id+'_f']||SPRITES[id];return src?`<span class="cpf"><img src="${src}" alt="" draggable="false"></span>`:heroPt(id,'cpf');}
+function cpDot(rv){const n=scoutWho(rv);return `<i class="cprv" style="--rv:${rvCol(rv)}" title="${esc(n.name)}">${esc((n.name||'?').replace(/^the /i,'')[0]||'?')}</i>`;}
+function cpStars(id){const o=S.units.filter(u=>u.id===id).map(u=>u.level).sort((a,b)=>b-a);return o.map(l=>'★'.repeat(l)).join(' ');}
+function cpTop(id){const top=maxLv(id),cp=cpMine(id),need=COPIES[top-1]-cp,left=poolLeft(id),s='★'.repeat(top);
+  if(maxedIds().has(id))return {ok:1,t:`${s} done`};
+  if(!cp)return {ok:left>=COPIES[top-1],t:`${s} takes ${COPIES[top-1]} copies: ${left} left`};
+  return need<=left?{ok:1,t:`${s} reachable: ${need} more needed, ${left} left`}:{ok:0,t:`${s} out of reach: ${need} more needed, only ${left} left`};}
+function cpWhen(id,rk){const d=HERO[id];if(maxedIds().has(id))return 'Maxed: no longer in your shop';if(!poolLeft(id))return 'Sold out: no copies left';
+  if(d.tier>(S.cap||5))return 'Not at this level (above its rarity cap)';if(!cpOdds(rk)[d.tier-1]){const r=cpRankFor(d.tier);return r?`Not in shops until Rank ${r}`:'Not in shops at this level';}
+  return cpOneIn(cpShopP(id,rk,1));}
+function cpCard(id){if(!id||!HERO[id])return `<p class="muted cphint">Click a portrait to see how many copies are left, who holds them and how often it shows up in your shop.</p>`;
+  const d=HERO[id],G=GENRES[d.genre],T=TRAITS[d.trait],rk=UI.cpRank||S.rank,max=poolMax(id),left=poolLeft(id),cp=cpMine(id),rvn=Math.max(0,max-left-cp),hs=cpHold()[id]||[],tp=cpTop(id),w=v=>max?Math.round(1000*v/max)/10:0;
+  const nx=Math.min(RMAX,rk+1),low=d.tier<=2&&maxLv(id)===2;
+  return `<div class="cpch cr${d.tier}">${cpFace(id)}<div><b>${esc(d.name)}</b><small>${RARITY[d.tier-1]} · ${G?gico(d.genre)+' '+esc(G.name):''} · ${T?esc(T.name):''}</small></div><button type="button" class="cpx" data-a="cpsel" data-v="" aria-label="Close">✕</button></div>
+    <p class="cpbig"><b>${left}</b> of ${max} copies left</p>
+    <div class="cpm" aria-hidden="true"><i class="y" style="width:${w(cp)}%"></i><i class="v" style="width:${w(rvn)}%"></i><i class="l" style="width:${w(left)}%"></i></div>
+    <p class="cpkey"><span class="y">you ${cp}</span>${lobbyN()?`<span class="v">rivals ${rvn}</span>`:''}<span class="l">in the pool ${left}</span></p>
+    <dl class="cpdl"><dt>In a shop at Rank ${rk}${rk===S.rank?'':' (if you Train)'}</dt><dd>${cpWhen(id,rk)}</dd>
+    ${nx>rk?`<dt>At Rank ${nx}</dt><dd>${cpWhen(id,nx)}</dd>`:''}
+    <dt>${cp?`You hold ${cp} ${cp===1?'copy':'copies'} (${cpStars(id)})`:'Top star'}</dt><dd class="${tp.ok?'ok':'no'}">${tp.t}${low?'<br><small>Commons and Uncommons stop at ★★.</small>':''}</dd>
+    ${lobbyN()?`<dt>Rivals</dt><dd>${hs.length?hs.map(([rv,n])=>`${cpDot(rv)} ${esc(scoutWho(rv).name)}: ${n} ${n===1?'copy':'copies'}`).join('<br>'):'No rival held one at the start of this round'}</dd>`:''}</dl>
+    <p class="muted cpfoot">Counts rerolls. The rarity is rolled first, so copies left only matter when they run out; owning one makes it show up a little more often.${typecast()?' Your Typecast board also gets one card of its genre in the first shop of each round.':''}</p>`;}
+function cpTok(id,hold,od){const d=HERO[id],left=poolLeft(id),max=poolMax(id),lv=S.units.filter(u=>u.id===id).map(u=>u.level),st=lv.length?'★'.repeat(Math.max(...lv))+(lv.length>1?'×'+lv.length:''):'',hs=hold[id]||[],off=!od[d.tier-1]||d.tier>(S.cap||5)||maxedIds().has(id),G=GENRES[d.genre],T=TRAITS[d.trait];
+  return `<button type="button" class="cpt cr${d.tier}${off?' off':''}${left?'':' gone'}${UI.cpSel===id?' sel':''}" data-a="cpsel" data-v="${id}" data-t="${d.tier}" data-n="${esc((d.name+' '+(G?G.name:'')+' '+(T?T.name:'')+' '+RARITY[d.tier-1]).toLowerCase())}" aria-label="${esc(d.name)}: ${left} of ${max} copies left">${cpFace(id)}<b class="cpn">${left}</b>${st?`<span class="cpy">${st}</span>`:''}${hs.length?`<span class="cprs">${hs.slice(0,3).map(([rv])=>cpDot(rv)).join('')}${hs.length>3?`<i class="cprv more">+${hs.length-3}</i>`:''}</span>`:''}<i class="cpb" aria-hidden="true"><i style="width:${max?Math.round(100*left/max):0}%"></i></i><small>${esc(d.name)}</small></button>`;}
+function poolHTML(){const rk=UI.cpRank||S.rank,od=cpOdds(rk),cap=S.cap||5,sc=scoutSnap(),hold=cpHold(),view=UI.cpView==='hunt'?'hunt':'genre',T=UI.cpT||null;
+  const hs=HEROES.map(h=>h[0]).filter(id=>HERO[id]&&!gOut(HERO[id].genre)),gs=[...new Set(hs.map(id=>HERO[id].genre))].filter(g=>GENRES[g]);
+  const bar=od.map((v,i)=>{const t=i+1,lock=!v||t>cap,on=!T||T.includes(t);return `<button type="button" class="cpseg cr${t}${lock?' lock':''}${on?'':' dim'}" style="flex:${lock?'0 0 auto':v+' 1 0'}" data-a="cptier" data-v="${t}" aria-pressed="${!!T&&on}" title="${RARITY[i]}: ${lock?(t>cap?'above this level\'s rarity cap':'not at Rank '+rk):v+'% of shop cards'}. Click to show only this rarity, again for all.">${lock?'🔒 ':''}<b>${RARITY[i]}</b>${lock?'':`<small>${v}%</small>`}</button>`;}).join('');
+  const rks=[];for(let r=S.rank;r<=Math.min(RMAX,S.rank+2);r++)rks.push(r);
+  const body=view==='genre'?gs.map(g=>{const ids=hs.filter(id=>HERO[id].genre===g).sort((a,b)=>HERO[a].tier-HERO[b].tier||HERO[a].name.localeCompare(HERO[b].name)),mine=ids.filter(id=>cpMine(id)).length,rv=ids.filter(id=>hold[id]).length;
+      return `<section class="cpg g-${g}"><h4>${gico(g)} ${esc(GENRES[g].name)}<small>${mine?`you hold ${mine} · `:''}${sc?`${rv} held by rivals`:''}</small></h4><div class="cpts">${ids.map(id=>cpTok(id,hold,od)).join('')}</div></section>`;}).join('')+'<p class="muted plnone" hidden>No character matches. Clear the search or click the odds bar again.</p>'
+    :(()=>{const ids=[...new Set(S.units.map(u=>u.id))].filter(id=>HERO[id]).sort((a,b)=>HERO[b].tier-HERO[a].tier||cpMine(b)-cpMine(a));
+      if(!ids.length)return '<p class="muted cphint">You own no characters yet. Hire one and it shows up here with its odds and copies left.</p>';
+      return ids.map(id=>{const d=HERO[id],tp=cpTop(id),h=hold[id]||[];return `<button type="button" class="cph cr${d.tier}${UI.cpSel===id?' sel':''}" data-a="cpsel" data-v="${id}">${cpFace(id)}<span class="cphn"><b>${esc(d.name)}</b><small>${RARITY[d.tier-1]} · you hold ${cpMine(id)} (${cpStars(id)})</small></span><span class="cphs ${tp.ok?'ok':'no'}">${tp.t}</span><span class="cphw">${cpWhen(id,rk)}${lobbyN()?` · ${h.length?'rivals: '+h.map(([rv])=>cpDot(rv)).join(''):'no rival holds it'}`:''}</span></button>`;}).join('')+'<p class="muted cpfoot">★★ takes 3 copies, ★★★ takes 6 (Commons and Uncommons stop at ★★).</p>';})();
+  return `<div class="poolsh cpsh"><div class="eyebrow">Casting pool${lobbyN()?` · shared with ${lobbyN()} rival${lobbyN()>1?'s':''}`:''}</div><h3 style="color:var(--gold);margin:0">🃏 Who can still show up in your shop</h3>
+    <div class="cpodds"><div class="cpot">A shop card at Rank ${rk}${rk===S.rank?'':' (if you Train)'} is</div><div class="cpbar" role="group" aria-label="Rarity odds; click a rarity to filter">${bar}</div>
+      ${rks.length>1?`<div class="cprk" role="group" aria-label="Preview rank">${rks.map(r=>`<button type="button" class="plg${r===rk?' on':''}" data-a="cprank" data-v="${r}" aria-pressed="${r===rk}">${r===S.rank?`Rank ${r} (you)`:`Rank ${r}`}</button>`).join('')}</div>`:''}</div>
+    <div class="plbar0"><span class="cpv" role="group" aria-label="View"><button type="button" class="plg${view==='genre'?' on':''}" data-a="cpview" data-v="genre" aria-pressed="${view==='genre'}">By genre</button><button type="button" class="plg${view==='hunt'?' on':''}" data-a="cpview" data-v="hunt" aria-pressed="${view==='hunt'}">My hunt</button></span>${view==='genre'?`<input id="poolq" type="search" autocomplete="off" placeholder="Search a name, genre or role" aria-label="Search characters" value="${esc(UI.poolQ||'')}">`:''}${S.lobby?'<button type="button" class="btn sm" data-a="scout">📸 Scouting</button>':''}</div>
+    <div class="cpwrap"><div class="cpbody">${body}</div><aside class="cpdet${UI.cpSel?' on':''}" id="cpdet" aria-live="polite">${cpCard(UI.cpSel)}</aside></div>
+    <p class="muted plnote">Ring = rarity · number = copies left · gold stars = yours${sc?' · coloured letters = rivals holding one at the start of this round (📸 Scouting)':''} · faded = not in your shop at this rank. Everyone buys from one pool: buying takes copies out, selling puts them back.</p></div>`;}
+function poolFilter(){try{const q=(UI.poolQ||'').trim().toLowerCase(),T=UI.cpT||null;let any=0;
+  document.querySelectorAll('#sheet .cpg').forEach(sec=>{let n=0;sec.querySelectorAll('.cpt').forEach(e=>{const ok=(!T||T.includes(+e.dataset.t))&&(!q||e.dataset.n.includes(q));e.hidden=!ok;if(ok)n++;});sec.hidden=!n;any+=n;});
+  const no=document.querySelector('#sheet .plnone');if(no)no.hidden=!!any||!document.querySelector('#sheet .cpg');}catch(e){}}
+function cpRedraw(a,v){const el=document.querySelector('#sheet .poolsh');if(!el)return;const h=document.querySelector('#sheet .sh'),y=h?h.scrollTop:0;el.outerHTML=poolHTML();poolFilter();const h2=document.querySelector('#sheet .sh');if(h2)h2.scrollTop=y;
+  const b=a&&document.querySelector(`#sheet [data-a="${a}"][data-v="${v}"]`);if(b)b.focus({preventScroll:true});}
 const SCOUT_ACT={
-  poolview:()=>{if(!S)return;sheet(poolHTML());poolFilter();if(typeof DESK!=='undefined'&&DESK){const q=document.getElementById('poolq');if(q)q.focus();}},
-  poolg:v=>{UI.poolG=v||'';document.querySelectorAll('#sheet [data-a="poolg"]').forEach(b=>{const on=(b.dataset.v||'')===UI.poolG;b.classList.toggle('on',on);b.setAttribute('aria-pressed',String(on));});poolFilter();},
-  poolall:()=>{UI.poolAll=!UI.poolAll;sheet(poolHTML());poolFilter();const b=document.querySelector('#sheet [data-a="poolall"]');if(b)b.focus();},
+  poolview:()=>{if(!S)return;UI.cpRank=0;if(UI.cpSel&&!HERO[UI.cpSel])UI.cpSel='';sheet(poolHTML());poolFilter();if(typeof DESK!=='undefined'&&DESK){const q=document.getElementById('poolq');if(q)q.focus();}},
+  cptier:v=>{const t=+v,T=UI.cpT;UI.cpT=!T?[t]:T.length===1&&T[0]===t?null:T.includes(t)?T.filter(x=>x!==t):T.concat(t).sort();if(UI.cpT&&(!UI.cpT.length||UI.cpT.length===5))UI.cpT=null;
+    document.querySelectorAll('#sheet .cpseg').forEach(b=>{const on=!UI.cpT||UI.cpT.includes(+b.dataset.v);b.classList.toggle('dim',!on);b.setAttribute('aria-pressed',String(!!UI.cpT&&on));});poolFilter();},
+  cprank:v=>{UI.cpRank=+v===S.rank?0:+v;cpRedraw('cprank',v);},
+  cpview:v=>{UI.cpView=v==='hunt'?'hunt':'genre';cpRedraw('cpview',v);},
+  cpsel:v=>{UI.cpSel=v&&HERO[v]?v:'';const d=document.getElementById('cpdet');if(d){d.innerHTML=cpCard(UI.cpSel);d.classList.toggle('on',!!UI.cpSel);}
+    document.querySelectorAll('#sheet .cpt,#sheet .cph').forEach(b=>b.classList.toggle('sel',b.dataset.v===UI.cpSel));
+    if(!UI.cpSel){const b=document.querySelector('#sheet .cpt.sel,#sheet .cpt');if(b&&!(typeof DESK!=='undefined'&&DESK))b.blur();}},
   scout:v=>{if(!S)return;sheet(scoutHTML(v||UI.scoutSel));const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
   scoutrv:v=>{const h=document.querySelector('#sheet .sh'),y=h?h.scrollTop:0;sheet(scoutHTML(v));const h2=document.querySelector('#sheet .sh');if(h2)h2.scrollTop=Math.min(y,140);
     const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
@@ -28482,6 +28533,49 @@ const SCOUT_ACT={
 .plbar{display:block;width:56px;height:4px;margin:2px 0 0 auto;background:var(--bg2,#000);border-radius:2px;overflow:hidden}.plbar>i{display:block;height:100%;background:var(--gold)}
 .plo,.plv,.plm{font-size:.68rem;font-weight:800;padding:0 5px;border-radius:3px;line-height:1.5}
 .plo{background:var(--gold);color:#0b0a0e}.plv{border:1px solid var(--line)}.plm{border:1px solid var(--muted);color:var(--muted)}
+#sheet .shw:has(.cpsh){width:min(1060px,100%)}
+.cr1{--tc:var(--r1)}.cr2{--tc:var(--r2)}.cr3{--tc:var(--r3)}.cr4{--tc:var(--r4)}.cr5{--tc:var(--r5)}
+.cpodds{display:grid;gap:4px}.cpot{font:800 .66rem/1.2 var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.cpbar{display:flex;gap:3px;min-width:0}
+.cpseg{font:inherit;min-width:0;min-height:38px;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:0;padding:3px 6px;border:0;border-radius:3px;background:color-mix(in srgb,var(--tc) 30%,var(--panel2));box-shadow:inset 0 -4px 0 var(--tc);color:var(--ink,#fff);cursor:var(--cu-hand,pointer);overflow:hidden;white-space:nowrap}
+.cpseg b{font-size:.74rem;overflow:hidden;text-overflow:ellipsis;max-width:100%}.cpseg small{font-size:.86rem;font-weight:800;color:var(--tc)}
+.cpseg.lock{background:repeating-linear-gradient(135deg,var(--panel2) 0 5px,var(--bg2,#111) 5px 10px);box-shadow:inset 0 -2px 0 color-mix(in srgb,var(--tc) 50%,transparent);color:var(--muted);flex-direction:row;gap:3px}
+.cpseg.dim{opacity:.3}.cpseg:focus-visible,.cpt:focus-visible,.cph:focus-visible{outline:2px solid var(--gold);outline-offset:1px}
+.cprk,.cpv{display:flex;flex-wrap:wrap;gap:4px}
+.cpwrap{display:grid;grid-template-columns:minmax(0,1fr) 270px;gap:10px;align-items:start;min-width:0}
+.cpbody{display:grid;gap:6px;min-width:0}
+.cpg{display:grid;grid-template-columns:118px minmax(0,1fr);gap:8px;align-items:center;padding:5px 8px;border:1px solid var(--line);border-left:4px solid var(--gc,var(--line));border-radius:3px;background:var(--panel2);min-width:0}
+.cpg h4{margin:0;font-size:.86rem;display:grid;gap:1px}.cpg h4 small{font-weight:400;font-size:.68rem;color:var(--muted)}
+.cpts{display:flex;flex-wrap:wrap;gap:4px;min-width:0}
+.cpt{all:unset;box-sizing:border-box;position:relative;width:66px;display:grid;justify-items:center;gap:1px;padding:3px 2px 2px;border-radius:4px;cursor:var(--cu-hand,pointer)}
+.cpt:hover,.cpt.sel{background:color-mix(in srgb,var(--tc) 22%,transparent)}.cpt.sel{box-shadow:0 0 0 2px var(--gold)}
+.cpf{position:relative;display:block;width:48px;height:48px;border-radius:50%;overflow:hidden;background:radial-gradient(circle at 50% 35%,color-mix(in srgb,var(--tc) 35%,#3a3842),#1b1a20);box-shadow:0 0 0 3px var(--tc);flex:none}
+.cpf img{position:absolute;left:50%;top:-4%;width:170%;height:auto;transform:translateX(-50%);pointer-events:none}
+.pt.cpf{display:grid;place-items:center;font-size:1.4rem}
+.cpt .cpn{position:absolute;top:34px;right:6px;min-width:18px;padding:0 3px;border-radius:9px;background:#0b0a0e;border:1px solid var(--tc);font-size:.74rem;line-height:16px;text-align:center;color:var(--gold)}
+.cpt .cpy{position:absolute;top:0;left:2px;padding:0 3px;border-radius:3px;background:var(--gold);color:#0b0a0e;font-size:.58rem;font-weight:800;line-height:1.35;letter-spacing:-1px}
+.cprs{position:absolute;top:0;right:2px;display:flex;gap:1px}
+.cprv{display:inline-grid;place-items:center;width:14px;height:14px;border-radius:50%;background:var(--rv,#ff6b6b);color:#0b0a0e;font:800 .55rem/1 var(--f-body);font-style:normal;text-transform:uppercase;vertical-align:-2px}.cprv.more{background:var(--panel);color:var(--ink,#fff);width:auto;padding:0 2px;border-radius:7px}
+.cpb{display:block;width:44px;height:3px;background:var(--bg2,#000);border-radius:2px;overflow:hidden;margin-top:3px}.cpb>i{display:block;height:100%;background:var(--tc)}
+.cpt small{font-size:.6rem;line-height:1.1;max-width:62px;text-align:center;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere;color:var(--ink,#fff)}
+.cpt.off{opacity:.42}.cpt.gone{opacity:.3;filter:grayscale(1)}.cpt.gone .cpn{color:var(--muted)}
+.cpdet{position:sticky;top:0;display:grid;gap:6px;padding:9px 10px;border:1px solid var(--line);border-radius:4px;background:var(--panel2);min-width:0}
+.cpch{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:8px;align-items:center}.cpch b{font-size:.95rem}.cpch small{display:block;font-size:.7rem;color:var(--muted)}
+.cpch .cpf{width:56px;height:56px}.cpx{all:unset;cursor:var(--cu-hand,pointer);padding:2px 6px;color:var(--muted);display:none}
+.cpbig{margin:0;font-size:.82rem}.cpbig b{font-size:1.5rem;color:var(--gold)}
+.cpm{display:flex;height:8px;border-radius:4px;overflow:hidden;background:var(--bg2,#000)}.cpm .y{background:var(--gold)}.cpm .v{background:#ff7a7a}.cpm .l{background:#7ec8e3}
+.cpkey{display:flex;flex-wrap:wrap;gap:3px 10px;margin:0;font-size:.7rem}.cpkey span::before{content:'';display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:4px;background:currentColor}
+.cpkey .y{color:var(--gold)}.cpkey .v{color:#ff7a7a}.cpkey .l{color:#7ec8e3}
+.cpdl{margin:0;display:grid;gap:1px;font-size:.78rem}.cpdl dt{font-size:.66rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:4px}.cpdl dd{margin:0;font-weight:700}
+.cpdl dd.ok{color:#7ee081}.cpdl dd.no{color:#ff9a7a}.cpdl dd small{font-weight:400;color:var(--muted)}
+.cpfoot,.cphint{font-size:.7rem;margin:0}
+.cph{all:unset;box-sizing:border-box;display:grid;grid-template-columns:auto minmax(0,1fr) auto;grid-template-areas:"f n s" "f w w";gap:2px 10px;align-items:center;padding:6px 10px;border:1px solid var(--line);border-left:4px solid var(--tc);border-radius:3px;background:var(--panel2);cursor:var(--cu-hand,pointer);min-width:0}
+.cph.sel{box-shadow:0 0 0 2px var(--gold)}.cph>.cpf{grid-area:f}.cphn{grid-area:n;display:grid;min-width:0}.cphn b{font-size:.88rem}.cphn small{font-size:.7rem;color:var(--muted)}
+.cphs{grid-area:s;font-size:.78rem;font-weight:800;text-align:right}.cphs.ok{color:#7ee081}.cphs.no{color:#ff9a7a}.cphw{grid-area:w;font-size:.74rem;color:var(--muted)}
+@media (max-width:760px){.cpwrap{grid-template-columns:minmax(0,1fr)}.cpdet{position:sticky;top:auto;bottom:0;z-index:2;box-shadow:0 -8px 24px #000a}.cpdet:not(.on){display:none}.cpx{display:block}
+  .cpg{grid-template-columns:minmax(0,1fr);gap:4px}.cpg h4{display:flex;gap:6px;align-items:baseline;flex-wrap:wrap}
+  .cpts{display:grid;grid-template-columns:repeat(5,minmax(0,1fr))}.cpt{width:auto}.cpseg small{display:none}.cpseg b{font-size:.66rem}.cpseg{min-height:32px;padding:3px 3px}
+  .cph{grid-template-areas:"f n" "f s" "f w";grid-template-columns:auto minmax(0,1fr)}.cphs{text-align:left}}
 .scwho{margin:4px 0 0;font-size:1.05rem}.scwho small{color:var(--muted);font-weight:400;font-size:.78rem}
 .scmeta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.82rem;margin:0}.scw{color:#7ee081}.scl{color:#ff7a7a}
 .scgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:4px;min-width:0}
