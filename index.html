@@ -21339,18 +21339,18 @@ const SK={
  mindblast:{name:'Mind Blast',d:p=>`${R(40*p)} damage to the 2 enemies with the most energy, and they are stunned for 1s.`,cast(u){targetFoes(u).sort((a,b)=>(b.mana||0)-(a.mana||0)).slice(0,2).forEach(t=>{spell(u,t,40);stunU(t,1);});}},
  engage:{name:'Battle Stations!',d:p=>`Your characters attack 30% faster for 4s and get a ${R(25*p)} shield.`,cast(u){allies(u).forEach(a=>{a.hastes.push({m:.3,t:4});shieldU(u,a,25*u.p);});}},
  deflect:{name:'Deflect',d:p=>`Taunts for 3s and shields itself for ${R(60*p)}. Meanwhile, half the damage of every attack on it bounces back.`,cast(u){u.taunt=3;u.reflectT=B.t+3;shieldU(u,u,60*u.p);}},
- darklightning:{name:'Dark Lightning',d:p=>`Lightning hits 4 enemies (area damage: double against crowds) for ${R(70*p)} each, and they lose 40 energy.`,cast(u){targetFoes(u).sort(()=>0).slice(0,4).forEach(t=>{spell(u,t,70,true);t.mana=Math.max(0,(t.mana||0)-40);});}},
+ darklightning:{name:'Force Choke',d:p=>`Lifts one enemy: ${R(70*p)} damage, stunned for 1.5s. The Force also hits 3 more enemies for ${R(60*p)} and they lose 40 energy (all area damage: double against crowds).`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f[0];stunU(t,1.5);spell(u,t,70,true);f.filter(x=>x!==t).slice(0,3).forEach(x=>{spell(u,x,60,true);x.mana=Math.max(0,(x.mana||0)-40);});}},
  splitup:{name:"Let's Split Up",d:p=>`Taunts for 2s, and every counselor shields a random ally for 12 (${bodiesFromP(p)} counselors).`,cast(u){u.taunt=2;const n=bodies(u),al=allies(u);for(let i=0;i<n&&al.length;i++)shieldU(u,al[Math.floor(rand()*al.length)],12*u.tierM);}},
- comeplay:{name:'Tag, You\'re It',d:p=>`Every kid hits the lowest-HP enemy for 6 and terrifies it for 3s (${bodiesFromP(p)} kids).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=lowest(targetFoes(u));if(!t)break;spellFlat(u,t,6*u.tierM);terrify(t,3);}}},
+ comeplay:{name:'Tag, You\'re It',d:p=>`Every kid hits the weakest back-row enemy (no back row: the lowest-HP enemy) for 6 and terrifies it for 3s (${bodiesFromP(p)} kids).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=backWeakest(u);if(!t)break;spellFlat(u,t,6*u.tierM);terrify(t,3);}}},
  hide:{name:'Hide!',d:p=>`Heals your most wounded character for ${R(45*p)} and hides it: it can't be targeted for 1.5s.`,cast(u){const a=wounded(u,1)[0];if(!a)return;heal(u,a,45*u.p);a.untarget=Math.max(a.untarget||0,1.5);}},
- compels:{name:'Begone, Demon!',d:p=>`${R(30*p)} damage to every front-row enemy, and they lose 30 energy.`,cast(u){const f=targetFoes(u),fr=f.filter(t=>t.row==='front');(fr.length?fr:f).forEach(t=>{spell(u,t,30,true);t.mana=Math.max(0,(t.mana||0)-30);});}},
- revup:{name:'Rev It Up',d:p=>'Attacks 50% faster for 4s, and its next attack deals double damage.',cast(u){u.hastes.push({m:.5,t:4});u.nextMult=Math.max(u.nextMult||1,2);}},
+ compels:{name:'Holy Water',d:p=>`Splashes the enemy back row (no back row: every enemy): each takes ${R(20*p)} damage and is terrified for 2.5s (Undead and Kaiju feel no fear).`,cast(u){const f=targetFoes(u),bk=f.filter(t=>t.row==='back');(bk.length?bk:f).forEach(t=>{spell(u,t,20,true);terrify(t,2.5);});}},
+ revup:{name:'Rev It Up',d:p=>'Attacks 50% faster for 4s, and its next attack deals double damage. While revved, every hit stops healing on its target for 4s.',cast(u){u.revT=B.t+4;u.hastes.push({m:.5,t:4});u.nextMult=Math.max(u.nextMult||1,2);}},
  survivor:{name:'Last One Standing',d:p=>`Hits the enemy with the most HP left for ${R(50*p)}, +${R(25*p)} for each of your fallen characters, and heals herself for ${R(50*p)}, +${R(25*p)} per fallen character (damage bonuses don't raise the heal).`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.hp>a.hp?b:a),k=B.units.filter(x=>x.side===u.side&&!x.alive&&!x.summon&&!x.lurking&&!x.sat).length;spell(u,t,50+25*k);heal(u,u,(50+25*k)*u.p);}},
  unstoppable:{name:'Unstoppable',d:p=>`Taunts for 3s and shields itself for ${R(60*p)}. Meanwhile, enemies that hit it are terrified for 3s.`,cast(u){u.taunt=3;u.scareBack=B.t+3;shieldU(u,u,60*u.p);}},
  wakeup:{name:"Lullaby",d:p=>`Every enemy falls asleep for 1.5s, takes ${R(45*p)} damage and is terrified for 4s.`,cast(u){targetFoes(u).forEach(t=>{spell(u,t,45,true);stunU(t,1.5);terrify(t,4);});}},
  bodyguard:{name:'Bodyguard',d:p=>`Taunts for 3s and shields itself for ${R(40*p)}, +${R1d(p)} per 🪙 you hold (counts up to 🪙30).`,cast(u){u.taunt=3;shieldU(u,u,(40+Math.min(30,B.gold||0))*u.p);}},
  flashlight:{name:'Flashlights',d:p=>`Every lookout shoots a random enemy for 5 and blinds it: its next attack misses (${bodiesFromP(p)} lookouts).`,cast(u){const n=bodies(u);for(let i=0;i<n;i++){const t=randFoe(u);if(!t)break;spellFlat(u,t,5*u.tierM);t.blind=(t.blind||0)+1;float(t,'Blinded','miss');}}},
- smashgrab:{name:'Smash and Grab',d:p=>`${R(40*p)} damage to the weakest back-row enemy. A knockout steals 🪙1 (once a fight).`,cast(u){const t=backWeakest(u);if(!t)return;spell(u,t,40);if(!t.alive&&!u.grabbed&&u.side==='A'){u.grabbed=1;B.goldEarned++;float(u,'+1🪙','heal');}}},
+ smashgrab:{name:'Ram Raid',d:p=>`Rams the enemy with the most HP: breaks its shield and deals ${R(40*p)} damage. A knockout steals 🪙1 (once a fight).`,cast(u){const f=targetFoes(u);if(!f.length)return;const t=f.reduce((a,b)=>b.hp>a.hp?b:a);if(t.shield>0){t.shield=0;float(t,'Shield broken','miss');}spell(u,t,40);if(!t.alive&&!u.grabbed&&u.side==='A'){u.grabbed=1;B.goldEarned++;float(u,'+1🪙','heal');}}},
  cracksafe:{name:'Crack the Safe',d:p=>`${R(35*p)} damage and −10 armor for 6s.`,cast(u){const t=pickTarget(u)||randFoe(u);if(!t)return;spell(u,t,35);t.armDown=Math.max(t.armDown||0,10);t.armDownT=6;}},
  syscrash:{name:'System Crash',d:p=>`Every enemy loses 25 energy and takes ${R(18*p)} damage.`,cast(u){targetFoes(u).forEach(t=>{spell(u,t,18,true);t.mana=Math.max(0,(t.mana||0)-25);});}},
  cleanup:{name:'Clean-up Crew',d:p=>`Heals your 3 most wounded characters for ${R(35*p)}, ${R(20*p)} and ${R(20*p)}, and shields each for ${R1d(.5*p)} per 🪙 you hold (counts up to 🪙30).`,cast(u){const g=Math.min(30,B.gold||0);wounded(u,3).forEach((a,i)=>{heal(u,a,(i?20:35)*u.p);if(g)shieldU(u,a,g*.5*u.p);});}},
@@ -22459,6 +22459,7 @@ function dealDamage(src,t,amt,type,aoe){
   if(t.meatShield&&t.taunt>0){const c=B.units.filter(x=>x.side===t.side&&x.alive&&x.crowd&&x!==t).sort((a,b)=>bodies(b)-bodies(a))[0];if(c){const sh=amt/3;amt-=sh;dealDamage(src,c,sh,'true');}}
   const dealt=amt;
   const b0=t.crowd?bodies(t):0;
+  if(type==='attack'&&src&&src.revT>B.t){if(!(t.noHealT>B.t))float(t,'🚫💚 No healing','miss');t.noHealT=B.t+4;} // Chainsaw: no healing (TRO-271)
   let sAbs=0;if(t.shield>0&&!B.wsk){const k=shK(src,t);const s=Math.min(t.shield,amt*k);t.shield-=s;amt-=s/k;sAbs=s/k;}if(TUNE.bugOverkill&&t.crowd&&t.genre==='bug'&&!aoe&&(type==='attack'||type==='spell'))amt=Math.min(amt,TUNE.bugOverkill*t.bodyHp);
   t.blocked=(t.blocked||0)+Math.max(0,amt0-amt);
   t.taken=(t.taken||0)+Math.max(0,Math.min(amt,t.hp));t.hp-=amt;
@@ -22517,7 +22518,7 @@ function kill(t,src){
   if(B.ball&&B.ball.holder===t){const nx=nextBallHolder(t);B.ball.holder=nx;if(nx)nx.timer=Math.min(nx.timer,.4);if(B.ball.streak)float(nx||t,'Fumble!','ko');B.ball.streak=0;}
 }
 function heal(src,t,amt,silent){
-  if(!t.alive)return 0;if(src&&src._casting)castShot(src,t,1);amt*=src?src.healMult:1;
+  if(!t.alive||t.noHealT>B.t)return 0;if(src&&src._casting)castShot(src,t,1);amt*=src?src.healMult:1;
   const healer=src;
   // Neighbors: Medics heal the characters right beside them more
   if(src&&src!==t&&src.trait==='medic'&&src.side===t.side&&Z(src)===Z(t)&&src.row===t.row&&nxTo(src,t))amt*=1+TUNE.medicNear;
@@ -24888,10 +24889,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.81',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.82',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.82',items:[["📿", "The Priest now throws Holy Water at the enemy back row: a little damage and 2.5s of terror for each. Slasher's job is the back row."], ["🧸", "Creepy Kids now play tag with the weakest enemy in the back row (no back row: the weakest anywhere)."], ["🪚", "The Chainsaw Maniac's Rev It Up now stops healing: while revved, every hit stops its target healing for 4s."], ["🚗", "The Getaway Driver now Ram Raids the enemy with the most HP: breaks its shield, 40 damage. A knockout still steals 🪙1."], ["⚡", "The Dark Lord now uses Force Choke: lifts one enemy (70 damage, stunned 1.5s) and the Force hits 3 more enemies and drains their energy. Space Opera's job is control, not blasting."]]},
   {v:'20.81',items:[["👀", "Rival cast portraits now show each character in its own colours inside a genre-coloured ring (they were dark red), with bigger star labels."], ["🖥️", "Smaller desktop windows (1280x720): the crossover chips and the shop bar no longer overlap, and board names are readable."], ["🎯", "The rival's tell lines no longer run under its picture."]]},
   {v:'20.80',items:[["🎯", "Lobby strip: a rival drafting against you now has a big 🎯 and a red ring on its portrait, and its two main-genre icons are bigger."], ["🎬", "Double Feature now shows on your board: every character it boosts wears a 🎬 badge (+50% HP and damage in fights)."], ["❤️", "Rivals play the same events as you, so their lives can go up: the Lobby strip now shows the rise (+2) and says why."]]},
   {v:'20.79',items:[["🔭", "The Commando is now the Spotter: it marks the biggest enemy crowd for 6s, and shells and blasts hit it 50% harder. The Army's job is the big crowd, not the back row."], ["🧨", "The Prospector now throws one stick of dynamite at the enemy about to use a skill: big damage and a 1.5s stun. Fastest draw, Wild West style."]]},
@@ -26818,6 +26820,7 @@ globalThis.SYMF = globalThis.SYMF || (function () {
     if (t.meatShield && t.taunt > 0) { const c = B.units.filter(x => x.side === t.side && x.alive && x.crowd && x !== t).sort((a, b) => bodies(b) - bodies(a))[0]; if (c) { const sh = amt / 3; amt -= sh; dealDamage(src, c, sh, 'true'); } }
     const dealt = amt;
     const b0 = t.crowd ? bodies(t) : 0;
+    if(type==='attack'&&src&&src.revT>B.t){if(!(t.noHealT>B.t))float(t,'🚫💚 No healing','miss');t.noHealT=B.t+4;} // Chainsaw: no healing (TRO-271)
     let sAbs = 0; if (t.shield > 0 && !B.wsk) { const k = shK(src, t); const s = Math.min(t.shield, amt * k); t.shield -= s; amt -= s / k; sAbs = s / k; }
     if (TUNE.bugOverkill && t.crowd && t.genre === 'bug' && !aoe && (type === 'attack' || type === 'spell')) amt = Math.min(amt, TUNE.bugOverkill * t.bodyHp);
     t.blocked = (t.blocked || 0) + Math.max(0, amt0 - amt);
