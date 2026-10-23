@@ -346,6 +346,9 @@ strong.lvon{color:var(--gold);font-weight:800}
 .dscn{display:grid;min-width:0}.dscn b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.dscn small{font-size:.7rem;color:var(--muted)}
 .dsci{flex:none;display:flex;gap:2px;align-items:center;font-size:1.1rem}.dsct:not(.on) .dsci{filter:grayscale(1) brightness(.55)}
 @media (max-width:520px){.dscg{grid-template-columns:repeat(2,minmax(0,1fr))}.dsct{padding:4px 6px}.dscnx{max-width:none}}
+.choices.pitch .ptc{gap:6px}.ptc .ptu{color:#9fe0a0}.ptc .ptk{color:#f2a08f;font-size:.82rem}.ptc .ptk b{color:inherit;font-size:inherit}
+.slotg.ptg .ic.pit{border-color:#9fe0a0}.slh.ptr{color:#9fe0a0}.irow.ptr b{color:#9fe0a0}
+@media (max-width:520px){.choices.pitch{display:grid!important;grid-template-columns:1fr!important;gap:8px}.choices.pitch .ptc{display:grid!important;grid-template-columns:52px 1fr;column-gap:10px;row-gap:2px;text-align:left;align-items:center;padding:8px 10px;min-height:0}.choices.pitch .ptc .rar{display:none}.choices.pitch .ptc .big{grid-row:1/span 3;grid-column:1;margin:0}.choices.pitch .ptc>:not(.big){grid-column:2}}
 .ccard{display:grid;gap:6px;align-content:start;text-align:left;font:inherit;cursor:var(--cu-hand,pointer);background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:10px;font-size:.84rem;color:var(--muted)}
 .ccard .hd{display:flex;gap:10px;align-items:center;color:var(--ink)}
 .ccard .hd b{display:block;font-size:.95rem}
@@ -20972,8 +20975,8 @@ const RMAX=RANK.odds.length;
 function topTier(r){const o=RANK.odds[Math.max(0,Math.min(RMAX,r)-1)];let t=1;o.forEach((p,i)=>{if(p>0)t=i+1;});return S&&S.cap?Math.min(t,S.cap):t;}
 const BENCH=5, SHOP_SLOTS=5, REROLL=1;
 // rarity identity: Commons and Uncommons stop at ★★; Rare, Epic and Mythic count as 2 for their genre from ★★ (v19.3)
-function maxLv(id){return HERO[id].tier>=3||legend('spinoff')?3:2;}
-function genreWeight(id,units){const rare=HERO[id].tier>=3;if(!rare&&!legend('spinoff'))return 1;const lv=Math.max(0,...(units||[]).filter(u=>u.id===id).map(u=>u.level||1));return lv>=(rare?2:3)?2:1;}
+function maxLv(id){return HERO[id].tier>=3||legend('spinoff')||pit('spin')?3:2;}
+function genreWeight(id,units){const rare=HERO[id].tier>=3;if(!rare&&!legend('spinoff')&&!pit('spin'))return 1;const lv=Math.max(0,...(units||[]).filter(u=>u.id===id).map(u=>u.level||1));return lv>=(rare?2:3)?2:1;}
 
 // Parked while we balance 4 genres: their data stays in the file. Remove a key here to bring a genre back.
 const PARKED=new Set(['orc','elf','fin','grim']);
@@ -21532,7 +21535,7 @@ function buildSchedule(n){
   for(let a=1;a<=TUNE.acts;a++)act.forEach((t,j)=>{const i=SCHEDULE.length,nom=5*(a-1)+j*TUNE.actSpan/(act.length-1);SCHEDULE.push({type:t,act:a,g:nom+(i-nom)*TUNE.actLenG});});
 }
 // tuned with headless bots (merged rarity pass): best bot lines ~58-63% run wins, Commons-only ~1%
-const TUNE={finOdds:{18:[2,3,5,7]},lateLv:14,ep1Cap:0.88,rvPivotN:2,rvPivotSpread:1,rvEchoM:1,trGuard:[.12,.18],trBrawl:[2,4],trBrawlCap:[30,60],trStalk:[.3,.55],trStalkE:0,trGun:[.3,.6],trMysE:[.4,.7],trMysS:[.25,.5],trMed:[.3,.6],trMedRegen:.01,dfK:1.5,dfT:1,recast:1,recastK:3,recastFrom:19,ladderLobby:[3,3,4,4,5,5,6,7],ladderPair:1,ladderKO:0,ladderEarly:['penny'],ladderLead:1,leadFrom:6,leadBossK:[2.1, 2.3, 1.67, 2.21, 1.53, 2.03, 1.58, 1.94, 1.7, 1.85, 2.0, 2.2, 2.6],repitchEv:0,spaceVsDead:0.5,ladderOn:1,ladderLv:5,ladderTo:18,ladderActK:[1.09, 1.15, 1.5, 1.73],ladderLowK:[1.1, 0.85, 0.85, 1.05],ladderRampTo:9,ladderLoss:[1,1,1,1],heistShield:1.5,westShield:2,kaijuShield:0.5,artShield:2,kaijuArt:0.5,ballBug:0.3,fearNoBounce:1,shieldBounce:1,undeadFearless:1,kaijuFearless:1,bugOverkill:1.5,heistBug:0.7,spaceShieldAct:[0.6,0,0,0],seasonBossF:1.0,gymBossK:2.8,gymActK:1,gymGenreW:1.5,gymLobby:3,gymSim:0,rvBrains:1,rvAdapt:[0,0,0,0,0,0,0.35,0.35,0.35,0.35,1,1,1,1,1,1,1,1,1],rvPivotW:6,rvPivotOff:2,rvPivotGap:6,rvPivotUniq:1,rvFair:1,rvPC:[-2.108,0.0302],rvMatch:1,rvMatchN:3,rvCal:{"w":[1.0617,2.6306,-0.1192,0.2886,-4.1458],"st":{"ace":-0.0653,"cue":0.2443,"duke":-0.1342,"echo":-0.4375,"goldie":0.4,"hugo":-0.1407,"ivy":-0.2401,"kit":0.0913,"penny":-0.0064,"quill":0.367,"rex":0.109,"sal":-0.1873},"lv":{"4":0.3763,"10":0.1108,"13":-0.1938,"15":-0.2323,"17":-0.0405,"18":-0.0205}},rvP2:1,rvFull:1.03,rvSchedK:0.9,rvBrain:1,symFoes:1,xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:0.7,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:1,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"army":0.07,"bug":0.4,"undead":0.34,"heist":0.3,"west":0.15,"horror":0.07,"space":0,"kaiju":0.14,"ball":0.4},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.773,4.001,3.377,2.586],bossF:[1.9,1.6,2.0,2.2],bossP2:0.37,lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:0.85,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.45,"bug":1.2,"undead":1.15,"ball":1.25,"heist":1.5,"west":1.1,"horror":1.4,"space":1.35,"kaiju":1.5},rivalsOn:true,wideHp:2.0,wideAtk:1.8,wideP:1.4,giant3:0.85,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.14,spacePierce:.5,spaceHaste:0.15,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:0,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
+const TUNE={pitch:1,ptFrom:5,ptSim:'rand',ptIndieSq:5,ptIndiePer:0.2,ptIndieMax:0.6,ptSpinTax:1,ptSpinMult:1.2,ptRr:1,ptInt:0,ptIndieLeg:0,ptXoB:1,ptXoDF:0,finOdds:{18:[2,3,5,7]},lateLv:14,ep1Cap:0.88,rvPivotN:2,rvPivotSpread:1,rvEchoM:1,trGuard:[.12,.18],trBrawl:[2,4],trBrawlCap:[30,60],trStalk:[.3,.55],trStalkE:0,trGun:[.3,.6],trMysE:[.4,.7],trMysS:[.25,.5],trMed:[.3,.6],trMedRegen:.01,dfK:1.5,dfT:1,recast:1,recastK:3,recastFrom:19,ladderLobby:[3,3,4,4,5,5,6,7],ladderPair:1,ladderKO:0,ladderEarly:['penny'],ladderLead:1,leadFrom:6,leadBossK:[2.1, 2.3, 1.67, 2.21, 1.53, 2.03, 1.58, 1.94, 1.7, 1.85, 2.0, 2.2, 2.6],repitchEv:0,spaceVsDead:0.5,ladderOn:1,ladderLv:5,ladderTo:18,ladderActK:[1.09, 1.15, 1.5, 1.73],ladderLowK:[1.1, 0.85, 0.85, 1.05],ladderRampTo:9,ladderLoss:[1,1,1,1],heistShield:1.5,westShield:2,kaijuShield:0.5,artShield:2,kaijuArt:0.5,ballBug:0.3,fearNoBounce:1,shieldBounce:1,undeadFearless:1,kaijuFearless:1,bugOverkill:1.5,heistBug:0.7,spaceShieldAct:[0.6,0,0,0],seasonBossF:1.0,gymBossK:2.8,gymActK:1,gymGenreW:1.5,gymLobby:3,gymSim:0,rvBrains:1,rvAdapt:[0,0,0,0,0,0,0.35,0.35,0.35,0.35,1,1,1,1,1,1,1,1,1],rvPivotW:6,rvPivotOff:2,rvPivotGap:6,rvPivotUniq:1,rvFair:1,rvPC:[-2.108,0.0302],rvMatch:1,rvMatchN:3,rvCal:{"w":[1.0617,2.6306,-0.1192,0.2886,-4.1458],"st":{"ace":-0.0653,"cue":0.2443,"duke":-0.1342,"echo":-0.4375,"goldie":0.4,"hugo":-0.1407,"ivy":-0.2401,"kit":0.0913,"penny":-0.0064,"quill":0.367,"rex":0.109,"sal":-0.1873},"lv":{"4":0.3763,"10":0.1108,"13":-0.1938,"15":-0.2323,"17":-0.0405,"18":-0.0205}},rvP2:1,rvFull:1.03,rvSchedK:0.9,rvBrain:1,symFoes:1,xRound:0.06,ghOn:1,ghFrom:4,ghP:[0,.2,.25,.3],ghK:0.7,famW:1.07,efamOn:1,famP1:.55,famP2:.3,fam2P:.6,genK:1.0,genOn:1,genN:[3,3,3.5,4],genGrow:0.2,genPrev:.25,genPack:.2,affP:[.15,.35,.5,.6],aff2:.3,bossAffP:[0,.5,.6,.7],xMBowl:1,rvPool:1,xBees:1.0,xArmsPer:0.02,xArmsMax:0.6,xLocust:15,xGraveN:2,xStamp:0.45,xGhostHp:.4,xTrain:1,xOrbital:1.05,xHive:0.05,xGShip:2,xZeroG:30,xMonster:0.003,xRansomN:1,xBugHunt:1.4,xNight:1.05,xRodeo:1.0,tcG:{"army":0.07,"bug":0.4,"undead":0.34,"heist":0.3,"west":0.15,"horror":0.07,"space":0,"kaiju":0.14,"ball":0.4},xMul:{"graverob":1.15,"armsdeal":1.1,"bees":1.12,"ants":1.1,"sudden":1.12,"bughunt":1.05,"fixed":1.1,"noscream":1.1},tcSlots:1,tcRoll:0,antsN:3,devourPct:0.2,behindHp:0.7,westKoMana:10,kRoarStun:1.5,clock:.75,actSpan:5.33,growth:1.09,acts:4,actMul:[2.773,4.001,3.377,2.586],bossF:[1.9,1.6,2.0,2.2],bossP2:0.37,lossCost:[2,2,3,3],comeback:2,gbStart:1,gbStep:.15,gbMax:2.5,gbFlight:.55,fullCast:1.2,cutOn:1,artEvery1:4,ballBounce1:0.85,intPer:10,intCap:5,reroll:2,streakGold:[0,0,1,1,2,3],lossGold:1,rrStep:3,poolSize:[12,10,9,8,7],poolCut:2,poolPer:[0,0,1,1,.5],cutFight:3,rePBase:.4,rePStep:.06,reGood:[.5,-.03],reBad:[.15,.03],curseStep:.05,wheelJackpot:.06,cutRandomLv:6,cutMin:6,cutPer:3,cardMax:20,benchCards:8,hatchMul:.85,graveCap:3,fcG:{"army":1.45,"bug":1.2,"undead":1.15,"ball":1.25,"heist":1.5,"west":1.1,"horror":1.4,"space":1.35,"kaiju":1.5},rivalsOn:true,wideHp:2.0,wideAtk:1.8,wideP:1.4,giant3:0.85,kSplash:.5,kRage:.05,kRageMax:15,kRoar:1.45,kHp:0.25,spaceShield:0.14,spacePierce:.5,spaceHaste:0.15,warpHaste:.4,warpFor:6,shieldGenEvery:3,shieldGenPct:.05,motherAt:8,motherPct:.22,fear:0.28,horrorPick:.5,lightsEvery:8,screamAmp:.25,heistBase:.45,heistCap:.4,vaultCap:1,bankTip:25,fhHeal:1,feedHaste:.18,feedDmg:.1,feedStart:1.25,feedMax:6,feedRegrow:3,blLs:.3,blCap:.5,cgAt:.35,cgFor:2,cgHeal:.35,bountyMax:3,pressDrain:5,shockFor:12,shockEvery:.5,pheroFor:3,pheroAmp:.4,gravePer:.11,graveMax:1,ijHp:.55,ijDmg:.5,sixEvery:3,sixPct:1,halfAt:10,halfHeal:.4,halfHaste:.5,indiePer:.3,indieMax:.9,hypePer:.05,hypeMax:.35,placeMax:5,burnAt:12,xuMax:3,westCrit1:0,westCrit2:.25,westCritX:2.5,artDmg:1.4,bugRegrow:[2,1.25,1],armyHp:1.1,scoutChance:.12,scoutMult:2,walletEnergy:1,lanes:1,coverDR:.25,medicNear:.5,broodDmg:1.25,spinoffMult:1.2,ownBias:.25,ownCap:2,undeadPer:5,undeadMax:75,bbMult:1.6,cultMult:1.6,dangerEvery:6,dangerMult:3.5,xepPer:.02,xepNeed:1,gbPass:.5,broodPlus:3,broodCap:2,gbEnergy:5,adP:.45,adMax:2,
   // Game Levels (difficulty ladder): numbers used by the level rules
   lvCutG:.8,actLenG:.25,lvXp:[.1,.05],lvElite:1.05,pilotElite:1.4,pilotEarly:0.7,pilotBoss:1.4,p2Elite:2,lvEliteGold:3,lvTrial:1.1,lvTrialGold:8,lvExtra:.3,lvTwin:1.0,lvCastDrop:0,lvPart2:1.0,lvMerchant:2,lvFoe:.009,lvFoeFrom:8,lvMin:1,lvGate:1,epsMode:1,renewGold:5};
 buildSchedule(false);
@@ -22008,6 +22011,22 @@ function itemSellValue(t){return 1+ilv(t);}
 // run statistics for the end screen (older saves get the missing fields on first use)
 function runStats(){const s=S.stats;s.dmg=s.dmg||{};s.taken=s.taken||{};s.spend=s.spend||{buy:0,reroll:0,rank:0};s.rerolls=s.rerolls||0;s.rounds=s.rounds||[];s.sold=s.sold||0;return s;}
 function legend(id){return !!S&&S.legend===id;}
+// ---- The Pitch (TRO-418): one run rule picked from 3 at Episode 1 (Level 5+), an upside and a cost; l = the
+// Legendary whose code and picture it borrows (that Legendary is not offered during the run)
+const PITCHES={
+  indie:{n:'Indie Film',l:'indie',up:()=>`With ${TUNE.ptIndieSq} or fewer board squares filled, your characters get +${pctOf(TUNE.ptIndiePer)} HP and damage for every empty square (up to +${pctOf(TUNE.ptIndieMax)}).`,cost:()=>TUNE.ptIndieLeg?'No Legendary offer after the Act 1 boss.':`Fill more than ${TUNE.ptIndieSq} squares and the bonus is gone.`},
+  spin:{n:'Spin-off',l:'spinoff',up:()=>`Commons and Uncommons can reach ★★★ (two ★★ combine) and count as 2 for their genre at ★★★${TUNE.ptSpinMult>1?`, and get +${pctOf(TUNE.ptSpinMult-1)} HP and damage`:''}.`,cost:()=>`Rare and better characters cost 🪙${TUNE.ptSpinTax} more.`},
+  reshoot:{n:'Reshoots',l:'dircut',up:()=>`Rerolls cost 🪙${TUNE.ptRr}.`,cost:()=>TUNE.ptInt>0?`Interest pays up to 🪙${TUNE.ptInt} a round.`:'No interest.'},
+  xo:{n:'Crossover Event',l:'crossep',up:()=>TUNE.ptXoB?'Crossovers switch on with 1 character from one genre and 2 from the other.':'Crossovers switch on with just 1 character from each genre.',cost:()=>TUNE.ptXoDF?'Typecast and Double Feature are off: no bonus for a board of one genre or of exactly two.':'Typecast is off: a one-genre board gets no Typecast bonus and no extra shop cards.'}};
+function pit(k){return !!S&&S.pitch===k;}
+function ptOn(){return !!(TUNE.pitch&&S&&S.ladder&&(S.lv|0)>=TUNE.ptFrom&&!S.daily&&!S.chal&&!S.gym&&!S.late);}
+function ptBan(id){const p=S&&S.pitch&&PITCHES[S.pitch];return !!p&&(p.l===id||(S.pitch==='reshoot'&&id==='vault'));}
+function ptDeal(){rsKey('pt');return shuffle(Object.keys(PITCHES)).slice(0,3);}
+function ptStart(){if(!ptOn())return;const ch=ptDeal();
+  if(S.real)S.pending.unshift({kind:'pitch',choices:ch});else{const v=TUNE.ptSim;S.pitch=v==='rand'?ch[0]:PITCHES[v]?v:null;}}
+function ptText(k){const p=PITCHES[k];return p?p.up()+' Cost: '+p.cost():'';}
+function ptCard(k,a){const p=PITCHES[k];return `<button class="choice ptc"${a?` data-a="${a}" data-v="${k}"`:''}><span class="rar">Pitch</span><span class="big">${ico(LEGENDS[p.l],1)}</span><b>${esc(p.n)}</b><span class="ptu">${esc(p.up())}</span><span class="ptk"><b>Cost:</b> ${esc(p.cost())}</span></button>`;}
+function ptDetail(){const k=S&&S.pitch;if(!PITCHES[k])return '';return `<div class="eyebrow">Your Pitch</div><h3 style="color:var(--gold)">${esc(PITCHES[k].n)}</h3><div class="choices pitch">${ptCard(k)}</div><p class="muted" style="font-size:.85rem">Picked at Episode 1. It lasts the whole run.</p>`;}
 function boardSize(){return RANK.board[S.rank-1];}
 const fieldSlots=['f0','f1','f2','f3','b0','b1','b2','b3'];
 const benchSlots=['n0','n1','n2','n3','n4'];
@@ -22074,6 +22093,7 @@ function newRun(){if(typeof UI!=='undefined'){UI.loadErr=0;UI._g=UI._l=UI._ng=UI
   buildSchedule(S.lv);
   if(TUNE.ladderLead&&LADON&&(S.lv|0)>=TUNE.leadFrom){const ld=lvLead(S.lv|0);if(ld)S.lead=ld;}
   rollSpecials();
+  ptStart();
   rollShop();
   startRound();
   if(lobbyWanted())lobbyInit();
@@ -22208,9 +22228,9 @@ function rollShop(rr){rsKey('s');
 // v19.61 Typecast: everyone on the board is from one genre (3+ characters): that genre fills TUNE.tcSlots shop cards
 // TRO-220 Double Feature: exactly two genres on the board, both at 4+ (their 2nd tier): those characters get x TUNE.dfK
 function dblFeatOn(units,G){if(!(TUNE.dfK>1))return null;const gs=[...new Set(units.map(u=>HERO[u.id].genre))];return gs.length===2&&gs.every(g=>G[g]>=TUNE.dfT&&!gOut(g))?gs:null;}
-function dblFeat(G){return S?dblFeatOn(fielded(),G):null;}
-function typecast(){if(!S)return null;const f=fielded();if(f.length<3)return null;const g=HERO[f[0].id].genre;return f.every(u=>HERO[u.id].genre===g)&&!gOut(g)?g:null;}
-function shopPrice(o){const p=PRICE[HERO[o.id].tier-1];return o.level===2?Math.round(p*(legend('scout')?TUNE.scoutMult:3)):p;}
+function dblFeat(G){return S&&!(pit('xo')&&TUNE.ptXoDF)?dblFeatOn(fielded(),G):null;}
+function typecast(){if(!S||pit('xo'))return null;const f=fielded();if(f.length<3)return null;const g=HERO[f[0].id].genre;return f.every(u=>HERO[u.id].genre===g)&&!gOut(g)?g:null;}
+function shopPrice(o){const p=PRICE[HERO[o.id].tier-1]+(pit('spin')&&HERO[o.id].tier>=3?TUNE.ptSpinTax:0);return o.level===2?Math.round(p*(legend('scout')?TUNE.scoutMult:3)):p;}
 function canBuy(i){
   const o=S.shop[i];if(!o)return {ok:false,why:'Sold'};
   if(S.gold<shopPrice(o))return {ok:false,why:'Not enough gold'};
@@ -22222,7 +22242,7 @@ function canBuy(i){
 }
 function freeSlotFor(id){
   // Indie Darling: automatic placement stops at 4 on the board (its bonus needs 4 or fewer); a full bench still uses the board
-  const room=id&&fieldCount()+(twoSlot(id)?2:1)<=(legend('indie')?Math.min(4,boardSize()):boardSize());
+  const room=id&&fieldCount()+(twoSlot(id)?2:1)<=(legend('indie')?Math.min(4,boardSize()):pit('indie')?Math.min(TUNE.ptIndieSq,boardSize()):boardSize());
   const melee=id&&heroReach(id)==='melee'&&HERO[id].trait!=='stalker';
   if(room){/* TRO-195: a second copy fights too while the board has room */const order=melee?['f1','f2','f0','f3','b1','b2','b0','b3']:['b1','b2','b0','b3','f1','f2','f0','f3'];for(const s of (twoSlot(id)?(melee?['f0','f2','b0','b2']:['b0','b2','f0','f2']):order))if(slotOK(s,id))return s;}
   for(const s of benchSlots)if(!unitAt(s))return s;
@@ -22259,7 +22279,7 @@ function recast(id){
   S.units=S.units.filter(u=>u.slot!=='gone');
   return true;
 }
-function rerollCost(){return legend('dircut')?1:twv('reroll')!=null?twv('reroll'):TUNE.reroll;}
+function rerollCost(){return legend('dircut')?1:pit('reshoot')?TUNE.ptRr:twv('reroll')!=null?twv('reroll'):TUNE.reroll;}
 function reroll(){
   if(S.freeRerolls>0)S.freeRerolls--;
   else{const c=rerollCost();if(S.gold<c){toast('Not enough gold');return false;}S.gold-=c;runStats().spend.reroll+=c;S.rrRound=(S.rrRound||0)+1;}
@@ -22271,7 +22291,7 @@ function trainCost(){return S.rank>=RMAX?null:RANK.train;}
 // add shop XP: each full gauge is a rank (extra XP carries over). quiet: no preview card (the caller rolls a fresh shop)
 function gainXp(n,quiet){
   S.xp=(S.xp||0)+n;let up=0;
-  while(S.rank<RMAX&&S.xp>=xpNeed()){S.xp-=xpNeed();S.rank++;up++;if(!legend('skeleton')&&!legend('indie'))autoFill();}
+  while(S.rank<RMAX&&S.xp>=xpNeed()){S.xp-=xpNeed();S.rank++;up++;if(!legend('skeleton')&&!legend('indie')&&!pit('indie'))autoFill();}
   if(S.rank>=RMAX)S.xp=0;
   return up;
 }
@@ -22386,13 +22406,13 @@ function genreCounts(units){const g={};[...new Set(units.map(u=>u.id))].forEach(
 // a Legendary that makes something you hold useless says so on its offer card
 function legendClash(id){if(id==='wallet'&&S.trinkets.includes('battery'))return 'Your 🔋 Battery Pack does nothing with this: you already start at full energy.';return '';}
 // v19.89: the Game Ball needs 2+ different Sportsball characters on the board, so it isn't offered without them
-function legOffer(id){return id!=='gameball'||new Set(fielded().filter(u=>HERO[u.id].genre==='ball').map(u=>u.id)).size>=2;}
+function legOffer(id){return !ptBan(id)&&(id!=='gameball'||new Set(fielded().filter(u=>HERO[u.id].genre==='ball').map(u=>u.id)).size>=2);}
 function legendChoices(n){rsKey('l');n=n||2;
   const g=genreCounts(fielded());
   const ranked=Object.keys(g).filter(k=>g[k]>=2).sort((a,b)=>g[b]-g[a]);
   const out=[];
   for(const k of ranked){const Ls=Object.keys(LEGENDS).filter(id=>LEGENDS[id].genre===k&&id!==S.legend&&lvOK('l',id)&&legOffer(id));if(Ls.length){out.push(pick(Ls));if(out.length>=(n>=3?2:1))break;}}
-  const cross=shuffle(Object.keys(LEGENDS).filter(id=>!LEGENDS[id].genre&&id!==S.legend&&!out.includes(id)&&lvOK('l',id)));
+  const cross=shuffle(Object.keys(LEGENDS).filter(id=>!LEGENDS[id].genre&&id!==S.legend&&!out.includes(id)&&lvOK('l',id)&&!ptBan(id)));
   while(out.length<n&&cross.length)out.push(cross.shift());
   if(lvGated()&&out.length<n){const more=shuffle(Object.keys(LEGENDS).filter(id=>lvOK('l',id)&&id!==S.legend&&!out.includes(id)&&legOffer(id)));while(out.length<n&&more.length)out.push(more.shift());}
   return out;
@@ -22554,7 +22574,8 @@ function startRound(){rsKey('r');
 }
 // interest: 🪙1 per TUNE.intPer held when the round ends, up to TUNE.intCap
 // interest cap: 🪙5 (The Vault 10, Director's Cut 4, Haunted Wallet 1), plus the Interest Ledger
-function intCap(){return (legend('wallet')?1:legend('vault')?10:legend('dircut')?4:twv('intCap')!=null?twv('intCap'):TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
+function intCap(){return pit('reshoot')?Math.min(TUNE.ptInt,intCap0()):intCap0();}
+function intCap0(){return (legend('wallet')?1:legend('vault')?10:legend('dircut')?4:twv('intCap')!=null?twv('intCap'):TUNE.intCap)+(lvl('ledger')?tv('ledger'):0);}
 function income(){const interest=Math.min(intCap(),Math.floor(Math.max(0,S.gold)/TUNE.intPer)),max=S.rank>=RMAX;
   return {base:5,interest,coin:0,ledger:lvl('ledger')?1:0,xp:max?0:RANK.freeXp};}
 function intMeter(inc){const cap=intCap(),n=inc.interest,nx=n<cap?TUNE.intPer*(n+1)-S.gold:0;
@@ -22804,7 +22825,7 @@ function activeSyn(units){
   for(const k in GENRES)G[k]=tierOf(GENRES[k],c.g[k]||0);
   for(const k in TRAITS)T[k]=tierOf(TRAITS[k],c.t[k]||0);
   const real=genreCounts(units);
-  const xo=xoOn();CROSSOVERS.forEach(x=>{const a=real[x.a]||0,b=real[x.b]||0;X[x.id]=xo&&((legend('crossep')||twv('xo'))?a>=1&&b>=1:a>=2&&b>=2);});
+  const xo=xoOn();CROSSOVERS.forEach(x=>{const a=real[x.a]||0,b=real[x.b]||0;X[x.id]=xo&&((legend('crossep')||twv('xo')||pit('xo')&&!TUNE.ptXoB)?a>=1&&b>=1:pit('xo')?Math.min(a,b)>=1&&Math.max(a,b)>=2:a>=2&&b>=2);});
   return {G,T,X,c,real};
 }
 
@@ -22884,7 +22905,7 @@ function applyMods(){
   const danger=legend('danger')&&G.army;
   B.artEvery=danger?TUNE.dangerEvery:G.army>=3?2:G.army>=2?3:G.army>=1?TUNE.artEvery1:0;B.art=danger?4:legend('shock')&&B.artEvery?TUNE.shockEvery:B.artEvery;B.artMult=G.army>=3?2:1;
   B.broodEvery=G.bug?TUNE.bugRegrow[G.bug-1]:0;
-  const sq=fieldCount();B.indie=legend('indie')&&sq<=4?1+Math.min(TUNE.indieMax,TUNE.indiePer*Math.max(0,boardSize()-sq)):0; /* v19.89: squares */
+  const sq=fieldCount();B.indie=legend('indie')&&sq<=4?1+Math.min(TUNE.indieMax,TUNE.indiePer*Math.max(0,boardSize()-sq)):pit('indie')&&sq<=TUNE.ptIndieSq?1+Math.min(TUNE.ptIndieMax,TUNE.ptIndiePer*Math.max(0,boardSize()-sq)):0; /* v19.89: squares */
   const star=legend('blockbuster')?A.slice().sort((a,b)=>b.tier-a.tier||b.level-a.level||b.maxHp-a.maxHp)[0]:null;
   if(legend('skeleton'))B.skel=Math.min(3,Math.max(0,boardSize()-A.length));
   const finAll=G.fin>=2;
@@ -22959,7 +22980,7 @@ function applyMods(){
     if(legend('feeding')&&u.genre==='bug')u.dmgMult*=TUNE.feedStart;
     if(legend('bloodline')&&u.genre==='undead'){u.ls+=TUNE.blLs;u.overShield=TUNE.blCap;}
     if(u.skill==='tunnel'&&u.manaMax)u.mana=u.manaMax; // Burrow Lurker tunnels at once
-    if(legend('spinoff')&&HERO[u.id]&&HERO[u.id].tier<=2){const f=TUNE.spinoffMult;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
+    if((legend('spinoff')||pit('spin')&&TUNE.ptSpinMult>1)&&HERO[u.id]&&HERO[u.id].tier<=2){const f=legend('spinoff')?TUNE.spinoffMult:TUNE.ptSpinMult;u.dmgMult*=f;u.hp*=f;u.maxHp*=f;if(u.crowd)u.bodyHp*=f;}
     if(legend('brood')&&u.genre==='bug'&&u.crowd){u.maxBodies+=TUNE.broodPlus;u.hp+=u.bodyHp*TUNE.broodPlus;u.capBodies=Math.round(u.maxBodies*TUNE.broodCap);u.maxHp=u.bodyHp*u.capBodies;}
     if(B.skel)u.dmgMult*=1+.2*B.skel;
     if(legend('crossep'))u.dmgMult*=1+TUNE.xepPer*Object.values(X).filter(Boolean).length;
@@ -23422,7 +23443,7 @@ function settle(){if(S&&S.seed!=null)FR=null;
   if(X.draft)S.freeRerolls+=1;
   res.rerolls=(win?0:1)+(X.draft?1:0);
   S.gold+=g;S.stats.gold+=g;res.gold=g;
-  if(res.boss&&ev.act<runActs()&&S.lives>0&&lvHas('l'))S.pending.push({kind:'legend',win});
+  if(res.boss&&ev.act<runActs()&&S.lives>0&&lvHas('l')&&!(pit('indie')&&TUNE.ptIndieLeg&&ev.act===1))S.pending.push({kind:'legend',win});
   // Guest Stars / Trial by Fire: a win pays an item pick
   if(win&&S.enemy&&S.enemy.trial&&S.lives>0)S.pending.push({kind:'trial',level:3});
   if(win&&S.enemy&&(S.enemy.elite||S.enemy.gym===1)){S.gold+=TUNE.lvEliteGold;S.stats.gold+=TUNE.lvEliteGold;res.gold+=TUNE.lvEliteGold;}
@@ -24217,7 +24238,8 @@ const SCR={};
 // Legendary + item icons (top bar, and on phones also next to the shop buttons)
 // TRO-378: the Legendary has its own gold slot (holds 1) and all 5 item sockets always show, so the limits read at a glance
 function itemIcons(){if(pgate().items)return '';const lg=lvHas('l')||!!S.legend,it=lvHas('i')||S.trinkets.length>0,n=S.trinkets.length;if(!lg&&!it)return '';
-  return (lg?`<span class="slotg legg" role="group" aria-label="Legendary slot: holds 1"><small class="slbl">Legendary (1)</small><span class="slots">${S.legend&&LEGENDS[S.legend]?`<button class="ic leg" data-a="legend-info" title="${esc(LEGENDS[S.legend].name+': '+legS(S.legend))}">${ico(LEGENDS[S.legend])}</button>`:`<span class="ic sock legsock" role="img" aria-label="No Legendary yet" title="No Legendary yet. One is offered after the Act 1, 2 and 3 bosses; you hold one at a time.">🏆</span>`}</span></span>`:'')
+  const pt=S.pitch&&PITCHES[S.pitch];
+  return (pt?`<span class="slotg ptg" role="group" aria-label="Pitch"><small class="slbl">Pitch</small><span class="slots"><button class="ic pit" data-a="pitch-info" title="${esc(pt.n+': '+ptText(S.pitch))}">${ico(LEGENDS[pt.l])}</button></span></span>`:'')+(lg?`<span class="slotg legg" role="group" aria-label="Legendary slot: holds 1"><small class="slbl">Legendary (1)</small><span class="slots">${S.legend&&LEGENDS[S.legend]?`<button class="ic leg" data-a="legend-info" title="${esc(LEGENDS[S.legend].name+': '+legS(S.legend))}">${ico(LEGENDS[S.legend])}</button>`:`<span class="ic sock legsock" role="img" aria-label="No Legendary yet" title="No Legendary yet. One is offered after the Act 1, 2 and 3 bosses; you hold one at a time.">🏆</span>`}</span></span>`:'')
     +(it?`<span class="slotg itg" role="group" aria-label="Items: ${n} of ${TRINKET_CAP} slots used"><small class="slbl">Items ${n}/${TRINKET_CAP}</small><span class="slots">${S.trinkets.map(t=>`<button class="ic${TR[t].rar==='R'?' rare':''}" data-a="trinket" data-v="${t}" title="${esc(TR[t].name)} ${'★'.repeat(ilv(t))}: ${esc(trS(t))}">${ico(TR[t])}<i class="ipip">${'★'.repeat(ilv(t))}</i></button>`).join('')}${'<span class="ic sock" title="Empty item slot" aria-hidden="true"></span>'.repeat(Math.max(0,TRINKET_CAP-n))}</span></span>`:'');}
 // ================= TRO-381: act timeline cards =================
 // S.eph: one entry per played episode {r, k:'w'|'l'|'e'|'L', l0/l1 lives before/after, g gold, f foe name, fk lead foe key,
@@ -25096,7 +25118,7 @@ function heroDetail(id,level){
   const d=HERO[id],b=TBASE[d.trait];const st=heroStatsAt(id,level);const poolLine=S?`<p class="poolln">Pool: <b>${poolLeft(id)}</b> of ${poolMax(id)} copies left. ★★ takes 3 copies, ★★★ takes 6.</p>`:'';
   const range=reachLabel(id)+' · '+atkVerb(id);
   return `<div class="hs-head">${heroArt(id,'lg')}<div><div class="hs-name">${esc(d.name)} ${stars(level)}</div><div class="flav">${esc(d.flavor)}</div></div></div>${poolLine}
-    <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${gico(d.genre)} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip" title="Reach: Melee hits only from the front row; Ranged hits from either row. Codex → Combat has the rules.">${range}</span>${rowPrefChip(id)}${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for its genre from ★★':' · max ★★'}</span></div>
+    <div class="chips"><button class="chip gen g-${d.genre}" data-a="syn" data-v="${d.genre}">${gico(d.genre)} ${GENRES[d.genre].name}</button><button class="chip" data-a="syn" data-v="${d.trait}">${tsvg(d.trait)} ${TRAITS[d.trait].name}</button><span class="chip" title="Reach: Melee hits only from the front row; Ranged hits from either row. Codex → Combat has the rules.">${range}</span>${rowPrefChip(id)}${d.crowd?`<span class="chip">👥 ×${st.n}</span>`:''}<span class="chip rar tier${d.tier}">${RARITY[d.tier-1]} · 🪙${PRICE[d.tier-1]}${d.tier>=3?' · counts as 2 for its genre from ★★':legend('spinoff')||pit('spin')?' · max ★★★':' · max ★★'}</span></div>
     <div class="statrow"><span>❤️ HP<b>${R(st.hp)}${d.crowd?' each':''}</b></span><span>⚔️ ATK<b>${R(st.atk)}${d.crowd?' each':''}</b></span><span>🛡️ Armor<b>${b.arm}</b></span><span>⏱ Speed<b>${b.spd}s</b></span></div>
     <div class="lvrow"><span class="muted">${'★'.repeat(1)} / ${'★'.repeat(2)}${maxLv(id)>2?' / '+'★'.repeat(3):''}</span>${d.crowd?`<span>👥 ${starVals(id,level,s=>s.n)} bodies</span>`:`<span>❤️ ${starVals(id,level,s=>R(s.hp))}</span><span>⚔️ ${starVals(id,level,s=>R(s.atk))}</span>`}</div>
     <div class="skill"><b>${SK[d.skill].name}</b> <span class="muted">· ${b.mana} energy</span><br>${skillStars(id,level)}</div>
@@ -25157,6 +25179,7 @@ function enemyDetail(key,st){
 }
 function itemsList(){
   const rows=[];
+  if(S.pitch&&PITCHES[S.pitch]){const P=PITCHES[S.pitch];rows.push('<div class="slh ptr">Pitch <small>this run</small></div>');rows.push(`<button class="irow ptr" data-a="pitch-info"><span class="emo">${ico(LEGENDS[P.l])}</span><span><b>${esc(P.n)}</b>${esc(ptText(S.pitch))}</span></button>`);}
   const n=S.trinkets.length;
   if(lvHas('l')||S.legend){rows.push('<div class="slh leg">Legendary <small>holds 1</small></div>');const L=S.legend&&LEGENDS[S.legend];
     rows.push(L?`<button class="irow leg" data-a="legend-info"><span class="emo">${ico(L)}</span><span><b>${esc(L.name)}</b>${esc(legS(S.legend))}${L.s?'<i class="imore">Full rules ›</i>':''}</span></button>`:'<div class="irow leg sock"><span class="emo">🏆</span><span><b>No Legendary yet</b>One is offered after the Act 1, 2 and 3 bosses. Taking a new one replaces the one you hold.</span></div>');}
@@ -25356,6 +25379,8 @@ SCR.codex=()=>{
 function showPending(){
   if(!S||!S.pending.length||UI.screen==='battle'||UI.screen==='title'||UI.screen==='end')return;
   const p=S.pending[0];
+  if(p.kind==='pitch'){if(!p.choices||p.choices.some(k=>!PITCHES[k]))p.choices=ptDeal();
+    sheet(`<div class="eyebrow">Episode 1 · Level ${S.lv}</div><h3 style="color:var(--gold)">Choose your Pitch</h3><p class="muted" style="font-size:.85rem">How this season is made: one rule for the whole run, with an upside and a cost. Each Pitch points at a different plan.</p><div class="choices pitch">${p.choices.map(k=>ptCard(k,'pend')).join('')}</div>`,true);UI.pendOpen=true;return;}
   if(p.kind==='legend'){
     if(!p.choices){p.choices=legendChoices(p.win?3:2);p.rare=p.win?(trinketChoices(3,true)[0]||null):null;save();}
     if(p.rare&&(!TR[p.rare]||ilv(p.rare)>=ITEM_MAX)){p.rare=trinketChoices(3,true)[0]||null;save();}
@@ -25377,7 +25402,8 @@ function showPending(){
     <div class="row"><button class="btn ghost" data-a="pend" data-v="">Take 🪙3 instead</button>${has('prop')?`<button class="btn" data-a="item-reroll" ${S.gold>=propCost()?'':'disabled'}>🔄 New choices · 🪙${propCost()}</button>`:''}<button class="btn ghost" data-a="pend-hide">👀 See my team first</button></div>`,true);UI.pendOpen=true;
 }
 function resolvePending(v){
-  const p=S.pending.shift();if(!p)return;UI.swap=null;UI.legPeek=false;UI.armLeg=null;UI.more=null;tlAct(p.kind==='legend'?'l':'i',v||'-');
+  const p=S.pending.shift();if(!p)return;UI.swap=null;UI.legPeek=false;UI.armLeg=null;UI.more=null;tlAct(p.kind==='legend'?'l':p.kind==='pitch'?'p':'i',v||'-');
+  if(p.kind==='pitch'){S.pitch=PITCHES[v]&&(p.choices||[]).includes(v)?v:(p.choices||[])[0]||null;if(S.pitch)toast(`Pitch: ${PITCHES[S.pitch].n}`);closeSheet();save();render();return;}
   if(p.kind==='legend'){tlLog({r:S.round,k:'L',v:v||''});
     if(!v)S.gold+=3;
     else if(v.startsWith('t:')){toast(itemMsg(v.slice(2)));takeTrinket(v.slice(2));}
@@ -25448,7 +25474,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
     case 'event-sell':{const e=S.event,uid=+v,u=S.units.find(x=>x.uid===uid);if(!e||!e.sub||e.sub.kind!=='recruit'||e.subDone||!u||!benchSlots.includes(u.slot)||fresh())break;
       if(UI.armSell!==uid){UI.armSell=uid;render();break;}sell(uid);UI.armSell=null;toast(`Sold ${HERO[u.id].name}: there is room now.`);go();break;}
     case 'item-reroll':{const c=propCost();if(!has('prop')||S.gold<c)break;S.gold-=c;runStats().spend.reroll+=c;
-      const p=S.pending[0];if(UI.screen!=='event'&&p&&p.kind!=='legend'){p.rr=(p.rr|0)+1;p.choices=trinketChoices(p.level,false);save();showPending();}
+      const p=S.pending[0];if(UI.screen!=='event'&&p&&p.kind!=='legend'&&p.kind!=='pitch'){p.rr=(p.rr|0)+1;p.choices=trinketChoices(p.level,false);save();showPending();}
       else if(S.event&&S.event.sub&&S.event.sub.kind==='trinket'){S.event.sub.rr=(S.event.sub.rr|0)+1;S.event.sub.ids=trinketChoices(3,false);go();}break;}
     case 'endhero':if(!isWide()||!canHover)sheet(heroDetail(v,+(el&&el.dataset.l)||1));break;
     case 'enditem':if(!isWide()||!canHover){const b=infoBody({kind:'trinket',id:v});if(b)sheet(b);}break;
@@ -25489,6 +25515,7 @@ case 'codex-web':UI.codexQ='';UI.codexBack=UI.screen;UI.screen='codex';UI.codexT
       const g=itemSellValue(v);UI.armItem=null;sellItem(v);toast(`Sold ${TR[v].name} for 🪙${g}.`);if(UI.insp&&UI.insp.kind==='trinket')UI.insp=null;closeSheet();go();break;}
     case 'swap':{const [w,pre,id]=v.split('|');UI.swap={a:w,pre,id};UI.freshAt=Date.now();closeSheet();render();break;}
     case 'swap-back':UI.swap=null;closeSheet();render();break;
+    case 'pitch-info':if(S&&S.pitch&&PITCHES[S.pitch])sheet(ptDetail());break;
     case 'legend-info':showInfo({kind:'legend',id:v||S.legend});break;
     case 'syn':showInfo({kind:'syn',id:v});break;
     case 'combo':showInfo({kind:'combo',id:v});break;
@@ -25606,10 +25633,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.117',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.118',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.118',items:[["🎬", "The Pitch: from Level 5, every Ladder run starts with a choice of 3 Pitches, one rule for the whole run with an upside and a cost. Indie Film (a small, strong cast), Spin-off (Commons and Uncommons reach ★★★), Reshoots (cheap rerolls, no interest) and Crossover Event (easier crossovers, no Typecast)."], ["📌", "Your Pitch sits next to your Legendary in the top bar. Tap it to read it again. The Legendary it borrows from is not offered in that run."]]},
   {v:'20.117',items:[["🔊", "Every genre now has its own attack sound, abilities have their own cues, and the studio audience cheers, gasps and groans along with the fight."], ["🎚️", "Settings has volume sliders for Music, Effects and Interface. Cards you place, stars you earn and Legendaries you pick have new sounds."]]},
   {v:'20.116',items:[["💥", "New shots in the Polygon look: Army tracers, Space blasters, a Force bolt, holy water, a dream wisp, a bubbling beaker and more. Every shot flashes when it leaves and bursts its own way when it lands (bangs, splashes, shards, confetti), crits burst in gold, and heals fly a green plus."]]},
   {v:'20.115',items:[["🧾", "Texts now match the rules: a loss costs 1 life on the Ladder, Space shields last Act 1 only, Undead and Kaiju feel no fear, and Danger Close, Shock and Awe and Graveyard Shift say what they need."], ["🧠", "Echo really counters you now: it was reading an old genre table and often brought the wrong plan. It now reads the same counter web you see."], ["🔧", "Fixes: the defeat screen names the rival character that hurt you, the win line names the rival final boss, the finale warns when a loss would end your run, and no more \"mix 3 genres\" tip on a Double Feature board."]]},
@@ -25826,7 +25854,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.117',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.118',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -26022,7 +26050,7 @@ function render(){
   feel();
   if(UI.screen!=='battle'&&!UI.sheetOpen&&!peeking())showPending();
   try{tutPaint();}catch(e){}pgPaint();
-  if(peeking()){const fb=document.querySelector('#app [data-a="fight"]');if(fb){fb.innerHTML=S.pending[0].kind==='legend'?'🏆 Choose Legendary':'🎁 Choose item';fb.classList.add('peekbtn');fb.disabled=false;fb.removeAttribute('aria-disabled');}}
+  if(peeking()){const fb=document.querySelector('#app [data-a="fight"]');if(fb){fb.innerHTML=S.pending[0].kind==='pitch'?'🎬 Choose your Pitch':S.pending[0].kind==='legend'?'🏆 Choose Legendary':'🎁 Choose item';fb.classList.add('peekbtn');fb.disabled=false;fb.removeAttribute('aria-disabled');}}
 }
 function save(){tlSave();try{lateTick();}catch(e){}try{if(S&&!S.over)repairSlots();}catch(e){}try{if(S&&!S.over)localStorage.setItem(SAVE_KEY,JSON.stringify({S,screen:UI.screen==='codex'?(UI.codexBack||'plan'):UI.screen,speed:UI.speed}));}catch(e){}}
 function loadSave(){try{const j=localStorage.getItem(SAVE_KEY)||localStorage.getItem(OLD_SAVE_KEY);return j?JSON.parse(j):null;}catch(e){return null;}}
