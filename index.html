@@ -25697,10 +25697,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.121',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.122',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.122',items:[["📸", "Visit a rival in 3D: tap a rival in the Lobby and the camera swings onto their side of the arena, their figures facing you on mats in their colour, with name and stars on each. Tap a figure for its card; Q and E swing to the next rival, Esc goes back to your shop. Devices that show fights on the flat board keep the flat visit."]]},
   {v:'20.121',items:[["💬", "Hover cards: every hover text in the game is now our own card (icon, title, coloured keywords) instead of the browser's plain box. On a phone, tap."], ["🎨", "Rules read like a game now: damage, HP, shields, gold and genre names are coloured, numbers stand out, headings use the title font."]]},
   {v:'20.120',items:[["📸", "Visit a rival: tap a rival in the Lobby and their whole set fills the screen, with their figures on their board, stars, bench, genres, items, Legendary, lives, rank, last result and streak. Tap a figure for its card. Q and E switch rival, Esc goes back to your shop."]]},
   {v:'20.119',items:[["🖼️", "Fixed: the character circles in the genre panel and the rival's cast box were empty rings. They show faces again, a bit larger."]]},
@@ -25921,7 +25922,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.121',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["💬", "Hover texts are now game cards with coloured keywords, and rules are easier to scan."], ["📸", "Tap a rival in the Lobby to visit their set: their figures on their board, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.122',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["💬", "Hover texts are now game cards with coloured keywords, and rules are easier to scan."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -26956,8 +26957,9 @@ function arMat(c,o){return new TBA.THREE.MeshStandardMaterial(Object.assign({col
 function arTex(w,h,draw){const c=document.createElement('canvas');c.width=w;c.height=h;draw(c.getContext('2d'),w,h);const t=new TBA.THREE.CanvasTexture(c);t.colorSpace=TBA.THREE.SRGBColorSpace;t.anisotropy=4;return t;}
 const arNo=m=>{m.userData.outlineParameters={visible:false};return m;},arAt=(m,x,y,z)=>{m.position.set(x,y,z);return m;};
 // TRO-174: the enemy floor mats in the rival studio's colour (back to the red mats for every other fight)
+function arRvMat(id){if(!AR.mR[id]){const h=rvCol(id),c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)*.4|0);AR.mR[id]=AR.mat(`rgba(${c.join(',')},.72)`,h);}return AR.mR[id];}
 function arRvTint(){try{if(!AR.eMat||!AR.mat)return;const id=S&&S.enemy&&S.enemy.rival;let m=AR.mE0;
-  if(id&&RIVAL[id]){if(!AR.mR[id]){const h=rvCol(id),c=[1,3,5].map(i=>parseInt(h.slice(i,i+2),16)*.4|0);AR.mR[id]=AR.mat(`rgba(${c.join(',')},.72)`,h);}m=AR.mR[id];}
+  if(id&&RIVAL[id])m=arRvMat(id);
   AR.eMat.forEach(o=>{o.material=m;});}catch(e){}}
 function arFlat(geo,mat,x,y,z){const m=arNo(new TBA.THREE.Mesh(geo,mat));m.rotation.x=-Math.PI/2;m.position.set(x,y,z);return m;}
 function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Group(),TW=AR_X*4+1.3,TD=AR_Z.Ab*2+4.4,FL=-.62;
@@ -26982,8 +26984,8 @@ function arBoard(){const {THREE}=TBA,RB=TB3LIB.RoundedBoxGeometry,g=new THREE.Gr
   const mat=(fill,tape)=>M('#ffffff',{transparent:true,depthWrite:false,roughness:.9,map:arTex(256,256,(x,w,h)=>{x.fillStyle=fill;x.fillRect(10,10,w-20,h-20);x.strokeStyle='rgba(255,255,255,.08)';x.lineWidth=3;x.strokeRect(22,22,w-44,h-44);
     x.fillStyle=tape;for(const [cx,cy,sx,sy] of [[10,10,1,1],[w-10,10,-1,1],[10,h-10,1,-1],[w-10,h-10,-1,-1]]){x.fillRect(cx,cy,sx*62,sy*14);x.fillRect(cx,cy,sx*14,sy*62);}})});
   const mA=mat('rgba(44,58,92,.62)','#5aa9ff'),mE=mat('rgba(92,36,52,.62)','#ff4d5e');
-  AR.eMat=[];AR.mE0=mE;AR.mat=mat;AR.mR={};
-  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<4;c++){const w=arWorld(k+c),o=arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z);g.add(o);if(k[0]==='E')AR.eMat.push(o);}
+  AR.eMat=[];AR.aMat=[];AR.mE0=mE;AR.mat=mat;AR.mR={};
+  for(const k of ['Eb','Ef','Af','Ab'])for(let c=0;c<4;c++){const w=arWorld(k+c),o=arFlat(new THREE.PlaneGeometry(AR_X-.25,3.05),k[0]==='A'?mA:mE,w.x,.012,w.z);g.add(o);(k[0]==='E'?AR.eMat:AR.aMat).push(o);}
   // clash line: red-and-white tape
   const ct=arTex(512,32,(x,w,h)=>{for(let i=0;i<16;i++){x.fillStyle=i%2?'#f3eee4':'#e8303f';x.fillRect(i*32,0,32,h);}});
   g.add(arFlat(new THREE.PlaneGeometry(AR_X*4+.8,.3),M('#ffffff',{map:ct,emissive:'#ff2d40',emissiveIntensity:.25}),0,.016,0));
@@ -29189,7 +29191,7 @@ function rvvHTML(){const sc=scoutSnap(),x=sc&&sc.rv.find(v=>v.id===RVV.id);if(!x
     return top+left+mid+right+foot;});}
 function rvvPaint(){const el=document.getElementById('rvv');if(!el||!RVV.id)return;const a=document.activeElement,k=a&&a.dataset?a.dataset.a+'|'+a.dataset.v:'';
   el.style.setProperty('--rvc',rvCol(RVV.id));el.classList.toggle('sh',!rvvLit(RVV.id));el.setAttribute('aria-label',scoutWho(RVV.id).name+"'s set");el.innerHTML=rvvHTML();
-  const b=k&&[...el.querySelectorAll('[data-a]')].find(x=>x.dataset.a+'|'+x.dataset.v===k);(b||el.querySelector('.rvvtab.on')||el.querySelector('.rvvx')).focus({preventScroll:true});}
+  const b=k&&[...el.querySelectorAll('[data-a]')].find(x=>x.dataset.a+'|'+x.dataset.v===k);(b||el.querySelector('.rvvtab.on')||el.querySelector('.rvvx')).focus({preventScroll:true});rv3Sync();}
 function rvvOpen(id){if(!S||!S.lobby)return false;const sc=scoutSnap();if(!sc||!sc.rv.length)return false;
   const L=rvvOrder(),x=L.find(v=>v.id===id)||L.find(v=>S.enemy&&v.id===S.enemy.rival&&!v.out)||L.find(v=>!v.out)||L[0];
   if(RVV.id!==x.id)RVV.u=null;RVV.id=x.id;UI.scoutSel=x.id;if(UI.sheetOpen&&UI.sheetOpen!=='modal')closeSheet();
@@ -29197,7 +29199,7 @@ function rvvOpen(id){if(!S||!S.lobby)return false;const sc=scoutSnap();if(!sc||!
   rvvPaint();return true;}
 function rvvUnit(slot){RVV.u=slot||null;rvvPaint();}
 function rvvStep(d){const L=rvvOrder();if(!L.length)return;const i=Math.max(0,L.findIndex(v=>v.id===RVV.id));rvvOpen(L[(i+d+L.length)%L.length].id);}
-function rvvClose(){const el=document.getElementById('rvv');if(el)el.remove();document.body.classList.remove('rvv-on');RVV.id=null;RVV.u=null;
+function rvvClose(){rv3Close();const el=document.getElementById('rvv');if(el)el.remove();document.body.classList.remove('rvv-on');RVV.id=null;RVV.u=null;
   const f=RVV.foc;RVV.foc=null;if(f&&f.isConnected&&f.focus)try{f.focus({preventScroll:true});}catch(e){}}
 (function(){if(typeof window==='undefined'||!window.addEventListener)return;
   // while a visit is open it owns the keyboard: no shop hotkey (Space = FIGHT, D = reroll ...) reaches the game behind it
@@ -29210,6 +29212,88 @@ function rvvClose(){const el=document.getElementById('rvv');if(el)el.remove();do
       const i=fs.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();fs[fs.length-1].focus();}else if(!e.shiftKey&&(i<0||i===fs.length-1)){e.preventDefault();fs[0].focus();}}},true);
   // a new screen (run ended, page restored) closes a visit left open
   const rd0=render;globalThis.render=function(){const x=rd0.apply(this,arguments);try{if(RVV.id&&UI.screen!=='plan'&&UI.screen!=='event')rvvClose();}catch(e){}return x;};})();
+// ================= TRO-386 Rival visit in the 3D arena (UI pass 4b; spike docs/design/rival-visit-spike.md) =================
+// Where fights use the 3D arena, the visit's board is the arena itself: the rival's fielded characters as toys facing
+// you (front row nearest you, as an enemy team stands), near mats in the rival's colour, a 0.9 s camera swing on entry
+// (0.6 s from the side on Q/E), the 4a tags pinned over each toy. Toys are built one per frame, the other rivals' ahead
+// of a Q/E and kept until you leave (then disposed). Slow device: same steps as fights, then the flat 4a board.
+const RV3={warm:[],on:false,dead:false,raf:0,id:null,sets:{},t0:0,sw:900,az:.55,de:24,last:0,ema:0,nf:0,built:0,pb:0,fit:0,mats:null,vw:0,vh:0};
+function rv3Ok(){try{if(RV3.dead||SET.arena===false||RM||typeof document==='undefined'||UI.screen==='battle'||AR.f)return false;
+  if(!TBA.tried)tbaInit();return !!(TBA.on&&arInit()&&!AR.dead);}catch(e){return false;}}
+function rv3Units(id){const sc=scoutSnap(),x=sc&&sc.rv.find(v=>v.id===id);if(!x||x.out)return [];
+  const st=Object.assign({rules:[],units:[],trinkets:[],tlv:{},legend:null,lives:0,rank:1},x.st);
+  return scoutWith(st,()=>fielded()).filter(u=>/^[fb]\d$/.test(u.slot)&&HERO[u.id]);}
+function rv3Set(id){const us=rv3Units(id),sig=us.map(u=>u.id+':'+u.level+':'+u.slot).join(',');let s=RV3.sets[id];
+  if(s&&s.sig!==sig){rv3Drop(s);s=null;}return s||(RV3.sets[id]={sig,toys:[],todo:us.slice()});}
+function rv3Drop(s){s.toys.forEach(T=>arDispose(T.root));s.toys=[];s.todo=[];}
+function rv3Build(s,h,show){const d=HERO[h.id];if(!d)return;const el={classList:{add(){},remove(){},toggle(){},contains(){return false;}}};
+  const u={side:'A',id:h.id,level:h.level,art:h.id,row:'front',col:+h.slot[1],wide:twoSlot(h.id),crowd:!!d.crowd,alive:true,el};
+  let T=null;try{T=arToy(u);}catch(e){}const i=AR.toys.indexOf(T);if(i>=0)AR.toys.splice(i,1);if(!T)return;
+  const w=arWorld((h.slot[0]==='f'?'Ab':'Af')+h.slot[1]);T.root.position.set(w.x+(u.wide?AR_X/2:0),.05,w.z);T.root.rotation.y=0;T.root.updateMatrixWorld(true);
+  T.top=new TBA.THREE.Box3().setFromObject(T.body).max.y-.05;T.slot=h.slot;T.wide=u.wide;try{T.anim=idcK(u,T);}catch(e){T.anim='idle';}
+  // a toy built ahead is drawn once at near-zero size, so its upload to the GPU happens now and not on the Q/E frame
+  T.root.visible=true;T.root.scale.setScalar(show?.01:1e-4);if(!show)RV3.warm.push(T);T.born=performance.now();s.toys.push(T);RV3.built=1;}
+// the next rival to build ahead (after the one on screen, nearest in the Q/E order first)
+function rv3Ahead(){const L=rvvOrder().filter(v=>!v.out).map(v=>v.id),i=L.indexOf(RV3.id);
+  for(let k=1;k<L.length;k++)for(const j of [i+k,i-k]){const id=L[(j%L.length+L.length)%L.length];if(id===RV3.id)continue;const s=rv3Set(id);if(s.todo.length)return s;}return null;}
+function rv3Rect(){const b=document.querySelector('#rvv .rvvfl')||document.querySelector('#rvv .rvvb')||document.getElementById('rvv');return b?b.getBoundingClientRect():null;}
+// frame the near half of the table inside the board's box; the picture still runs to the screen edges (view offset)
+function rv3Frame(el,az,r){const {THREE}=TBA,cam=AR.cam,v=new THREE.Vector3(),W=Math.max(1,r.width),H=Math.max(1,r.height);cam.clearViewOffset();cam.aspect=W/H;
+  const pts=[];for(const k of ['Af','Ab'])for(const c of [0,3]){const w=arWorld(k+c);for(const y of [0,3.1])pts.push(new THREE.Vector3(w.x+(c?.55:-.55)*AR_X,y,w.z+(k==='Ab'?1.6:-1.6)));}
+  let D=30,tz=3.8;for(let it=0;it<14;it++){cam.position.set(Math.sin(az)*D*Math.cos(el),D*Math.sin(el),tz+Math.cos(az)*D*Math.cos(el));cam.lookAt(0,.6,tz);cam.updateProjectionMatrix();cam.updateMatrixWorld();
+    let x0=9,x1=-9,y0=9,y1=-9;for(const q of pts){v.copy(q).project(cam);x0=Math.min(x0,v.x);x1=Math.max(x1,v.x);y0=Math.min(y0,v.y);y1=Math.max(y1,v.y);}
+    D*=Math.max((x1-x0)/(W<H?2.04:1.94),(y1-y0)/1.72);tz-=(y1+y0)/2*D*Math.tan(cam.fov*Math.PI/360)/Math.sin(el)*.8;}
+  cam.setViewOffset(W,H,-r.left,-r.top,innerWidth,innerHeight);cam.updateProjectionMatrix();cam.updateMatrixWorld();}
+// the 4a tags (name + stars, click = card) follow their toy; the button box covers the toy so the figure is clickable
+function rv3Labels(r){const el=document.getElementById('rvv'),s=RV3.sets[RV3.id];if(!el||!r)return;const {THREE}=TBA,v=new THREE.Vector3(),vw=innerWidth,vh=innerHeight,by={};
+  if(s)s.toys.forEach(T=>{by[T.slot]=T;});
+  el.querySelectorAll('.rvvfl .rvq[data-v]').forEach(b=>{const T=by[b.dataset.v];if(!T||!T.root.visible||T.root.scale.x<.3){if(b._rv3!=='h'){b._rv3='h';b.style.visibility='hidden';}return;}
+    const p=T.root.position,sc=T.root.scale.x;v.set(p.x,p.y,p.z).project(AR.cam);const x=(v.x+1)/2*vw,y=(1-v.y)/2*vh;
+    v.set(p.x,p.y+T.top*sc+.15,p.z).project(AR.cam);const ty=(1-v.y)/2*vh;v.set(p.x+AR_X*(T.wide?.86:.4),p.y,p.z).project(AR.cam);const w=Math.max(30,Math.abs((v.x+1)/2*vw-x)*2);
+    // write only what changed: once the swing settles the tags stand still and the overlay is not repainted
+    const k=(y<r.top||ty>r.bottom?'h':'v')+w.toFixed(0)+','+Math.max(24,y-ty).toFixed(0)+','+(x-w/2).toFixed(0)+','+ty.toFixed(0);if(b._rv3===k)return;b._rv3=k;
+    b.style.visibility=k[0]==='h'?'hidden':'visible';b.style.width=w.toFixed(0)+'px';b.style.height=Math.max(24,y-ty).toFixed(0)+'px';
+    b.style.transform=`translate(${(x-w/2).toFixed(0)}px,${ty.toFixed(0)}px)`;});}
+function rv3Loop(now){RV3.raf=0;if(!RV3.on)return;
+  if(UI.screen==='battle'||AR.f||!document.getElementById('rvv')){rv3Close();return;}
+  try{const gap=RV3.last?now-RV3.last:16;RV3.last=now;if(!RV3.t0)RV3.t0=now; // the swing starts on the first drawn frame (a cold open builds the 3D library first)
+AR.dt=Math.min(.1,gap/1000);
+    // too slow: sharper pixels go first, then the ink outlines, then the flat board (frames that built a toy don't count)
+    if(!AR.keep&&!document.hidden&&gap<1000&&!RV3.built){RV3.ema=RV3.nf?RV3.ema*.92+gap*.08:gap;if(++RV3.nf>45&&RV3.ema>50){RV3.nf=0;
+      if(AR.q<1&&AR.R.getPixelRatio()>1){AR.q=1;AR.R.setPixelRatio(1);RV3.vw=0;}else if(AR.q<2)AR.q=2;else{RV3.dead=true;rv3Close();rvvPaint();return;}}}
+    RV3.built=0;const vw=innerWidth,vh=innerHeight;
+    if(RV3.vw!==vw||RV3.vh!==vh){RV3.vw=vw;RV3.vh=vh;AR.cv.style.width=vw+'px';AR.cv.style.height=vh+'px';AR.R.setSize(vw,vh,false);RV3.fit=0;}
+    const s=RV3.sets[RV3.id];
+    if(s&&s.todo.length)rv3Build(s,s.todo.shift(),true);else if(now-RV3.t0>RV3.sw&&now-RV3.pb>120){RV3.pb=now;const o=rv3Ahead();if(o)rv3Build(o,o.todo.shift(),false);}
+    const r=rv3Rect();
+    if(r&&r.width>10&&r.height>10){const k=Math.min(1,(now-RV3.t0)/RV3.sw),e=1-Math.pow(1-k,3),asp=r.width/r.height,el1=asp<1?30:36; // tall phone boxes are width-bound: a lower camera makes the toys bigger, not a steeper one
+     
+      rv3Frame((el1+RV3.de*(1-e))*Math.PI/180,RV3.az*(1-e),r);if(k>=1&&!RV3.fit){RV3.fit=1;try{arsFit();}catch(e){}}}
+    const {lib}=TBA;
+    if(s)for(const T of s.toys){if(!T.root.visible)continue;const em=lib.EMOTES[T.anim]||lib.EMOTES.idle;
+      if(em){const t=em._idle?now/1000*idcRate(T.ph)+T.ph*em.dur:(now/1000)%em.dur;T.figs.forEach((F,i)=>{const ps=lib.sampleEmote(em,t+i*em.dur*.37);F.fig.position.y=lib.poseFigure(F.fig,ps,1,em.rel);});}
+      const g=(now-T.born)/340;T.root.scale.setScalar(g>=1?1:Math.max(.01,(1-Math.pow(1-Math.max(0,g),3))*(1+.14*Math.sin(Math.max(0,g)*Math.PI))));}
+    try{arsFrame(now);}catch(e){}
+    rv3Labels(r);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);
+    const cur=RV3.sets[RV3.id];RV3.warm.forEach(T=>{if(!cur||!cur.toys.includes(T)){T.root.visible=false;T.root.scale.setScalar(1);}});RV3.warm=[];}
+  catch(e){RV3.dead=true;rv3Close();try{rvvPaint();}catch(_){}return;}
+  RV3.raf=requestAnimationFrame(rv3Loop);}
+function rv3Sync(){const el=document.getElementById('rvv');if(!el||!RVV.id){rv3Close();return;}
+  if(!rv3Ok()){rv3Close();el.classList.remove('r3d');return;}
+  el.classList.add('r3d');
+  if(!RV3.on){if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}Object.assign(RV3,{on:true,id:null,last:0,nf:0,ema:0,vw:0,vh:0,pb:0});
+    try{arsFight();}catch(e){}AR.cv.classList.add('rvv3d');document.body.appendChild(AR.cv);}
+  if(RV3.id!==RVV.id){const prev=RV3.id,L=rvvOrder().map(v=>v.id),now=performance.now();
+    if(prev&&RV3.sets[prev])RV3.sets[prev].toys.forEach(T=>{T.root.visible=false;});
+    RV3.id=RVV.id;const s=rv3Set(RVV.id);s.toys.forEach(T=>{T.root.visible=true;T.born=now-120;});
+    if(AR.aMat&&AR.mat){if(!RV3.mats)RV3.mats=AR.aMat.map(o=>o.material);const m=arRvMat(RVV.id);AR.aMat.forEach(o=>{o.material=m;});}
+    AR.cv.style.setProperty('--rvc',rvCol(RVV.id));RV3.t0=0;RV3.fit=0;
+    if(prev){RV3.sw=600;RV3.az=.3*(L.indexOf(RVV.id)<L.indexOf(prev)?-1:1);RV3.de=8;}else{RV3.sw=900;RV3.az=.55;RV3.de=24;}}
+  rv3Labels(rv3Rect());if(!RV3.raf)RV3.raf=requestAnimationFrame(rv3Loop);}
+function rv3Close(){if(RV3.raf){cancelAnimationFrame(RV3.raf);RV3.raf=0;}if(!RV3.on&&!RV3.mats)return;RV3.on=false;
+  Object.values(RV3.sets).forEach(rv3Drop);RV3.sets={};RV3.id=null;RV3.warm=[];
+  if(RV3.mats&&AR.aMat)AR.aMat.forEach((o,i)=>{o.material=RV3.mats[i];});RV3.mats=null;
+  try{if(AR.cam)AR.cam.clearViewOffset();if(AR.cv){AR.cv.classList.remove('rvv3d');AR.cv.style.removeProperty('--rvc');if(!AR.f&&AR.cv.parentNode)AR.cv.remove();}}catch(e){}}
 (function(){const oa0=onAction0;globalThis.onAction0=function(a,v,el){if(SCOUT_ACT[a]&&UI.sheetOpen!=='modal'){try{SCOUT_ACT[a](v,el);}catch(e){}return;}return oa0.apply(this,arguments);};})();
 (function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
   document.addEventListener('input',e=>{if(e.target&&e.target.id==='poolq'){UI.poolQ=e.target.value;poolFilter();}});
@@ -29221,6 +29305,21 @@ function rvvClose(){const el=document.getElementById('rvv');if(el)el.remove();do
     if(k==='o'&&!S.lobby)return;e.preventDefault();onAction(k==='p'?'poolview':'scout');}catch(err){}});
   const st=document.createElement('style');st.id='scoutcss';st.textContent=`
 body.rvv-on #app{visibility:hidden}
+.arena3d.rvv3d{z-index:399;background:radial-gradient(ellipse at 50% 46%,color-mix(in srgb,var(--rvc,#ff6b6b) 22%,#2a2030) 0%,#130f18 60%,#08070b 100%)}
+.rvv.r3d{background:transparent}
+.rvv.r3d .rvvh{text-shadow:0 2px 8px #000,0 0 2px #000}
+.rvv.r3d .rvvb{display:flex;flex-direction:column;align-items:stretch;justify-content:flex-end;gap:8px}
+.rvv.r3d .rvvfl{flex:1 1 auto;width:100%;min-height:0;padding:0}
+.rvv.r3d .rvvfl::before,.rvv.r3d .rvvrl,.rvv.r3d .rvq.e,.rvv.r3d .rvvfl .rvqf{display:none}
+.rvv.r3d .rvr{display:contents}
+.rvv.r3d .rvq{position:fixed;left:0;top:0;z-index:2;visibility:hidden;height:auto;will-change:transform}
+.rvv.r3d .rvq::before{left:6%;right:6%;bottom:-8px;height:24px;transform:none;border-radius:50%;background:transparent;border:0;box-shadow:none}
+.rvv.r3d .rvq:hover::before{box-shadow:0 0 0 2px rgba(255,255,255,.55)}
+.rvv.r3d .rvq.on::before{box-shadow:0 0 0 3px #ffd76a,0 0 26px 6px rgba(255,215,106,.5)}
+.rvv.r3d .rvq:focus-visible::before{box-shadow:0 0 0 3px #fff}
+.rvv.r3d .rvql{top:0;transform:translate(-50%,-100%);font-size:.74rem;padding:1px 7px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
+.rvv.r3d .rvvbn{align-self:center;background:rgba(14,11,9,.82);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 10px}
+@media (max-width:760px){.rvv.r3d .rvvb{height:max(290px,46svh)}.rvv.r3d .rvql{font-size:.6rem;padding:0 4px}}
 .rvv{--rvc:#ff6b6b;position:fixed;inset:0;z-index:400;display:grid;grid-template-columns:minmax(220px,270px) minmax(0,1fr) minmax(230px,280px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"h h h" "l b r" "x t t";gap:8px 14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
   background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--rvc) 16%,#1d1712) 0%,#0e0b09 70%);color:var(--ink,#fff);overflow:hidden}
 .rvvh{grid-area:h;text-align:center;display:grid;gap:2px;justify-items:center}
