@@ -25874,10 +25874,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.131',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.132',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.132',items:[["💃", "Victory dances: every genre has its own routine (Army drill, Bug skitter, Kaiju stomp, Heist tiptoe...) and each Legendary has a signature one. Your team dances when you win, a figure dances when it hits ★★★, and you can click a figure on your board to make it dance."]]},
   {v:'20.131',items:[["🕺", "Everyone has their own idle now: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat. No two figures on a board move in sync."]]},
   {v:'20.130',items:[["🩹", "Fixed: a dead enemy's health bar no longer stays floating on the arena after the fight."]]},
   {v:'20.129',items:[["🩹", "Fixed: the Final boss and rival hover cards showed garbled picture code instead of the genre names."]]},
@@ -26108,7 +26109,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.131',h:"character life",items:[["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat.", 1]]},
+  {d:'2026-10-23',from:'20.131',to:'20.132',h:"character life",items:[["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat.", 1], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -26622,13 +26623,13 @@ const IDU={V:{},U:{
   tanks:['shiver',-1],babykaiju:['clawflex',-1],reporter:['point',-1,'type',1],scientist:['type',-1,'stir',1],hunter:['sniff',-1],mecha:['heavy',-1],kingmonster:['heavy',1,'clawflex',1],giantmoth:['conduct',1]},
   RT:[1.0,1.4,.8,1.2]};
 function iduEm(lib){if(IDU._lib===lib)return;IDU._lib=lib;
-  const Z0={squash:0,spine:[0,0,0],neck:[0,0,0],shoulderR:[0,0,0],shoulderL:[0,0,0],elbowR:[0,0,0],elbowL:[0,0,0],flap:0,hop:0,squat:0,stepR:0,stepL:0,slide:0};
+  const Z0={spin:0,squash:0,spine:[0,0,0],neck:[0,0,0],shoulderR:[0,0,0],shoulderL:[0,0,0],elbowR:[0,0,0],elbowL:[0,0,0],flap:0,hop:0,squat:0,stepR:0,stepL:0,slide:0};
   const arm=(S,v)=>{const s=v.s||[0,0,0];return {['shoulder'+S]:[s[0],S==='R'?s[1]:-s[1],S==='R'?-s[2]:s[2]],['elbow'+S]:[v.e||0,0,0]};};
   const CH={q:'squat',sq:'squash',h:'hop',sr:'stepR',sl:'stepL',sd:'slide',fl:'flap'};
   const cv=(m,p)=>{const A=m>0?'R':'L',B=m>0?'L':'R',o=JSON.parse(JSON.stringify(Z0));
     if(p.a)Object.assign(o,arm(A,p.a));if(p.b)Object.assign(o,arm(B,p.b));
     if(p.sp)o.spine=[p.sp[0],p.sp[1]*m,p.sp[2]*m];if(p.nk)o.neck=[p.nk[0],p.nk[1]*m,p.nk[2]*m];
-    for(const k in CH)if(p[k]!==undefined)o[CH[k]]=m<0&&k==='sr'?0:p[k];if(m<0&&p.sr)o.stepL=p.sr;if(m<0&&p.sd)o.slide=-p.sd;return o;};
+    if(p.sn!==undefined)o.spin=p.sn;for(const k in CH)if(p[k]!==undefined)o[CH[k]]=p[k];if(m<0){o.stepR=p.sl||0;o.stepL=p.sr||0;if(p.sd)o.slide=-p.sd;}return o;};
   const U=(a,b)=>({a,b}); // active / other arm shorthand
   const arc=(n,f)=>Array.from({length:n},(_,i)=>f(i,n)); // n evenly spaced beats between rel t .12 and .88
   const T=(i,n)=>.12+.76*i/(n-1);
@@ -26685,7 +26686,7 @@ function iduEm(lib){if(IDU._lib===lib)return;IDU._lib=lib;
   V.yawn=[2.6,[[.14,{a:{s:[-.5,0,.1],e:-2.2},sp:[-.14,0,0],nk:[-.35,0,0],sq:-.03}],[.4,{a:{s:[-.5,0,.1],e:-2.2},sp:[-.16,0,0],nk:[-.4,0,0],sq:-.04}],[.6,{sp:[.12,0,0],nk:[.3,0,0],q:.1,sq:.04}],[.82,{}]]];
   V.stretch=[3.0,[[.14,{a:{s:[0,0,2.5],e:-.2},b:{s:[0,0,2.5],e:-.2},sp:[-.2,0,0],nk:[-.25,0,0],sq:-.05,h:.08}],[.45,{a:{s:[0,0,2.6],e:-.1},b:{s:[0,0,2.6],e:-.1},sp:[-.26,0,0],nk:[-.3,0,0],sq:-.06}],[.65,{a:{s:[0,0,.3]},b:{s:[0,0,.3]},sp:[.1,0,0],q:.15,sq:.05}],[.85,{}]]];
   V.scratch=[2.4,[[.14,{a:{s:[-.3,0,.8],e:-2.4},nk:[0,0,.15]}],...arc(5,(i,n)=>[.24+i*.08,{a:{s:[-.3,0,.8],e:-2.4+(i%2?.2:-.15)},nk:[.05,0,.15],sq:.01}]),[.82,{a:{s:[-.2,0,.3]},nk:[.1,.3,0]}]]];
-  IDU.has=id=>!!IDU.U[id];
+  IDU.cv=cv;IDU.has=id=>!!IDU.U[id];
   for(const id in IDU.U){const sp=IDU.U[id];let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;
     const keys=[],parts=[];for(let i=0;i<sp.length;i+=2)parts.push([V[sp[i]],sp[i+1]]);
     const rest=IDU.RT[h%IDU.RT.length];let total=0;parts.forEach(([v])=>total+=v[0]+rest);
@@ -26696,6 +26697,84 @@ function iduEm(lib){if(IDU._lib===lib)return;IDU._lib=lib;
       keys.push(Object.assign({t:(t0+v[0])/total},cv(m,{sq:-.015})));at=t0+v[0]+rest;});
     keys.sort((a,b)=>a.t-b.t);
     lib.EMOTES['idu_'+id]={dur:+total.toFixed(2),rel:true,_idle:1,keys};}}
+// ===== v20.132 (TRO-440 patch 2): signature dances. Visual only (keyframes on the rig channels, no rand(), no battle writes).
+// One dance per live genre (win, star-up to 3 stars, click a figure in the shop) and one per Legendary (tier 5), 5-9 s,
+// 5-8 distinct moves each: arms + legs + head + spin, built from a move library on a beat grid. Original choreography.
+// Move = [beats, [[beat, pose]...]]; pose shorthand as in idlechar.js plus sn = fraction of a full turn made in this move.
+const IDD={D:{
+  // [bpm, [[move, side]...]]
+  army:[140,[['salute',1],['march',1],['march',-1],['aboutface',1],['present',1],['stompR',1],['salute',-1]]],
+  bug:[148,[['claw',1],['skitter',1],['skitter',-1],['chitter',1],['claw',-1],['spinhop',1],['headwobble',1]]],
+  undead:[112,[['lurch',1],['headwobble',1],['rise',1],['lurch',1],['present',1]]],
+  ball:[128,[['dribble',1],['jumpshot',1],['pumpup',1],['dribble',-1],['spinhop',-1],['pointcrowd',1]]],
+  heist:[120,[['dial',1],['tiptoe',1],['dust',1],['eyes',1],['tip',1],['pointcrowd',-1]]],
+  west:[120,[['hoedown',1],['lasso',1],['fingerguns',1],['tip',1],['stompR',-1]]],
+  horror:[112,[['jitter',1],['stalk',1],['headwobble',-1],['spook',1],['jitter',-1],['spook',-1]]],
+  space:[136,[['starpoint',1],['launch',1],['hyperslide',1],['salute',-1],['starpoint',-1],['spinhop',1]]],
+  kaiju:[108,[['stompBig',1],['roar',1],['chestthump',1],['tailsway',1],['stompBig',-1],['roar',-1],['chestthump',-1]]],
+  // Legendary dances (tier 5): their own order, own tempo
+  gunny:[128,[['salute',1],['present',1],['aboutface',1],['fingerguns',1],['stompR',1],['salute',-1],['pumpup',1]]],
+  hivemind:[152,[['chitter',1],['conduct',1],['skitter',1],['headwobble',1],['claw',1],['conduct',-1],['spinhop',-1]]],
+  bonedragon:[108,[['rise',1],['roar',1],['stompBig',1],['tailsway',1],['claw',1],['roar',-1],['chestthump',1]]],
+  qb:[130,[['dribble',-1],['jumpshot',-1],['pointcrowd',1],['spinhop',1],['pumpup',-1],['fingerguns',-1],['dribble',1]]],
+  mastermind:[126,[['eyes',1],['dust',1],['conduct',1],['dial',-1],['tip',-1],['spinhop',1],['pointcrowd',1]]],
+  noname:[120,[['tip',1],['stalk',1],['fingerguns',1],['lasso',-1],['stompR',1],['tip',-1]]],
+  dreamstalker:[112,[['stalk',1],['jitter',1],['spook',1],['claw',-1],['headwobble',1],['spook',-1]]],
+  darklord:[120,[['stompBig',1],['conduct',1],['roar',1],['present',1],['launch',1],['conduct',-1],['starpoint',1]]],
+  kingmonster:[108,[['roar',1],['stompBig',1],['chestthump',1],['stompBig',-1],['tailsway',-1],['roar',-1],['spinhop',1]]]},
+  M:{}};
+function iddEm(lib){if(IDD._lib===lib)return;IDD._lib=lib;iduEm(lib);const cv=IDU.cv,M=IDD.M,alt=(n,f)=>Array.from({length:n},(_,i)=>f(i,n));
+  const A=(s,e)=>({s,e});
+  M.salute=[2,[[0,{}],[.25,{a:A([-.6,0,.9],-2.5),sp:[-.06,0,0],nk:[-.08,0,0],h:.12}],[1.3,{a:A([-.6,0,.9],-2.5),sp:[-.06,0,0]}],[1.7,{a:A([0,0,.2],-.2),q:.1}]]];
+  M.march=[4,alt(8,i=>[i*.5,{a:A([i%2?.9:-.9,0,.15],-.5),b:A([i%2?-.9:.9,0,.15],-.5),sr:i%2?0:.7,sl:i%2?.7:0,q:i%2?.05:.2,h:i%2?.12:0,sp:[.04,i%2?.12:-.12,0]}])];
+  M.aboutface=[2,[[0,{q:.3,a:A([-.4,0,.2],-1),b:A([-.4,0,.2],-1)}],[.5,{h:.5,sn:.3,a:A([0,0,.5],-2),b:A([0,0,.5],-2),sq:-.06}],[1.2,{h:.5,sn:.8,a:A([0,0,.5],-2),b:A([0,0,.5],-2)}],[1.7,{q:.4,sn:1,sq:.08,a:A([-.4,0,.2],-1),b:A([-.4,0,.2],-1)}]]];
+  M.present=[2,[[0,{a:A([-.4,0,.2],-1.2),b:A([-.4,0,.2],-1.2)}],[.4,{a:A([-1.2,0,.1],-1.4),b:A([-1.2,0,.1],-1.4),sp:[-.08,0,0],nk:[-.1,0,0],q:.1}],[1.4,{a:A([-1.2,0,.1],-1.4),b:A([-1.2,0,.1],-1.4),sp:[-.08,0,0],q:.1}]]];
+  M.stompR=[2,[[0,{}],[.25,{sr:.9,q:.5,sq:.1,a:A([-.5,0,1.1],-1.6),b:A([-.5,0,1.1],-1.6),sp:[.1,.2,0]}],[.5,{sr:0,q:.1,h:.1,a:A([0,0,.3],-.4),b:A([0,0,.3],-.4)}],[1,{sr:.9,q:.5,sq:.1,a:A([-.5,0,1.1],-1.6),b:A([-.5,0,1.1],-1.6)}],[1.4,{q:.15,sq:-.02}]]];
+  M.claw=[2,[[0,{a:A([-.5,0,.6],-.8),b:A([-.5,0,.6],-.8),fl:.2}],[.5,{a:A([-.8,0,1],-1.2),b:A([-.8,0,1],-1.2),sp:[-.12,0,0],fl:.8,sq:.05,q:.1}],[1,{a:A([-.5,0,.6],-.8),b:A([-.5,0,.6],-.8),sp:[.1,0,0],fl:.2}],[1.5,{a:A([-.8,0,1],-1.2),b:A([-.8,0,1],-1.2),sp:[-.12,0,0],fl:.8,sq:.05,q:.1}]]];
+  M.skitter=[4,alt(8,i=>[i*.5,{sd:i<4?.14*(i%2?1:.4):-.14*(i%2?1:.4),sr:i%2?.5:0,sl:i%2?0:.5,q:.3,sq:i%2?.05:-.02,a:A([-.6,0,.5],-1.2),b:A([-.6,0,.5],-1.2),sp:[.12,0,i<4?.12:-.12],nk:[0,i%2?.5:-.5,0]}])];
+  M.chitter=[2,alt(4,i=>[i*.5,{h:i%2?.2:0,q:i%2?0:.3,a:A([0,0,i%2?2:1.2],-.5),b:A([0,0,i%2?1.2:2],-.5),fl:i%2?.8:.2,sq:i%2?-.05:.06}])];
+  M.spinhop=[3,[[0,{q:.7,sq:.12,a:A([.5,0,.2],-.5),b:A([.5,0,.2],-.5)}],[.4,{h:.9,sn:.35,a:A([0,0,2.7],-.2),b:A([0,0,2.7],-.2),sq:-.1,fl:.8}],[1,{h:1,sn:.8,a:A([0,0,2.7],-.2),b:A([0,0,2.7],-.2),fl:.8}],[1.5,{q:.6,sn:1,sq:.14,a:A([0,0,1.2],-.5),b:A([0,0,1.2],-.5)}],[2.2,{a:A([0,0,2.4],-.3),b:A([0,0,.4],-1.4),q:.1,nk:[-.1,.3,0]}]]];
+  M.headwobble=[2,alt(6,i=>[i*.33,{nk:[.1,i%2?.5:-.5,i%2?.4:-.4],sp:[0,i%2?.15:-.15,0],a:A([0,0,.3],-.6),b:A([0,0,.3],-.6),q:.1,h:i%2?.06:0}])];
+  M.lurch=[4,[...alt(4,i=>[i,{a:A([-1.5,0,.1],-.1),b:A([-1.4,0,.15],-.1),sp:[.25,i%2?.2:-.2,0],nk:[.25,i%2?-.3:.3,i%2?.3:-.3],sr:i%2?0:.6,sl:i%2?.6:0,q:.2,sq:.03}]),[3.8,{a:A([-1.5,0,.1],-.1),b:A([-1.4,0,.15],-.1),sp:[.25,0,0],q:.2}]]];
+  M.rise=[2,[[0,{q:.9,sq:.12,sp:[.4,0,0],nk:[.4,0,0],a:A([.3,0,.2],-.3),b:A([.3,0,.2],-.3)}],[.8,{q:.3,sp:[.1,0,0],a:A([-1.2,0,.4],-.1),b:A([-1.2,0,.4],-.1)}],[1.3,{q:0,h:.3,sp:[-.2,0,0],nk:[-.4,0,0],a:A([0,0,2.6],-.1),b:A([0,0,2.6],-.1),sq:-.05,fl:.8}],[1.8,{a:A([0,0,2.4],-.2),b:A([0,0,2.4],-.2),sp:[-.2,0,0],nk:[-.4,0,0]}]]];
+  M.dribble=[2,alt(4,i=>[i*.5,{a:A([-.5+(i%2?.2:0),0,.2],-.8+(i%2?.3:0)),b:A([.2,0,.3],-.3),q:i%2?.12:.35,sq:i%2?-.01:.05,nk:[.25,0,0],sp:[.12,0,0],sd:i<2?.03:-.03,sr:i%2?.3:0}])];
+  M.jumpshot=[2,[[0,{q:.6,sq:.1,a:A([-1,0,.15],-1.6),b:A([-1,0,.15],-1.6),sp:[.1,0,0]}],[.5,{h:1.1,q:0,sq:-.08,a:A([-2.5,0,.1],-.3),b:A([-2.5,0,.1],-.3),sp:[-.15,0,0],nk:[-.3,0,0]}],[.9,{h:1,a:A([-2.7,0,.1],.2),b:A([-2.4,0,.1],-.3),nk:[-.3,0,0]}],[1.5,{q:.5,sq:.12,a:A([0,0,.8],-.5),b:A([0,0,.8],-.5)}]]];
+  M.pumpup=[2,alt(4,i=>[i*.5,{a:A([0,0,i%2?2.7:.5],i%2?-.1:-1.8),b:A([0,0,i%2?.5:2.7],i%2?-1.8:-.1),h:i%2?.15:0,q:i%2?0:.2,sp:[0,i%2?.15:-.15,i%2?.1:-.1],nk:[-.1,i%2?.2:-.2,0]}])];
+  M.pointcrowd=[2,[[0,{}],[.3,{a:A([-1.5,0,.9],-.1),b:A([-1.5,0,.9],-.1),nk:[0,.3,0],h:.1}],[1,{a:A([-1.5,.3,.2],-.1),b:A([-1.5,.3,.2],-.1),nk:[0,-.4,0],sp:[0,-.2,0],h:.1}],[1.6,{a:A([-.3,0,.3],-.4)}]]];
+  M.dial=[2,[[0,{a:A([-.9,0,.1],-1.35),b:A([-.3,0,.1],-.5),nk:[.22,.1,.28],q:.1}],...alt(6,i=>[.2+i*.25,{a:A([-.9,0,.1+(i%2?.2:-.1)],-1.35+(i%2?.25:-.1)),b:A([-.3,0,.1],-.5),nk:[.22,.1,.28],q:.1,sp:[.1,0,0],sr:i%2?.3:0}])]];
+  M.tiptoe=[4,alt(8,i=>[i*.5,{sd:i<4?.05*i-.1:.3-.05*i,q:.35,sr:i%2?0:.4,sl:i%2?.4:0,a:A([-.5,0,.3],-1.3),b:A([-.5,0,.3],-1.3),sp:[.18,.12,0],nk:[.1,i<4?.5:-.5,0],sq:.03}])];
+  M.dust=[2,alt(4,i=>[i*.5,{a:A([-.5,i%2?.4:-.3,.1],-1.9),b:A([-.5,i%2?-.3:.4,.1],-1.9),sp:[.1,0,0],nk:[.2,0,0],sq:i%2?.02:0,q:.1}])];
+  M.eyes=[2,[[0,{}],[.3,{a:A([-.4,0,.5],-2.4),b:A([-.4,0,.5],-2.4),sp:[.05,0,0]}],[.8,{a:A([-.4,0,.5],-2.4),b:A([-.4,0,.5],-2.4),nk:[0,.4,0]}],[1.1,{a:A([-1.5,0,.5],-.1),b:A([-1.5,0,.5],-.1),nk:[0,-.4,0],h:.1}],[1.7,{a:A([-1.5,.3,.3],-.1),b:A([-.4,0,.5],-2.4),nk:[0,.4,0]}]]];
+  M.tip=[2,[[0,{}],[.3,{a:A([-.4,0,.75],-2.4),nk:[.25,0,0],sp:[.1,0,0]}],[1,{a:A([-.4,0,.75],-2.4),nk:[.3,0,0],sp:[.1,0,0],q:.1}],[1.5,{a:A([-.3,0,.4],-1),nk:[-.1,.4,0],h:.1}]]];
+  M.hoedown=[4,alt(8,i=>[i*.5,{b:A([.3,0,.6],-2),a:A([0,0,i%2?1.3:.5],-.6),sr:i%2?.8:0,sl:i%2?0:.8,h:i%2?.2:0,q:i%2?0:.3,sp:[0,i%2?.2:-.2,i%2?.1:-.1],nk:[0,i%2?-.3:.3,0]}])];
+  M.lasso=[4,[[0,{}],...alt(8,i=>[.4+i*.4,{a:A([-2.4,i%4<2?.5:-.5,i%2?2.6:2.2],-.2),b:A([.3,0,.6],-2),nk:[-.2,0,i%2?.2:-.2],sp:[-.05,0,i%2?.1:-.1],h:i%4===3?.12:0,q:.1}])]];
+  M.fingerguns=[2,[[0,{a:A([-1.4,0,.15],-.2),b:A([-1.4,0,.15],-.2),nk:[0,.3,0]}],[.4,{a:A([-1.7,0,.15],-.2),b:A([-1.4,0,.15],-.2),sp:[-.12,0,0],nk:[0,.3,0],h:.1}],[.7,{a:A([-1.4,0,.15],-.2),b:A([-1.7,0,.15],-.2),sp:[-.12,0,0],nk:[0,-.3,0],h:.1}],[1,{a:A([-1.4,0,.15],-.2),b:A([-1.4,0,.15],-.2),sp:[.1,0,0]}],[1.4,{a:A([-1.7,0,.15],-.2),b:A([-1.7,0,.15],-.2),sp:[-.15,0,0],h:.14}]]];
+  M.jitter=[2,alt(8,i=>[i*.25,{sq:i%2?.03:-.015,sp:[.12,0,i%2?.04:-.04],a:A([0,0,.15+(i%2)*.08],-.4),b:A([0,0,.15+((i+1)%2)*.08],-.4),nk:[.1,i%4<2?.6:-.6,0],q:.15}])];
+  M.stalk=[4,[...alt(4,i=>[i,{sd:.04*(i%2?1:-1),sr:i%2?0:.5,sl:i%2?.5:0,q:.3,a:A([-.7,0,.3],-.3),b:A([-.7,0,.3],-.3),sp:[.3,0,0],nk:[.3,i%2?.3:-.3,i%2?.2:-.2]}]),[3.8,{q:.3,sp:[.3,0,0],nk:[.35,0,0],a:A([-.7,0,.3],-.3),b:A([-.7,0,.3],-.3)}]]];
+  M.spook=[2,[[0,{q:.5,sp:[.3,0,0],nk:[.3,0,0]}],[.15,{h:.3,q:0,sp:[-.3,0,0],nk:[-.5,.2,.3],a:A([0,0,1.5],-.3),b:A([0,0,1.5],-.3),sq:-.08,fl:.9}],[.9,{h:0,sp:[-.28,0,0],nk:[-.5,.2,.3],a:A([0,0,1.5],-.3),b:A([0,0,1.5],-.3),fl:.9}],[1.7,{q:.2,sp:[.1,0,0],nk:[.1,0,0]}]]];
+  M.starpoint=[2,[[0,{}],[.4,{a:A([0,0,2.3],-.1),b:A([.2,0,.6],-2),sp:[-.08,.2,.18],nk:[-.3,.3,.2],q:.1,h:.1}],[1.2,{a:A([0,.3,2.3],-.1),b:A([.2,0,.6],-2),sp:[-.08,.2,.18],nk:[-.3,.3,.2],q:.1}],[1.7,{a:A([-1,0,.3],-.3),b:A([-1,0,.3],-.3)}]]];
+  M.launch=[2,[[0,{q:1,sq:.2,sp:[.35,0,0],nk:[.2,0,0],a:A([.6,0,.2],-.3),b:A([.6,0,.2],-.3)}],[.5,{h:1.5,q:0,sq:-.12,a:A([0,0,2.7],-.1),b:A([0,0,2.7],-.1),sp:[-.15,0,0],nk:[-.3,0,0],fl:.9}],[1.1,{h:1.3,a:A([0,0,2.6],-.1),b:A([0,0,2.6],-.1),fl:.9}],[1.6,{q:.6,sq:.12,a:A([0,0,1],-.3),b:A([0,0,1],-.3)}]]];
+  M.hyperslide=[4,alt(8,i=>[i*.5,{sd:i<4?-.25+.12*i:.35-.12*i,sr:i%2?.4:0,sl:i%2?0:.4,q:.2,a:A([-.5,0,i%2?1.4:.4],-.6),b:A([-.5,0,i%2?.4:1.4],-.6),sp:[-.05,0,i<4?-.12:.12],nk:[0,i<4?.4:-.4,0],fl:.4}])];
+  M.stompBig=[2,[[0,{q:.3}],[.3,{sr:1,q:.7,sq:.16,a:A([-.6,0,1.2],-.9),b:A([-.6,0,1.2],-.9),sp:[.12,.2,0],nk:[.1,0,0],h:.2}],[.6,{sr:0,q:.25,sq:-.05,h:0}],[1.2,{sl:1,q:.7,sq:.16,a:A([-.6,0,1.2],-.9),b:A([-.6,0,1.2],-.9),sp:[.12,-.2,0],h:.2}],[1.6,{sl:0,q:.3,sq:.04}]]];
+  M.roar=[2,[[0,{q:.3,sp:[.2,0,0],nk:[.2,0,0]}],[.5,{q:0,sp:[-.35,0,0],nk:[-.55,0,0],a:A([0,0,1.7],-.5),b:A([0,0,1.7],-.5),fl:.9,sq:-.06}],[1.4,{sp:[-.38,0,0],nk:[-.6,0,0],a:A([0,0,1.8],-.5),b:A([0,0,1.8],-.5),fl:1,sq:-.07}],[1.8,{q:.3,sp:[.1,0,0],nk:[.1,0,0]}]]];
+  M.chestthump=[2,alt(4,i=>[i*.5,{a:A([-.5,0,i%2?.3:.9],i%2?-2.3:-1.1),b:A([-.5,0,i%2?.9:.3],i%2?-1.1:-2.3),sq:i%2?.06:0,q:i%2?.2:.05,nk:[i%2?.2:-.1,0,0],sp:[0,i%2?.1:-.1,0]}])];
+  M.tailsway=[2,alt(4,i=>[i*.5,{sp:[.05,0,i%2?.25:-.25],sd:i%2?.05:-.05,q:.2,a:A([0,0,.6],-.5),b:A([0,0,.6],-.5),nk:[0,i%2?-.3:.3,i%2?-.15:.15],sr:i%2?.4:0,sl:i%2?0:.4}])];
+  M.conduct=[3,[[0,{a:A([-.8,0,.4],-.6),b:A([-.8,0,.4],-.6),sp:[0,.12,0]}],[.8,{a:A([-1.3,0,1],-.3),b:A([-.5,0,.2],-1.2),sp:[0,.2,0],nk:[-.12,.2,0],fl:.5}],[1.5,{a:A([-.5,0,.2],-1.2),b:A([-1.3,0,1],-.3),sp:[0,-.2,0],nk:[-.12,-.2,0],fl:.5,h:.08}],[2.2,{a:A([-1.6,0,1.4],-.2),b:A([-1.6,0,1.4],-.2),sp:[-.1,0,0],nk:[-.2,0,0],fl:.8,h:.14}],[2.8,{a:A([-.4,0,.3],-.3),b:A([-.4,0,.3],-.3)}]]];
+  IDD.has=k=>!!IDD.D[k];
+  for(const k in IDD.D){const [bpm,seq]=IDD.D[k],bt=60/bpm;let total=0;seq.forEach(([n])=>total+=M[n][0]);
+    const keys=[Object.assign({t:0},cv(1,{sn:0}))];let at=0,turns=0;
+    for(const [n,m] of seq){const [len,ks]=M[n];let last=turns;
+      for(const [b,p] of ks){const q=Object.assign({},p);if(q.sn!==undefined){q.sn=turns+q.sn;last=q.sn;}else q.sn=last;keys.push(Object.assign({t:(at+b)/total},cv(m,q)));}
+      turns=Math.round(last);at+=len;}
+    keys.sort((a,b)=>a.t-b.t);keys.push(Object.assign({t:1},cv(1,{sn:turns})));
+    lib.EMOTES['idd_'+k]={dur:+(total*bt).toFixed(2),rel:true,keys};}}
+// the dance a character owns: Legendary id > genre > none
+function iddKey(id){try{const lib=TBA.lib;if(!lib)return '';iddEm(lib);const h=HERO[id];if(!h)return '';return IDD.D[id]?'idd_'+id:IDD.D[h.genre]?'idd_'+h.genre:'';}catch(e){return '';}}
+// click a board / bench / card toy in the shop: it dances (any figure with a dance; not while one is playing)
+if(typeof document!=='undefined'&&document.addEventListener)document.addEventListener('click',ev=>{try{
+  const r=ev.target&&ev.target.closest&&ev.target.closest('.slot[data-v],.scard'),c=r&&r.querySelector('canvas.toylive');if(!c||!c._k||RM)return;
+  const p=tbaParse(c._k);if(!p||p.foe||!HERO[p.id])return;const k=iddKey(p.id);if(!k)return;const now=performance.now(),a=c._an;
+  if(a&&TBA.lib.EMOTES[a.k]&&now-a.t0<TBA.lib.EMOTES[a.k].dur*1000)return;c._an={k,t0:now};}catch(e){}},true);
 function idcEm(lib){iduEm(lib);const E=lib.EMOTES;if(E.idSway)return;
   const Z={squash:0,spine:[0,0,0],neck:[0,0,0],shoulderR:[0,0,0],shoulderL:[0,0,0],elbowR:[0,0,0],elbowL:[0,0,0],flap:0,hop:0,squat:0,stepR:0,stepL:0,slide:0};
   const L=(dur,keys)=>({dur,rel:true,_idle:1,keys:keys.map(k=>Object.assign({},Z,k))});
@@ -26902,7 +26981,7 @@ function anState(u,T,now,sp){if(RM)return null;anToy(u,T,now);
   if(u.hp<u.maxHp*.25){if(!u._anLo){u._anLo=1;ANM.n.lo++;}ANM.t0=T.born;ANM.s=1;return 'slump';}
   return null;}
 // victory: a pose per character (stable per id; two different characters on one side never share one while any is free)
-function anWin(u){if(u._anWB===B&&u._anW)return u._anW;const k=u.art||u.name,list=u.side==='A'?TBA_WIN:TBA_FOE;if(ANM.wB!==B){ANM.wB=B;ANM.wm.clear();ANM.wu.A.length=0;ANM.wu.E.length=0;}
+function anWin(u){if(u._anWB===B&&u._anW)return u._anW;if(u.side==='A'&&!u.summon){const dk=iddKey(u.id);if(dk){u._anW=dk;u._anWB=B;return dk;}}const k=u.art||u.name,list=u.side==='A'?TBA_WIN:TBA_FOE;if(ANM.wB!==B){ANM.wB=B;ANM.wm.clear();ANM.wu.A.length=0;ANM.wu.E.length=0;}
   const p=tbaParse(k),id=p?p.id:String(k),key=u.side+':'+id;let v=ANM.wm.get(key);
   if(!v){let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;const used=ANM.wu[u.side==='A'?'A':'E'];
     for(let i=0;i<list.length;i++){const c=list[(h+i)%list.length];if(used.indexOf(c)<0||used.length>=list.length){v=c;break;}}used.push(v);ANM.wm.set(key,v);ANM.n.win++;}
@@ -26941,7 +27020,7 @@ function anHit(src,t,d,type){const now=performance.now(),sp=B.speed||1,crit=!!((
 // ---------------- live shop toys ----------------
 function anShopOn(){return !RM&&typeof document!=='undefined'&&typeof S!=='undefined'&&!!S;}
 function anLvMark(c,img){try{c._dn=-1;if(!anShopOn())return;const sl=img.closest&&img.closest('.slot[data-v]');if(!sl)return;c._dn=0;const u=unitAt(sl.dataset.v);if(!u)return;const now=performance.now();
-  if(ANM.mg&&ANM.mg.uid===u.uid&&now-ANM.mg.t<4000){c._an={k:'starup',t0:now};ANM.mg=null;ANM.n.star++;anBurst(sl,u.level);}
+  if(ANM.mg&&ANM.mg.uid===u.uid&&now-ANM.mg.t<4000){c._an={k:(u.level>=3&&iddKey(u.id))||'starup',t0:now};ANM.mg=null;ANM.n.star++;anBurst(sl,u.level);}
   else if(ANM.pop&&ANM.pop.uid===u.uid&&now-ANM.pop.t<4000){c._an={k:'buyhop',t0:now};ANM.pop=null;ANM.n.buy++;}}catch(e){}}
 function anBurst(sl,lv){const b=document.createElement('i');b.className='anburst'+(lv>=3?' l3':'');b.setAttribute('aria-hidden','true');b.innerHTML='<b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b>';sl.appendChild(b);setTimeout(()=>b.remove(),1000);}
 function anLvPose(c,f,wave,now){const lib=TBA.lib,ms=now*1000;let e=null,t=0,k=1,a=c._an;
