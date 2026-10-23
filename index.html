@@ -20900,7 +20900,7 @@ function pack(g) {
   }
   addGlow(out); return out;
 }
-const addGlow = g => g.traverse(m => { if (m.isMesh && m.material.isMeshBasicMaterial && m.material.transparent) m.material.blending = THREE.AdditiveBlending; });
+const addGlow = g => g.traverse(m => { if (m.isMesh && m.material.isMeshBasicMaterial && m.material.transparent) m.material.blending = 2; });
 
 B.$proj = function (kind, color) {
   const f = P[kind]; if (!f) return null;
@@ -23419,7 +23419,7 @@ function abFeed(u){const f=document.getElementById('field');if(!f||!SK[u.skill])
 // and a short screen dim + hit-stop at 1x/2x (the old cut-in).
 function abBanner(u){const f=document.getElementById('field');if(!f||!SK[u.skill])return;let w=document.querySelector('body>.abstack');
   if(!w){w=document.createElement('div');w.className='abstack';w.setAttribute('aria-hidden','true');document.body.appendChild(w);}
-  const fr=f.getBoundingClientRect(),q=document.getElementById('bbq'),bot=q&&q.offsetParent?q.getBoundingClientRect().bottom:fr.bottom; // below the board: over the battle bench strip when shown
+  const fr=f.getBoundingClientRect(),q=document.getElementById('bbq'),bot=q&&q.offsetParent&&innerWidth>560?q.getBoundingClientRect().bottom:fr.bottom; // below the board: over the battle bench strip when shown
   Object.assign(w.style,{left:Math.round(fr.left)+'px',top:Math.round(fr.top)+'px',width:Math.round(fr.width)+'px',height:Math.round(bot-fr.top)+'px'});
   const sp=B.speed||1,big=(u.side==='A'&&!u.summon&&HERO[u.id]&&HERO[u.id].tier>=3)||(u.side==='E'&&!!u.boss);
   const it=document.createElement('div');it.className='abb'+(big?' big':'')+' '+(u.side==='E'?'foe g-foe':'g-'+(u.genre||'foe'));
@@ -24139,6 +24139,12 @@ function recapHTML(){if(!B||!B.units)return '';
   const ln=(c,v)=>`<div class="rcl ${c}${v<1?' z':''}"><s><i style="--w:${(v/mx*100).toFixed(1)}%"></i></s><b>${v<1?'–':R(v)}</b></div>`;
   return `<div class="rcap"><div class="rch">Fight recap <span class="rcd">dealt</span><span class="rct">taken</span><span class="rch2">healed + shielded</span></div><div class="rcg">${rows.map((o,i)=>{const u=o.u;
     return `<div class="rc${o===top?' mvp':''}${u.alive===false?' ko':''}" style="--i:${i}" title="${esc(u.name)}: ${R(o.d)} damage dealt, ${R(o.t)} taken, ${R(o.h)} healed + shielded${u.alive===false?' (knocked out)':''}">${o===top?'<span class="crown" aria-label="MVP">👑</span>':''}${o.sum?pt({e:u.e,genre:'foe'}):rcPt(u)}<div class="rcb"><div class="rcn">${esc(u.name)}${u.level>1?' '+'★'.repeat(u.level):''}</div>${ln('rcd',o.d)}${ln('rct',o.t)}${ln('rch2',o.h)}</div></div>`;}).join('')}</div></div>`;}
+// TRO-452: with the 3D arena the recap panel lies over the bench strip under the board (nothing fights there), so the
+// win dance of your whole team stays visible
+function resPlace(f){const ov=f.querySelector('.overlay.resbar'),q=document.getElementById('bbq');
+  if(!ov||!q||!q.offsetParent||!document.documentElement.classList.contains('ar3d'))return;
+  const fr=f.getBoundingClientRect(),qr=q.getBoundingClientRect();if(qr.height<50||qr.top<fr.bottom-30)return;
+  ov.style.bottom=Math.round(fr.bottom-qr.bottom+4)+'px';}
 function showResult(){
   document.querySelectorAll('#field .unit.dead .hpb,#field .unit.dead .mpb').forEach(b=>b.remove());
   FR=null;if(S)delete S.inFight;
@@ -24161,6 +24167,7 @@ function showResult(){
   const btn=S.over?(S.result==='win'?'See the ending':'See the run'):'Continue';
   const rvA=rvBeat&&RIVAL[rvBeat]&&(res.win||rvKnown(rvBeat))&&typeof RB!=='undefined'&&RB.CARDS&&RB.CARDS[rvBeat]?RB.CARDS[rvBeat].algo:'';
   f.insertAdjacentHTML('beforeend',`<div class="overlay resbar"><div class="ov${res.win?'':' lose'}" role="status">${body}${rvResLine(rvBeat,rvLead,res.win)}${rvA?`<p class="muted rvalgo">${RIVAL[rvBeat].e} ${esc(RIVAL[rvBeat].name)} plays by: <b>${esc(rvA)}</b>${rvWhyOK()?` · <button class="lnk" data-a="rvwhy">Why did ${esc(RIVAL[rvBeat].name)} do that?</button>`:''}</p>`:''}<div class="ovbtns"><button class="btn primary" data-a="after-fight">${btn}</button>${UI.foeTeam?`<button class="btn ghost" data-a="foeteam">🔭 See their team${DESK?'<span class="kh">V</span>':''}</button>`:''}</div>${rcap}</div></div>`);
+  try{resPlace(f);}catch(e){}
   const b=f.querySelector('.overlay [data-a="after-fight"]');if(b)b.focus();
   try{if(res.win&&rvBeat&&RIVAL[rvBeat])rvuWon(rvBeat);}catch(e){}
 }
@@ -25877,7 +25884,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.142',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.143',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -26120,7 +26127,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.142',h:"character life",items:[["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Shop cards you already own glow and hop (2/3 shows how close a ★★ is), and events take the whole screen: Hide (Tab) shows your team and the shop while the event waits."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.143',h:"character life",items:[["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Shop cards you already own glow and hop (2/3 shows how close a ★★ is), and events take the whole screen: Hide (Tab) shows your team and the shop while the event waits."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -27721,14 +27728,14 @@ function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelecto
   AR.H=H;cam.clearViewOffset();cam.aspect=W/Math.max(1,H);
   const pts=[],v=new THREE.Vector3();for(const k of ['Eb','Ab'])for(const c of [0,3]){const w=arWorld(k+c);for(const y of [0,3.1])pts.push(new THREE.Vector3(w.x+(c?.5:-.5)*AR_X,y,w.z+(k==='Ab'?1.5:-1.5)));}
   // wide screens: a low view across the table; tall phone screens look down more steeply so the board fills them
-  const asp=W/Math.max(1,H),el=Math.max(42,Math.min(56,42+(1.25-asp)*30))*Math.PI/180;let D=40,tz=0;
+  const asp=W/Math.max(1,H),el=(asp<.8?66:Math.max(42,Math.min(56,42+(1.25-asp)*30)))*Math.PI/180;let D=40,tz=0;
   for(let it=0;it<14;it++){cam.position.set(0,D*Math.sin(el),tz+D*Math.cos(el));cam.lookAt(0,0,tz);cam.updateProjectionMatrix();cam.updateMatrixWorld();
     let x0=9,x1=-9,y0=9,y1=-9;for(const p of pts){v.copy(p).project(cam);x0=Math.min(x0,v.x);x1=Math.max(x1,v.x);y0=Math.min(y0,v.y);y1=Math.max(y1,v.y);}
     D*=Math.max((x1-x0)/1.98,(y1-y0)/1.9);tz-=(y1+y0)/2*D*Math.tan(cam.fov*Math.PI/360)/Math.sin(el)*.8;}
   const fr=f.getBoundingClientRect(),scr=(x,y,z)=>{v.set(x,y,z).project(cam);return {x:(v.x+1)/2*W,y:(1-v.y)/2*H-top};};
   for(const s of slots){const k=s.dataset.k;if(!k)continue;const w=arWorld(k),r=s.getBoundingClientRect(),a=scr(w.x,.05,w.z),l=scr(w.x-AR_X*.4,.05,w.z),q=scr(w.x+AR_X*.4,.05,w.z);
     const sx=r.left-fr.left,sy=r.top-fr.top,sc=Math.max(.5,Math.min(1.2,(q.x-l.x)/Math.max(1,r.width)));
-    s.style.transformOrigin='50% 100%';s.style.transform=`translate(${(a.x-(sx+r.width/2)).toFixed(1)}px,${(a.y+18-(sy+r.height)).toFixed(1)}px) scale(${sc.toFixed(3)})`;}
+    s._sc=sc;s.style.transformOrigin='50% 100%';s.style.transform=`translate(${(a.x-(sx+r.width/2)).toFixed(1)}px,${(a.y+18-(sy+r.height)).toFixed(1)}px) scale(${sc.toFixed(3)})`;}
   if(typeof B!=='undefined'&&B&&B.units)B.units.forEach(u=>{if(u.wide&&u.el&&u.el.parentNode)wideSize(u);});
   arView(true);try{arBench3Z();}catch(e){}arGlideTo();}
 // v19.56: the canvas covers the whole window; the camera still frames the board in the field's box (a view offset
@@ -27738,7 +27745,7 @@ function arView(force){const f=AR.f;if(!f)return;const r=f.getBoundingClientRect
   AR.cv.style.width=vw+'px';AR.cv.style.height=vh+'px';AR.R.setSize(vw,vh,false);AR.cam.setViewOffset(AR.W,AR.H,-x,-y,vw,vh);try{arsFit();}catch(e){}}
 function arDispose(o){AR.scene.remove(o);if(o.userData&&o.userData.fxO){o.userData.fxO.forEach(q=>q.dispose());o.userData.fxO=null;}o.traverse(x=>{if(x.geometry)x.geometry.dispose();const m=x.material;if(m)(Array.isArray(m)?m:[m]).forEach(q=>{if(q.map)q.map.dispose();q.dispose();});});}
 function arClear(){anClear();skcClear();if(AR.bt&&AR.bt.length){AR.bt.forEach(T=>{try{arDispose(T.root);}catch(e){}});if(SH3.bm&&SH3.bm.parent)SH3.bm.parent.remove(SH3.bm);SH3.bm&&SH3.bm.position.set(0,0,0);}AR.bt=[];document.documentElement.classList.remove('b3');AR.toys.forEach(T=>arDispose(T.root));AR.toys=[];AR.proj.forEach(arPjDrop);AR.proj=[];(AR.pfx||[]).forEach(F=>AR.scene.remove(F.g));AR.pfx=[];}
-function arOff(){if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}if(!AR.f)return;const f=AR.f;AR.f=null;
+function arOff(){document.documentElement.classList.remove('glide');if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}if(!AR.f)return;const f=AR.f;AR.f=null;
   try{f.classList.remove('arena');f.querySelectorAll('.bslot').forEach(s=>{s.style.transform='';});f.querySelectorAll('.unit.t3d').forEach(e=>e.classList.remove('t3d'));if(AR.cv&&AR.cv.parentNode)AR.cv.remove();document.documentElement.classList.remove('ar3d');}catch(e){}
   if(typeof B!=='undefined'&&B&&B.units)B.units.forEach(u=>{delete u._ar;});arClear();AR.B=null;}
 // v19.40: summoned units (no art of their own) get a spawn model
@@ -27760,7 +27767,7 @@ function arToy(u){if(u._ar!==undefined)return u._ar;u._ar=null;const sp=!u.art&&
     AR.scene.add(root);AR.toys.push(T);u._ar=T;u.el.classList.add('t3d');return T;}
   catch(e){return null;}}
 const arEase=x=>x<0?0:x>1?1:x*x*(3-2*x);
-function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.until?TBA.end:null,a=Math.min(1,AR.dt*7*sp);
+function arUpdate(now){const {lib,THREE}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.until?TBA.end:null,a=Math.min(1,AR.dt*7*sp);
   for(const u of B.units){if(!u.el){if(u._ar)u._ar.root.visible=false;continue;}const T=arToy(u);if(!T)continue;
     if(!u.el.classList.contains('t3d'))u.el.classList.add('t3d');
     const w=arWorld(arKey(u));T.home.x+=(w.x+(u.wide?AR_X/2:0)-T.home.x)*a;T.home.z+=(w.z-T.home.z)*a;
@@ -27779,6 +27786,11 @@ function arUpdate(now){const {lib}=TBA,sp=B.speed||1,end=TBA.end&&now<TBA.end.un
     let dyw=yaw-T.yaw;dyw=Math.atan2(Math.sin(dyw),Math.cos(dyw));T.yaw+=dyw*Math.min(1,AR.dt*14);T.root.rotation.y=T.yaw;
     const rc=T._rc,rk=rc?(now-rc.t0)/rc.dur:2,hit=rk<1?(rk<.22?rk/.22:1-arEase((rk-.22)/.78))*rc.m:0,pop=Math.min(1,(now-T.born)/320),ghost=u.alive&&!targetable(u);
     T.root.position.set(T.home.x+ox+(hit?rc.dx*hit:0),.05+(ghost?.25+Math.sin(now/160)*.12:0),T.home.z+oz+(hit?rc.dz*hit:0));
+    {const el=u.el,sl=el.parentNode,sc=(sl&&sl._sc)||1;let tr='';
+      if(!AR.gl&&AR.cam&&AR.vw>0&&T.root.visible){const V=AR.bv||(AR.bv=[new THREE.Vector3(),new THREE.Vector3()]),rp=T.root.position;
+        V[0].set(rp.x,.05,rp.z).project(AR.cam);V[1].set(w.x+(u.wide?AR_X/2:0),.05,w.z).project(AR.cam);
+        const dx=(V[0].x-V[1].x)*AR.vw/2/sc,dy=-(V[0].y-V[1].y)*AR.vh/2/sc;if(Math.abs(dx)+Math.abs(dy)>1)tr=dx.toFixed(1)+'px '+dy.toFixed(1)+'px';}
+      if(el._bf!==tr){el._bf=tr;el.style.translate=tr;}}
     const sq=1-.14*hit;T.root.scale.set(pop*(1+.07*hit),pop*sq,pop*(1+.07*hit));
     const gone=anim==='death'?Math.max(0,(now-t0)/1000*s-e.dur-.35):0;T.body.position.y=-gone*1.6;T.root.visible=gone<1.2;anPost(u,T,now,sp,anim);}}
 function arGbClear(){if(AR.proj.some(P=>P.gb))AR.proj=AR.proj.filter(P=>{if(P.gb){arPjDrop(P);return false;}return true;});}
@@ -27830,6 +27842,11 @@ html.ar3d .bbq .board{background:rgba(10,9,14,.55)!important;-webkit-backdrop-fi
 #field.arena .unit.t3d{background:none!important;border-color:transparent!important;box-shadow:none!important}
 #field.arena .unit.t3d .spr,#field.arena .unit.t3d .crowdspr,#field.arena .unit.t3d .pt{visibility:hidden}
 #field.arena .unit.t3d::before,#field.arena .unit.t3d::after{display:none}
+html.b3 #bbq .rowlbl.bqlbl{display:inline-block;width:fit-content;padding:2px 8px;border-radius:3px;background:rgba(10,9,14,.78);position:relative;z-index:2}
+section:has(.overlay.resbar) .bbq .bqlbl{visibility:hidden}
+/* TRO-452: bars wait for the shop->fight glide; they appear when the camera lands (SMI-70) */
+html.glide #field .unit{opacity:0}
+
 </style>`);
   const wrap=(name,f)=>{const o=globalThis[name];if(typeof o==='function')globalThis[name]=f(o);};
   wrap('numFx',o=>function(u,v,k,c){const r=o.apply(this,arguments);try{if(c&&B&&!B.silent)ARS.flash=performance.now();}catch(e){}return r;}); // TRO-206
@@ -29859,8 +29876,8 @@ function sh3Hand(){try{if(!SH3.on||UI.screen!=='battle'||AR.dead||RM||SET.arena=
   if(SH3.dim){const dm=SH3.dim;dm.style.transition='opacity .6s';dm.style.opacity='0';setTimeout(()=>{dm.remove();dm.style.opacity='';dm.style.transition='';},700);}
   if(SH3.tag)SH3.tag.remove();if(SH3.bar)SH3.bar.remove();
   if(SH3.emats&&AR.eMat)AR.eMat.forEach((o,i)=>{if(SH3.emats[i])o.material=SH3.emats[i];});SH3.emats=null;
-  SH3.H=H;H.to=setTimeout(sh3Kill,1500);return true;}catch(e){return false;}}
-function sh3Kill(){const H=SH3.H;if(!H)return;SH3.H=null;clearTimeout(H.to);
+  document.documentElement.classList.add('glide');SH3.H=H;H.to=setTimeout(sh3Kill,1500);return true;}catch(e){return false;}}
+function sh3Kill(){const H=SH3.H;if(!H)return;SH3.H=null;clearTimeout(H.to);if(!AR.gl)document.documentElement.classList.remove('glide');
   Object.values(H.toys).forEach(sh3Drop);Object.values(H.sets).forEach(z=>z.toys.forEach(sh3Drop));
   try{if(SH3.bm&&SH3.bm.parent&&!(AR.bt&&AR.bt.length))SH3.bm.parent.remove(SH3.bm);if(AR.cv){AR.cv.classList.remove('s3dcv');AR.cv.style.background='';if(!AR.f&&!RV3.on){document.documentElement.classList.remove('ar3d');if(AR.cam)AR.cam.clearViewOffset();if(AR.cv.parentNode)AR.cv.remove();}}}catch(e){}}
 function sh3Adopt(){const H=SH3.H;if(!H||!B||B.silent)return;SH3.H=null;clearTimeout(H.to);const now=performance.now(),drop=[],pool={};
@@ -29875,13 +29892,13 @@ function sh3Adopt(){const H=SH3.H;if(!H||!B||B.silent)return;SH3.H=null;clearTim
   if(AR.bt.length)document.documentElement.classList.add('b3');
   Object.values(H.toys).forEach(T=>{if(!used.has(T)){T._s0=T.root.scale.x;drop.push(T);if(T.tag)T.tag.remove();}});
   Object.values(H.sets).forEach(z=>z.toys.forEach(T=>{if(!used.has(T)){T._s0=T.root.scale.x;drop.push(T);if(T.tag)T.tag.remove();}}));
-  AR.gl={from:H.cam,to:null,t0:0,drop,t1:now};}
+  document.documentElement.classList.add('glide');AR.gl={from:H.cam,to:null,t0:0,drop,t1:now};}
 // the fight's own camera is the target: arLayout (end) records it, then arGlide blends from the shop framing
 function arGlideTo(){const g=AR.gl,cam=AR.cam;if(!g)return;const V=TBA.THREE.Vector3,p=cam.position.clone(),d=cam.getWorldDirection(new V()),t=d.y<-.01?-p.y/d.y:30;
   g.to={p,g:p.clone().addScaledVector(d,t),asp:cam.aspect,vw:cam.view&&cam.view.enabled?Object.assign({},cam.view):null};if(!g.t0)g.t0=performance.now();}
-function arGlide(now){const g=AR.gl;if(!g||!g.to)return;const cam=AR.cam,k=Math.min(1,(now-g.t0)/900),e=k*k*(3-2*k),A=g.from,Z0=g.to,L=(a,b)=>a+(b-a)*e;
+function arGlide(now){const g=AR.gl;if(!g||!g.to)return;const dk=document.documentElement;if(document.getElementById('tbx')){g.t0=now;g.t1=now;}dk.classList.add('glide');const cam=AR.cam,k=Math.min(1,(now-g.t0)/900),e=k*k*(3-2*k),A=g.from,Z0=g.to,L=(a,b)=>a+(b-a)*e;
   for(const T of g.drop){const s=Math.max(.001,1-(now-g.t1)/350);T.root.scale.setScalar(T._s0*s);if(s<=.001&&!T._gone){T._gone=1;T.root.visible=false;}}
-  if(k>=1){AR.gl=null;g.drop.forEach(T=>{try{arDispose(T.root);}catch(x){}});if(SH3.bm&&SH3.bm.parent&&!(AR.bt&&AR.bt.length))SH3.bm.parent.remove(SH3.bm);AR.W=-1;return;}
+  if(k>=1){AR.gl=null;dk.classList.remove('glide');g.drop.forEach(T=>{try{arDispose(T.root);}catch(x){}});if(SH3.bm&&SH3.bm.parent&&!(AR.bt&&AR.bt.length))SH3.bm.parent.remove(SH3.bm);AR.W=-1;return;}
   cam.position.set(L(A.p.x,Z0.p.x),L(A.p.y,Z0.p.y),L(A.p.z,Z0.p.z));cam.aspect=L(A.asp,Z0.asp);cam.lookAt(L(A.g.x,Z0.g.x),L(A.g.y,Z0.g.y),L(A.g.z,Z0.g.z));
   const a=A.vw,b=Z0.vw;if(a&&b)cam.setViewOffset(L(a.fullWidth,b.fullWidth),L(a.fullHeight,b.fullHeight),L(a.offsetX,b.offsetX),L(a.offsetY,b.offsetY),L(a.width,b.width),L(a.height,b.height));
   cam.updateProjectionMatrix();cam.updateMatrixWorld();}
