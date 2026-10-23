@@ -25635,10 +25635,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.119',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.120',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.120',items:[["📸", "Visit a rival: tap a rival in the Lobby and their whole set fills the screen, with their figures on their board, stars, bench, genres, items, Legendary, lives, rank, last result and streak. Tap a figure for its card. Q and E switch rival, Esc goes back to your shop."]]},
   {v:'20.119',items:[["🖼️", "Fixed: the character circles in the genre panel and the rival's cast box were empty rings. They show faces again, a bit larger."]]},
   {v:'20.118',items:[["🎬", "The Pitch: from Level 5, every Ladder run starts with a choice of 3 Pitches, one rule for the whole run with an upside and a cost. Indie Film (a small, strong cast), Spin-off (Commons and Uncommons reach ★★★), Reshoots (cheap rerolls, no interest) and Crossover Event (easier crossovers, no Typecast)."], ["📌", "Your Pitch sits next to your Legendary in the top bar. Tap it to read it again. The Legendary it borrows from is not offered in that run."]]},
   {v:'20.117',items:[["🔊", "Every genre now has its own attack sound, abilities have their own cues, and the studio audience cheers, gasps and groans along with the fight."], ["🎚️", "Settings has volume sliders for Music, Effects and Interface. Cards you place, stars you earn and Legendaries you pick have new sounds."]]},
@@ -25857,7 +25858,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.119',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.120',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["📸", "Tap a rival in the Lobby to visit their set: their figures on their board, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -28931,7 +28932,7 @@ function rvBrainPlace(R){
 // Scouting snapshot: rivals only act inside rivalsTurn (after your fight, from settle). A plain JSON copy taken right
 // after that turn (and when the lobby is set up) is therefore exactly every rival's state at the start of your next
 // round, until your next fight. Read-only: no random numbers, nothing written but S.lobby.scout.
-const SCOUT_KEYS=['lv','rules','ladder','part','round','lives','maxLives','rank','trinkets','tlv','legend','cut','lvG','cap'];
+const SCOUT_KEYS=['lv','rules','ladder','part','round','lives','maxLives','rank','streak','trinkets','tlv','legend','cut','lvG','cap'];
 function scoutTake(r){if(!S||!S.lobby)return;
   const rv=S.lobby.rv.map(R=>{const st=R.st||{},o={};SCOUT_KEYS.forEach(k=>{if(st[k]!==undefined&&st[k]!==null)o[k]=st[k];});
     o.units=(st.units||[]).map(u=>({id:u.id,level:u.level,slot:u.slot}));
@@ -29061,10 +29062,91 @@ const SCOUT_ACT={
   cpsel:v=>{UI.cpSel=v&&HERO[v]?v:'';const d=document.getElementById('cpdet');if(d){d.innerHTML=cpCard(UI.cpSel);d.classList.toggle('on',!!UI.cpSel);}
     document.querySelectorAll('#sheet .cpt,#sheet .cph').forEach(b=>b.classList.toggle('sel',b.dataset.v===UI.cpSel));
     if(!UI.cpSel){const b=document.querySelector('#sheet .cpt.sel,#sheet .cpt');if(b&&!(typeof DESK!=='undefined'&&DESK))b.blur();}},
-  scout:v=>{if(!S)return;sheet(scoutHTML(v||UI.scoutSel));const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
+  scout:v=>{if(!S)return;if(rvvOpen(v||UI.scoutSel))return;sheet(scoutHTML(v||UI.scoutSel));const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
+  rvv:v=>{rvvOpen(v);},
+  rvvu:v=>{rvvUnit(v);},
+  rvvx:()=>{rvvClose();},
   scoutrv:v=>{const h=document.querySelector('#sheet .sh'),y=h?h.scrollTop:0;sheet(scoutHTML(v));const h2=document.querySelector('#sheet .sh');if(h2)h2.scrollTop=Math.min(y,140);
     const b=document.querySelector('#sheet .sctab.on');if(b)b.focus({preventScroll:true});},
 };
+// ================= TRO-385 Rival visit, flat version (UI pass 4a; docs/design/ui-pass-2026-10.md section 3) =================
+// A rival's set fills the screen, read from the Scouting snapshot only (never gold, shop or next pick; nothing written).
+// Front-facing toys on a tilted floor in the rival's colour; their run on the left, a character card on the right;
+// Q/E or arrows switch rival; Esc, O or Back return to the shop untouched. The 3D-arena visit (4b) falls back to this.
+const RVV={id:null,u:null,foc:null};
+function rvvOrder(){const sc=scoutSnap();if(!sc)return [];
+  return sc.rv.map((x,i)=>[x,i]).sort((a,b)=>(a[0].out-b[0].out)||(a[0].out?(a[0].place|0)-(b[0].place|0):(b[0].st.lives|0)-(a[0].st.lives|0))||a[1]-b[1]).map(a=>a[0]);}
+function rvvLit(id){try{const j=rvuLoad();return epsAll()||!!j.rev[id]||!!j.badge[id];}catch(e){return true;}}
+function rvvFig(id,cls){const d=HERO[id],f=SPRITES[id+'_f']||SPRITES[id];if(!f)return heroPt(id,'sm');
+  if(!d.crowd)return `<img class="${cls}" src="${f}" alt="" draggable="false">`;
+  return [SPRITES[id+'_f2']||f,SPRITES[id+'_f3']||f,f].map((x,i)=>`<img class="${cls} c${i}" src="${x}" alt="" draggable="false">`).join('');}
+function rvvSq(u,sel){if(!u)return '<div class="rvq e" aria-hidden="true"></div>';const d=HERO[u.id];if(!d)return '<div class="rvq e" aria-hidden="true"></div>';
+  return `<button type="button" class="rvq cr${d.tier}${twoSlot(u.id)?' w2':''}${sel?' on':''}" data-a="rvvu" data-v="${u.slot}" aria-pressed="${!!sel}" aria-label="${esc(d.name)}, ${u.level} star${u.level>1?'s':''}"><span class="rvqf">${rvvFig(u.id,'rvqi')}</span><span class="rvql"><span class="scst">${'★'.repeat(u.level)}</span> ${esc(d.name)}</span></button>`;}
+function rvvRow(us,p,sel){let h='';for(let k=0;k<4;k++){const u=us.find(v=>v.slot===p+k);
+    if(u){h+=rvvSq(u,u.slot===sel);if(twoSlot(u.id)&&k<3)k++;}
+    else if(!us.some(v=>v.slot===p+(k-1)&&twoSlot(v.id)))h+=rvvSq(null);}return h;}
+// the character card: base numbers at their star (as the Codex card), the skill at every star
+function rvvCard(u,bench){const d=u&&HERO[u.id];if(!d)return '<p class="muted">Click a character on their board to see its card.</p>';
+  const st=heroStatsAt(u.id,u.level),G=GENRES[d.genre],T=TRAITS[d.trait];
+  return `<h4>${bench?'On their bench':'On their board'}</h4><div class="rvvch"><div><b class="rvvcn">${esc(d.name)}</b><small><span class="rvvrr tier${d.tier}">${RARITY[d.tier-1]}</span> · ${G?gico(d.genre)+' '+esc(G.name):''} · ${T?esc(T.name):''}</small>
+    <span class="scst rvvcs">${'★'.repeat(u.level)}</span><p class="rvvcst"><span>⚔️ <b>${R(st.atk)}</b></span><span>❤️ <b>${R(st.hp)}</b></span>${d.crowd?`<span>👥 <b>×${st.n}</b></span>`:''}</p></div><span class="rvvcf">${rvvFig(u.id,'rvvci')}</span></div>
+    <p class="rvvsk"><b>${esc(SK[d.skill].name)}:</b> ${skillStars(u.id,u.level)}</p>
+    <p class="muted rvvnote">Base numbers at ${'★'.repeat(u.level)}${d.crowd?`, for each of the ${st.n} bodies`:''}. Their genre bonuses and items come on top in a fight.</p>`;}
+function rvvHTML(){const sc=scoutSnap(),x=sc&&sc.rv.find(v=>v.id===RVV.id);if(!x)return '';const id=x.id,rv=RIVAL[id]||{name:id,style:'',d:'',tell:''},n=scoutWho(id),lit=rvvLit(id);
+  const R0=S.lobby.rv.find(v=>v.id===id),nx=!!(S.enemy&&S.enemy.rival===id),ld=S.lead===id,stu=rvStudio(id);
+  const when=sc.r||UI.screen==='plan'||UI.screen==='event'?`their set at the start of Ep ${UI.screen==='plan'||UI.screen==='event'?S.round:sc.r+1}`:'their set at the start of the season';
+  const st=Object.assign({rules:[],units:[],trinkets:[],tlv:{},legend:null,lives:0,rank:1},x.st);
+  const tabs=rvvOrder().map(v=>{const w=scoutWho(v.id),tg=S.enemy&&S.enemy.rival===v.id?'next':S.lead===v.id?'Leader':v.out?'out':v.done?'done':'';
+    return `<button type="button" class="rvvtab${v.id===id?' on':''}${v.out?' out':''}${rvvLit(v.id)?'':' sh'}" style="--rvc:${rvCol(v.id)}" data-a="rvv" data-v="${v.id}" aria-pressed="${v.id===id}">${rvFigHTML(v.id)}<span><b>${esc(w.name)}</b>${tg?`<small>${tg}</small>`:''}</span>${v.out?'':`<i>❤️${Math.max(0,v.st.lives|0)}</i>`}</button>`;}).join('');
+  const kb=k=>typeof DESK!=='undefined'&&DESK?`<kbd class="kh">${k}</kbd>`:'';
+  const top=`<header class="rvvh"><h2>${rvFigHTML(id)}${esc(n.name)}'s set</h2><p class="rvvsty">${rv.style?`<b>${esc(rv.style)}</b>: `:''}${esc(rv.d||'')}${stu?` <small>· ${esc(stu)}</small>`:''}</p>
+    <p class="rvvsnap">📸 A snapshot: ${when}. Rivals shop after your fight, so it changes then.${nx?' <b>Your next opponent.</b>':''}${ld?' <b>💀 The Leader: your final boss.</b>':''}</p></header>`;
+  const foot=`<nav class="rvvt" aria-label="Rivals">${kb('Q')}${tabs}${kb('E')}</nav><button type="button" class="btn rvvx" data-a="rvvx">◀ Back to my set ${kb('Esc')}</button>`;
+  if(x.out)return top+`<div class="rvvout"><p>${esc(n.name)} is out of the season${x.place?` (finished ${ordN(x.place)})`:''}. Their characters went back to the pool.</p></div>`+foot;
+  return scoutWith(st,()=>{const f=fielded(),bn=benched(),s=activeSyn(f),c=s.c,bs=boardSize(),fs=f.reduce((t,u)=>t+(twoSlot(u.id)?2:1),0);
+    let su=RVV.u&&st.units.find(u=>u.slot===RVV.u);if(!su){let b=-1;f.forEach(u=>{const d=HERO[u.id];if(!d)return;const v=u.level*10+d.tier;if(v>b){b=v;su=u;}});if(!su)su=bn[0]||null;}
+    const sel=su?su.slot:'';
+    const gs=Object.keys(c.g||{}).filter(k=>c.g[k]>0&&GENRES[k]).sort((a,b)=>(s.G[b]||0)-(s.G[a]||0)||c.g[b]-c.g[a]);
+    const gh=gs.map(k=>{const on=s.G[k]||0,t=GENRES[k].tiers;return `<span class="scch${on?' on':''} g-${k}" title="${esc(GENRES[k].name)}: ${c.g[k]} counted${on?`, bonus at ${t[on-1]} on`:`, first bonus at ${t[0]}`}">${gico(k)} ${esc(GENRES[k].name)} <b>${c.g[k]}</b><small>/${on?t[on-1]:t[0]}</small></span>`;}).join('');
+    const xh=CROSSOVERS.filter(o=>s.X[o.id]).map(o=>`<span class="scch on" title="${esc(o.d)}">🔗 ${esc(o.name)}</span>`).join('');
+    const L=st.legend&&LEGENDS[st.legend],its=(st.trinkets||[]).filter(t=>TR[t]);
+    const ih=(L?`<span class="scch on rvvlg" title="${esc(L.name+': '+legS(st.legend))}">${ico(L)} ${esc(L.name)} <small>Legendary</small></span>`:'')+its.map(t=>`<span class="scch" title="${esc(TR[t].name+': '+trS(t))}">${ico(TR[t])} ${esc(TR[t].name)} <small>${'★'.repeat((st.tlv||{})[t]||1)}</small></span>`).join('');
+    const sk=st.streak|0,stk=sk>=2?`🔥 ${sk} wins in a row`:sk<=-2?`${-sk} losses in a row`:'none';
+    const left=`<aside class="rvvl" aria-label="Their run"><h4>Their run</h4>
+      <p class="rvvbig"><span title="Lives">❤️ <b>${Math.max(0,st.lives|0)}</b></span><span title="Shop rank">Rank <b>${st.rank}</b></span><span title="Board squares filled">Board <b>${fs}/${bs}</b></span></p>
+      ${x.last?`<p class="rvvlast ${x.last.w?'w':'l'}">${x.last.w?'✓':'✗'} Ep ${x.last.r}: ${x.last.w?'won':'lost'}</p>`:''}${x.done?'<p class="rvvlast w">Finished the season</p>':''}
+      <dl class="rvvdl"><dt>Streak</dt><dd>${stk}</dd><dt>Plays by</dt><dd>${esc(rv.style||'')}</dd></dl>
+      ${rv.tell?`<p class="rvvtell">🎯 ${esc(rv.tell)}</p>`:''}${R0&&RIVAL[id]?rvPivLine(R0):''}
+      <h4>Genres</h4><div class="scchips">${gh||'<span class="muted">None yet</span>'}</div>
+      ${xh?`<h4>Crossovers</h4><div class="scchips">${xh}</div>`:''}
+      <h4>Legendary and items</h4><div class="scchips">${ih||'<span class="muted">None yet</span>'}</div></aside>`;
+    const mid=`<main class="rvvb" aria-label="Their board"><div class="rvvfl"><span class="rvvrl b">Back</span><div class="rvr b">${rvvRow(f,'b',sel)}</div><span class="rvvrl f">Front</span><div class="rvr f">${rvvRow(f,'f',sel)}</div></div>
+      <div class="rvvbn"><small>Bench ${bn.length}</small>${bn.map(u=>{const d=HERO[u.id];return d?`<button type="button" class="rvbq${u.slot===sel?' on':''}" data-a="rvvu" data-v="${u.slot}" aria-label="${esc(d.name)}, ${u.level} star${u.level>1?'s':''}, on the bench"><span class="rvqf">${rvvFig(u.id,'rvqi')}</span><span class="scst">${'★'.repeat(u.level)}</span></button>`:'';}).join('')||'<span class="muted">Empty</span>'}</div></main>`;
+    const right=`<aside class="rvvr" aria-live="polite">${rvvCard(su,su&&su.slot[0]==='n')}</aside>`;
+    return top+left+mid+right+foot;});}
+function rvvPaint(){const el=document.getElementById('rvv');if(!el||!RVV.id)return;const a=document.activeElement,k=a&&a.dataset?a.dataset.a+'|'+a.dataset.v:'';
+  el.style.setProperty('--rvc',rvCol(RVV.id));el.classList.toggle('sh',!rvvLit(RVV.id));el.setAttribute('aria-label',scoutWho(RVV.id).name+"'s set");el.innerHTML=rvvHTML();
+  const b=k&&[...el.querySelectorAll('[data-a]')].find(x=>x.dataset.a+'|'+x.dataset.v===k);(b||el.querySelector('.rvvtab.on')||el.querySelector('.rvvx')).focus({preventScroll:true});}
+function rvvOpen(id){if(!S||!S.lobby)return false;const sc=scoutSnap();if(!sc||!sc.rv.length)return false;
+  const L=rvvOrder(),x=L.find(v=>v.id===id)||L.find(v=>S.enemy&&v.id===S.enemy.rival&&!v.out)||L.find(v=>!v.out)||L[0];
+  if(RVV.id!==x.id)RVV.u=null;RVV.id=x.id;UI.scoutSel=x.id;if(UI.sheetOpen&&UI.sheetOpen!=='modal')closeSheet();
+  let el=document.getElementById('rvv');if(!el){RVV.foc=document.activeElement;el=document.createElement('div');el.id='rvv';el.className='rvv';el.setAttribute('role','dialog');el.setAttribute('aria-modal','true');document.body.appendChild(el);document.body.classList.add('rvv-on');}
+  rvvPaint();return true;}
+function rvvUnit(slot){RVV.u=slot||null;rvvPaint();}
+function rvvStep(d){const L=rvvOrder();if(!L.length)return;const i=Math.max(0,L.findIndex(v=>v.id===RVV.id));rvvOpen(L[(i+d+L.length)%L.length].id);}
+function rvvClose(){const el=document.getElementById('rvv');if(el)el.remove();document.body.classList.remove('rvv-on');RVV.id=null;RVV.u=null;
+  const f=RVV.foc;RVV.foc=null;if(f&&f.isConnected&&f.focus)try{f.focus({preventScroll:true});}catch(e){}}
+(function(){if(typeof window==='undefined'||!window.addEventListener)return;
+  // while a visit is open it owns the keyboard: no shop hotkey (Space = FIGHT, D = reroll ...) reaches the game behind it
+  window.addEventListener('keydown',e=>{if(!RVV.id||!document.getElementById('rvv'))return;const k=e.key||'';e.stopImmediatePropagation();
+    if(e.ctrlKey||e.metaKey||e.altKey)return;
+    if(k==='Escape'||k==='o'||k==='O'){e.preventDefault();rvvClose();return;}
+    if(k==='q'||k==='Q'||k==='ArrowLeft'){e.preventDefault();rvvStep(-1);return;}
+    if(k==='e'||k==='E'||k==='ArrowRight'){e.preventDefault();rvvStep(1);return;}
+    if(k==='Tab'){const el=document.getElementById('rvv'),fs=[...el.querySelectorAll('button')].filter(b=>!b.disabled&&b.offsetParent!==null);if(!fs.length)return;
+      const i=fs.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();fs[fs.length-1].focus();}else if(!e.shiftKey&&(i<0||i===fs.length-1)){e.preventDefault();fs[0].focus();}}},true);
+  // a new screen (run ended, page restored) closes a visit left open
+  const rd0=render;globalThis.render=function(){const x=rd0.apply(this,arguments);try{if(RVV.id&&UI.screen!=='plan'&&UI.screen!=='event')rvvClose();}catch(e){}return x;};})();
 (function(){const oa0=onAction0;globalThis.onAction0=function(a,v,el){if(SCOUT_ACT[a]&&UI.sheetOpen!=='modal'){try{SCOUT_ACT[a](v,el);}catch(e){}return;}return oa0.apply(this,arguments);};})();
 (function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
   document.addEventListener('input',e=>{if(e.target&&e.target.id==='poolq'){UI.poolQ=e.target.value;poolFilter();}});
@@ -29075,6 +29157,83 @@ const SCOUT_ACT={
     if(same){closeSheet();e.preventDefault();return;}if(UI.sheetOpen&&!mine)return;
     if(k==='o'&&!S.lobby)return;e.preventDefault();onAction(k==='p'?'poolview':'scout');}catch(err){}});
   const st=document.createElement('style');st.id='scoutcss';st.textContent=`
+body.rvv-on #app{visibility:hidden}
+.rvv{--rvc:#ff6b6b;position:fixed;inset:0;z-index:400;display:grid;grid-template-columns:minmax(220px,270px) minmax(0,1fr) minmax(230px,280px);grid-template-rows:auto minmax(0,1fr) auto;grid-template-areas:"h h h" "l b r" "x t t";gap:8px 14px;padding:10px 16px calc(10px + env(safe-area-inset-bottom,0px));
+  background:radial-gradient(ellipse at 50% 45%,color-mix(in srgb,var(--rvc) 16%,#1d1712) 0%,#0e0b09 70%);color:var(--ink,#fff);overflow:hidden}
+.rvvh{grid-area:h;text-align:center;display:grid;gap:2px;justify-items:center}
+.rvvh h2{margin:0;font:400 clamp(1.5rem,3.4vw,2.4rem)/1.05 var(--f-display,inherit);letter-spacing:.01em;color:#fff3e4;display:flex;align-items:center;gap:10px;text-shadow:0 2px 0 rgba(0,0,0,.5)}
+.rvvh h2 .rvfig{width:40px;height:40px;border-radius:50%;box-shadow:0 0 0 2px var(--rvc)}
+.rvvsty{margin:0;font-size:.86rem;color:#d8cfc4;max-width:760px}.rvvsty small{color:var(--muted)}
+.rvvsnap{margin:2px 0 0;font-size:.74rem;color:#bfb4a8;border:1px solid rgba(255,255,255,.12);border-radius:999px;padding:2px 10px}.rvvsnap b{color:#ffd76a}
+.rvv .rvfig{position:relative;display:inline-block;flex:none;overflow:hidden;background:var(--panel,#222);border-radius:50%}
+.rvv .rvfig>i{position:absolute;inset:-2px -6px auto;height:250%;background-size:100% auto;background-position:50% 0}
+.rvv .rvfig.emo>i{inset:0;height:auto;display:grid;place-items:center;font-style:normal}
+.rvv.sh .rvvh .rvfig>*,.rvvtab.sh .rvfig>*{filter:brightness(0) drop-shadow(0 0 1px rgba(255,255,255,.8))}
+.rvvl,.rvvr{background:rgba(14,11,9,.88);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:10px 12px;overflow:auto;min-height:0;align-self:start;max-height:100%;display:grid;gap:6px;align-content:start}
+.rvvl{grid-area:l}.rvvr{grid-area:r}
+.rvvl h4,.rvvr h4{margin:2px 0 0;font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.rvvbig{display:flex;gap:12px;align-items:baseline;margin:0;font-size:.9rem}.rvvbig b{font-size:1.5rem}
+.rvvlast{margin:0;padding:4px 8px;border-radius:4px;font-weight:800;font-size:.85rem}.rvvlast.w{background:rgba(70,180,90,.18);color:#8fe39b}.rvvlast.l{background:rgba(220,70,70,.18);color:#ff9b9b}
+.rvvdl{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;margin:0;font-size:.82rem}.rvvdl dt{color:var(--muted)}.rvvdl dd{margin:0}
+.rvvtell{margin:0;font-size:.82rem;padding:6px 8px;border-left:3px solid var(--rvc);background:rgba(255,255,255,.05);border-radius:3px}
+.rvv .rvtell{margin:0;font-size:.8rem}
+.rvv .scchips{display:flex;flex-wrap:wrap;gap:4px}
+.rvv .scch{font-size:.74rem;padding:2px 7px;border:1px solid var(--line);border-radius:3px;background:var(--panel2);display:inline-flex;gap:4px;align-items:center}
+.rvv .scch.on{border-color:#c9a24a;color:#ffe3a0}.rvv .scch small{color:var(--muted)}
+.rvvb{grid-area:b;min-height:0;display:grid;grid-template-rows:auto auto;align-content:center;justify-items:center;gap:10px}
+.rvvfl{position:relative;width:min(100%,680px);display:grid;gap:clamp(4px,1.2vh,12px);padding:clamp(10px,2.4vh,26px) clamp(14px,3vw,34px) clamp(12px,2.6vh,28px)}
+.rvvfl::before{content:'';position:absolute;inset:0;z-index:0;clip-path:polygon(9% 0,91% 0,100% 100%,0 100%);border-radius:10px;
+  background:linear-gradient(180deg,#3a2a1e,#2b2018 60%,#21180f),repeating-linear-gradient(90deg,rgba(0,0,0,.18) 0 2px,transparent 2px 64px);box-shadow:inset 0 -8px 0 rgba(0,0,0,.35)}
+.rvr{position:relative;z-index:1;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:clamp(4px,1vw,12px);height:clamp(92px,23vh,190px)}
+.rvr.b{width:84%;margin:0 auto;height:clamp(80px,20vh,165px)}
+.rvvrl{position:absolute;z-index:1;left:-6px;font-size:.6rem;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.rvvrl.b{top:14%}.rvvrl.f{top:58%}
+.rvq{position:relative;display:block;min-width:0;padding:0;border:0;background:none;color:inherit;font:inherit;cursor:var(--cu-hand,pointer)}
+.rvq.w2{grid-column:span 2}
+.rvq::before{content:'';position:absolute;left:3%;right:3%;bottom:0;height:58%;border-radius:8px;transform:perspective(420px) rotateX(46deg);transform-origin:50% 100%;
+  background:color-mix(in srgb,var(--rvc) 42%,#4a3220);border:2px solid color-mix(in srgb,var(--rvc) 70%,#fff 10%);box-shadow:inset 0 0 18px rgba(0,0,0,.35)}
+.rvq.e{cursor:default}.rvq.e::before{background:rgba(0,0,0,.18);border:2px dashed rgba(255,255,255,.14)}
+.rvq.on::before{border-color:#ffd76a;box-shadow:0 0 0 2px #ffd76a,0 0 22px rgba(255,215,106,.55)}
+.rvq:focus-visible{outline:none}.rvq:focus-visible::before{border-color:#fff}
+.rvqf{position:absolute;inset:0;pointer-events:none}
+.rvqi{position:absolute;left:50%;bottom:6%;height:94%;width:auto;aspect-ratio:1;transform:translateX(-50%);filter:drop-shadow(0 6px 4px rgba(0,0,0,.45))}
+.rvqi.c0{left:30%;height:72%;bottom:22%}.rvqi.c1{left:70%;height:72%;bottom:22%}.rvqi.c2{height:80%}
+.rvq.w2 .rvqi{height:104%}
+.rvql{position:absolute;z-index:2;left:50%;top:-4px;transform:translateX(-50%);white-space:nowrap;max-width:118%;overflow:hidden;text-overflow:ellipsis;font-size:.68rem;font-weight:800;padding:1px 6px;border-radius:4px;background:rgba(10,8,14,.88);border:1px solid rgba(255,255,255,.28)}
+.rvq.cr3 .rvql{border-color:#4aa3ff}.rvq.cr4 .rvql{border-color:#b36bff}.rvq.cr5 .rvql{border-color:#ffb43a}
+.rvq.on .rvql{border-color:#ffd76a;color:#ffe9a8}
+.rvv .scst{color:#ffd23f;letter-spacing:-.08em}
+.rvvbn{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}.rvvbn>small{font-size:.62rem;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.rvbq{position:relative;width:46px;height:52px;border:1px solid rgba(255,255,255,.16);border-radius:6px;background:rgba(0,0,0,.3);padding:0;cursor:var(--cu-hand,pointer);color:inherit}
+.rvbq.on{border-color:#ffd76a;box-shadow:0 0 10px rgba(255,215,106,.5)}.rvbq .rvqi{height:86%;bottom:12%}.rvbq .scst{position:absolute;left:0;right:0;bottom:0;font-size:.55rem;text-align:center}
+.rvvch{display:grid;grid-template-columns:1fr 84px;gap:8px;align-items:start}
+.rvvcn{display:block;font:400 1.35rem/1.05 var(--f-display,inherit)}.rvvch small{display:block;font-size:.74rem;color:#cfc6bb;margin-top:2px}
+.rvvrr.tier1{color:#c9c9c9}.rvvrr.tier2{color:#7ddc7d}.rvvrr.tier3{color:#6cb6ff}.rvvrr.tier4{color:#c08bff}.rvvrr.tier5{color:#ffb43a}
+.rvvcs{display:block;font-size:1.05rem;margin-top:4px}.rvvcst{display:flex;gap:10px;margin:4px 0 0;font-size:.85rem}.rvvcst b{font-size:1rem}
+.rvvcf{position:relative;width:84px;height:96px;overflow:hidden}.rvvch>div{min-width:0}.rvvci{position:absolute;left:50%;bottom:0;height:100%;width:auto;aspect-ratio:1;transform:translateX(-50%)}
+.rvvci.c0{left:30%;height:76%}.rvvci.c1{left:70%;height:76%}
+.rvvsk{margin:0;font-size:.82rem;line-height:1.4}.rvvnote{margin:0;font-size:.72rem}
+.rvvout{grid-area:b;align-self:center;text-align:center;font-size:1rem;color:#d8cfc4}
+.rvvx{grid-area:x;align-self:end;justify-self:start;font-size:1.05rem;padding:10px 16px;white-space:nowrap}
+.rvvt{grid-area:t;display:flex;gap:6px;align-items:center;justify-content:center;flex-wrap:wrap;align-self:end}
+.rvvtab{display:inline-flex;align-items:center;gap:6px;min-height:40px;padding:4px 10px 4px 5px;border:1px solid rgba(255,255,255,.16);border-radius:6px;background:rgba(14,11,9,.88);color:inherit;font:inherit;font-size:.82rem;cursor:var(--cu-hand,pointer)}
+.rvvtab .rvfig{width:28px;height:28px;box-shadow:0 0 0 2px var(--rvc)}
+.rvvtab>span{display:grid;line-height:1.1;text-align:left}.rvvtab small{font-size:.6rem;font-weight:800;text-transform:uppercase;color:#ffd76a}.rvvtab>i{font-style:normal;font-size:.72rem;color:#ffb3b3}
+.rvvtab.on{border-color:var(--rvc);background:color-mix(in srgb,var(--rvc) 22%,#140f0b);box-shadow:0 0 0 1px var(--rvc)}
+.rvvtab.out{opacity:.55}.rvvtab.out .rvfig>*{filter:grayscale(1) brightness(.55)}
+.rvv kbd.kh{font:700 .66rem/1.2 system-ui,sans-serif!important;padding:1px 4px;border:1px solid rgba(255,255,255,.3);border-radius:3px;opacity:.8}
+@media (max-height:700px) and (min-width:761px){.rvvsty{display:none}.rvv{gap:6px 12px;padding-top:6px}.rvvl,.rvvr{padding:8px 10px;gap:4px}.rvvbig b{font-size:1.2rem}}
+@media (max-width:760px){
+  .rvv{display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden;padding:8px 10px calc(14px + env(safe-area-inset-bottom,0px));gap:10px}
+  .rvv>*{flex:none;min-height:auto}.rvvx{order:0}.rvvh{order:1}.rvvb,.rvvout{order:2}.rvvt{order:3}.rvvr{order:4}.rvvl{order:5}
+  .rvvx{position:sticky;top:0;z-index:5;align-self:flex-start;font-size:.9rem;padding:7px 12px;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+  .rvvb{display:flex;flex-direction:column;align-items:center}
+  .rvvh h2{font-size:1.5rem}.rvvsty{font-size:.78rem}
+  .rvvfl{width:100%;padding:10px 12px 12px}.rvr{height:clamp(84px,25vw,120px)}.rvr.b{height:clamp(74px,22vw,104px)}
+  .rvql{font-size:.56rem;padding:0 3px;max-width:104%}.rvvrl{display:none}
+  .rvvt{justify-content:flex-start;flex-wrap:nowrap;overflow-x:auto;padding-bottom:2px}.rvvtab{flex:none}
+  .rvvl,.rvvr{max-height:none;overflow:visible}
+}
 #sheet .shw:has(.poolsh),#sheet .shw:has(.scoutsh){width:min(880px,100%)}
 #sheet .shw:has(.poolsh)>.sh,#sheet .shw:has(.scoutsh)>.sh{width:100%}
 .poolsh,.scoutsh{display:grid;gap:8px;min-width:0}
