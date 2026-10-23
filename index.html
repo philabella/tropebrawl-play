@@ -2220,6 +2220,50 @@ html .rvep .rvtell{max-width:none;padding-right:96px}
 @media (max-height:760px){html.dt .dcol.c .top{padding:6px 10px;gap:5px}html.dt .dcol.c .top .r1{flex-wrap:nowrap;gap:6px}html.dt .dcol.c .top .r1 .btn{padding:.3em .55em;min-height:0;font-size:.74rem}html.dt:not(.bwide) .board .slot.hasspr .spr{bottom:calc(var(--gh,41px) + 1px)}html.dt .board .slot.hasspr .nm{position:relative;z-index:3;overflow:visible;line-height:1.15;max-width:none;font-size:.72rem;text-shadow:0 1px 2px #000,0 0 3px #000}}
 .gmem{display:block}.gmem .cpf{width:40px;height:40px;box-shadow:0 0 0 2px var(--tc)}
 .rvep .foe .pt.tp{width:46px;height:46px;background:radial-gradient(circle at 50% 30%,color-mix(in srgb,var(--gc) 55%,var(--panel2)),var(--bg2) 85%)}
+/* v20.128 (TRO-430): main menu */
+.mm{--u:min(1vh,.42vw);position:fixed;inset:0;z-index:1;overflow:hidden;max-width:none;margin:0;padding:0;color:#f4ecd8}
+#app>section.screen.mm,html.dt #app>section.screen.mm{max-width:none;margin:0}
+.mm-bg{position:absolute;inset:0;background:radial-gradient(ellipse 45% 40% at 50% 8%,rgba(255,206,90,.2),transparent 70%),radial-gradient(ellipse 70% 60% at 50% 62%,#3a2a4a 0%,#1d1626 55%,#0d0a12 100%)}
+.mm-bg::after{content:'';position:absolute;left:-5%;right:-5%;bottom:-18vh;height:52vh;border-radius:50%;background:radial-gradient(ellipse at 50% 30%,#4b3560,#22182d 60%,transparent 75%)}
+.mm-stage{position:absolute;left:0;right:0;bottom:0;height:72vh;pointer-events:none;user-select:none}
+.mm-stage .tfig{--k:1}
+.mm-stage .tburst{position:absolute;transform:translateX(-50%)}
+.mm-top{position:absolute;left:0;right:0;top:7vh;z-index:6;text-align:center;pointer-events:none}
+.mm .mm-top .title-word{margin:0;font-size:clamp(56px,17vh,190px);line-height:.9;letter-spacing:.01em;text-shadow:0 6px 0 var(--inkline,#1c1824),0 0 40px rgba(255,190,60,.25)}
+.mm-tag{margin:1.4vh 0 0;font-size:clamp(12px,1.7vh,18px);letter-spacing:.16em;text-transform:uppercase;color:#e9d9b0;opacity:.8}
+.mm-mid{position:absolute;left:50%;top:44%;translate:-50% 0;z-index:6;display:flex;flex-direction:column;align-items:center;gap:1.2vh;width:min(420px,86vw)}
+.mm-play{width:100%;font-family:var(--f-display);font-size:clamp(26px,4.4vh,46px);letter-spacing:.04em;text-transform:uppercase;padding:1.5vh 0;border:3px solid var(--inkline,#1c1824);border-radius:14px;background:var(--gold,#ffcf33);color:#1c1824;box-shadow:0 7px 0 var(--inkline,#1c1824),0 0 50px rgba(255,200,60,.35);cursor:pointer;transition:transform .12s,box-shadow .12s}
+.mm-play:hover,.mm-play:focus-visible{transform:translateY(-2px);box-shadow:0 9px 0 var(--inkline,#1c1824),0 0 70px rgba(255,200,60,.5)}
+.mm-play:active{transform:translateY(4px);box-shadow:0 3px 0 var(--inkline,#1c1824)}
+.mm-sub{display:flex;gap:.7em;align-items:baseline;font-size:clamp(14px,1.8vh,18px);color:#efe2c2;text-align:center}
+.mm-sub .lnk{font-size:inherit;color:var(--gold,#ffcf33)}
+.mm-chips{display:flex;gap:10px;margin-top:1.8vh;flex-wrap:nowrap;justify-content:center;width:max-content;max-width:96vw}
+.mm-chip{display:flex;align-items:center;gap:7px;min-height:40px;padding:6px 14px 6px 10px;border-radius:999px;background:rgba(20,15,28,.8);border:1.5px solid rgba(255,207,51,.28);font:inherit;font-size:clamp(13px,1.6vh,16px);color:#f4ecd8;white-space:nowrap;cursor:pointer}
+.mm-chip:hover,.mm-chip:focus-visible{border-color:var(--gold,#ffcf33)}
+.mm-chip .ico{width:24px;height:24px}
+.mm-chip small{opacity:.65;font-size:.82em;display:inline-flex;align-items:center;gap:3px}
+.mm-chip small .ico{width:15px;height:15px}
+.mm-chip .q{color:var(--gold,#ffcf33);letter-spacing:.04em}
+.mm-corner{position:absolute;bottom:2.4vh;z-index:9;display:flex;gap:6px;align-items:center}
+.mm-l{left:2.4vw}.mm-r{right:2.4vw}
+.mm-ib{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;min-width:58px;min-height:52px;padding:6px 6px;border:0;border-radius:10px;background:rgba(20,15,28,.82);font:inherit;font-size:12px;color:#e6dabb;cursor:pointer}
+.mm-ib:hover,.mm-ib:focus-visible{background:rgba(60,45,80,.9);color:#fff}
+.mm-ib .ico{width:30px;height:30px}
+.mm-ib.sndbtn,.mm-ib.mm-fs{font-size:22px;min-width:52px}
+.mm-ib .nwdot{position:absolute;top:5px;right:10px}
+.mm-r .verl{margin:0 0 0 8px;font-size:11px;opacity:.45}
+.mm-pitch{position:absolute;left:50%;bottom:2.8vh;translate:-50% 0;margin:0;font-size:12px;opacity:.55;white-space:nowrap}
+@media (max-width:1100px){.mm-pitch{display:none}}
+@media (max-height:520px) and (min-width:600px){.mm-tag{display:none}.mm-top{top:3vh}.mm-mid{top:34%}.mm-chips{margin-top:.6vh}.mm-ib{min-height:44px}.mm-ib span{display:none}}
+@media (max-width:599px){
+  .mm-top{top:3.5vh}.mm .mm-top .title-word{font-size:min(58px,15vw)}.mm-tag{font-size:11px;letter-spacing:.12em}
+  .mm-stage.ph{top:15vh;bottom:auto;height:40vh}
+  .mm-mid{top:auto;bottom:12.5vh;translate:-50% 0;width:min(360px,90vw)}
+  .mm-chips{gap:6px;width:auto}.mm-chip{padding:6px 10px 6px 7px}.mm-chip small{display:none}
+  .mm-corner{bottom:max(2vh,env(safe-area-inset-bottom,0px))}.mm-l{left:3vw}.mm-r{right:3vw}.mm-ib{min-width:50px}
+  .mm-pitch{display:block;bottom:10vh;font-size:11px;white-space:normal;text-align:center;width:90vw}
+  .mm-r .verl{display:none}
+}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -24597,7 +24641,8 @@ function titleScene(){const f=TITLE_CAST.filter(c=>SPRITES[c[0]+'_f']);if(!f.len
     +`<i class="tspark a"></i><i class="tspark b"></i><i class="tspark c"></i></div>`;}
 SCR.title=()=>{
   const sv=loadSave();if(CHAL_LINK)return chalLandHTML(sv); // TRO-86 step 4: a challenge link
-  if(!DAILY_LINK&&!LATE_LINK&&titleFresh(sv))return titleFreshHTML(); // TRO-86: a daily link skips the first-visit title
+  if(!DAILY_LINK&&!LATE_LINK&&titleFresh(sv))return mmHTML(sv,true); // TRO-86: a daily link skips the first-visit title
+  if(!UI.pick&&!DAILY_LINK&&!LATE_LINK)return mmHTML(sv,false); // TRO-430: the main menu
   return `<section class="screen tst${UI.pick?' ladon':''}">${titleScene()}<div class="tmenu">
     ${UI.pick?'<div class="eyebrow">Climb it one tier at a time</div><h1 class="title-word ladword">The Ladder</h1>':`<div class="eyebrow">Shop · Combine · Brawl</div>
     <h1 class="title-word">${TITLE}</h1>`}
@@ -24608,6 +24653,33 @@ SCR.title=()=>{
     <p class="verl">v${TB_VERSION}${tlBadge()}</p>
   </div></section>`;
 };
+// v20.128 (TRO-430): the main menu. Logo, one big button, the toys brawl across the whole screen, small chips, corner icons.
+// [sprite id, centre x %, bottom (units), size (units), lean deg, z, dir (+1 = left side), delay s]; 1 unit = min(1vh,.42vw)
+const MM_CAST=[['starknight',17,27,34,4,1,1,0],['kingmonster',31,27,50,-3,1,-1,0],['commando',69,27,31,4,1,1,-.6],['queen',83,27,40,-3,1,-1,-.6],
+  ['gunslinger',9,1,36,4,3,1,-1.2],['chainsaw',23,0,36,-4,3,-1,-1.2],['necro',77,1,36,4,3,1,-1.8],['mascot',91,1,32,-3,3,-1,-1.8],['safecracker',37,0,24,-2,4,-1,-.3]];
+const MM_HITS=[[24,50,16,0],[76,48,14,-.6],[16,17,14,-1.2],[84,17,14,-1.8]];
+function mmScene(){const B='<polygon points="0,-46 9,-20 34,-32 22,-8 48,0 22,8 34,32 9,20 0,46 -9,20 -34,32 -22,8 -48,0 -22,-8 -34,-32 -9,-20"/>';
+  // phones reuse the classic two-row brawl (percent of the stage box); wide screens spread it left and right of the menu
+  const ph=typeof innerWidth!=='undefined'&&innerWidth<600,cast=ph?TITLE_CAST:MM_CAST,hits=ph?TITLE_HITS:MM_HITS,u=v=>ph?v+'%':`calc(${v}*var(--u))`;
+  return `<div class="mm-stage${ph?' ph':''}" aria-hidden="true">`
+    +cast.filter(c=>SPRITES[c[0]+'_f']).map(([id,x,b,w,rot,z,dir,d])=>`<span class="tfig" style="left:${x}%;bottom:${u(b)};width:${u(w)};z-index:${z};--rot:${rot}deg;--dir:${dir};--d:${d}s"><i class="tsh"></i><img src="${SPRITES[id+'_f']}" alt="" draggable="false"></span>`).join('')
+    +hits.map(([x,b,w,d])=>`<svg class="tburst" style="left:${x}%;bottom:${u(b)};width:${u(w)};--d:${d}s" viewBox="-50 -50 100 100">${B}</svg>`).join('')+'</div>';}
+function mmIc(a,ic,t,x){return `<button class="mm-ib" data-a="${a}" aria-label="${t}" title="${t}">${ic}<span>${t}</span>${x||''}</button>`;}
+function mmHTML(sv,fresh){const p=lvLoad(),lo=lvMin();UI.lv=fresh?lo:Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh(),d=dlyToday(),tw=dlyTw(d);
+  const main=fresh?`<button class="mm-play" data-a="new">▶ Play the Pilot</button><div class="mm-sub">5-minute tutorial<button class="lnk" data-a="tut-skip">I know auto-battlers</button></div>`
+    :sv?`<button class="mm-play" data-a="continue">▶ Continue</button><div class="mm-sub"><span>${esc(lvNmC(sv.S.lv|0))} · Episode ${sv.S.round}</span><button class="lnk" data-a="play">New run</button></div>`
+    :`<button class="mm-play" data-a="play">▶ Play</button><div class="mm-sub"><span>Next: ${esc(lvTitle(UI.lv))}</span></div>`;
+  let chips='';
+  if(dlyShow(p))chips+=`<button class="mm-chip" data-a="daily-menu" data-v="${d}" title="${esc(twRule(tw))}">${ico('u_tv')}Daily ${dlyMD(d)}<small>${esc(twName(tw))}</small></button>`;
+  if(!fresh&&lateShow(p)){const lr=lateGet(dlyLoad(),d);chips+=`<button class="mm-chip" data-a="late-menu" data-v="${d}" title="${esc(twRule(tw))}">${ico('u_film')}Late Show<small>${lr?lateRes(lr):'one try'}</small></button>`;}
+  if(!fresh&&p.open>=4){const nx=dscNext();chips+=`<button class="mm-chip mm-dsc" data-a="dsc"><b class="q">???</b>${nx?'Next to find':'Discoveries'}<small>${nx?nx.t.replace(/^an? (crossover of )?/,''):'all found'}</small></button>`;}
+  return `<section class="screen mm${fresh?' mmfresh':''}"><div class="mm-bg" aria-hidden="true"></div>${mmScene()}
+    <header class="mm-top"><h1 class="title-word">${TITLE}</h1><p class="mm-tag">Cast the clichés. Watch them brawl.</p></header>
+    <div class="mm-mid">${UI.loadErr&&!sv?'<p class="tlderr" role="alert">This run couldn\'t be loaded. Start a new run.</p>':''}${main}${chips?`<div class="mm-chips">${chips}</div>`:''}</div>
+    <nav class="mm-corner mm-l" aria-label="Menu">${mmIc('codex',ico('u_codex',1),'Codex')}${mmIc('settings',ico('u_gear',1),'Settings')}${mmIc('news',ico('u_scroll',1),'News',ns.length?'<i class="nwdot" aria-label="new"></i>':'')}${typeof window!=='undefined'&&window.tbApp?'<button class="mm-ib" data-a="appquit"><span>Quit</span></button>':''}</nav>
+    <div class="mm-corner mm-r"><button class="mm-ib sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('mm-ib mm-fs')}<p class="verl">v${TB_VERSION}${tlBadge()}</p></div>
+    <p class="tpitch mm-pitch">${typeof TB_BUILD!=='undefined'&&TB_BUILD==='demo'?'':'One price. '}Every character. No account, no store, no passes.</p>
+  </section>`;}
 // TRO-65: the menu = one big Continue / Play (Play opens the level picker), then Codex, Settings, What's New
 function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh();
   return `<div class="tplay">${UI.loadErr&&!sv?'<p class="tlderr" role="alert">⚠️ This run couldn\'t be loaded. Start a new run.</p>':''}${sv?`<button class="btn primary big tbig" data-a="continue"><span>▶ Continue</span></button><div class="tlv">${esc(lvNmC(sv.S.lv|0))} · round ${sv.S.round}</div><button class="lnk tnew" data-a="play">Start a different run</button>`
@@ -25799,10 +25871,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.127',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.128',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.128',items:[["🎬", "A new main menu: the cast brawls across the whole screen, one big Play button, and the Daily, the Late Show and your next discovery as small buttons under it."]]},
   {v:'20.127',items:[["🏷️", "One name for difficulty: the game now says Pilot (3 short tutorial runs), the Season and Ascension 1-14, with one name and one number everywhere. The Play screen shows the path as three steps."]]},
   {v:'20.126',items:[["🌟", "The Table Read (the last tutorial run) has a mini-boss in Episode 6, announced two episodes ahead. A win pays 🪙3."]]},
   {v:'20.125',items:[["✂️", "In Act 1, The Cut no longer picks on a team built around one genre (4 or more of them): something else goes wrong instead."]]},
@@ -26029,7 +26102,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.127',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.128',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
