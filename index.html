@@ -245,7 +245,29 @@ strong.lvon{color:var(--gold);font-weight:800}
 .rstrip i{font-style:normal;font-weight:800}
 .chiprow{display:flex;flex-wrap:wrap;gap:6px}
 .chiprow>span{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px;font-size:.8rem}
-#vtip{position:fixed;z-index:70;pointer-events:none;background:var(--panel2);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:.78rem;color:var(--ink);max-width:240px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+:root{--fs-xs:.72rem;--fs-s:.82rem;--fs-m:.92rem;--fs-l:1.12rem;--fs-h:1.55rem;
+  --k-dmg:#ff8a5c;--k-hp:#7fe08f;--k-sh:#bcd3f0;--k-mana:#7fb2ff;--k-gold:#ffd24a;--k-spd:#f7e27a}
+#vtip{position:fixed;z-index:90;pointer-events:none;min-width:150px;max-width:310px;padding:0;border-radius:10px;
+  background:linear-gradient(180deg,#2a2730,#16151a 70%);border:2px solid var(--gold-dk);
+  box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,204,46,.18),0 10px 28px rgba(0,0,0,.6);color:var(--ink);
+  font:500 var(--fs-m)/1.38 var(--f-body);opacity:0;transform:translateY(3px);transition:opacity .08s,transform .08s}
+#vtip.on{opacity:1;transform:none}
+#vtip .vh{display:flex;align-items:center;gap:7px;padding:7px 11px 5px;border-bottom:1px solid rgba(255,204,46,.22);
+  font:400 var(--fs-m)/1.1 var(--f-display);letter-spacing:.03em;text-transform:uppercase;color:var(--gold);text-shadow:0 2px 0 #000,0 0 3px #000}
+#vtip .vh img,#vtip .vh .vi svg{width:1.35em;height:1.35em;flex:none;filter:drop-shadow(0 1px 0 #000)}#vtip .vh .vi{display:contents;color:var(--gold)}
+#vtip .vh:empty,#vtip .vb:empty{display:none}#vtip .vh:empty+.vb{padding-top:8px}
+#vtip .vb{padding:7px 11px 8px}#vtip .ico{width:1.05em;height:1.05em;vertical-align:-.15em}
+.kw{font-weight:700}
+.kw-n{color:#fff}.kw-dmg{color:var(--k-dmg)}.kw-hp{color:var(--k-hp)}.kw-sh{color:var(--k-sh)}.kw-mana{color:var(--k-mana)}
+.kw-gold{color:var(--k-gold)}.kw-spd{color:var(--k-spd)}.kw-star{color:var(--gold);letter-spacing:-.06em}
+.kw-g{color:var(--kg,var(--gold));text-shadow:0 1px 0 #000}
+#insp h3,#sheet h3{font-family:var(--f-display);font-weight:400;letter-spacing:.02em;line-height:1.05;text-transform:uppercase;text-shadow:0 2px 0 #000,0 0 4px rgba(0,0,0,.8)}
+#insp .tl,#sheet .tl{line-height:1.42;margin:.45em 0}
+#insp .tl>b:first-child,#sheet .tl>b:first-child{display:inline-grid;place-items:center;min-width:1.6em;height:1.6em;margin-right:.35em;border-radius:50%;
+  background:#2d2c32;border:1px solid var(--line);font:400 var(--fs-s)/1 var(--f-display);color:var(--muted)}
+#insp .tl.on>b:first-child,#sheet .tl.on>b:first-child{background:var(--gold);border-color:var(--gold);color:#1a1300}
+#insp .tl:not(.on),#sheet .tl:not(.on){color:var(--muted)}
+.ilist .irow>span:last-child>b:first-child{font-family:var(--f-display);font-weight:400;letter-spacing:.03em;text-transform:uppercase}
 @media (max-width:480px){.bar{grid-template-columns:minmax(0,134px) minmax(0,1fr) 44px;font-size:.78rem}}
 /* codex */
 .tabs{display:flex;flex-wrap:wrap;gap:6px}
@@ -20906,7 +20928,10 @@ function feId(k){if(!ITEM_EMO){try{const m={};[...Object.entries(TR),...Object.e
 function feAlone(p){return p.closest('.bossp')?'u_skull':p.closest('.evt')?'u_question':p.closest('.ab')?'u_bolt':'u_spark';}
 function feImg(id){const i=document.createElement('img');i.className='ico';i.alt=ICO_WORD[id]||'';i.draggable=false;i.src=icoSrc(id);return i;}
 function feStr(v){return v.replace(FE_RE,m=>{const k=m.replace(/️/g,'');return FE_KEEP.has(k)?(m===k?m:k+'︎'):'';}).replace(/ {2,}/g,' ').trim();}
-function feAttr(e){for(const a of ['title','aria-label']){const v=e.getAttribute&&e.getAttribute(a);if(v&&FE_T.test(v)){const w=feStr(v);if(w!==v)e.setAttribute(a,w);}}}
+function tipAttr(e){if(!e.getAttribute)return;const v=e.getAttribute('title');if(v==null)return;e.removeAttribute('title');
+  if(v){e.setAttribute('data-tip',v);if(!e.hasAttribute('aria-label')&&!(e.textContent||'').trim())e.setAttribute('aria-label',v);}}
+function tipSvg(r){if(r.querySelectorAll)r.querySelectorAll('svg title').forEach(t=>{const g=t.closest('svg');if(g&&t.textContent&&!g.hasAttribute('data-tip'))g.setAttribute('data-tip',t.textContent);t.remove();});}
+function feAttr(e){tipAttr(e);for(const a of ['title','aria-label']){const v=e.getAttribute&&e.getAttribute(a);if(v&&FE_T.test(v)){const w=feStr(v);if(w!==v)e.setAttribute(a,w);}}}
 function feNode(t){const v=t.nodeValue;if(!v||!FE_T.test(v))return;const p=t.parentNode;if(!p||FE_SKIP[p.nodeName]||(p.closest&&p.closest('svg,[data-noemoji],.pt')))return;
   const alone=v.trim()&&p.textContent.trim()===v.trim();
   const f=document.createDocumentFragment();let last=0,m,txt='',ch=false;FE_RE.lastIndex=0;
@@ -20919,11 +20944,12 @@ function feNode(t){const v=t.nodeValue;if(!v||!FE_T.test(v))return;const p=t.par
     else if(/\s$|^$/.test(txt)&&v[last]===' ')last++;}
   if(!ch)return;txt+=v.slice(last);if(txt)f.appendChild(document.createTextNode(txt));p.replaceChild(f,t);}
 function feParse(root){if(!root)return;if(root.nodeType===3){feNode(root);return;}if(root.nodeType!==1&&root.nodeType!==11)return;
-  if(root.nodeType===1)feAttr(root);if(root.querySelectorAll)root.querySelectorAll('[title],[aria-label]').forEach(feAttr);
+  if(root.nodeType===1)feAttr(root);if(root.querySelectorAll)root.querySelectorAll('[title],[aria-label]').forEach(feAttr);tipSvg(root);
   const w=document.createTreeWalker(root,4),list=[];let n;while((n=w.nextNode()))list.push(n);list.forEach(feNode);}
 (function(){try{if(typeof document==='undefined'||typeof MutationObserver==='undefined'||typeof document.createTreeWalker!=='function')return;
-  const mo=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')feNode(m.target);else if(m.type==='attributes')feAttr(m.target);else m.addedNodes.forEach(feParse);}});
-  const start=()=>{feParse(document.body);mo.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label']});
+  const mo=new MutationObserver(ms=>{for(const m of ms){if(m.type==='characterData')feNode(m.target);else if(m.type==='attributes')feAttr(m.target);else m.addedNodes.forEach(n=>{feParse(n);try{kwScan(n);}catch(e){}});}
+    const vt=document.getElementById('vtip');if(vt&&vt._el&&!vt._el.isConnected){vt._el=null;vt.classList.remove('on');}});
+  const start=()=>{feParse(document.body);try{kwScan(document.body);}catch(e){}mo.observe(document.body,{childList:true,subtree:true,characterData:true,attributes:true,attributeFilter:['title','aria-label']});
     const st=document.createElement('style');st.textContent=`.slot.fullsell::after{content:'';width:1.1em;height:1.1em;background:url("${icoSrc('u_e_wheel')}") center/contain no-repeat}`;document.head.appendChild(st);};
   // after the whole script has run (ICO_SVG, TR are defined further down)
   if(document.readyState!=='loading')setTimeout(start,0);else document.addEventListener('DOMContentLoaded',start);}catch(e){}})();
@@ -25600,13 +25626,49 @@ document.addEventListener('click',e=>{
   const el=e.target.closest('[data-a]');if(!el||el.disabled)return;
   onAction(el.dataset.a,el.dataset.v,el);
 });
-function vtip(el,x,y){let t=$('#vtip');if(!el){if(t)t.remove();return;}if(!t){t=document.createElement('div');t.id='vtip';t.setAttribute('role','tooltip');document.body.appendChild(t);}
-  t.textContent=el.dataset.tip;const r=el.getBoundingClientRect();const px=x??(r.left+r.width/2),py=y??r.top;
-  const w=t.offsetWidth,h=t.offsetHeight;t.style.left=Math.max(8,Math.min(innerWidth-w-8,px-w/2))+'px';t.style.top=Math.max(8,py-h-10)+'px';}
+// TRO-431: keyword colours. One regex over escaped text: gold amounts, numbers (coloured by the word after them),
+// keywords, genre names (genre colour), stars. kwScan paints text nodes inside KW_SEL as they reach the page.
+const KW=[['dmg','damage|ATK|crits?|critical'],['hp','HP|max HP|heals?|healed|healing|lives|life'],['sh','shields?|Shield|Armor|armor'],
+  ['mana','energy'],['gold','gold'],['spd','Speed|attack speed']];
+let KRE=null;const KW_G={};
+function kwRe(){if(KRE)return KRE;const kws=KW.map(x=>x[1]).join('|');Object.keys(GENRES).forEach(k=>KW_G[GENRES[k].name]=k);
+  const gn=Object.keys(KW_G).sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
+  KRE=new RegExp(`(🪙\\s?\\d+)|(?<![\\w&#.])([+\\-−]?\\d+(?:\\.\\d+)?%?)(\\s(?:more |less |extra |bonus )?(?:${kws})\\b)?|\\b(${kws})\\b|\\b(${gn})\\b|(★+)`,'g');return KRE;}
+function kwCls(w){w=w.trim().replace(/^(more|less|extra|bonus) /,'');for(const [c,x] of KW)if(new RegExp(`^(?:${x})$`).test(w))return c;return 'n';}
+function kwHTML(h){return h.replace(kwRe(),(m,gold,num,numkw,kw,g,star)=>{
+  if(gold)return `<span class="kw kw-gold">${gold}</span>`;
+  if(num)return numkw?`<span class="kw kw-${kwCls(numkw)}">${num}${numkw}</span>`:`<span class="kw kw-n">${num}</span>`;
+  if(kw)return `<span class="kw kw-${kwCls(kw)}">${kw}</span>`;
+  if(g)return `<span class="kw kw-g" style="--kg:var(--g-${KW_G[g]})">${g}</span>`;
+  return star?`<span class="kw kw-star">${star}</span>`:m;});}
+const KW_SEL='#insp p,#insp .skill,#insp li,#sheet p,#sheet .skill,#sheet li,.ilist .irow>span:last-child,.cx-body p,.cx-body li,.evcard small,.rvvsk';
+function kwNode(t){const p=t.parentNode;if(!p||!p.closest||p.closest('.kw,svg,.chip,h1,h2,h3,input,textarea,.irow>span>b'))return;
+  const v=t.nodeValue;if(!v||!/[\d★A-Za-z🪙]/.test(v)||!v.trim())return;const e=esc(v);let h=kwHTML(e);
+  const pv=t.previousSibling;if(pv&&pv.nodeName==='IMG'&&pv.alt==='Gold')h=h.replace(/^(<span class="kw kw-)n(">)/,'$1gold$2');
+  if(h===e)return;const tp=document.createElement('template');tp.innerHTML=h;p.replaceChild(tp.content,t);}
+function kwScan(root){if(!root)return;if(root.nodeType===3){const p=root.parentNode;if(p&&p.closest&&p.closest(KW_SEL))kwNode(root);return;}
+  if(root.nodeType!==1)return;const els=root.matches(KW_SEL)?[root]:[...root.querySelectorAll(KW_SEL)];
+  if(!els.length&&root.closest(KW_SEL))els.push(root);
+  els.forEach(e=>{const w=document.createTreeWalker(e,4),l=[];let n;while((n=w.nextNode()))l.push(n);l.forEach(kwNode);});}
+// TRO-431: the hover card. data-tip "Title: body" / "Title. body" (title up to 34 characters) gets a title line with the
+// hovered element's icon; data-tip-h sets the title explicitly; a short tip is a title alone.
+function tipSplit(s,el){if(el.dataset.tipH)return [el.dataset.tipH,s];const m=/^([^:.!?]{2,34}?)(?::\s+|\.\s+)([\s\S]+)$/.exec(s);return m?[m[1],m[2]]:s.length<=34?[s,'']:['',s];}
+let VTIP_T=0;
+function vtip(el,x,y){let t=$('#vtip');if(!el){if(t)t.classList.remove('on');return;}
+  if(!t){t=document.createElement('div');t.id='vtip';t.setAttribute('role','tooltip');t.innerHTML='<div class="vh"></div><div class="vb"></div>';document.body.appendChild(t);}
+  const s=el.dataset.tip||'';if(t._s!==s||t._el!==el){t._s=s;t._el=el;const [h,b]=tipSplit(s,el);
+    const im=el.matches('img.ico,svg')?el:el.querySelector('img.ico,svg');
+    t.firstChild.innerHTML=h?(im?(im.nodeName==='IMG'?`<img src="${im.src}" alt="">`:`<i class="vi">${im.outerHTML}</i>`):'')+esc(h.replace(/ \((trait|genre)\)$/,'')):'';
+    t.lastChild.innerHTML=kwHTML(esc(b));}
+  const w=t.offsetWidth,hh=t.offsetHeight,r=el.getBoundingClientRect();let px,py;
+  if(x!=null){px=x+16;py=y+18;if(px+w>innerWidth-8)px=x-w-12;if(py+hh>innerHeight-8)py=y-hh-12;}
+  else{px=r.left+r.width/2-w/2;py=r.top-hh-10;if(py<8)py=r.bottom+10;}
+  t.style.left=Math.max(8,Math.min(innerWidth-w-8,px))+'px';t.style.top=Math.max(8,Math.min(innerHeight-hh-8,py))+'px';t.classList.add('on');}
 document.addEventListener('mousemove',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');vtip(el,e.clientX,e.clientY);});
+document.addEventListener('pointerdown',e=>{if(e.pointerType==='mouse')vtip(null);},true);
 document.addEventListener('focusin',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');vtip(el);});
 document.addEventListener('focusout',()=>vtip(null));
-document.addEventListener('touchstart',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');vtip(el);},{passive:true});
+document.addEventListener('touchstart',e=>{const el=e.target.closest&&e.target.closest('[data-tip]');vtip(el);clearTimeout(VTIP_T);if(el)VTIP_T=setTimeout(()=>vtip(null),4000);},{passive:true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&UI.sheetOpen==='info')closeSheet();});
 // hover card: on devices with a mouse, hovering a shop card or a board character shows its details next to it
 function hoverCard(el){let c=$('#hovcard');if(!el){if(c)c.remove();return;}
@@ -25635,10 +25697,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.120',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.121',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.121',items:[["💬", "Hover cards: every hover text in the game is now our own card (icon, title, coloured keywords) instead of the browser's plain box. On a phone, tap."], ["🎨", "Rules read like a game now: damage, HP, shields, gold and genre names are coloured, numbers stand out, headings use the title font."]]},
   {v:'20.120',items:[["📸", "Visit a rival: tap a rival in the Lobby and their whole set fills the screen, with their figures on their board, stars, bench, genres, items, Legendary, lives, rank, last result and streak. Tap a figure for its card. Q and E switch rival, Esc goes back to your shop."]]},
   {v:'20.119',items:[["🖼️", "Fixed: the character circles in the genre panel and the rival's cast box were empty rings. They show faces again, a bit larger."]]},
   {v:'20.118',items:[["🎬", "The Pitch: from Level 5, every Ladder run starts with a choice of 3 Pitches, one rule for the whole run with an upside and a cost. Indie Film (a small, strong cast), Spin-off (Commons and Uncommons reach ★★★), Reshoots (cheap rerolls, no interest) and Crossover Event (easier crossovers, no Typecast)."], ["📌", "Your Pitch sits next to your Legendary in the top bar. Tap it to read it again. The Legendary it borrows from is not offered in that run."]]},
@@ -25858,7 +25921,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.120',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["📸", "Tap a rival in the Lobby to visit their set: their figures on their board, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.121',h:"the Pitch",items:[["🎬", "From Level 5, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["💬", "Hover texts are now game cards with coloured keywords, and rules are easier to scan."], ["📸", "Tap a rival in the Lobby to visit their set: their figures on their board, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
