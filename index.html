@@ -25874,10 +25874,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.130',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.131',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.131',items:[["🕺", "Everyone has their own idle now: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat. No two figures on a board move in sync."]]},
   {v:'20.130',items:[["🩹", "Fixed: a dead enemy's health bar no longer stays floating on the arena after the fight."]]},
   {v:'20.129',items:[["🩹", "Fixed: the Final boss and rival hover cards showed garbled picture code instead of the genre names."]]},
   {v:'20.128',items:[["🎬", "A new main menu: the cast brawls across the whole screen, one big Play button, and the Daily, the Late Show and your next discovery as small buttons under it."]]},
@@ -26107,6 +26108,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
+  {d:'2026-10-23',from:'20.131',to:'20.131',h:"character life",items:[["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat.", 1]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -26585,7 +26587,116 @@ const IDC={B:null,names:[],vig:0,col:null,K:{
   guardian:['idSway'],brawler:['idShift','idShift','idHop'],stalker:['idTwitch'],
   gunner:['idFidget','idLook','idle'],mystic:['idBreathe','idLook'],medic:['idBreathe','idle','idLook'],foe:['idle','idSway','idBreathe','idShift']},
   FLY:new Set(['vampbat','wraith','nurse'])};
-function idcEm(lib){const E=lib.EMOTES;if(E.idSway)return;
+// ===== v20.131 (TRO-440): one signature idle per character. Visual only: keyframe data on the existing rig channels, nothing
+// here writes the battle or calls rand(). ~35 small "verbs" (check a watch, spin a dial, type, scan, pray, flex, ...) are
+// assigned per character id; Rare+ characters chain two verbs. Each loop is the verb(s) plus a breathing rest, so a board
+// never moves in sync (idcRate/phase from idlecast still offset every figure). Flyers and unlisted ids keep the old loops.
+// Pose shorthand: a/b = active/other arm {s:[pitch,yaw,outward], e:elbow bend}; sp/nk = spine/neck [x,y,z] (y,z follow the
+// active side); q squat, sq squash, h hop, sr/sl step, sd slide, fl flap. m = +1 right-handed, -1 left-handed.
+const IDU={V:{},U:{
+  // army
+  riot:['shove',1],rifle:['reload',1],commando:['scan',-1],radio:['dial',-1],mule:['hitch',1],fieldmed:['wipebrow',1],observer:['scan',1,'point',-1],gunny:['salute',1,'hips',1],
+  // orc
+  ironhide:['flex',1],goblins:['chatter',1],javelin:['point',1],warchief:['heavy',1,'flex',1],
+  // elf
+  dancer:['dancelite',1],ranger:['scan',1],priestess:['pray',1],starcaller:['lookup',1,'conduct',1],
+  // fin
+  interns:['type',1],raider:['knuckles',1],wolf:['sniff',1],hedge:['watch',-1,'type',1],
+  // grim
+  shieldbro:['shove',-1],chainblade:['shadowbox',1],hospitaller:['pray',1],seer:['lookup',1],
+  // bug
+  ravager:['clawflex',1],spitters:['sniff',1],beetles:['shove',1],lurker:['shiver',1],queen:['conduct',1,'chatter',1],scorpion:['clawflex',1,'heavy',1],hivemind:['conduct',-1,'lookup',1],
+  // undead
+  skelarch:['shiver',1],zombies:['heavy',1],gravegolem:['heavy',1],necro:['stir',1,'lookup',1],bonesetter:['knuckles',-1,'stir',1],bonedragon:['heavy',1,'clawflex',1],
+  // ball
+  dodgeball:['juggle',1],pitcher:['reload',-1],cheersquad:['dancelite',1],waterboy:['wave',1],pointguard:['dribble',1],headcoach:['point',1,'hips',1],mascot:['dancelite',-1,'wave',1],qb:['juggle',-1,'dribble',1],
+  // heist
+  muscle:['flex',-1],lookouts:['scan',1],driver:['tapfoot',1],safecracker:['dial',1],hacker:['type',1],fixer:['watch',1,'tip',1],insideman:['tip',-1,'watch',1],mastermind:['stir',-1,'hips',1],
+  // west
+  outlaws:['tip',1],deputy:['rock',1],doc:['stir',-1],bounty:['scan',-1],prospector:['stir',1],gunslinger:['reload',1,'tip',1],sheriff:['rock',1,'tip',1],noname:['tip',1,'sniff',1],
+  // horror
+  counselors:['shiver',1],kids:['chatter',-1],babysitter:['watch',1],exorcist:['pray',1,'lookup',1],chainsaw:['heavy',1],finalgirl:['scan',1,'shiver',1],brute:['heavy',-1],dreamstalker:['clawflex',-1,'conduct',1],
+  // space
+  redshirts:['chatter',1],droids:['scan',-1],pilot:['watch',1],smuggler:['tip',1],telepath:['conduct',1],captain:['hips',1,'point',1],starknight:['rock',-1,'shove',1],darklord:['stir',1,'heavy',1],
+  // kaiju
+  tanks:['shiver',-1],babykaiju:['clawflex',-1],reporter:['point',-1,'type',1],scientist:['type',-1,'stir',1],hunter:['sniff',-1],mecha:['heavy',-1],kingmonster:['heavy',1,'clawflex',1],giantmoth:['conduct',1]},
+  RT:[1.0,1.4,.8,1.2]};
+function iduEm(lib){if(IDU._lib===lib)return;IDU._lib=lib;
+  const Z0={squash:0,spine:[0,0,0],neck:[0,0,0],shoulderR:[0,0,0],shoulderL:[0,0,0],elbowR:[0,0,0],elbowL:[0,0,0],flap:0,hop:0,squat:0,stepR:0,stepL:0,slide:0};
+  const arm=(S,v)=>{const s=v.s||[0,0,0];return {['shoulder'+S]:[s[0],S==='R'?s[1]:-s[1],S==='R'?-s[2]:s[2]],['elbow'+S]:[v.e||0,0,0]};};
+  const CH={q:'squat',sq:'squash',h:'hop',sr:'stepR',sl:'stepL',sd:'slide',fl:'flap'};
+  const cv=(m,p)=>{const A=m>0?'R':'L',B=m>0?'L':'R',o=JSON.parse(JSON.stringify(Z0));
+    if(p.a)Object.assign(o,arm(A,p.a));if(p.b)Object.assign(o,arm(B,p.b));
+    if(p.sp)o.spine=[p.sp[0],p.sp[1]*m,p.sp[2]*m];if(p.nk)o.neck=[p.nk[0],p.nk[1]*m,p.nk[2]*m];
+    for(const k in CH)if(p[k]!==undefined)o[CH[k]]=m<0&&k==='sr'?0:p[k];if(m<0&&p.sr)o.stepL=p.sr;if(m<0&&p.sd)o.slide=-p.sd;return o;};
+  const U=(a,b)=>({a,b}); // active / other arm shorthand
+  const arc=(n,f)=>Array.from({length:n},(_,i)=>f(i,n)); // n evenly spaced beats between rel t .12 and .88
+  const T=(i,n)=>.12+.76*i/(n-1);
+  const V=IDU.V;
+  V.watch=[2.8,[[.14,{a:{s:[-.5,0,.3],e:-1.9},sp:[.06,0,0],nk:[.3,.35,0]}],[.4,{a:{s:[-.5,0,.3],e:-2.0},sp:[.06,0,0],nk:[.38,.3,0]}],
+    [.55,{a:{s:[-.5,0,.3],e:-2.0},nk:[.25,.3,0],sq:.02}],[.68,{a:{s:[-.5,0,.3],e:-1.95},nk:[-.2,-.5,0],sp:[-.05,-.15,0],sq:.03}],[.9,{a:{s:[-.3,0,.2],e:-1.2},nk:[0,-.2,0]}]]];
+  V.dial=[3.0,[[.12,{a:{s:[-.9,0,.1],e:-1.35},b:{s:[-.3,0,.1],e:-.5},nk:[.22,.1,.28],q:.1,sp:[.1,0,0]}],
+    ...arc(6,(i,n)=>[.22+i*.09,{a:{s:[-.9,0,.1+(i%2?.18:-.1)],e:-1.35+(i%2?.2:-.1)},b:{s:[-.3,0,.1],e:-.5},nk:[.22,.1,.28],q:.1,sp:[.1,0,0]}]),
+    [.86,{a:{s:[-.7,0,.1],e:-1.0},nk:[.1,.4,.1],sp:[.06,0,0]}]]];
+  V.type=[2.6,[...arc(7,(i,n)=>[T(i,n),{a:{s:[-.8,0,.2],e:-1.6+(i%2?.18:-.05)},b:{s:[-.8,0,.2],e:-1.6+(i%2?-.05:.18)},nk:[.3,0,0],q:.1,sp:[.08,0,0]}])]];
+  V.scan=[3.0,[[.12,{a:{s:[-1.1,0,.4],e:-2.0},nk:[-.05,.1,0],sp:[0,.05,0]}],[.3,{a:{s:[-1.1,0,.4],e:-2.0},nk:[-.05,.7,0],sp:[0,.35,0]}],[.5,{a:{s:[-1.1,0,.4],e:-2.0},nk:[-.05,.7,0],sp:[0,.35,0]}],
+    [.68,{a:{s:[-1.1,0,.4],e:-2.0},nk:[-.05,-.7,0],sp:[0,-.35,0]}],[.84,{a:{s:[-1.1,0,.4],e:-2.0},nk:[-.05,-.7,0],sp:[0,-.35,0]}]]];
+  V.lookup=[3.2,[[.15,{nk:[-.45,0,0],sp:[-.1,0,0],a:{s:[0,0,.2]}}],[.35,{nk:[-.5,.4,0],sp:[-.12,.15,0],a:{s:[-1.4,0,.4],e:-.1},sq:-.02}],[.6,{nk:[-.5,.4,0],sp:[-.12,.15,0],a:{s:[-1.4,0,.4],e:-.1}}],[.82,{nk:[-.3,-.3,0],sp:[-.05,-.1,0]}]]];
+  V.point=[2.6,[[.15,{a:{s:[-1.5,0,.25],e:-.1},nk:[0,.3,0],sp:[0,.15,0]}],[.35,{a:{s:[-1.5,0,.25],e:-.1},nk:[0,.3,0],sp:[0,.15,0]}],[.5,{a:{s:[-1.5,.3,.25],e:-.1},nk:[0,-.45,0],sp:[0,-.2,0]}],[.7,{a:{s:[-1.5,.3,.25],e:-.1},nk:[0,-.45,0],sp:[0,-.2,0],h:.1}],[.88,{a:{s:[-.4,0,.1],e:-.4}}]]];
+  V.stir=[3.0,[[.12,{a:{s:[-.8,0,.1],e:-1.5},nk:[.3,0,0],sp:[.1,0,0]}],...arc(6,(i,n)=>{const ph=i*Math.PI/2;return [.2+i*.1,{a:{s:[-.8+Math.sin(ph)*.18,0,.1+Math.cos(ph)*.18],e:-1.5+Math.cos(ph)*.12},nk:[.3,0,Math.sin(ph)*.06],sp:[.1,0,0]}];}),[.88,{a:{s:[-.3,0,.1],e:-.6}}]]];
+  V.wipebrow=[2.8,[[.14,{a:{s:[-.2,0,1.1],e:-2.4},sp:[.12,0,0],nk:[.1,0,.12],q:.1}],[.3,{a:{s:[-.2,.4,1.1],e:-2.4},sp:[.12,0,0],q:.1}],[.46,{a:{s:[-.2,-.4,1.1],e:-2.4},sp:[.12,0,0],q:.1}],
+    [.62,{a:{s:[0,0,.6],e:-.6},sp:[.2,0,0],nk:[.3,0,0],q:.2,sq:.05}],[.82,{a:{s:[0,0,.2],e:-.2},sp:[.05,0,0],q:.05}]]];
+  V.salute=[2.2,[[.1,{a:{s:[-.6,0,.9],e:-2.5},sp:[-.06,0,0],nk:[-.08,0,0]}],[.18,{a:{s:[-.6,0,.9],e:-2.5},sp:[-.06,0,0],nk:[-.08,0,0],h:.08}],[.58,{a:{s:[-.6,0,.9],e:-2.5},sp:[-.06,0,0],nk:[-.08,0,0]}],[.68,{a:{s:[0,0,.1],e:0},q:.05}]]];
+  V.flex=[2.8,[[.14,{a:{s:[0,0,1.4],e:-2.2},b:{s:[0,0,1.4],e:-2.2},sp:[-.1,0,0],q:.12,sq:.05}],[.3,{a:{s:[0,0,1.5],e:-2.45},b:{s:[0,0,1.5],e:-2.45},sp:[-.12,0,0],q:.2,sq:.08}],
+    [.42,{a:{s:[0,0,1.4],e:-2.2},b:{s:[0,0,1.4],e:-2.2},sp:[-.1,0,0],q:.12,sq:.05}],[.56,{a:{s:[0,0,1.5],e:-2.45},b:{s:[0,0,1.5],e:-2.45},sp:[-.12,0,0],q:.2,sq:.08}],[.72,{a:{s:[0,.0,1.0],e:-1.4},b:{s:[0,0,1.0],e:-1.4},nk:[0,.25,0]}],[.88,{}]]];
+  V.chatter=[3.4,[[.1,{nk:[0,.6,0],sp:[0,.18,0],a:{s:[-.5,0,.4],e:-1.2},sq:.02}],[.2,{nk:[0,.6,0],sp:[0,.18,0],a:{s:[-.6,0,.5],e:-1.0},h:.08}],[.3,{nk:[0,.6,0],sp:[0,.18,0],a:{s:[-.5,0,.4],e:-1.2},sq:.02}],
+    [.45,{nk:[0,-.6,0],sp:[0,-.18,0],b:{s:[-.4,0,.4],e:-1.1},sq:.03}],[.55,{nk:[0,-.6,0],sp:[0,-.18,0],b:{s:[-.5,0,.5],e:-.9},h:.08}],[.7,{nk:[0,-.6,0],sp:[0,-.18,0],b:{s:[-.4,0,.4],e:-1.1},sq:.03}],[.82,{nk:[.15,0,.2],h:.1,sq:-.02}]]];
+  V.pray=[3.6,[[.14,{a:{s:[-.75,0,-.05],e:-2.2},b:{s:[-.75,0,-.05],e:-2.2},nk:[.4,0,0],sp:[.08,0,0],q:.1}],[.5,{a:{s:[-.75,0,-.05],e:-2.25},b:{s:[-.75,0,-.05],e:-2.25},nk:[.5,0,.05],sp:[.1,0,0],q:.15,sq:.03}],
+    [.7,{a:{s:[-.8,0,.0],e:-2.2},b:{s:[-.8,0,.0],e:-2.2},nk:[-.2,0,0],sp:[-.04,0,0],q:.08}]]];
+  V.sniff=[2.4,[[.12,{nk:[.3,0,0],sp:[.12,0,0],q:.15}],[.22,{nk:[.15,0,0],sp:[.14,0,0],q:.18,sq:.03}],[.3,{nk:[.3,0,0],sp:[.12,0,0],q:.15}],[.4,{nk:[.15,0,0],sp:[.14,0,0],q:.18,sq:.03}],
+    [.55,{nk:[-.1,.6,0],sp:[0,.2,0],q:.1}],[.75,{nk:[-.1,-.6,0],sp:[0,-.2,0],q:.1}],[.9,{}]]];
+  V.knuckles=[3.0,[[.14,{a:{s:[-.6,0,.0],e:-1.7},b:{s:[-.6,0,.0],e:-1.7},nk:[.1,0,0],q:.1}],[.26,{a:{s:[-.6,0,.0],e:-1.9},b:{s:[-.6,0,.0],e:-1.5},nk:[.1,0,0],q:.13,sq:.04}],[.36,{a:{s:[-.6,0,.0],e:-1.6},b:{s:[-.6,0,.0],e:-1.9},q:.1}],
+    [.5,{nk:[0,0,.35],sp:[0,0,.06]}],[.62,{nk:[0,0,-.35],sp:[0,0,-.06]}],[.75,{nk:[.2,0,0],a:{s:[0,0,.45]},b:{s:[0,0,.45]},sq:.04}],[.88,{}]]];
+  V.shadowbox=[2.4,[[.12,{a:{s:[-1.1,0,.2],e:-2.0},b:{s:[-1.1,0,.2],e:-2.0},q:.2,sp:[.1,0,0],sd:.012}],[.24,{a:{s:[-1.6,0,.1],e:-.2},b:{s:[-1.0,0,.2],e:-2.1},q:.22,sp:[.08,.35,0]}],[.34,{a:{s:[-1.1,0,.2],e:-2.0},b:{s:[-1.1,0,.2],e:-2.0},q:.2,sp:[.1,0,0]}],
+    [.46,{b:{s:[-1.6,0,.1],e:-.2},a:{s:[-1.0,0,.2],e:-2.1},q:.22,sp:[.08,-.35,0]}],[.56,{a:{s:[-1.1,0,.2],e:-2.0},b:{s:[-1.1,0,.2],e:-2.0},q:.2,sp:[.1,0,0]}],[.7,{a:{s:[-1.6,0,.1],e:-.2},b:{s:[-1.6,0,.1],e:-.2},q:.28,sq:.05,hop:.1,sp:[.12,0,0]}],[.86,{q:.1}]]];
+  V.clawflex=[2.6,[[.12,{a:{s:[-.5,0,.6],e:-.8},b:{s:[-.5,0,.6],e:-.8},sp:[.08,0,0],fl:.2}],[.28,{a:{s:[-.7,0,.9],e:-1.1},b:{s:[-.7,0,.9],e:-1.1},sp:[-.1,0,0],nk:[-.15,0,0],fl:.7,sq:.04}],[.42,{a:{s:[-.5,0,.6],e:-.8},b:{s:[-.5,0,.6],e:-.8},sp:[.08,0,0],fl:.2}],
+    [.56,{a:{s:[-.7,0,.9],e:-1.1},b:{s:[-.7,0,.9],e:-1.1},sp:[-.1,0,0],nk:[-.15,0,0],fl:.7,sq:.04}],[.7,{nk:[0,.5,0],sp:[0,.15,0],fl:.3}],[.82,{nk:[0,-.5,0],sp:[0,-.15,0],fl:.3}]]];
+  V.shiver=[2.0,[...arc(9,(i,n)=>[T(i,n),{sq:(i%2?.025:-.012),sp:[.1,0,(i%2?.03:-.03)],a:{s:[0,0,.1+(i%2)*.06],e:-.3},b:{s:[0,0,.1+((i+1)%2)*.06],e:-.3},nk:[.06,i>4?-.5:.5,0],q:.12}])]];
+  V.hitch=[2.6,[[.14,{sp:[-.12,0,0],a:{s:[.4,0,.1]},b:{s:[.4,0,.1]},q:.1}],[.3,{sp:[-.12,0,0],a:{s:[.6,0,.3],e:-.3},b:{s:[.6,0,.3],e:-.3},q:.18,sq:.05,sd:.01}],[.5,{sp:[-.05,.2,0],a:{s:[.3,0,.2]},b:{s:[.3,0,.2]},nk:[0,-.3,0],q:.1}],[.7,{sp:[-.12,0,0],a:{s:[.6,0,.3],e:-.3},b:{s:[.6,0,.3],e:-.3},q:.18,sq:.05}],[.88,{}]]];
+  V.dribble=[2.4,[...arc(8,(i,n)=>[T(i,n),{a:{s:[-.5+(i%2?.2:0),0,.2],e:-.8+(i%2?.3:0)},q:i%2?.12:.3,sq:i%2?-.01:.04,nk:[.25,0,0],sp:[.1,0,0],sd:(i%4<2?.008:-.008)}])]];
+  V.juggle=[3.0,[...arc(8,(i,n)=>[T(i,n),{a:{s:[-.9+(i%2?-.4:.3),0,.25],e:-1.6},b:{s:[-.9+(i%2?.3:-.4),0,.25],e:-1.6},nk:[-.25+(i%2?.2:-.1),0,0],h:i%2?.1:0,q:.08}])]];
+  V.reload=[2.6,[[.14,{a:{s:[-.8,0,.1],e:-1.2},b:{s:[-.6,0,.1],e:-1.0},nk:[.3,0,0],sp:[.1,0,0]}],[.28,{a:{s:[-.85,.2,.1],e:-1.15},b:{s:[-.6,0,.1],e:-1.0},nk:[.3,0,0],sp:[.1,0,0]}],[.38,{a:{s:[-.8,-.2,.1],e:-1.25},b:{s:[-.6,0,.1],e:-1.0},nk:[.3,0,0],sp:[.1,0,0]}],
+    [.5,{a:{s:[-.85,.2,.1],e:-1.15},b:{s:[-.7,0,.1],e:-1.1},nk:[.15,0,0],sp:[.06,0,0],sq:.03}],[.64,{a:{s:[-1.0,0,.1],e:-.9},b:{s:[-.8,0,.1],e:-.9},nk:[-.1,.3,0]}],[.86,{}]]];
+  V.rock=[3.4,[[.1,{a:{s:[.5,0,.35],e:-1.3},b:{s:[.5,0,.35],e:-1.3},sp:[-.05,0,0],q:0}],[.3,{a:{s:[.5,0,.35],e:-1.3},b:{s:[.5,0,.35],e:-1.3},sp:[.08,0,0],q:.1,nk:[.05,.25,0]}],[.5,{a:{s:[.5,0,.35],e:-1.3},b:{s:[.5,0,.35],e:-1.3},sp:[-.08,0,0],q:0,h:.1,nk:[0,0,0]}],
+    [.7,{a:{s:[.5,0,.35],e:-1.3},b:{s:[.5,0,.35],e:-1.3},sp:[.08,0,0],q:.1,nk:[.05,-.25,0]}],[.88,{}]]];
+  V.tip=[2.6,[[.14,{a:{s:[-.4,0,.7],e:-2.2},nk:[.12,0,0]}],[.26,{a:{s:[-.4,0,.75],e:-2.4},nk:[.3,0,0],sp:[.1,0,0]}],[.5,{a:{s:[-.4,0,.75],e:-2.4},nk:[.3,0,0],sp:[.1,0,0]}],[.62,{a:{s:[-.3,0,.4],e:-1.0},nk:[-.1,.4,0],sq:.02}],[.84,{nk:[0,.3,0]}]]];
+  V.heavy=[4.4,[[.15,{sq:.06,sp:[-.08,0,0],a:{s:[0,0,.35]},b:{s:[0,0,.35]},nk:[-.12,0,0]}],[.3,{sq:-.03,sp:[.12,0,0],a:{s:[.1,0,.2]},b:{s:[.1,0,.2]},nk:[.18,0,0],q:.12}],[.45,{sq:.06,sp:[-.08,0,0],a:{s:[0,0,.4]},b:{s:[0,0,.4]},nk:[-.12,0,0]}],
+    [.6,{sr:.55,q:.15,sq:.05,sp:[.05,.1,0]}],[.68,{sl:.0,sq:-.04,q:.25,sp:[.12,0,0]}],[.82,{nk:[0,.3,.1],sp:[0,.1,0]}]]];
+  V.conduct=[3.4,[[.12,{a:{s:[-.8,0,.4],e:-.6},b:{s:[-.8,0,.4],e:-.6},sp:[0,.12,0],nk:[-.1,0,0]}],[.3,{a:{s:[-1.3,0,1.0],e:-.3},b:{s:[-.5,0,.2],e:-1.2},sp:[0,.2,0],nk:[-.12,.2,0],fl:.5}],[.5,{a:{s:[-.5,0,.2],e:-1.2},b:{s:[-1.3,0,1.0],e:-.3},sp:[0,-.2,0],nk:[-.12,-.2,0],fl:.5,h:.06}],
+    [.7,{a:{s:[-1.6,0,1.4],e:-.2},b:{s:[-1.6,0,1.4],e:-.2},sp:[-.1,0,0],nk:[-.2,0,0],fl:.8,h:.12}],[.86,{a:{s:[-.4,0,.3]},b:{s:[-.4,0,.3]}}]]];
+  V.hips=[3.0,[[.12,{a:{s:[.3,0,.6],e:-2.0},b:{s:[.3,0,.6],e:-2.0},sp:[-.04,0,0],nk:[-.05,0,0]}],[.3,{a:{s:[.3,0,.6],e:-2.0},b:{s:[.3,0,.6],e:-2.0},sp:[-.04,.2,0],nk:[-.05,.4,0],q:.05}],[.55,{a:{s:[.3,0,.6],e:-2.0},b:{s:[.3,0,.6],e:-2.0},sp:[-.04,-.2,0],nk:[-.05,-.4,0],q:.05}],
+    [.75,{a:{s:[.3,0,.6],e:-2.0},b:{s:[.3,0,.6],e:-2.0},nk:[-.2,0,0],sp:[-.1,0,0],sq:-.02}],[.9,{}]]];
+  V.wave=[2.6,[[.14,{a:{s:[0,0,2.4],e:-.3},nk:[0,0,.18]}],...arc(4,(i,n)=>[.26+i*.12,{a:{s:[0,0,2.4],e:-.3+(i%2?.5:-.3)},nk:[0,0,.18],h:.05}]),[.84,{a:{s:[0,0,.5],e:-.3}}]]];
+  V.tapfoot=[2.8,[[.1,{a:{s:[-.4,0,-.15],e:-1.4},b:{s:[-.4,0,-.15],e:-1.4},sp:[-.04,0,0]}],...arc(5,(i,n)=>[.18+i*.13,{a:{s:[-.4,0,-.15],e:-1.4},b:{s:[-.4,0,-.15],e:-1.4},sr:i%2?0:.5,nk:[i%2?0:.12,0,0],sq:i%2?0:.015}]),[.88,{nk:[0,.35,0]}]]];
+  V.dancelite=[3.0,[[.1,{a:{s:[0,0,2.2],e:-.2},b:{s:[0,0,.4],e:-1.3},sp:[0,.15,.1],nk:[0,.2,.1],sr:.4,q:.12,fl:.4}],[.25,{a:{s:[0,0,.4],e:-1.3},b:{s:[0,0,2.2],e:-.2},sp:[0,-.15,-.1],nk:[0,-.2,-.1],sl:.4,q:.12,fl:.4,h:.1}],[.4,{a:{s:[0,0,2.2],e:-.2},b:{s:[0,0,.4],e:-1.3},sp:[0,.15,.1],nk:[0,.2,.1],sr:.4,q:.12,fl:.4}],
+    [.55,{a:{s:[0,0,.4],e:-1.3},b:{s:[0,0,2.2],e:-.2},sp:[0,-.15,-.1],nk:[0,-.2,-.1],sl:.4,q:.12,fl:.4,h:.1}],[.7,{a:{s:[0,0,1.8],e:-.3},b:{s:[0,0,1.8],e:-.3},q:.3,sq:.06,nk:[-.1,0,0]}],[.82,{a:{s:[0,0,2.5],e:-.2},b:{s:[0,0,2.5],e:-.2},h:.18,sq:-.04}]]];
+  V.shove=[2.4,[[.14,{a:{s:[-.6,0,.15],e:-1.0},b:{s:[-.6,0,.15],e:-1.0},q:.2,sp:[.1,0,0]}],[.28,{a:{s:[-1.0,0,.1],e:-.5},b:{s:[-1.0,0,.1],e:-.5},q:.3,sq:.05,sp:[.16,0,0],sd:0}],[.4,{a:{s:[-.6,0,.15],e:-1.0},b:{s:[-.6,0,.15],e:-1.0},q:.2,sp:[.1,0,0]}],
+    [.55,{a:{s:[-1.0,0,.1],e:-.5},b:{s:[-1.0,0,.1],e:-.5},q:.3,sq:.05,sp:[.16,0,0]}],[.7,{a:{s:[-.5,0,.2],e:-1.1},b:{s:[-.5,0,.2],e:-1.1},q:.15,nk:[0,.4,0]}],[.86,{}]]];
+  V.yawn=[2.6,[[.14,{a:{s:[-.5,0,.1],e:-2.2},sp:[-.14,0,0],nk:[-.35,0,0],sq:-.03}],[.4,{a:{s:[-.5,0,.1],e:-2.2},sp:[-.16,0,0],nk:[-.4,0,0],sq:-.04}],[.6,{sp:[.12,0,0],nk:[.3,0,0],q:.1,sq:.04}],[.82,{}]]];
+  V.stretch=[3.0,[[.14,{a:{s:[0,0,2.5],e:-.2},b:{s:[0,0,2.5],e:-.2},sp:[-.2,0,0],nk:[-.25,0,0],sq:-.05,h:.08}],[.45,{a:{s:[0,0,2.6],e:-.1},b:{s:[0,0,2.6],e:-.1},sp:[-.26,0,0],nk:[-.3,0,0],sq:-.06}],[.65,{a:{s:[0,0,.3]},b:{s:[0,0,.3]},sp:[.1,0,0],q:.15,sq:.05}],[.85,{}]]];
+  V.scratch=[2.4,[[.14,{a:{s:[-.3,0,.8],e:-2.4},nk:[0,0,.15]}],...arc(5,(i,n)=>[.24+i*.08,{a:{s:[-.3,0,.8],e:-2.4+(i%2?.2:-.15)},nk:[.05,0,.15],sq:.01}]),[.82,{a:{s:[-.2,0,.3]},nk:[.1,.3,0]}]]];
+  IDU.has=id=>!!IDU.U[id];
+  for(const id in IDU.U){const sp=IDU.U[id];let h=0;for(const ch of id)h=(h*31+ch.charCodeAt(0))>>>0;
+    const keys=[],parts=[];for(let i=0;i<sp.length;i+=2)parts.push([V[sp[i]],sp[i+1]]);
+    const rest=IDU.RT[h%IDU.RT.length];let total=0;parts.forEach(([v])=>total+=v[0]+rest);
+    keys.push(Object.assign({t:0},cv(1,{sq:.02})));let at=rest*.5;
+    parts.forEach(([v,m],pi)=>{const t0=at;
+      keys.push(Object.assign({t:t0/total},cv(m,{sq:.02})));
+      for(const [r,p] of v[1])keys.push(Object.assign({t:(t0+r*v[0])/total},cv(m,p)));
+      keys.push(Object.assign({t:(t0+v[0])/total},cv(m,{sq:-.015})));at=t0+v[0]+rest;});
+    keys.sort((a,b)=>a.t-b.t);
+    lib.EMOTES['idu_'+id]={dur:+total.toFixed(2),rel:true,_idle:1,keys};}}
+function idcEm(lib){iduEm(lib);const E=lib.EMOTES;if(E.idSway)return;
   const Z={squash:0,spine:[0,0,0],neck:[0,0,0],shoulderR:[0,0,0],shoulderL:[0,0,0],elbowR:[0,0,0],elbowL:[0,0,0],flap:0,hop:0,squat:0,stepR:0,stepL:0,slide:0};
   const L=(dur,keys)=>({dur,rel:true,_idle:1,keys:keys.map(k=>Object.assign({},Z,k))});
   E.idle._idle=1;
@@ -26604,7 +26715,7 @@ function idcEm(lib){const E=lib.EMOTES;if(E.idSway)return;
   E.idFidget=L(2.8,[{t:0,squash:.02},{t:.35},{t:.45,shoulderR:[-.18,0,0],elbowR:[-.3,0,0],neck:[.1,0,0]},{t:.6,shoulderR:[-.18,0,0],elbowR:[-.15,0,0],neck:[.1,0,0]},{t:.72,squash:.02}]);
   E.idHover=L(2.0,[{t:0,hop:.35,flap:.45,spine:[.04,0,0]},{t:.5,hop:.65,flap:-.35,spine:[-.02,0,0]}]);}
 // which loop: stable per character (trait + id hash); flyers (listed or with wings) hover
-function idcPick(id,trait,fig){if(IDC.FLY.has(id)||(fig&&fig.userData.rigJ&&fig.userData.rigJ.wingR))return 'idHover';
+function idcPick(id,trait,fig){if(IDC.FLY.has(id)||(fig&&fig.userData.rigJ&&fig.userData.rigJ.wingR))return 'idHover';if(IDU.has(id)&&fig&&fig.userData.rigJ)return 'idu_'+id;
   const l=IDC.K[trait]||IDC.K.foe;let h=0;for(const ch of String(id))h=(h*31+ch.charCodeAt(0))>>>0;return l[h%l.length];}
 const idcRate=ph=>.85+((ph*7.31)%1)*.3;
 // battle toy (cached once the rig is known)
