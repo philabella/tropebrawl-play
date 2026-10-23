@@ -20940,7 +20940,7 @@ const R=n=>Math.round(n);const R1d=n=>Math.round(n*10)/10; /* v19.89: one decima
 const RM_SYS=typeof matchMedia==='function'&&matchMedia('(prefers-reduced-motion: reduce)').matches;
 // player settings (⚙️): animations on/off, unlock every Game Level. Stored apart from runs and level progress.
 const SET_KEY='tropebrawl-settings';
-const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl,trans:['full','short','off'].includes(d.trans)?d.trans:'full',speed:[1,2,3].includes(d.speed)?d.speed:1};})();
+const SET=(()=>{let d={};try{d=JSON.parse(localStorage.getItem(SET_KEY)||'{}')||{};}catch(e){}return {bmus:typeof d.bmus==='string'?d.bmus:'rumble',mus:typeof d.mus==='string'?d.mus:'show',bd:d.bdPick&&['sun','swirl','curt','violet'].includes(d.bd)?d.bd:'swirl',bdPick:!!d.bdPick,anim:d.anim!==false,allLv:d.allLvPick?!!d.allLv:true,allLvPick:!!d.allLvPick,share:d.share!==false,sound:d.sound!==false,music:d.music!==false,animOver:d.animOver===true,coach:d.coach!==false,arena:d.arena!==false,live:d.live!==false,look:d.lookPick&&d.look==='glass'?'glass':'comic',lookPick:!!d.lookPick,models:d.mdl&&['classic','new','poly'].includes(d.models)?d.models:d.models==='classic'?'classic':'poly',mdl:!!d.mdl,trans:['full','short','off'].includes(d.trans)?d.trans:'full',speed:[1,2,3].includes(d.speed)?d.speed:1,vMus:Number.isFinite(d.vMus)?Math.max(0,Math.min(100,d.vMus)):100,vFx:Number.isFinite(d.vFx)?Math.max(0,Math.min(100,d.vFx)):100,vUi:Number.isFinite(d.vUi)?Math.max(0,Math.min(100,d.vUi)):100};})();
 function setSave(){try{localStorage.setItem(SET_KEY,JSON.stringify(SET));}catch(e){}}
 let RM=false; // v19.62: animations are always on
 function applyMotion(){RM=false;try{document.documentElement.classList.toggle('noanim',RM);}catch(e){}}
@@ -23306,7 +23306,7 @@ function castFx(u){const el=u.el;if(!el)return;const k=skKind(u.skill);fxK(u);
 function act(u){
   if(u.skill&&u.manaMax&&u.mana>=u.manaMax){
     u.mana=0;
-    if(!B.silent&&u.el){if(RM)float(u,SK[u.skill].name,'sp');else castFx(u);u._cast=1;sfx('cast');u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
+    if(!B.silent&&u.el){if(RM)float(u,SK[u.skill].name,'sp');else castFx(u);u._cast=1;sfx('cast',{kind:skKind(u.skill)});u.el.classList.add('casting');const el=u.el;setTimeout(()=>el.classList.remove('casting'),350);
       if(!RM){const ring=document.createElement('i');ring.className='castring';el.appendChild(ring);setTimeout(()=>ring.remove(),550);}}
     const cfx=!B.silent&&u.el&&!RM;if(cfx){u._casting=1;B._cs=new Set();}
     const fxS=cfx?skcSnap():null; // v19.91: ability cues (visual only)
@@ -23944,7 +23944,7 @@ function battleLoop(ts){
     else{B.acc+=real*B.speed*TUNE.clock;while(B.acc>=DT&&!B.done){step(DT);B.acc-=DT;}}
   }
   drawBattle();
-  if(B.done){if(!B.ended){B.ended=true;gbClear();sfx(B.win?'win':'lose');musDuck();const fx=battleEndFx();const live=TBA.on&&!RM&&!B.silent;if(live){const t=performance.now();TBA.end={win:!!B.win,t0:t,until:t+3200};}setTimeout(showResult,fx?(live?1600:950):500);}return;}
+  if(B.done){if(!B.ended){B.ended=true;gbClear();sfx(B.win?'win':'lose');sfx(B.win?'cr_cheer':'cr_aww');sfx(B.win?'cr_clap':'wah');musDuck(.3,1800);const fx=battleEndFx();const live=TBA.on&&!RM&&!B.silent;if(live){const t=performance.now();TBA.end={win:!!B.win,t0:t,until:t+3200};}setTimeout(showResult,fx?(live?1600:950):500);}return;}
   requestAnimationFrame(battleLoop);
 }
 // a fight that was under way when the page reloaded: the same fight again (same board, same seed)
@@ -25606,10 +25606,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.116',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.117',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.117',items:[["🔊", "Every genre now has its own attack sound, abilities have their own cues, and the studio audience cheers, gasps and groans along with the fight."], ["🎚️", "Settings has volume sliders for Music, Effects and Interface. Cards you place, stars you earn and Legendaries you pick have new sounds."]]},
   {v:'20.116',items:[["💥", "New shots in the Polygon look: Army tracers, Space blasters, a Force bolt, holy water, a dream wisp, a bubbling beaker and more. Every shot flashes when it leaves and bursts its own way when it lands (bangs, splashes, shards, confetti), crits burst in gold, and heals fly a green plus."]]},
   {v:'20.115',items:[["🧾", "Texts now match the rules: a loss costs 1 life on the Ladder, Space shields last Act 1 only, Undead and Kaiju feel no fear, and Danger Close, Shock and Awe and Graveyard Shift say what they need."], ["🧠", "Echo really counters you now: it was reading an old genre table and often brought the wrong plan. It now reads the same counter web you see."], ["🔧", "Fixes: the defeat screen names the rival character that hurt you, the win line names the rival final boss, the finale warns when a loss would end your run, and no more \"mix 3 genres\" tip on a Double Feature board."]]},
   {v:'20.114',items:[["🔎", "New Codex tab: Discoveries. Every crossover, every character at ★★★, a win with each genre and a win with each Legendary shows as ??? until you do it in a run, then it keeps the day and the level. Old genre stickers count."], ["❓", "A Next to find line on the title and the end screen names one thing you have not found yet (a crossover's two genres first). Tap it to open Discoveries."]]},
@@ -25825,7 +25826,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-22',from:'20.90',to:'20.116',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
+  {d:'2026-10-22',from:'20.90',to:'20.117',h:"a Pilot that leads into Part 2",items:[["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act.", 1], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Level 9. One shared Level 14 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
   {d:'2026-10-19',from:'19.91',to:'20.11',h:"rival studios",items:[["🎭", "Rival studios: AI rivals share your character pool and send their casts against you. Beat one to unlock its Codex card.", 1], ["📤", "Share your run as a picture, start the next episode in one tap, and earn a genre sticker for winning with one genre."], ["📱", "Phones: a shop round fits on one screen."], ["⚖️", "Genre balance: the 6-of-a-genre bonuses are closer between genres, and the Kaiju giants are less dominant late."]]},
@@ -25978,7 +25979,8 @@ function settingsHTML(){
     ${sw('music',SET.music,'Music','Original Tropebrawl music, your picks below.')}
     <div class="setrow lookrow musrow"><span class="lkic" aria-hidden="true">🎵</span><span><b>Shop music</b><small>Plays in the shop and on the title.</small></span><span class="seg" role="radiogroup" aria-label="Shop music">${MUS_SHOP.map(([k,t,d])=>`<button class="btn sm${(SET.mus||'show')===k?' on':''}" data-a="mus" data-v="${k}" role="radio" aria-checked="${(SET.mus||'show')===k}" title="${d}">${t}</button>`).join('')}</span></div>
     <div class="setrow lookrow musrow"><span class="lkic" aria-hidden="true">⚔️</span><span><b>Battle music</b><small>Plays during fights.</small></span><span class="seg" role="radiogroup" aria-label="Battle music">${MUS_BATTLE.map(([k,t,d])=>`<button class="btn sm${(SET.bmus||'rumble')===k?' on':''}" data-a="bmus" data-v="${k}" role="radio" aria-checked="${(SET.bmus||'rumble')===k}" title="${d}">${t}</button>`).join('')}</span></div>
-    ${sw('sound',SET.sound,'Sound effects','Clicks, coins, hits and fanfares (Kenney, CC0). Quick mute: the speaker button or the M key.')}
+    ${sw('sound',SET.sound,'Sound effects','Clicks, coins, hits, abilities, crowd and fanfares (Kenney CC0 plus sounds made in code). Quick mute: the speaker button or the M key.')}
+    ${[['vMus','🎵','Music volume'],['vFx','⚔️','Effects volume'],['vUi','🖱️','Interface volume']].map(([k,ic,t])=>`<label class="setrow lookrow"><span class="lkic" aria-hidden="true">${ic}</span><span><b>${t}</b></span><input type="range" min="0" max="100" step="5" value="${SET[k]}" data-vol="${k}" aria-label="${t}" style="flex:1;min-width:90px;accent-color:var(--gold)"></label>`).join('')}
     ${sw('share',SET.share!==false,'Share anonymous run data','Your runs help train the AI rivals, and short bug notes help us fix crashes. No names, no personal info.')}
     <p class="muted setpriv">On by default. <button class="lnk" data-a="privacy">What is sent</button></p>
     <p class="muted setpriv">Learning rivals remember your play on this device only. <button class="lnk" data-a="rvforget">Forget what rivals learned</button></p>
@@ -26108,20 +26110,89 @@ function sfxInit(){
   SFX.loading=true;try{SFX.ctx=new AC();}catch(e){return;}
   for(const k in SFX_SRC)SFX_SRC[k].forEach((u,i)=>{try{const bin=atob(u.slice(u.indexOf(',')+1)),a=new Uint8Array(bin.length);for(let j=0;j<bin.length;j++)a[j]=bin.charCodeAt(j);
     SFX.ctx.decodeAudioData(a.buffer,b=>{(SFX.buf[k]=SFX.buf[k]||[])[i]=b;},()=>{});}catch(e){}});}
-// play one sound; o.vol scales it. Never touches the game's random numbers.
+// ===== v20.117 (TRO-405): sound design pass. Voices are synthesised here; no game random numbers (noise is a fixed LCG buffer). =====
+const SFX_UI=new Set(['click','hover','buy','sell','reroll','deny','train','rankup','merge','reward','legend','lock','place','placeb','star2','star3','shimmer']);
+function sfxBus(k){const C=SFX.ctx;if(!SFX.bus){SFX.bus={};['fx','ui'].forEach(n=>{const g=C.createGain();g.connect(C.destination);SFX.bus[n]=g;});}
+  SFX.bus.fx.gain.value=Math.max(0,Math.min(100,SET.vFx==null?100:SET.vFx))/100;SFX.bus.ui.gain.value=Math.max(0,Math.min(100,SET.vUi==null?100:SET.vUi))/100;return SFX.bus[k];}
+function synNoise(C){if(SFX.nz)return SFX.nz;const n=C.sampleRate|0,b=C.createBuffer(1,n,C.sampleRate),d=b.getChannelData(0);let q=987654321;for(let i=0;i<n;i++){q=(q*1103515245+12345)&0x7fffffff;d[i]=q/1073741824-1;}return SFX.nz=b;}
+// tone: pitch f0 -> f1 over d seconds, peak v
+function synT(C,o,t,f0,f1,d,ty,v,att){const s=C.createOscillator(),g=C.createGain();s.type=ty||'sine';s.frequency.setValueAtTime(f0,t);if(f1&&f1!==f0)s.frequency.exponentialRampToValueAtTime(f1,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+(att||.006));g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(g);g.connect(o);s.start(t);s.stop(t+d+.03);}
+// noise through a filter swept f0 -> f1
+function synN(C,o,t,d,ty,f0,f1,q,v,att){const s=C.createBufferSource(),f=C.createBiquadFilter(),g=C.createGain();s.buffer=synNoise(C);s.loop=true;f.type=ty;f.frequency.setValueAtTime(f0,t);if(f1&&f1!==f0)f.frequency.exponentialRampToValueAtTime(f1,t+d);f.Q.value=q||1;
+  g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+(att||.004));g.gain.exponentialRampToValueAtTime(.0001,t+d);s.connect(f);f.connect(g);g.connect(o);s.start(t,(SFX.n%7)*.1);s.stop(t+d+.03);}
+// crowd: two band-passed noise layers with a wobbling level
+function synC(C,o,t,d,f,f1,v,w){[1,1.55].forEach((m,j)=>{const s=C.createBufferSource(),b=C.createBiquadFilter(),g=C.createGain(),a=v*(j?.6:1);s.buffer=synNoise(C);s.loop=true;b.type='bandpass';b.Q.value=1.4;b.frequency.setValueAtTime(f*m,t);b.frequency.linearRampToValueAtTime(f1*m,t+d);
+  g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(a,t+d*.25);for(let i=1;i*.07<d*.7;i++)g.gain.linearRampToValueAtTime(a*(.62+.38*Math.sin(i*1.7+j*2+w))*(1-i*.07/d*.5),t+d*.25+i*.07);g.gain.linearRampToValueAtTime(.0001,t+d);
+  s.connect(b);b.connect(g);g.connect(o);s.start(t,j*.31);s.stop(t+d+.05);});}
+const SYN_P=[1,1.12,.9];
+const SYN={
+  pap:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.05,'bandpass',1900*p,700,1.2,.9);synT(C,o,t,170*p,60,.07,'triangle',.6);},
+  whoosh:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.16,'bandpass',350*p,1400*p,.9,.8,.04);},
+  swish:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.12,'highpass',1800,5000,.7,.5,.02);synT(C,o,t,2200*p,1500,.1,'sine',.15);},
+  twang:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,640*p,300*p,.18,'triangle',.7);synT(C,o,t,1280*p,600*p,.1,'sine',.2);},
+  stamp:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,150*p,70,.08,'square',.3);synN(C,o,t,.04,'lowpass',2500,0,1,.6);synT(C,o,t+.07,700*p,500,.06,'triangle',.3);},
+  squeak:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,1400*p,2300*p,.07,'sine',.6);synT(C,o,t+.08,1600*p,2600*p,.06,'sine',.5);},
+  rattle:(C,o,t,v)=>{const p=SYN_P[v];for(let i=0;i<4;i++)synN(C,o,t+i*.035,.03,'bandpass',(2400+i*300)*p,0,6,.6);synT(C,o,t,300*p,200,.14,'triangle',.2);},
+  pff:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.06,'highpass',3000*p,5000,.7,.5,.003);synT(C,o,t,900,400,.05,'sine',.2);},
+  crack:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.09,'lowpass',6000*p,900,.8,1,.001);synT(C,o,t,130*p,45,.12,'sine',.7);},
+  shing:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.17,'highpass',3500*p,8000,.9,.5,.02);synT(C,o,t,2600*p,3400*p,.14,'sine',.15);},
+  pew:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,1500*p,180,.17,'square',.3);},
+  stomp:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,95*p,32,.32,'sine',1,.004);synN(C,o,t,.2,'lowpass',260,80,1,.7);},
+  slide:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,1500*p,260,.28,'sine',.5,.01);},
+  c_aoe:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.28,'bandpass',300*p,2600*p,1.2,.8,.06);synT(C,o,t+.18,180,50,.28,'sine',.8);},
+  c_stun:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,200*p,420*p,.08,'sine',.7);synT(C,o,t+.08,420*p,160*p,.16,'sine',.7);[1800,2300,2900].forEach((f,i)=>synT(C,o,t+.12+i*.06,f*p,f*p,.12,'triangle',.18));},
+  c_heal:(C,o,t,v)=>{const p=SYN_P[v];[523,659,784,1047].forEach((f,i)=>synT(C,o,t+i*.06,f*p,f*p,.28,'sine',.35));},
+  c_shield:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,380*p,900*p,.1,'sine',.6);synT(C,o,t+.08,1500*p,1500*p,.3,'triangle',.25);},
+  c_summon:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,392*p,392*p,.1,'sawtooth',.18);synT(C,o,t+.1,523*p,523*p,.22,'sawtooth',.2);synT(C,o,t+.1,659*p,659*p,.2,'sawtooth',.14);},
+  c_buff:(C,o,t,v)=>{const p=SYN_P[v];[523,659,784].forEach((f,i)=>synT(C,o,t+i*.05,f*p,f*p*1.01,.12,'triangle',.4));},
+  c_hit:(C,o,t,v)=>{const p=SYN_P[v];synN(C,o,t,.07,'bandpass',900*p,400,1,.8);synT(C,o,t,240*p,110,.1,'triangle',.6);},
+  hover:(C,o,t,v)=>{synT(C,o,t,1200*SYN_P[v],1000,.03,'sine',.5,.002);},
+  place:(C,o,t,v)=>{const p=SYN_P[v];synT(C,o,t,210*p,120,.07,'triangle',.9);synN(C,o,t,.03,'lowpass',1500,0,1,.4);},
+  placeb:(C,o,t,v)=>{synT(C,o,t,170*SYN_P[v],100,.06,'triangle',.7);},
+  star2:(C,o,t,v)=>{[784,1175].forEach((f,i)=>synT(C,o,t+i*.09,f,f,.35,'sine',.5));synT(C,o,t+.18,1568,1568,.4,'triangle',.25);},
+  star3:(C,o,t,v)=>{[523,659,784,1047].forEach((f,i)=>synT(C,o,t+i*.09,f,f,.45,'triangle',.45));synT(C,o,t+.36,1568,1568,.6,'sine',.35);},
+  shimmer:(C,o,t,v)=>{for(let i=0;i<6;i++)synT(C,o,t+i*.05,1800+i*220,1800+i*220,.25,'sine',.18);},
+  rumble:(C,o,t,v)=>{synT(C,o,t,60,35,.8,'sine',.8,.05);synN(C,o,t,.7,'lowpass',200,60,1,.5,.05);},
+  wah:(C,o,t,v)=>{synT(C,o,t,233,233,.22,'sawtooth',.2);synT(C,o,t+.25,220,220,.22,'sawtooth',.2);synT(C,o,t+.5,208,150,.5,'sawtooth',.2,.02);},
+  cr_cheer:(C,o,t,v)=>{synC(C,o,t,.9,800,1300,.7,0);},
+  cr_ooh:(C,o,t,v)=>{synC(C,o,t,.6,500,380,.6,1);},
+  cr_aww:(C,o,t,v)=>{synC(C,o,t,.9,700,380,.6,2);},
+  cr_gasp:(C,o,t,v)=>{synC(C,o,t,.45,1500,2200,.5,3);},
+  cr_murmur:(C,o,t,v)=>{synC(C,o,t,1.2,600,650,.35,4);},
+  cr_clap:(C,o,t,v)=>{for(let i=0;i<16;i++)synN(C,o,t+i*.07+(i%3)*.013,.05,'bandpass',1800+(i%4)*300,0,1,.5);}
+};
+const GVOICE={army:'pap',orc:'whoosh',elf:'twang',fin:'stamp',grim:'swish',bug:'squeak',undead:'rattle',heist:'pff',west:'crack',horror:'shing',space:'pew',kaiju:'stomp'};
+const GRATE={army:1,orc:.85,elf:1.1,fin:1,grim:1,bug:1.35,undead:.9,heist:.95,west:1.15,horror:1.25,space:1.2,kaiju:.6,ball:1.05};
+const ATKV=new Set(['pap','whoosh','swish','twang','stamp','squeak','rattle','pff','crack','shing','pew','stomp']);
+Object.assign(SFX_VOL,{pap:.2,whoosh:.2,swish:.2,twang:.22,stamp:.22,squeak:.16,rattle:.18,pff:.18,crack:.24,shing:.18,pew:.2,stomp:.3,slide:.12,
+  c_aoe:.32,c_stun:.32,c_heal:.3,c_shield:.32,c_summon:.3,c_buff:.3,c_hit:.32,hover:.1,place:.3,placeb:.22,star2:.55,star3:.7,shimmer:.4,rumble:.35,wah:.4,
+  cr_cheer:.18,cr_ooh:.16,cr_aww:.16,cr_gasp:.2,cr_murmur:.12,cr_clap:.18});
+Object.assign(SFX_GAP,{pap:.09,whoosh:.09,swish:.09,twang:.09,stamp:.09,squeak:.09,rattle:.09,pff:.09,crack:.09,shing:.09,pew:.09,stomp:.4,slide:.15,
+  c_aoe:.1,c_stun:.1,c_heal:.1,c_shield:.1,c_summon:.1,c_buff:.1,c_hit:.1,hover:.025,place:.05,placeb:.05,cr_cheer:2,cr_ooh:2,cr_aww:2,cr_gasp:2,cr_murmur:2,cr_clap:2,wah:1,rumble:1});
+function sfxGenre(u){const id=u&&(u.twin?u.tid:u.side==='A'?u.id:null),d=id&&HERO[id];return d&&d.genre||null;}
+// play one sound; o.vol scales it, o.rate bends a sample, o.kind picks the ability cue. Never touches the game's random numbers.
 function sfx(k,o){try{
   if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;
-  const list=(SFX.buf[k]||[]).filter(Boolean);if(!list.length)return;
-  const now=SFX.ctx.currentTime;if(now-(SFX.last[k]||-9)<(SFX_GAP[k]||.03)||SFX.voices>=10)return;SFX.last[k]=now;
-  const fast=UI.screen==='battle'&&UI.speed>1&&/^(hit|big|ko|cast|ball)$/.test(k)?.6:1;
-  const src=SFX.ctx.createBufferSource(),g=SFX.ctx.createGain();SFX.n++;
-  src.buffer=list[SFX.n%list.length];src.playbackRate.value=SFX_RATE[SFX.n%SFX_RATE.length];
-  g.gain.value=(SFX_VOL[k]||.4)*fast*(o&&o.vol||1);src.connect(g);g.connect(SFX.ctx.destination);
-  SFX.voices++;src.onended=()=>{SFX.voices--;};src.start();
+  const C=SFX.ctx,now=C.currentTime;
+  if(k==='cast'&&o&&o.kind&&SYN['c_'+o.kind])k='c_'+o.kind;
+  if(/^cr_/.test(k)&&UI.speed>=3)return;
+  const list=(SFX.buf[k]||[]).filter(Boolean),syn=SYN[k];if(!list.length&&!syn)return;
+  let gs=1;if(k==='hit'||k==='big'){const h=SFX.hh=(SFX.hh||[]).filter(x=>now-x<1);h.push(now);if(h.length>6)gs=2;}
+  if(now-(SFX.last[k]||-9)<(SFX_GAP[k]||.03)*gs||SFX.voices>=14)return;SFX.last[k]=now;
+  const fast=UI.screen==='battle'&&UI.speed>1&&(/^(hit|big|ko|cast|ball|c_[a-z]+)$/.test(k)||ATKV.has(k))?.6:1;
+  const bus=sfxBus(SFX_UI.has(k)?'ui':'fx'),duck=(k==='hit'||k==='big')&&now<(SFX.dh||0)?.7:1;SFX.n++;
+  const vol=(SFX_VOL[k]||.4)*fast*duck*(o&&o.vol||1);
+  if(/^c_/.test(k))SFX.dh=now+.15;
+  if(k==='rankup'||k==='legend')musDuck(.5,1200);
+  if(syn){const out=C.createGain();out.gain.value=vol;out.connect(bus);SFX.voices++;setTimeout(()=>{SFX.voices--;},450);syn(C,out,now+.005,SFX.n%3,o);}
+  else{const src=C.createBufferSource(),g=C.createGain();src.buffer=list[SFX.n%list.length];src.playbackRate.value=SFX_RATE[SFX.n%SFX_RATE.length]*(o&&o.rate||1);
+    g.gain.value=vol;src.connect(g);g.connect(bus);SFX.voices++;src.onended=()=>{SFX.voices--;};src.start();}
+  if(k==='star3')sfx('cr_clap');if(k==='legend')sfx('shimmer');
 }catch(e){}}
 // TRO-174: rival stinger. Synthesised (no sample file). No Math.random / rand(): the whoosh noise uses its own LCG.
 function sfxStinger(big){try{if(!SET.sound||seeded||!SFX.ctx||SFX.ctx.state!=='running')return;
-  const C=SFX.ctx,t0=C.currentTime+.02,out=C.createGain(),lp=C.createBiquadFilter();out.gain.value=big?.4:.32;out.connect(C.destination);lp.type='lowpass';lp.frequency.value=1900;lp.Q.value=.8;lp.connect(out);
+  const C=SFX.ctx,t0=C.currentTime+.02,out=C.createGain(),lp=C.createBiquadFilter();out.gain.value=big?.4:.32;out.connect(sfxBus('fx'));lp.type='lowpass';lp.frequency.value=1900;lp.Q.value=.8;lp.connect(out);
   const stab=(t,fs,dur,v)=>fs.forEach(f=>[-7,7].forEach(dt=>{const o=C.createOscillator(),g=C.createGain();o.type='sawtooth';o.frequency.value=f;o.detune.value=dt;
     g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(v,t+.018);g.gain.exponentialRampToValueAtTime(v*.3,t+dur*.45);g.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(g);g.connect(lp);o.start(t);o.stop(t+dur+.05);}));
   const boom=(t,v,d)=>{const o=C.createOscillator(),g=C.createGain();o.type='sine';o.frequency.setValueAtTime(120,t);o.frequency.exponentialRampToValueAtTime(36,t+d);g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(out);o.start(t);o.stop(t+d+.05);};
@@ -26146,18 +26217,25 @@ function sfxUnlock(){sfxInit();try{if(SFX.ctx&&SFX.ctx.state==='suspended')SFX.c
   // game events (wrapped here so the game code stays as it is)
   const wrap=(name,f)=>{const o=globalThis[name];if(typeof o!=='function')return;globalThis[name]=f(o);};
   // a buy that completes a merge plays the merge sound instead of the coin
-  wrap('buy',o=>function(){SFX.hold=true;SFX.merged=false;let r;try{r=o.apply(this,arguments);}finally{SFX.hold=false;}sfx(r?(SFX.merged?'merge':'buy'):'deny');return r;});
+  wrap('buy',o=>function(){SFX.hold=true;SFX.merged=false;SFX.mk=null;let r;try{r=o.apply(this,arguments);}finally{SFX.hold=false;}sfx(r?(SFX.merged?(SFX.mk||'star2'):'buy'):'deny');return r;});
   wrap('sell',o=>function(){const r=o.apply(this,arguments);if(r!==false)sfx('sell');return r;});
   wrap('sellItem',o=>function(){const r=o.apply(this,arguments);if(r!==false)sfx('sell');return r;});
   wrap('reroll',o=>function(){const r=o.apply(this,arguments);sfx(r?'reroll':'deny');return r;});
   wrap('train',o=>function(){const k=S&&S.rank,r=o.apply(this,arguments);if(!r)sfx('deny');else if(S.rank===k)sfx('train');return r;});
   wrap('gainXp',o=>function(){const k=S&&S.rank,r=o.apply(this,arguments);if(S&&S.rank>k)sfx('rankup');return r;});
-  wrap('levelUp',o=>function(u){const l=u&&u.level,r=o.apply(this,arguments);if(u&&u.level>l){if(SFX.hold)SFX.merged=true;else sfx('merge');}return r;});
+  wrap('levelUp',o=>function(u){const l=u&&u.level,r=o.apply(this,arguments);if(u&&u.level>l){{const sk=u.level>=3?'star3':'star2';if(SFX.hold){SFX.merged=true;SFX.mk=sk;}else sfx(sk);}}return r;});
   wrap('resolvePending',o=>function(v){const p=S&&S.pending[0],r=o.apply(this,arguments);if(p)sfx(p.kind==='legend'&&v&&!String(v).startsWith('t:')?'legend':'reward');return r;});
-  wrap('startBattle',o=>function(silent){const r=o.apply(this,arguments);if(!silent)sfx(S.enemy&&S.enemy.boss?'boss':'fight');return r;});
-  wrap('dealDamage',o=>function(src,t,amt,type){const d=o.apply(this,arguments);if(d>0&&B&&!B.silent&&t){const k=d>=t.maxHp*.25?'big':'hit';hfLater(()=>sfx(k));}return d;});
-  wrap('kill',o=>function(t){const was=t&&t.alive,r=o.apply(this,arguments);if(was&&!t.alive&&B&&!B.silent)hfLater(()=>sfx('ko'));return r;});
+  wrap('startBattle',o=>function(silent){const r=o.apply(this,arguments);if(!silent){if(S.enemy&&S.enemy.boss){sfx('boss');sfx('rumble');sfx('cr_gasp');}else{sfx('fight');sfx('cr_murmur');}}return r;});
+  wrap('dealDamage',o=>function(src,t,amt,type){const d=o.apply(this,arguments);if(d>0&&B&&!B.silent&&t){const big=d>=t.maxHp*.25,k=big?'big':'hit',gr=GRATE[sfxGenre(src)]||1;hfLater(()=>{sfx(k,{rate:gr});if(big)sfx('cr_ooh');});}return d;});
+  wrap('kill',o=>function(t){const was=t&&t.alive,r=o.apply(this,arguments);if(was&&!t.alive&&B&&!B.silent)hfLater(()=>{sfx('ko');sfx('slide');sfx(t.side==='A'?'cr_aww':'cr_cheer');});return r;});
   wrap('throwBall',o=>function(){const r=o.apply(this,arguments);if(B&&!B.silent)sfx('ball');return r;});
+  // v20.117 (TRO-405): attack voice per genre, drops, hover
+  wrap('animAttack',o=>function(u,t){const r=o.apply(this,arguments);try{if(B&&!B.silent&&!RM&&u){const g=sfxGenre(u),st=atkStyle(u);if(g!=='ball'&&st!=='throw')sfx(GVOICE[g]||(st==='melee'?'whoosh':st==='shoot'?'pap':'twang'));}}catch(e){}return r;});
+  wrap('move',o=>function(from,to){const r=o.apply(this,arguments);if(r)sfx(String(to)[0]==='n'?'placeb':'place');return r;});
+  document.addEventListener('pointerover',e=>{if(!canHover||e.pointerType==='touch'||UI.screen==='battle')return;const el=e.target.closest&&e.target.closest('[data-a]');if(!el||el.disabled||el===SFX.hov)return;SFX.hov=el;sfx('hover');},true);
+  document.addEventListener('pointerout',e=>{if(SFX.hov&&!SFX.hov.contains(e.relatedTarget))SFX.hov=null;},true);
+  document.addEventListener('input',e=>{const t=e.target,k=t&&t.dataset&&t.dataset.vol;if(!k||!(k in SET))return;SET[k]=Math.max(0,Math.min(100,+t.value||0));setSave();},true);
+  document.addEventListener('change',e=>{const t=e.target,k=t&&t.dataset&&t.dataset.vol;if(!k)return;sfxUnlock();sfx(k==='vUi'?'click':k==='vFx'?'big':'star2');},true);
 }catch(e){}})();
 // ===== v20.28 (TRO-146): hits you can feel. Visual only: nothing here writes the battle or calls rand().
 // The sim deals damage the moment a unit attacks, but the shot or lunge needs a moment to arrive. B._lag (ms) is set
@@ -27547,14 +27625,14 @@ function musWant(){if(!SET.music||!SET.sound||seeded||document.hidden)return nul
 function musTick(){try{
   if(!SFX.ctx||SFX.ctx.state!=='running')return;if(SET.music&&SET.sound)musLoad();
   const ctx=SFX.ctx,now=ctx.currentTime;if(!MUS.master){MUS.master=ctx.createGain();MUS.master.connect(ctx.destination);}
-  MUS.master.gain.setTargetAtTime(MUS.duck,now,.08);
+  MUS.master.gain.setTargetAtTime(MUS.duck*Math.max(0,Math.min(100,SET.vMus==null?100:SET.vMus))/100,now,.08);
   const w=musWant();if(w===MUS.cur)return;if(w&&!MUS.buf[w])return;
   if(MUS.src){const g=MUS.gain,sr=MUS.src;g.gain.cancelScheduledValues(now);g.gain.setValueAtTime(g.gain.value,now);g.gain.linearRampToValueAtTime(0,now+.8);try{sr.stop(now+.85);}catch(e){}MUS.src=null;}
   MUS.cur=w;if(!w)return;
   const B0=MUS.buf[w],sr=ctx.createBufferSource(),g=ctx.createGain();sr.buffer=B0.b;sr.loop=true;sr.loopStart=B0.st;sr.loopEnd=Math.min(B0.b.duration,B0.st+MUS_LEN[w]);
   g.gain.setValueAtTime(0,now);g.gain.linearRampToValueAtTime(MUS_VOL[w],now+.8);sr.connect(g);g.connect(MUS.master);sr.start(now,B0.st);MUS.src=sr;MUS.gain=g;
 }catch(e){}}
-function musDuck(){MUS.duck=.35;setTimeout(()=>{MUS.duck=1;},1400);}
+function musDuck(a,ms){MUS.duck=a||.35;setTimeout(()=>{MUS.duck=1;},ms||1400);}
 if(typeof window!=='undefined'&&(window.AudioContext||window.webkitAudioContext))setInterval(musTick,250);
 if(typeof window!=='undefined'){window.addEventListener('pagehide',()=>{try{if(S&&!S.over)save();}catch(e){}});document.addEventListener('visibilitychange',()=>{try{if(document.hidden&&S&&!S.over)save();}catch(e){}});}
 // ---- v19.97: rival casts and Reruns fight with full fight-level effects (fastsim/symfight.js, embedded verbatim) ----
@@ -27663,6 +27741,7 @@ globalThis.SYMF = globalThis.SYMF || (function () {
     if (src) { src.dmgDone += dealt; if (src.side === 'E' && t.side === 'A') { const k = src.key || src.name; B.threat[k] = (B.threat[k] || 0) + dealt; } }
     if ((type === 'attack' || type === 'spell') && t.manaMax && !B.noMana) t.mana = Math.min(t.manaMax, t.mana + Math.min(8, dealt * .25));
     if (src && src.alive && src.ls && (type === 'attack' || type === 'spell')) { const lh = heal(null, src, dealt * src.ls, true); if (!B.silent) numFx(src, lh, 'heal2'); }
+    if (!B.silent && dealt > 0) { const big = dealt >= t.maxHp * .25, k = big ? 'big' : 'hit', gr = GRATE[sfxGenre(src)] || 1; hfLater(() => { sfx(k, { rate: gr }); if (big) sfx('cr_ooh'); }); }   // v20.117 sounds
     if (!B.silent && t.el) {   // the game's hit effects (numbers, flash, shake), untouched
       FXN.src = src; numFx(t, dealt - sAbs, B.envSrc === 'overtime' ? 'tick' : type === 'spell' ? 'spell' : type === 'attack' || type === 'bounce' ? 'phys' : 'true', (B.fxCrit && type === 'attack') || (B.fxCritS && type === 'spell')); if (sAbs > 0) { numFx(t, sAbs, 'block'); if (t.shield <= 0) shCrack(t); } hitFx(src, t, dealt, type);
       if (dealt > t.maxHp * .3) shake();
@@ -27690,7 +27769,8 @@ globalThis.SYMF = globalThis.SYMF || (function () {
     if (!t.summon && LG(ts, 'plotarmor') && !t.plotSaved) { t.plotSaved = true; pt.plot = true; t.hp = t.maxHp * .2; t.untarget = 1; float(t, 'Main Character!', 'heal'); return; }
     if (ON(ts) && !t.summon && !t.revived && pt.revive) { pt.revive = false; t.revived = true; t.hp = t.maxHp * TV(ts, 'extralife') / 100; float(t, 'Extra Life!', 'heal'); return; }
     t.hp = 0; t.alive = false; t.shield = 0; t.taunt = 0; t.koT = B.t;
-    float(t, 'KO', 'ko'); if (!B.silent && !RM && !t.summon && typeof performance !== 'undefined') B.hs = Math.max(B.hs || 0, performance.now() + (home(t.side) === 'E' ? 45 : 70));   // hit-stop (home: real side while flipped)
+    float(t, 'KO', 'ko'); if (!B.silent) hfLater(() => { sfx('ko'); sfx('slide'); sfx(home(t.side) === 'A' ? 'cr_aww' : 'cr_cheer'); });   // v20.117 sounds
+    if (!B.silent && !RM && !t.summon && typeof performance !== 'undefined') B.hs = Math.max(B.hs || 0, performance.now() + (home(t.side) === 'E' ? 45 : 70));   // hit-stop (home: real side while flipped)
     if (t.genre === 'kaiju' && LG(ts, 'finalwars')) sideUnits(ts).filter(a => a !== t && a.genre === 'kaiju').forEach(a => { a.dmgMult *= 1.2; float(a, '+20%', 'sp'); });
     if (ON(ts) && !t.summon && !pt.firstDown) { pt.firstDown = t; if (st.X.jock) sideUnits(ts).forEach(a => a.hastes.push({ m: .2, t: 5 })); }
     if (ON(ts) && !t.summon) {
