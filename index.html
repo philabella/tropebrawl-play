@@ -25875,10 +25875,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.135',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.136',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.136',items:[["🎬", "The shop is now on the 3D stage (bigger screens): your cast stands on your half of the arena where they will fight, the bench is a row in front. Click, drag, buy and sell work right on the stage."]]},
   {v:'20.135',items:[["👀", "Put a figure on the board next to another one and the neighbours perk up: a quick look over and a little hop. The newcomer lands with a bounce."]]},
   {v:'20.134',items:[["✨", "Juicier screens: Pitch, Legendary and item picks are dealt as big cards at the bottom centre, lift when you point at one, and your pick flies to its slot."], ["🔠", "Real title lettering: outlined, two-tone words that bounce in, on picks, Victory/Defeat and act banners. Gold counts up when you earn it."], ["🃏", "Living shop: toys bob, Rare and better cards shine, bought characters fly to their square, and a reroll sweeps the old cards away."]]},
   {v:'20.133',items:[["⚡", "The energy bar is now violet (blue looked like a shield) and only shows on characters that have a skill; enemy health is plain red, only shields are striped. Hover a unit to see what each bar means."], ["⭐", "Star levels are big and gold over every figure, in fights and on a rival's board. The selected figure's ring now lies flat on the floor."]]},
@@ -26113,7 +26114,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.135',h:"character life",items:[["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat.", 1], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."], ["✨", "Juicier screens: picks are dealt as big cards at the bottom centre, titles get real outlined lettering, and shop cards move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Put a figure next to another one on the board and the neighbours perk up."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.136',h:"character life",items:[["🎬", "The shop moved onto the 3D stage on bigger screens: your cast stands on your half of the arena, the bench in front, and you drag them right there.", 1], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."], ["✨", "Juicier screens: picks are dealt as big cards at the bottom centre, titles get real outlined lettering, and shop cards move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Put a figure next to another one on the board and the neighbours perk up."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -26263,7 +26264,7 @@ function settingsHTML(){
     <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🎞️</span><span><b>Transitions</b><small>Episode cards between the shop and fights, intermission cards, the run's title card. Short plays them quicker; a click or any key skips them.</small></span><span class="seg" role="radiogroup" aria-label="Transitions">${[['full','Full'],['short','Short'],['off','Off']].map(([k,t])=>`<button class="btn sm${tbxMode()===k?' on':''}" data-a="trans" data-v="${k}" role="radio" aria-checked="${tbxMode()===k}"${RM?' disabled':''}>${t}</button>`).join('')}</span></div>
     <p class="muted" style="margin:-4px 0 6px;font-size:.8rem" id="tbastat">${tbaStatus()}</p>
     ${sw('live',SET.live!==false,'Live 3D toys','Toys in the shop, on the board and bench are drawn live, as smooth as in fights. Switch off for pre-drawn animation (lighter on older phones). '+tlStatus())}
-    ${sw('arena',SET.arena!==false,'3D battle arena','Fights play out live on a 3D tabletop. Switch off for the flat board (lighter on older phones). '+arStatus())}
+    ${sw('arena',SET.arena!==false,'3D battle arena','Fights play out live on a 3D tabletop, and on bigger screens the shop board too. Switch off for the flat board (lighter on older phones). '+arStatus())}
     ${sw('music',SET.music,'Music','Original Tropebrawl music, your picks below.')}
     <div class="setrow lookrow musrow"><span class="lkic" aria-hidden="true">🎵</span><span><b>Shop music</b><small>Plays in the shop and on the title.</small></span><span class="seg" role="radiogroup" aria-label="Shop music">${MUS_SHOP.map(([k,t,d])=>`<button class="btn sm${(SET.mus||'show')===k?' on':''}" data-a="mus" data-v="${k}" role="radio" aria-checked="${(SET.mus||'show')===k}" title="${d}">${t}</button>`).join('')}</span></div>
     <div class="setrow lookrow musrow"><span class="lkic" aria-hidden="true">⚔️</span><span><b>Battle music</b><small>Plays during fights.</small></span><span class="seg" role="radiogroup" aria-label="Battle music">${MUS_BATTLE.map(([k,t,d])=>`<button class="btn sm${(SET.bmus||'rumble')===k?' on':''}" data-a="bmus" data-v="${k}" role="radio" aria-checked="${(SET.bmus||'rumble')===k}" title="${d}">${t}</button>`).join('')}</span></div>
@@ -29680,6 +29681,121 @@ function rv3Close(){if(RV3.raf){cancelAnimationFrame(RV3.raf);RV3.raf=0;}if(!RV3
   Object.values(RV3.sets).forEach(rv3Drop);RV3.sets={};RV3.id=null;RV3.warm=[];
   if(RV3.mats&&AR.aMat)AR.aMat.forEach((o,i)=>{o.material=RV3.mats[i];});RV3.mats=null;
   try{if(AR.cam)AR.cam.clearViewOffset();if(AR.cv){AR.cv.classList.remove('rvv3d');AR.cv.style.removeProperty('--rvc');if(!AR.f&&AR.cv.parentNode)AR.cv.remove();}}catch(e){}}
+// ================= TRO-438 3D shop (patch A; spike + numbers docs/design/shop3d.md) =================
+// On desktop, where fights use the 3D arena, the shop's board IS the arena: your characters stand on the near half as
+// they will in the fight, the bench is a row of mats in front of it, the camera frames your half (the far half stays
+// dimmed). The game's slot buttons stay the hit areas: each one is clipped (clip-path quad) to its mat as the camera
+// sees it, every frame, so click, drag, buy-by-drop, sell and every slot rule run through the same code as the flat
+// board. A dragged character is lifted and follows the pointer; buys hop, merges star up, neighbours perk up (the same
+// ANM signals the flat board uses). Phones, short windows, software WebGL, arena off, animations off and slow frames
+// keep the flat board; a visit (O / lobby) or a fight takes the arena over and the shop comes back after.
+const SH3_CSS="html.s3d body{background:#0b0912}\nhtml.s3d canvas.arena3d.s3dcv{position:fixed;left:0;top:0;z-index:0;pointer-events:none;background:radial-gradient(ellipse at 50% 45%,#2b2342 0%,#14111f 60%,#09080e 100%)}\nhtml.s3d #app{position:relative;z-index:2;background:none!important}\nhtml.s3d #app>*,html.s3d .dtl,html.s3d .dcol{background:none!important}\nhtml.s3d .dtl{display:block!important;width:100vw!important;max-width:none!important;transform:none!important;animation:none!important;filter:none!important;contain:none!important}\nhtml.s3d header.top{position:fixed!important;top:10px;left:var(--s3side);right:var(--s3side);width:auto!important;z-index:5;background:#120f1bd9!important;border-radius:12px}\nhtml.s3d .dcol.l{position:fixed!important;left:16px;top:10px;width:calc(var(--s3side) - 32px)!important;max-height:calc(100vh - var(--s3shop) - 20px);overflow:auto;z-index:6}\nhtml.s3d .dcol.r{position:fixed!important;right:16px;top:10px;width:calc(var(--s3side) - 32px)!important;z-index:5}\nhtml.s3d #insp{background:#14111ff2!important;border-radius:12px}\nhtml.s3d #insp:not(:has(.x)){display:none!important}\nhtml.s3d .syns{position:fixed!important;right:16px;bottom:calc(var(--s3shop) + 10px);width:calc(var(--s3side) - 32px);max-height:calc(100vh - var(--s3shop) - 190px);overflow-y:auto;display:flex!important;flex-direction:column;flex-wrap:nowrap!important;align-items:stretch;gap:5px;z-index:4;height:auto!important;margin:0!important}\nhtml.s3d .syns>*{width:100%!important;justify-content:flex-start;margin:0!important}\nhtml.s3d .syns{background:#120f1bd9;border-radius:12px;padding:6px}\nhtml.s3d .dshop{position:fixed!important;left:50%;transform:translateX(-50%);bottom:0;width:min(1888px,100vw);z-index:5}\nhtml.s3d .dshop .shopwrap{background:#120f1be6!important}\nhtml.s3d section.board{background:none!important;border:0!important;box-shadow:none!important;padding:0!important;min-height:0!important;height:0!important;overflow:visible!important}\nhtml.s3d .board .rowlbl{display:none!important}\nhtml.s3d .board .frow{position:static!important;height:0!important;min-height:0!important;margin:0!important;padding:0!important;border:0!important}\nhtml.s3d .board .frow>.slot{position:fixed!important;left:0!important;top:0!important;margin:0!important;width:var(--qw,0px)!important;height:var(--qh,0px)!important;min-height:0!important;transform:translate(var(--qx,-999px),var(--qy,-999px))!important;\n  clip-path:var(--qc);background:rgba(255,255,255,0)!important;border:0!important;box-shadow:none!important;border-radius:0!important;outline:0;transition:background .12s;animation:none!important;z-index:3}\nhtml.s3d .board .frow>.slot>*,html.s3d .board .frow>.slot::before,html.s3d .board .frow>.slot::after{display:none!important}\nhtml.s3d .board .frow>.slot:hover,html.s3d .board .frow>.slot:focus-visible{background:rgba(255,255,255,.10)!important}\nhtml.s3d .board .frow>.slot.sel{background:rgba(255,211,77,.24)!important}\nhtml.s3d .board .frow>.slot.dropok{background:rgba(255,211,77,.34)!important}\nhtml.s3d.tbdrag .board .frow>.slot.empty{background:rgba(120,180,255,.10)!important}\nhtml.s3d .dragghost.slot{display:none!important}\n#s3dim{position:fixed;left:0;right:0;top:0;z-index:1;pointer-events:none;background:linear-gradient(#08060ee0,#08060e99 80%,#08060e55)}\n.s3tag{position:fixed;left:0;top:0;z-index:3;pointer-events:none;font:700 12px var(--f-ui,system-ui);color:#fff;background:#0a090ebb;border-radius:8px;padding:2px 7px;white-space:nowrap}\n.s3tag b{color:#ffd34d;font-weight:800}";
+const SH3={on:false,dead:false,soft:null,raf:0,toys:{},todo:[],an:{},sig:{pop:0,mg:0,pu:0},last:0,ema:0,nf:0,built:0,vw:0,vh:0,r:null,bm:null,drag:null,dim:null,PH:null};
+const SH3_BZ=AR_Z.Ab+3.5,SH3_EL={classList:{add(){},remove(){},toggle(){},contains(){return false;}}};
+function sh3Bx(i){const n=benchSlots.length,sp=Math.min(2.85,14.2/n);return (i-(n-1)/2)*sp;}
+function sh3Soft(){if(SH3.soft===null)try{const g=AR.R.getContext(),e=g.getExtension('WEBGL_debug_renderer_info');SH3.soft=/swiftshader|llvmpipe|software|basic render/i.test(e?g.getParameter(e.UNMASKED_RENDERER_WEBGL):'');}catch(e){SH3.soft=false;}return SH3.soft;}
+function sh3Want(){try{if(SH3.dead||typeof document==='undefined'||typeof S==='undefined'||!S||UI.screen!=='plan'||SET.arena===false||RM||AR.f||RV3.on||innerWidth<1100||innerHeight<700)return false;
+  if(!TBA.tried)tbaInit();return !!(TBA.on&&arInit()&&!AR.dead&&!sh3Soft());}catch(e){return false;}}
+function sh3Side(){return Math.round(Math.min(380,Math.max(280,innerWidth*.15)))+32;}
+function sh3Rect(){const h=document.querySelector('#app header.top'),sp=document.querySelector('#app .dshop'),t=(h?h.getBoundingClientRect().bottom:110)+6,
+  b=Math.min(innerHeight-40,(sp?sp.getBoundingClientRect().top:innerHeight*.62)-4),side=sh3Side();return {left:side,top:t,width:Math.max(200,innerWidth-2*side),height:Math.max(160,b-t)};}
+function sh3Bench(){const {THREE}=TBA,g=new THREE.Group(),n=benchSlots.length,sp=Math.min(2.85,14.2/n);
+  const dk=new THREE.Mesh(new THREE.PlaneGeometry(sp*n+.6,3),new THREE.MeshBasicMaterial({color:'#0d0b14',transparent:true,opacity:.78,depthWrite:false}));dk.rotation.x=-Math.PI/2;dk.position.set(0,.01,SH3_BZ);g.add(dk);
+  const mm=new THREE.MeshBasicMaterial({color:'#5ab8ff',transparent:true,opacity:.16,depthWrite:false});
+  for(let i=0;i<n;i++){const o=new THREE.Mesh(new THREE.PlaneGeometry(sp-.35,2.25),mm);o.rotation.x=-Math.PI/2;o.position.set(sh3Bx(i),.02,SH3_BZ);g.add(o);}
+  g.traverse(o=>{o.userData.outlineParameters={visible:false};});g.userData.n=n;return g;}
+function sh3Pos(u,wide){if(u.slot[0]==='n')return {x:sh3Bx(benchSlots.indexOf(u.slot)),z:SH3_BZ};const w=arWorld((u.slot[0]==='f'?'Af':'Ab')+u.slot[1]);return {x:w.x+(wide?AR_X/2:0),z:w.z};}
+function sh3Make(h){const d=HERO[h.id];if(!d)return null;const u={side:'A',id:h.id,level:h.level,art:h.id,row:h.slot[0]==='f'?'front':'back',col:+h.slot[1]||0,wide:twoSlot(h.id),crowd:!!d.crowd,alive:true,el:SH3_EL};
+  let T=null;try{T=arToy(u);}catch(e){}const i=AR.toys.indexOf(T);if(i>=0)AR.toys.splice(i,1);if(!T)return null;
+  T.root.updateMatrixWorld(true);T.top=new TBA.THREE.Box3().setFromObject(T.body).max.y;try{T.anim=idcK(u,T);}catch(e){T.anim='idle';}
+  T.sig=h.id+':'+h.level;T.wide=u.wide;T.born=performance.now();
+  const tg=document.createElement('div');tg.className='s3tag';tg.setAttribute('aria-hidden','true');tg.innerHTML=`<b>${'★'.repeat(h.level)}</b> ${esc(d.name)}`;document.body.appendChild(tg);T.tag=tg;return T;}
+function sh3Drop(T){try{arDispose(T.root);}catch(e){}if(T.tag)T.tag.remove();}
+// which toys exist: one per character on the board or bench, keyed by uid (rebuilt when its stars change)
+function sh3Toys(){if(!SH3.on)return;const seen={};
+  for(const u of S.units){if(!/^[fbn]\d+$/.test(u.slot)||!HERO[u.id])continue;seen[u.uid]=1;let T=SH3.toys[u.uid];
+    if(T&&T.sig!==u.id+':'+u.level){sh3Drop(T);delete SH3.toys[u.uid];T=null;}
+    if(!T){if(!SH3.todo.includes(u))SH3.todo.push(u);continue;}
+    const q=sh3Pos(u,T.wide&&u.slot[0]!=='n');T.tx=q.x;T.tz=q.z;T.bench=u.slot[0]==='n';}
+  for(const k in SH3.toys)if(!seen[k]){sh3Drop(SH3.toys[k]);delete SH3.toys[k];}
+  SH3.todo=SH3.todo.filter(u=>seen[u.uid]&&!SH3.toys[u.uid]);}
+function sh3Build(u){if(!S.units.includes(u)||SH3.toys[u.uid]||!/^[fbn]\d+$/.test(u.slot))return;const T=sh3Make(u);if(!T)return;SH3.toys[u.uid]=T;
+  const q=sh3Pos(u,T.wide&&u.slot[0]!=='n');T.tx=q.x;T.tz=q.z;T.bench=u.slot[0]==='n';T.root.position.set(q.x,.05,q.z);T.root.scale.setScalar(.01);SH3.built=1;}
+// the flat board's animation signals (buy hop, star-up / signature dance, landing, neighbours perking up)
+function sh3Sig(){try{const now=performance.now(),a=(uid,k,d)=>{SH3.an[uid]={k,t0:now+(d||0)};};
+  if(ANM.pop&&ANM.pop.t!==SH3.sig.pop){SH3.sig.pop=ANM.pop.t;a(ANM.pop.uid,'buyhop');}
+  if(ANM.mg&&ANM.mg.t!==SH3.sig.mg){SH3.sig.mg=ANM.mg.t;const u=S.units.find(x=>x.uid===ANM.mg.uid);a(ANM.mg.uid,(u&&u.level>=3&&iddKey(u.id))||'starup');}
+  if(ANM.pu&&ANM.pu.t!==SH3.sig.pu){SH3.sig.pu=ANM.pu.t;const q=ANM.pu;if(q.mv)a(q.uid,'land');let i=0;S.units.forEach(u=>{if(u.slot&&anNbr(u,q.uid))a(u.uid,'nbr',300+120*i++);});}}catch(e){}}
+// camera: your half, the bench and the front of the far half, fitted into the space between the header and the shop
+function sh3Cam(r){const {THREE}=TBA,cam=AR.cam,v=new THREE.Vector3(),W=Math.max(1,r.width),H=Math.max(1,r.height);
+  if(!SH3.PH){const P=[];for(const k of ['Af','Ab'])for(const c of [0,3]){const w=arWorld(k+c);for(const y of [0,2.4])P.push([w.x+(c?.55:-.55)*AR_X,y,k==='Ab'?SH3_BZ+1.3:w.z-1.6]);}
+    for(const k of ['Ef','Eb'])for(const c of [0,3]){const w=arWorld('Ef'+c);for(const y of [0,2.3])P.push([w.x+(c?.48:-.48)*AR_X,y,k==='Eb'?AR_Z.Ef-1.2:AR_Z.Ef+1]);}SH3.PH=P;}
+  const el=40*Math.PI/180;cam.clearViewOffset();cam.aspect=W/H;let D=30,tz=0;
+  for(let it=0;it<16;it++){cam.position.set(0,D*Math.sin(el),tz+D*Math.cos(el));cam.lookAt(0,.6,tz);cam.updateProjectionMatrix();cam.updateMatrixWorld();
+    let x0=9,x1=-9,y0=9,y1=-9;for(const q of SH3.PH){v.set(q[0],q[1],q[2]).project(cam);x0=Math.min(x0,v.x);x1=Math.max(x1,v.x);y0=Math.min(y0,v.y);y1=Math.max(y1,v.y);}
+    D*=Math.max((x1-x0)/1.96,(y1-y0)/1.9);tz-=(y1+y0)/2*D*Math.tan(cam.fov*Math.PI/360)/Math.sin(el)*.8;}
+  cam.setViewOffset(W,H,-r.left,-r.top,innerWidth,innerHeight);cam.updateProjectionMatrix();cam.updateMatrixWorld();}
+function sh3Px(x,y,z,v){v.set(x,y,z).project(AR.cam);return [(v.x+1)/2*innerWidth,(1-v.y)/2*innerHeight];}
+// every slot button becomes the clip-path quad of its mat
+function sh3Quads(){const v=new TBA.THREE.Vector3(),n=benchSlots.length,sp=Math.min(2.85,14.2/n);
+  document.querySelectorAll('#app .board .frow>.slot[data-v]').forEach(el=>{const s=el.dataset.v;if(!/^[fbn]\d+$/.test(s))return;
+    const nb=s[0]==='n',u=unitAt(s),wide=!nb&&!!(u&&twoSlot(u.id)&&u.slot===s),w=nb?{x:sh3Bx(benchSlots.indexOf(s)),z:SH3_BZ}:arWorld((s[0]==='f'?'Af':'Ab')+s[1]);
+    const hx=nb?sp/2-.15:(AR_X-.25)/2,hz=nb?1.15:1.52,x0=w.x-hx,x1=w.x+hx+(wide?AR_X:0);
+    const c=[sh3Px(x0,0,w.z-hz,v),sh3Px(x1,0,w.z-hz,v),sh3Px(x1,0,w.z+hz,v),sh3Px(x0,0,w.z+hz,v)];
+    const X0=Math.min(c[0][0],c[3][0]),X1=Math.max(c[1][0],c[2][0]),Y0=Math.min(c[0][1],c[1][1]),Y1=Math.max(c[2][1],c[3][1]);
+    const k=c.map(a=>a[0].toFixed(0)+','+a[1].toFixed(0)).join(';');if(el._s3q===k)return;el._s3q=k;const st=el.style;
+    st.setProperty('--qx',X0.toFixed(0)+'px');st.setProperty('--qy',Y0.toFixed(0)+'px');st.setProperty('--qw',(X1-X0).toFixed(0)+'px');st.setProperty('--qh',(Y1-Y0).toFixed(0)+'px');
+    st.setProperty('--qc','polygon('+c.map(a=>(a[0]-X0).toFixed(0)+'px '+(a[1]-Y0).toFixed(0)+'px').join(',')+')');});}
+function sh3Tags(){const v=new TBA.THREE.Vector3();
+  for(const k in SH3.toys){const T=SH3.toys[k],p=T.root.position,s=T.root.scale.x,a=sh3Px(p.x,p.y+T.top*s+.18,p.z,v);
+    const tf=`translate(${a[0].toFixed(0)}px,${a[1].toFixed(0)}px) translate(-50%,-100%)`;if(T._tf!==tf){T._tf=tf;T.tag.style.transform=tf;}
+    const op=s<.3?'0':'1';if(T._op!==op){T._op=op;T.tag.style.opacity=op;}}
+  if(SH3.dim){const y=sh3Px(0,0,0,v)[1];const h=Math.max(0,y).toFixed(0)+'px';if(SH3.dim._h!==h){SH3.dim._h=h;SH3.dim.style.height=h;}}}
+function sh3Loop(now){SH3.raf=0;if(!SH3.on)return;if(!sh3Want()){sh3Off();return;}
+  try{const gap=SH3.last?now-SH3.last:16;SH3.last=now;AR.dt=Math.min(.1,gap/1000);
+    // too slow: sharper pixels go first, then the ink outlines, then the flat board (frames that built a toy don't count)
+    if(!AR.keep&&!document.hidden&&gap<1000&&!SH3.built){SH3.ema=SH3.nf?SH3.ema*.92+gap*.08:gap;++SH3.nf;
+      if(SH3.nf>8&&SH3.ema>120){SH3.dead=true;sh3Off();render();return;}
+      if(SH3.nf>45&&SH3.ema>50){SH3.nf=0;if(AR.q<1&&AR.R.getPixelRatio()>1){AR.q=1;AR.R.setPixelRatio(1);SH3.vw=0;}else if(AR.q<2)AR.q=2;else{SH3.dead=true;sh3Off();render();return;}}}
+    SH3.built=0;const vw=innerWidth,vh=innerHeight;
+    if(SH3.vw!==vw||SH3.vh!==vh){SH3.vw=vw;SH3.vh=vh;AR.cv.style.width=vw+'px';AR.cv.style.height=vh+'px';AR.R.setSize(vw,vh,false);sh3Vars();SH3.r=null;}
+    if(SH3.todo.length)sh3Build(SH3.todo.shift());
+    if(!SH3.r)SH3.r=sh3Rect();sh3Cam(SH3.r);
+    const {lib}=TBA,ms=performance.now(),dk=Math.min(1,AR.dt*12);
+    for(const k in SH3.toys){const T=SH3.toys[k],a=SH3.an[k];let em=null,t=0,one=false;
+      if(a){const e=lib.EMOTES[a.k],el=(ms-a.t0)/1000;if(!e||el>=e.dur)delete SH3.an[k];else if(el>=0){em=e;t=el;one=true;}}
+      if(!em){em=lib.EMOTES[T.anim]||lib.EMOTES.idle;if(em)t=em._idle?now/1000*idcRate(T.ph)+T.ph*em.dur:(now/1000)%em.dur;}
+      if(em)T.figs.forEach((F,i)=>{const ps=lib.sampleEmote(em,t+(one?i*.06:i*em.dur*.37));F.fig.position.y=lib.poseFigure(F.fig,ps,1,em.rel);});
+      const g=(ms-T.born)/340,gs=g>=1?1:Math.max(.01,(1-Math.pow(1-Math.max(0,g),3))*(1+.14*Math.sin(Math.max(0,g)*Math.PI)));T.root.scale.setScalar((T.bench?.78:1)*gs);
+      const P=T.root.position;if(SH3.drag&&SH3.drag.uid==k){const q=Math.min(1,AR.dt*20);P.x+=(SH3.drag.x-P.x)*q;P.z+=(SH3.drag.z-P.z)*q;P.y+=(.9-P.y)*q;}
+      else{P.x+=(T.tx-P.x)*dk;P.z+=(T.tz-P.z)*dk;P.y+=(.05-P.y)*dk;}}
+    try{arsFrame(now);}catch(e){}sh3Quads();sh3Tags();
+    if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
+  catch(e){SH3.dead=true;SH3.why=String(e&&e.message||e).slice(0,80);sh3Off();try{render();}catch(_){}return;}
+  SH3.raf=requestAnimationFrame(sh3Loop);}
+function sh3Vars(){const R=document.documentElement.style,sp=document.querySelector('#app .dshop');R.setProperty('--s3side',sh3Side()+'px');R.setProperty('--s3shop',(sp?sp.getBoundingClientRect().height:330).toFixed(0)+'px');}
+function sh3On(){if(SH3.on)return;SH3.on=true;Object.assign(SH3,{last:0,ema:0,nf:0,vw:0,vh:0,drag:null,r:null});
+  if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}document.documentElement.classList.add('s3d');sh3Vars();
+  try{arsFight();}catch(e){}if(SH3.bm&&SH3.bm.userData.n!==benchSlots.length){SH3.bm.traverse(o=>{if(o.geometry)o.geometry.dispose();});SH3.bm=null;}if(!SH3.bm)SH3.bm=sh3Bench();AR.scene.add(SH3.bm);
+  AR.cv.classList.add('s3dcv');if(AR.cv.parentNode!==document.body)document.body.appendChild(AR.cv);
+  if(!SH3.dim){SH3.dim=document.createElement('div');SH3.dim.id='s3dim';SH3.dim.setAttribute('aria-hidden','true');}document.body.appendChild(SH3.dim);
+  SH3.sig={pop:ANM.pop?ANM.pop.t:0,mg:ANM.mg?ANM.mg.t:0,pu:ANM.pu?ANM.pu.t:0};sh3Toys();if(!SH3.raf)SH3.raf=requestAnimationFrame(sh3Loop);}
+function sh3Off(){if(SH3.raf){cancelAnimationFrame(SH3.raf);SH3.raf=0;}if(!SH3.on)return;SH3.on=false;document.documentElement.classList.remove('s3d');
+  Object.values(SH3.toys).forEach(sh3Drop);SH3.toys={};SH3.todo=[];SH3.an={};SH3.drag=null;if(SH3.dim)SH3.dim.remove();if(SH3.bm&&SH3.bm.parent)SH3.bm.parent.remove(SH3.bm);
+  try{if(AR.cv){AR.cv.classList.remove('s3dcv');if(!AR.f&&!RV3.on){if(AR.cam)AR.cam.clearViewOffset();if(AR.cv.parentNode)AR.cv.remove();}}}catch(e){}}
+function sh3Sync(){try{if(sh3Want()){SH3.tries=0;sh3On();sh3Sig();sh3Toys();sh3Vars();document.querySelectorAll('#app .board .frow>.slot').forEach(el=>{el._s3q=null;});}
+  else{sh3Off();// the fight or a visit is still letting go of the arena: look again shortly
+    if(UI.screen==='plan'&&(AR.f||RV3.on)&&!SH3.wait&&(SH3.tries=(SH3.tries||0)+1)<40)SH3.wait=setTimeout(()=>{SH3.wait=0;sh3Sync();},250);else if(!AR.f&&!RV3.on)SH3.tries=0;}}catch(e){}}
+(function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
+  document.head.insertAdjacentHTML('beforeend','<style id="s3css">'+SH3_CSS+'</style>');
+  const rd0=render;globalThis.render=function(){const x=rd0.apply(this,arguments);sh3Sync();return x;};
+  const vc0=rvvClose;globalThis.rvvClose=function(){const x=vc0.apply(this,arguments);sh3Sync();return x;};
+  addEventListener('resize',()=>{if(SH3.on||UI.screen==='plan')sh3Sync();});
+  // a character dragged from the board is lifted and follows the pointer over the ground
+  document.addEventListener('pointermove',ev=>{if(!SH3.on||!PT.drag||!PT.src||PT.src.kind!=='unit')return;const u=unitAt(PT.src.slot);if(!u||!SH3.toys[u.uid])return;
+    const V=TBA.THREE.Vector3,nx=ev.clientX/innerWidth*2-1,ny=-(ev.clientY/innerHeight)*2+1,A=new V(nx,ny,-1).unproject(AR.cam),B=new V(nx,ny,1).unproject(AR.cam),t=(.9-A.y)/(B.y-A.y);
+    if(t>0&&isFinite(t))SH3.drag={uid:u.uid,x:A.x+(B.x-A.x)*t,z:A.z+(B.z-A.z)*t};});
+  const end=()=>{SH3.drag=null;};document.addEventListener('pointerup',end);document.addEventListener('pointercancel',end);}catch(e){}})();
 (function(){const oa0=onAction0;globalThis.onAction0=function(a,v,el){if(SCOUT_ACT[a]&&UI.sheetOpen!=='modal'){try{SCOUT_ACT[a](v,el);}catch(e){}return;}return oa0.apply(this,arguments);};})();
 (function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
   document.addEventListener('input',e=>{if(e.target&&e.target.id==='poolq'){UI.poolQ=e.target.value;poolFilter();}});
