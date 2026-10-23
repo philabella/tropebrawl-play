@@ -24297,15 +24297,20 @@ function tbxFight(go){if(tbxMode()==='off'||TBX.el||!S){go();return;}
   tbxRun(ov?[[16,()=>TBX.el.classList.add('on')],[40,go],[(boss?1500:1200)*k,()=>tbxOut(320*k+40)]]:[[16,()=>TBX.el.classList.add('on')],[(boss?980:760)*k,go],[(boss?980:760)*k+40,()=>tbxOut(320*k+40)]]);}
 // TRO-174: a rival fight opens with a VS card: you vs the rival studio (the fight starts under it, then it wipes away)
 function tbxVs(go,e,act,k){const id=e.rival,x=RIVAL[id],big=!!e.lead,me=rvMyAce(),st=rvStudio(id),tag=big?'Final boss':'Rival episode';
-  const el=tbxOpen('bump vs'+(big?' lead':'')+(k<1?' k5':''),`<div class="tbvs"><small class="tbvtag">${esc(runLong())} · Act ${act} · Episode ${S.round} · <b>${tag}</b></small>
+  const ov=document.documentElement.classList.contains('s3d'); // TRO-453 (SMI-88)
+  const el=tbxOpen('bump vs'+(ov?' ovl':'')+(big?' lead':'')+(k<1?' k5':''),`<div class="tbvs"><small class="tbvtag">${esc(runLong())} · Act ${act} · Episode ${S.round} · <b>${tag}</b></small>
     <div class="tbvrow"><div class="tbvside me"><div class="tbvfig">${me&&rvToy(me.id,'tbvimg')||'<span class="tbvemo">🎬</span>'}</div><b>Your cast</b><span>${me&&HERO[me.id]?esc(HERO[me.id].name):''}</span></div>
     <div class="tbvvs" aria-hidden="true">VS</div>
     <div class="tbvside rv"><div class="tbvfig${rvRevealed(id)?'':' sh'}">${(a=>a&&rvToy(a.id,'tbvimg'))(rvAce(id))||rvToy((RVX[id]||{}).m,'tbvimg')||`<span class="tbvemo">${x.e}</span>`}</div><b>${x.e} ${esc(x.name)}</b><small class="tbvai">AI rival</small><span>${(a=>a&&HERO[a.id]?esc(HERO[a.id].name)+' · ':'')(rvAce(id))}${esc(st||'Rival studio')}</span>${(k=>k?`<span class="tbvkit" title="Took: ${esc(k.replace(/<[^>]*>/g,''))}">${k}</span>`:'')(rvKit(S.lobby&&S.lobby.rv.find(R=>R.id===id),1))}</div></div>
     <p class="tbvq">“${esc(rvTaunt(id,big))}”</p></div>`,tag+': '+rvFull(id),'Click to skip');
   el.style.setProperty('--rvc',rvCol(id));sfxStinger(big);const T=(big?1900:1450)*k;
-  tbxRun([[16,()=>el.classList.add('on')],[T,go],[T+40,()=>tbxOut(320*k+40)]]);}
+  tbxRun(ov?[[16,()=>el.classList.add('on')],[40,go],[T,()=>tbxOut(320*k+40)]]:[[16,()=>el.classList.add('on')],[T,go],[T+40,()=>tbxOut(320*k+40)]]);}
 // fight -> shop / intermission / end: a wipe; an intermission gets a card with its icon and title; a level clear or a
 // new unlock goes straight on into the level-cleared sequence
+// TRO-453 (SMI-67): back to a 3D shop, the wipe stays up until the stage is on with every figure placed (max 1.5 s)
+function tbxHold(f){const t0=performance.now(),el=TBX.el,w=()=>{if(TBX.el!==el)return;let busy=false;
+  try{const es=SH3.eid&&SH3.sets[SH3.eid];busy=UI.screen==='plan'&&sh3Could()&&(!SH3.on||SH3.todo.length>0||!!(es&&es.todo.length)||document.documentElement.classList.contains('s3w'));}catch(e){}
+  if(busy&&performance.now()-t0<1500)setTimeout(w,40);else f();};w();}
 function tbxAfter(go){if(tbxMode()==='off'||TBX.el){go();tbxEnd(true);return;}const k=tbxK();
   tbxOpen('bump wipe'+(k<1?' k5':''),'<div class="tbep"></div>','');
   tbxRun([[16,()=>TBX.el.classList.add('on')],[250*k+20,()=>{go();
@@ -24314,7 +24319,7 @@ function tbxAfter(go){if(tbxMode()==='off'||TBX.el){go();tbxEnd(true);return;}co
       if(w&&t){w.innerHTML=`<span class="ic">${esc(a?a.textContent:'🎬')}</span><small>${esc(lvLong(S.lv))} · Episode ${S.round}</small><b>${esc(t.textContent)}</b><i>${/^intermission$/i.test(t.textContent.trim())?'Between scenes: your call':'Intermission'}</i>`;
         TBX.el.classList.remove('on');void TBX.el.offsetWidth;TBX.el.classList.add('on');TBX.el.setAttribute('aria-label',t.textContent);
         TBX.steps.push(...[[700*k,()=>tbxOut(320*k+40)]].map(([t2,f])=>{const x={f,d:false};x.h=setTimeout(()=>tbxStep(x),t2);return x;}));return;}}
-    tbxOut(320*k+40);}]]);}
+    tbxHold(()=>tbxOut(320*k+40));}]]);}
 
 // run start: black, the level's title card, then the label glides into the top-bar chip
 function tbxCard(){if(!S||tbxMode()==='off'||UI.screen==='battle')return;const n=S.lv|0,G=gymOf(),k=tbxK();
@@ -24323,9 +24328,9 @@ function tbxCard(){if(!S||tbxMode()==='off'||UI.screen==='battle')return;const n
   const el=tbxOpen('card on',`<div class="tbcard"><small>${ey}</small><b class="tbbig">${esc(G?'Gym '+G.n:lvLong(n))}</b><span class="tbnm">${x.e||''} ${esc(x.name||'')}</span>${rule?`<p class="tbrule">${esc(rule)}</p>`:''}${S.round>1?'<small>Episode '+S.round+'</small>':''}</div>`,lvTitle(n),'Click to skip');
   const glide=()=>{const big=el.querySelector('.tbbig'),tg=document.querySelector('#app .lvb');
       if(!big||!tg||!tg.offsetParent||RM_SYS){el.classList.add('glide');big&&(big.style.opacity='0');return;}
-      const a=big.getBoundingClientRect(),b=tg.getBoundingClientRect(),sc=Math.max(.08,b.height/Math.max(1,a.height))*1.15;
+      const a=big.getBoundingClientRect(),b=tg.getBoundingClientRect(),sc=Math.max(.04,Math.min(b.height/Math.max(1,a.height),b.width/Math.max(1,a.width)));
       big.style.transform=`translate(${(b.left+b.width/2-(a.left+a.width/2)).toFixed(1)}px,${(b.top+b.height/2-(a.top+a.height/2)).toFixed(1)}px) scale(${sc.toFixed(3)})`;
-      big.style.opacity='0.15';tg.style.visibility='hidden';el.classList.add('glide');},
+      big.style.opacity='0';tg.style.visibility='hidden';el.classList.add('glide');},
     land=()=>{const tg=document.querySelector('#app .lvb');if(tg){tg.style.visibility='';tg.classList.remove('land');void tg.offsetWidth;tg.classList.add('land');}tbxOut(200);};
   tbxRun([[16,()=>el.classList.add('on')],[1900*k,glide],[1900*k+(k<1?420:780),land]]);}
 
@@ -25637,7 +25642,8 @@ function closeSheet(){$('#sheet').hidden=true;$('#scrim').hidden=true;UI.sheetOp
 // v19.56: a hidden pick (See my team first) waits behind a Choose button; Fight brings it back first
 function peeking(){return !!(UI.legPeek&&S&&S.pending&&S.pending.length);}
 let toastT;
-function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1800);}
+function toast(m){const t=$('#toast');if(!t)return;t.textContent=m;t.hidden=false;try{const b=innerWidth<=760&&document.querySelector('#app .screen.plan>.board');t.style.top=b?Math.round(b.getBoundingClientRect().top+4)+'px':'';}catch(e){} // TRO-453 (SMI-90)
+  clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,1800);}
 // ================= input =================
 function onAction(a,v,el){try{tutAct(a);}catch(e){}if(UI.phMenu&&!['phmenu','quit','mute'].includes(a)){phMenu(false);const w=document.querySelector('.phw');if(w&&!UI.phOpen)w.classList.remove('open');}let r_;try{r_=onAction0(a,v,el);}catch(e){if(!(S&&repairSlots()))throw e;render();}try{tutPaint();}catch(e){}pgPaint();try{if(S&&!S.over&&UI.screen!=='title'&&UI.screen!=='end')save();}catch(e){}return r_;}
 function onAction0(a,v,el){
@@ -25828,11 +25834,13 @@ document.addEventListener('click',e=>{
 const KW=[['dmg','damage|ATK|crits?|critical'],['hp','HP|max HP|heals?|healed|healing|lives|life'],['sh','shields?|Shield|Armor|armor'],
   ['mana','energy'],['gold','gold'],['spd','Speed|attack speed']];
 let KRE=null;const KW_G={};
+// TRO-453 (SMI-68): multi-word names (characters, Legendaries, items) are matched first and left whole: no "Riot [Shield]"
+function kwNames(){try{return [...Object.values(HERO),...Object.values(LEGENDS),...Object.values(TR)].map(d=>d&&d.name).filter(n=>n&&/\s/.test(n)).sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|')||'(?!)';}catch(e){return '(?!)';}}
 function kwRe(){if(KRE)return KRE;const kws=KW.map(x=>x[1]).join('|');Object.keys(GENRES).forEach(k=>KW_G[GENRES[k].name]=k);
   const gn=Object.keys(KW_G).sort((a,b)=>b.length-a.length).map(x=>x.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('|');
-  KRE=new RegExp(`(🪙\\s?\\d+)|(?<![\\w&#.])([+\\-−]?\\d+(?:\\.\\d+)?%?)(\\s(?:more |less |extra |bonus )?(?:${kws})\\b)?|\\b(${kws})\\b|\\b(${gn})\\b|(★+)`,'g');return KRE;}
+  KRE=new RegExp(`\\b(${kwNames()})\\b|(🪙\\s?\\d+)|(?<![\\w&#.])([+\\-−]?\\d+(?:\\.\\d+)?%?)(?![\\dA-Z]|x\\d)(\\s(?:more |less |extra |bonus )?(?:${kws})\\b)?|\\b(${kws})\\b|\\b(${gn})\\b|(★+)`,'g');return KRE;}
 function kwCls(w){w=w.trim().replace(/^(more|less|extra|bonus) /,'');for(const [c,x] of KW)if(new RegExp(`^(?:${x})$`).test(w))return c;return 'n';}
-function kwHTML(h){return h.replace(kwRe(),(m,gold,num,numkw,kw,g,star)=>{
+function kwHTML(h){return h.replace(kwRe(),(m,nm,gold,num,numkw,kw,g,star)=>{if(nm)return m;
   if(gold)return `<span class="kw kw-gold">${gold}</span>`;
   if(num)return numkw?`<span class="kw kw-${kwCls(numkw)}">${num}${numkw}</span>`:`<span class="kw kw-n">${num}</span>`;
   if(kw)return `<span class="kw kw-${kwCls(kw)}">${kw}</span>`;
@@ -25895,7 +25903,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.145',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.146',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -26138,7 +26146,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.145',h:"character life",items:[["🎬", "Events and picks take the whole screen: the top bar steps aside until you pick. Hide (Tab or Esc) shows your team, gold and lives."],["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place, the episode title riding over it."], ["📱", "Phones: cleaner shop cards (bigger names, one icon row), fights use the full height, and tips sit at the edge of the screen instead of on your board."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Shop cards you already own glow and hop (2/3 shows how close a ★★ is), and events take the whole screen: Hide (Tab) shows your team and the shop while the event waits."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.146',h:"character life",items:[["🎬", "Events and picks take the whole screen: the top bar steps aside until you pick. Hide (Tab or Esc) shows your team, gold and lives."],["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place, the episode title riding over it."], ["📱", "Phones: cleaner shop cards (bigger names, one icon row), fights use the full height, and tips sit at the edge of the screen instead of on your board. Coming back from the opponent's half, the camera glides straight back to your board and bench."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Shop cards you already own glow and hop (2/3 shows how close a ★★ is), and events take the whole screen: Hide (Tab) shows your team and the shop while the event waits."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -29757,7 +29765,10 @@ function sh3FoeCard(el){const T=SH3.hov;if(!T||!T.f)return '';const f=T.f;
 function sh3Hov(T){if(SH3.hov===T&&(!T||document.getElementById('hovcard')))return;SH3.hov=T;let h=document.getElementById('s3hit');
   if(!T){if(h&&h.dataset.on){h.dataset.on='';try{hoverCard(null);}catch(e){}}return;}
   if(!h){h=document.createElement('div');h.id='s3hit';h.setAttribute('aria-hidden','true');document.body.appendChild(h);}
-  h.dataset.a='s3foe';h.dataset.v=T.fk;h.dataset.on='1';sh3HitBox(T,h);try{hoverCard(null);hoverCard(h);}catch(e){}}
+  h.dataset.a='s3foe';h.dataset.v=T.fk;h.dataset.on='1';sh3HitBox(T,h);try{hoverCard(null);hoverCard(h);}catch(e){}sh3HovFit();}
+// TRO-453 (SMI-85): lift the enemy hover card above the Q/E bar when they meet
+function sh3HovFit(){const c=document.getElementById('hovcard'),b=document.getElementById('s3bar');if(!c||!b||getComputedStyle(b).display==='none')return;
+  const q=c.getBoundingClientRect(),z=b.getBoundingClientRect();if(q.width&&z.width&&q.bottom>z.top-8&&q.top<z.bottom&&q.right>z.left&&q.left<z.right)c.style.top=Math.max(8,Math.round(z.top-8-q.height))+'px';}
 function sh3HitBox(T,h){const v=new TBA.THREE.Vector3(),p=T.root.position,s=T.root.scale.x,a=sh3Px(p.x,p.y,p.z,v),t=sh3Px(p.x,p.y+T.top*s,p.z,v),w=Math.abs(sh3Px(p.x+AR_X*(T.wide?.86:.42)*s,p.y,p.z,v)[0]-a[0])*2;
   const b={x:a[0]-w/2,y:t[1],w,h:Math.max(24,a[1]-t[1]+8)};if(h){h.style.left=b.x.toFixed(0)+'px';h.style.top=b.y.toFixed(0)+'px';h.style.width=b.w.toFixed(0)+'px';h.style.height=b.h.toFixed(0)+'px';}return b;}
 // what is under the pointer: only the far-half picture (the dimmer, the canvas or bare layout boxes), never a button or panel
@@ -29765,7 +29776,7 @@ function sh3HovAt(x,y,tg){if(!SH3.on||UI.screen!=='plan'||UI.sheetOpen||PT.drag|
   if(tg&&tg.closest&&tg.closest('button,a,input,.scard,.dshop,.dcol.r,.syns,header,.rvstrip,#s3bar,#s3tag,#hovcard,#s3pop,.vwrap,#sheet,#evpk'))return null;
   const es=SH3.eid&&SH3.sets[SH3.eid];if(!es)return null;let best=null,bd=1e9;
   for(const T of es.toys){if(!T.root.visible||T.root.scale.x<.3)continue;const b=sh3HitBox(T,null);if(x<b.x||x>b.x+b.w||y<b.y||y>b.y+b.h)continue;const d=Math.abs(x-(b.x+b.w/2));if(d<bd){bd=d;best=T;}}return best;}
-function sh3HovTick(){sh3PopAt();const P=SH3.ptr;if(!P)return;if(SH3.hov&&!SH3.hov.root.visible){sh3Hov(null);return;}if(SH3.hov){const h=document.getElementById('s3hit');if(h)sh3HitBox(SH3.hov,h);}}
+function sh3HovTick(){sh3PopAt();sh3HovFit();const P=SH3.ptr;if(!P)return;if(SH3.hov&&!SH3.hov.root.visible){sh3Hov(null);return;}if(SH3.hov){const h=document.getElementById('s3hit');if(h)sh3HitBox(SH3.hov,h);}}
 (function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
   document.head.insertAdjacentHTML('beforeend','<style id="s3css446">'+SH3_CSS446+'</style>');
   document.addEventListener('pointermove',ev=>{if(!SH3.on)return;SH3.ptr={x:ev.clientX,y:ev.clientY};if(ev.pointerType!=='mouse'&&ev.pointerType!=='pen')return;sh3Hov(sh3HovAt(ev.clientX,ev.clientY,ev.target));},{passive:true});
@@ -29807,20 +29818,20 @@ function sh3Toys(){if(!SH3.on)return;const seen={};
   for(const k in SH3.toys)if(!seen[k]){sh3Drop(SH3.toys[k]);delete SH3.toys[k];}
   SH3.todo=SH3.todo.filter(u=>seen[u.uid]&&!SH3.toys[u.uid]);}
 function sh3Build(u){if(!S.units.includes(u)||SH3.toys[u.uid]||!/^[fbn]\d+$/.test(u.slot))return;const T=sh3Make(u);if(!T)return;SH3.toys[u.uid]=T;
-  const q=sh3Pos(u,T.wide&&u.slot[0]!=='n');T.tx=q.x;T.tz=q.z;T.bench=u.slot[0]==='n';T.root.position.set(q.x,.05,q.z);T.root.scale.setScalar(.01);SH3.built=1;}
+  const q=sh3Pos(u,T.wide&&u.slot[0]!=='n');T.tx=q.x;T.tz=q.z;T.bench=u.slot[0]==='n';T.root.position.set(q.x,.05,q.z);T.root.scale.setScalar(.01);SH3.built=1;if(document.getElementById('tbx')){T.born=performance.now()-1000;T.root.scale.setScalar(T.bench?.78:1);}}
 // the flat board's animation signals (buy hop, star-up / signature dance, landing, neighbours perking up)
 function sh3Sig(){try{const now=performance.now(),a=(uid,k,d)=>{SH3.an[uid]={k,t0:now+(d||0)};};
   if(ANM.pop&&ANM.pop.t!==SH3.sig.pop){SH3.sig.pop=ANM.pop.t;a(ANM.pop.uid,'buyhop');}
   if(ANM.mg&&ANM.mg.t!==SH3.sig.mg){SH3.sig.mg=ANM.mg.t;const u=S.units.find(x=>x.uid===ANM.mg.uid);a(ANM.mg.uid,(u&&u.level>=3&&iddKey(u.id))||'starup');}
   if(ANM.pu&&ANM.pu.t!==SH3.sig.pu){SH3.sig.pu=ANM.pu.t;const q=ANM.pu;if(q.mv)a(q.uid,'land');let i=0;S.units.forEach(u=>{if(u.slot&&anNbr(u,q.uid))a(u.uid,'nbr',300+120*i++);});}}catch(e){}}
 // camera: your half, the bench and the front of the far half, fitted into the space between the header and the shop
-function sh3Cam(r,e,az){e=e||0;az=az||0;const {THREE}=TBA,cam=AR.cam,v=new THREE.Vector3(),W=Math.max(1,r.width),H=Math.max(1,r.height);
+function sh3Cam(r,e,az,F){e=e||0;az=az||0;const {THREE}=TBA,cam=AR.cam,v=new THREE.Vector3(),W=Math.max(1,r.width),H=Math.max(1,r.height);
   if(!SH3.PH){const P=[];for(const k of ['Af','Ab'])for(const c of [0,3]){const w=arWorld(k+c);for(const y of [0,2.4])P.push([w.x+(c?.55:-.55)*AR_X,y,k==='Ab'?SH3_BZ+1.3:w.z-1.6]);}
     for(const k of ['Ef','Eb'])for(const c of [0,3]){const w=arWorld('Ef'+c);for(const y of [0,2.3])P.push([w.x+(c?.48:-.48)*AR_X,y,k==='Eb'?AR_Z.Ef-1.2:AR_Z.Ef+1]);}SH3.PH=P;
     const E=[];for(const k of ['Ef','Eb'])for(const c of [0,3]){const w=arWorld(k+c);for(const y of [0,3])E.push([w.x+(c?.55:-.55)*AR_X,y,w.z+(k==='Eb'?-1.7:1.7)]);}SH3.PE=E.concat(E);}
   const pts=e?SH3.PH.map((q,i)=>{const p=SH3.PE[i];return [q[0]+(p[0]-q[0])*e,q[1]+(p[1]-q[1])*e,q[2]+(p[2]-q[2])*e];}):SH3.PH;
   const el=(40-6*e)*Math.PI/180;cam.clearViewOffset();cam.aspect=W/H;let D=30,tz=0;
-  for(let it=0;it<16;it++){cam.position.set(Math.sin(az)*D*Math.cos(el),D*Math.sin(el),tz+Math.cos(az)*D*Math.cos(el));cam.lookAt(0,.6,tz);cam.updateProjectionMatrix();cam.updateMatrixWorld();
+  if(F){D=F.D;tz=F.tz;cam.position.set(Math.sin(az)*D*Math.cos(el),D*Math.sin(el),tz+Math.cos(az)*D*Math.cos(el));cam.lookAt(0,.6,tz);}else for(let it=0;it<16;it++){SH3._D=D;SH3._tz=tz;cam.position.set(Math.sin(az)*D*Math.cos(el),D*Math.sin(el),tz+Math.cos(az)*D*Math.cos(el));cam.lookAt(0,.6,tz);cam.updateProjectionMatrix();cam.updateMatrixWorld();
     let x0=9,x1=-9,y0=9,y1=-9;for(const q of pts){v.set(q[0],q[1],q[2]).project(cam);x0=Math.min(x0,v.x);x1=Math.max(x1,v.x);y0=Math.min(y0,v.y);y1=Math.max(y1,v.y);}
     D*=Math.max((x1-x0)/1.96,(y1-y0)/1.9);tz-=(y1+y0)/2*D*Math.tan(cam.fov*Math.PI/360)/Math.sin(el)*.8;}
   cam.setViewOffset(W,H,-r.left,-r.top,innerWidth,innerHeight);cam.updateProjectionMatrix();cam.updateMatrixWorld();}
@@ -29853,12 +29864,14 @@ function sh3Loop(now){SH3.raf=0;if(!SH3.on)return;if(!sh3Want()){sh3Off();return
     SH3.built=0;const vw=innerWidth,vh=innerHeight;
     if(SH3.vw!==vw||SH3.vh!==vh){SH3.vw=vw;SH3.vh=vh;AR.cv.style.width=vw+'px';AR.cv.style.height=vh+'px';AR.R.setSize(vw,vh,false);sh3Vars();SH3.r=null;}
     if(SH3.todo.length)sh3Build(SH3.todo.shift());
-    if(SH3.r&&(SH3.rk=(SH3.rk|0)+1)%20===0){const q=sh3Rect(),R=SH3.r,d=Math.abs(q.top-R.top)+Math.abs(q.height-R.height)+Math.abs(q.width-R.width);
+    if(SH3.r&&!SH3.view&&!SH3.tv&&(SH3.rk=(SH3.rk|0)+1)%20===0){const q=sh3Rect(),R=SH3.r,d=Math.abs(q.top-R.top)+Math.abs(q.height-R.height)+Math.abs(q.width-R.width);
       if(d>2&&SH3.rq&&Math.abs(q.top-SH3.rq.top)+Math.abs(q.height-SH3.rq.height)+Math.abs(q.width-SH3.rq.width)<1)SH3.r=null;SH3.rq=q;}
     if(!SH3.r){SH3.r=sh3Rect();SH3.rq=null;const t=SH3.r.top;SH3.r1={left:SH3.r.left,top:t,width:SH3.r.width,height:Math.max(160,innerHeight-60-t)};}
     SH3.tv+=(SH3.view-SH3.tv)*Math.min(1,AR.dt*5);if(Math.abs(SH3.view-SH3.tv)<.002)SH3.tv=SH3.view;const e=SH3.tv*SH3.tv*(3-2*SH3.tv),R0=SH3.r,R1=SH3.r1;
     const sw=SH3.sw0?Math.max(0,1-(performance.now()-SH3.sw0)/600):0,az=SH3.swd*.3*sw*sw*(3-2*sw);
-    sh3Cam(e?{left:R0.left,top:R0.top,width:R0.width,height:R0.height+(R1.height-R0.height)*e}:R0,e,az);
+    if(e>0&&e<1){const Rz={left:R0.left,top:R0.top,width:R0.width,height:R1.height};sh3Cam(R0,0,az);const A={D:SH3._D,tz:SH3._tz};sh3Cam(Rz,1,az);const Z={D:SH3._D,tz:SH3._tz};
+      sh3Cam({left:R0.left,top:R0.top,width:R0.width,height:R0.height+(R1.height-R0.height)*e},e,az,{D:A.D+(Z.D-A.D)*e,tz:A.tz+(Z.tz-A.tz)*e});}
+    else sh3Cam(e?{left:R0.left,top:R0.top,width:R0.width,height:R1.height}:R0,e,az);
     const es=SH3.eid&&SH3.sets[SH3.eid];if(es&&es.todo.length){const T=sh3MakeE(es.todo.shift());if(T){es.toys.push(T);T.root.visible=true;SH3.built=1;}}
     const {lib}=TBA,ms=performance.now(),dk=Math.min(1,AR.dt*12);
     for(const k in SH3.toys){const T=SH3.toys[k],a=SH3.an[k];let em=null,t=0,one=false;
@@ -30637,6 +30650,25 @@ html.dt .endcast::after{content:'';position:absolute;left:14%;right:14%;bottom:4
 .endwrap.elose .endcast>:is(img,canvas){filter:grayscale(.7) brightness(.7) drop-shadow(0 8px 10px rgba(0,0,0,.55))}
 html:not(.dt) .endcast{display:flex;height:128px;justify-content:center;align-items:flex-end;margin-bottom:-6px;overflow:hidden}
 html:not(.dt) .endcast>:is(img,canvas){height:120px;margin:0 -16px}html:not(.dt) .endcast>:is(img,canvas):nth-child(even){height:108px}
+</style>
+<style id="tro453b">/* TRO-453 round 2: docs/design/tro453b/mock.css */
+@media (max-width:760px){
+  /* SMI-91: bench tiles are short: the rarity letter sat on the name (the tile border shows rarity) */
+  html:not(.dt) .board .frow.bench>.slot .rgem{display:none}
+  /* SMI-91: the rank line stays one line (the whole row opens All ranks) */
+  html:not(.dt) .oddsrow{flex-wrap:nowrap;white-space:nowrap;gap:6px}
+  html:not(.dt) .oddsrow>span:not(.odds):not(.oddsgo){min-width:0;overflow:hidden;text-overflow:ellipsis;flex:0 1 auto}
+  html:not(.dt) .oddsrow .oddsgo{display:none}html:not(.dt) .oddsrow::after{content:'›';margin-left:auto;font-size:15px;line-height:1}
+}
+/* SMI-88: the rival VS card on the 3D shop is a band over the shop->fight glide (no black screen) */
+#tbx.bump.vs.ovl .tbvs{margin-top:9vh;width:100vw;padding:14px 0 16px;background:linear-gradient(90deg,transparent,rgba(9,8,12,.88) 16% 84%,transparent)}
+#tbx.ovl .tbskip{display:none}
+/* SMI-90: phone toasts sit at the top of the board (toast()); wider so they take two lines, not three */
+@media (max-width:760px){html:not(.dt) #toast{max-width:calc(100vw - 20px);width:max-content;padding:6px 12px;font-size:13px;line-height:1.3}}
+/* v20.144 follow-ups: the phone fight's bonus-chip row scrolls inside the screen (as a flex child it grew the page by 5-9 px);
+   the crossover badge fits its emoji */
+@media (max-width:760px) and (min-height:700px){html:not(.dt) .bbq+div{min-width:0;max-width:100%}}
+@media (max-width:760px){html:not(.dt) .shop .scard .xo{height:24px;line-height:24px}}
 </style>
 
 <script>(function(){var e=document.getElementById("tbload");if(e)e.remove();})();</script>
