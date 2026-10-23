@@ -234,7 +234,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .bar .fill{height:100%;border-radius:0 4px 4px 0;background:var(--dim);min-width:2px}
 .bar.mvp .fill{background:var(--gold)}
 .lwctr{margin:6px 0;font-size:.9rem;color:#ffb4a8}
-.lwend{max-width:560px;margin:10px auto 0;text-align:left}
+.lwend{max-width:640px;margin:10px 0 0;text-align:left}.lwend .why{display:flex;gap:10px;align-items:center}
 .rpb{margin-top:8px}
 .bar .v{text-align:right;font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700}
 .spend{display:flex;height:16px;gap:2px}
@@ -21699,7 +21699,7 @@ function faFits(id){return !!freeSlotFor(id)||S.units.filter(u=>u.id===id&&u.lev
 function faFull(e){return !e.sub.ids.every(faFits);}
 function faNoteHTML(e){return faFull(e)?`<p class="ifull">🪑 Board and bench are full: a pick with no room turns into its price in gold.${S.units.some(u=>benchSlots.includes(u.slot))?' Sell a bench character below to keep it.':''}</p>`:'';}
 function faSellHTML(e){if(!faFull(e))return '';const bn=S.units.filter(u=>benchSlots.includes(u.slot));
-  return bn.length?`<div class="row evsell">${bn.map(u=>`<button class="btn sm${UI.armSell===u.uid?' danger':''}" data-a="event-sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell':'Sell'} ${esc(HERO[u.id].name)} ${'★'.repeat(u.level)} · +🪙${sellValue(u)}</button>`).join('')}</div>`:'';}
+  return bn.length?`<div class="row evsell">${bn.map(u=>`<button class="btn sm${UI.armSell===u.uid?' danger':''}" data-a="event-sell" data-v="${u.uid}">${UI.armSell===u.uid?(canHover?'Click':'Tap')+' again to sell':'Sell'} ${esc(HERO[u.id].name)} ${'★'.repeat(u.level)} · +🪙${sellValue(u)}</button>`).join('')}</div>`:'';}
 // read-only team panel under event screens; tags mark the characters the current options would affect
 function evMarks(e){const m={},add=(u,txt,tip)=>{if(u&&u.slot)(m[u.slot]=m[u.slot]||[]).push({txt,tip});};
   if(!e)return m;
@@ -24292,8 +24292,9 @@ function tbxFight(go){if(tbxMode()==='off'||TBX.el||!S){go();return;}
   const k=tbxK(),e=S.enemy||{},act=(SCHEDULE[Math.min(S.round,SCHEDULE.length)-1]||{}).act||1,boss=!!e.boss,rv=e.rival&&RIVAL[e.rival];
   if(rv){tbxVs(go,e,act,k);return;} // TRO-174
   const tag=e.lead?'Final boss':e.gym?'Gym Leader ('+(e.gym===2?4:act)+'/4)'+(e.gym===2?' · cast ×'+TUNE.gymBossK:''):e.part?'Boss · part 2':boss?'Boss episode':e.elite?'Mini-boss':rv?'Rival episode':e.gh?'Rerun':'';
-  tbxOpen('bump'+(k<1?' k5':''),`<div class="tbep${boss?' boss':''}"><small>${esc(runLong())} · Act ${act}${tag?' · '+tag:''}</small><b>Episode ${S.round}</b><i>${boss?'💀 ':rv?rv.e+' ':'⚔️ '}${esc(e.title||'')}</i></div>`,'Episode '+S.round);
-  tbxRun([[16,()=>TBX.el.classList.add('on')],[(boss?980:760)*k,go],[(boss?980:760)*k+40,()=>tbxOut(320*k+40)]]);}
+  const ov=document.documentElement.classList.contains('s3d'); // TRO-453 (SMI-76): over the shop->fight glide, not instead of it
+  tbxOpen('bump'+(ov?' ovl':'')+(k<1?' k5':''),`<div class="tbep${boss?' boss':''}"><small>${esc(runLong())} · Act ${act}${tag?' · '+tag:''}</small><b>Episode ${S.round}</b><i>${boss?'💀 ':rv?rv.e+' ':'⚔️ '}${esc(e.title||'')}</i></div>`,'Episode '+S.round);
+  tbxRun(ov?[[16,()=>TBX.el.classList.add('on')],[40,go],[(boss?1500:1200)*k,()=>tbxOut(320*k+40)]]:[[16,()=>TBX.el.classList.add('on')],[(boss?980:760)*k,go],[(boss?980:760)*k+40,()=>tbxOut(320*k+40)]]);}
 // TRO-174: a rival fight opens with a VS card: you vs the rival studio (the fight starts under it, then it wipes away)
 function tbxVs(go,e,act,k){const id=e.rival,x=RIVAL[id],big=!!e.lead,me=rvMyAce(),st=rvStudio(id),tag=big?'Final boss':'Rival episode';
   const el=tbxOpen('bump vs'+(big?' lead':'')+(k<1?' k5':''),`<div class="tbvs"><small class="tbvtag">${esc(runLong())} · Act ${act} · Episode ${S.round} · <b>${tag}</b></small>
@@ -24535,8 +24536,8 @@ function synHTML(units,withList){
   const on={};for(const k in s.G)if(s.G[k])on['g'+k]=s.G[k];for(const k in s.T)if(s.T[k])on['t'+k]=s.T[k];for(const k in s.X)if(s.X[k])on['x'+k]=1;
   const prev=withList&&S&&UI._synS===S?UI._syn:null;if(withList&&S){UI._syn=on;UI._synS=S;}
   const pulse=k=>!RM&&prev&&on[k]&&(prev[k]||0)<on[k]?' newon':'';
-  for(const k in GENRES){const n=c.g[k]||0;if(!n)continue;const def=GENRES[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'genre',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.G[k]>0,html:`<span class="e">${def.e}</span>`});}
-  for(const k in TRAITS){const n=c.t[k]||0;if(!n)continue;const def=TRAITS[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'trait',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.T[k]>0,html:tsvg(k)});}
+  for(const k in GENRES){const n=c.g[k]||0;if(!n)continue;const def=GENRES[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'genre',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.G[k]>0,html:`<span class="e">${def.e}</span><span class="sn">${esc(def.name)}</span>`});}
+  for(const k in TRAITS){const n=c.t[k]||0;if(!n)continue;const def=TRAITS[k];const nx=def.tiers.find(x=>x>n)||def.tiers[def.tiers.length-1];items.push({k,kind:'trait',n,nx,max:n>=def.tiers[def.tiers.length-1],on:s.T[k]>0,html:tsvg(k)+`<span class="sn">${esc(def.name)}</span>`});}
   items.sort((a,b)=>b.on-a.on||b.n-a.n);
   const combos=CROSSOVERS.filter(x=>s.X[x.id]);
   // crossovers one character away (wide play made visible): 2 of one genre and 1 of the other, on the board
@@ -24557,7 +24558,7 @@ function shopHTML(){
     const mk=o.level===1&&(l1[o.id]||0)>=2; // buying it combines three copies into a ★★
     const mkTo=mk&&maxLv(o.id)>=3&&owned.some(u=>u.level===2)?3:2; // v19.56: ...and that ★★ joins another ★★ into a ★★★
     const xo=owned.some(u=>u.slot[0]!=='n')?null:CROSSOVERS.find(x=>!xNow[x.id]&&xoRoom(fieldNow,x)&&activeSyn([...fieldNow,{id:o.id,level:o.level,slot:'x'}]).X[x.id]);
-    return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${twoSlot(o.id)?' w2':''}${ready?' ready':owned.length?' owned':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} title="${esc(c.ok?d.name+' · '+RARITY[d.tier-1]:c.why)}" aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
+    return `<div style="position:relative;min-width:0;--i:${i}" data-hov="${i}"><button class="scard tier${d.tier} g-${d.genre}${twoSlot(o.id)?' w2':''}${ready?' ready':owned.length?' owned':''}${S.gold<shopPrice(o)?' poor':''}${UI.freshSlot===i?' fresh':''}${UI.pick===i?' picked':''}" data-a="pick" data-v="${i}" ${c.ok?'':'disabled'} ${c.ok?'':`title="${esc(c.why)}"`} aria-label="Buy ${esc(RARITY[d.tier-1])} ${esc(d.name)} for ${shopPrice(o)} gold">
       ${o.rc?'<span class="rctag" title="Recast: this card replaced a card of the genre The Cut removed">Recast</span>':''}${o.tc&&!o.rc?'<span class="rctag tctag" title="Typecast: everyone on your board is from one genre, so the round\'s first shop includes 1 card from it">Typecast</span>':''}${o.level===2?'<span class="lv2" title="Ready-made ★★ from your Talent Scout: 3 copies in one, for 2× the price">★★<span class="l2t"> 3-in-1</span></span>':''}${owned.length?(o.level===1&&!mk&&l1[o.id]===1&&maxLv(o.id)>=2?`<span class="own pip" title="You own one at ★: this copy makes 2 of the 3 for a ★★">2/3<i>★★</i></span>`:`<span class="own" title="Copies you already own">${owned.map(u=>'★'.repeat(u.level)).join(' · ')}</span>`):''}${mk?`<span class="mk${mkTo===3?' mk3':''}" title="${mkTo===3?'You own two ★ and a ★★: this third copy makes a second ★★, and the two ★★ combine into a ★★★':'You own two: this third copy combines them into a ★★'}"><span class="mkl">Makes </span><span class="mka">→</span>${'★'.repeat(mkTo)}</span>`:''}
       ${heroArt(o.id)}<span class="sst">${statChips(heroStatsAt(o.id,o.level||1),d.crowd)}</span><span class="nm" title="${esc(d.name)}">${shy(esc(d.name))}</span><span class="rarl">${RARITY[d.tier-1]}${d.tier>=3?'<i class="rx" title="Counts as 2 for its genre from ★★"> · ×2</i>':''}${d.crowd?'<i class="rx" title="Crowd: one card, several bodies sharing one HP bar. It hits harder with more bodies left; more stars, more bodies."> · Crowd</i>':''}${twoSlot(o.id)?'<i class="rx" title="Takes 2 board squares"> · 2 squares</i>':''}</span><span class="tags">${(()=>{const cs=cardSyn(o,fieldNow,synNow),sy=cs.g,ty=cs.t,gn=GENRES[d.genre].name,tn=TRAITS[d.trait].name;return `<span class="gch${sy?' up':''}${sy&&sy.up?' tierup':''}"${sy?` title="${esc(gn)} on your board: ${sy.c0} → ${sy.c1}${sy.up?', the next bonus switches on':''}"`:` title="${esc(gn)} genre: bonuses with ${GENRES[d.genre].tiers.join(' / ')} on your board"`}><i class="ge">${gico(d.genre)}</i>${sy?`<b class="gcn">${sy.c1}</b>`:''}<span class="gnm">${esc(gn)}</span>${ctrChip(d.genre,ctrT)}${d.tier>=3?'<b class="x2s" title="Counts as 2 for its genre from ★★">×2</b>':''}${sy?`<b class="gct">${sy.c0}→${sy.c1}${sy.up?' ✓':''}</b>`:''}</span><span class="tgr${ty?' up':''}${ty&&ty.up?' tierup':''}" title="${esc(tn)}${ty?` on your board: ${ty.c0} → ${ty.c1}${ty.up?', the next bonus switches on':''}`:` trait: bonuses with ${TRAITS[d.trait].tiers.join(' / ')} on your board`}">${tsvg(d.trait)}${ty?`<b class="gcn">${ty.c1}</b>`:''}<span class="tnm">${esc(tn)}</span>${ty?`<b class="gct">${ty.c0}→${ty.c1}${ty.up?' ✓':''}</b>`:''}<span class="tx"><i class="aimg" title="${esc(AIM[aimRule(o.id)].name+' targeting: '+AIM[aimRule(o.id)].d)}">${AIM[aimRule(o.id)].e}</i>${rowMark(o.id)}${d.crowd?'<i class="crwg" title="Crowd: one card, several bodies sharing one HP bar. It hits harder with more bodies left; more stars, more bodies.">👥</i>':''}${twoSlot(o.id)?'<b class="x2w" title="Takes 2 board squares">2▭</b>':''}</span></span>`;})()}</span><span class="sx">${c.ok?'':`<span class="why">${esc(c.why)}</span>`}${xo?`<span class="xo" title="Put on your board, this character switches on the ${esc(xo.name)} crossover">🔗 ${esc(xo.name)}</span>`:''}<span class="fl">${esc(d.flavor)}</span></span><span class="pr"><i class="prc">🪙</i>${shopPrice(o)}</span><span class="pleft" title="Copies of ${esc(d.name)} still in the pool: ★★ takes 3, ★★★ takes 6">${poolLeft(o.id)}<span class="plw"> in pool</span><span class="pls"> left</span></span></button>
       <button class="info" data-a="hero-info" data-v="${o.id}" data-l="${o.level}" data-s="${i}" aria-label="About ${esc(d.name)}">i</button></div>`;
@@ -24912,6 +24913,12 @@ function tutPaint(){if(typeof document==='undefined'||!document.body)return;let 
 function tutClear(b,l,t,w,h){const d=document.querySelector('#insp>.x'),q=d&&d.parentNode.getBoundingClientRect();b.style.visibility=q&&q.width&&l<q.right&&l+w>q.left&&t<q.bottom&&t+h>q.top?'hidden':'';}
 // docks above or below the target (where it fits; never on it), arrow pointing at the target's centre
 function tutPlace(){const b=document.getElementById('tut');if(!b||b.hidden)return;const tg=document.querySelector('.tutring');
+  // TRO-453 (SMI-75): on phones the bubble docks at a screen edge, away from what it talks about (the gold ring shows the
+  // target): the top edge over the status bar, or just above the Fight bar when the target is in the top 30%
+  b.classList.toggle('tdock',innerWidth<=760);
+  if(innerWidth<=760){const W=innerWidth,H=innerHeight,r=tg&&tg.getBoundingClientRect(),hi=r&&r.height&&r.top+r.height/2<H*.3,bar=document.querySelector('#app .plan .actions'),ab=bar&&bar.getBoundingClientRect();
+    b.style.width=(W-12)+'px';b.style.left='6px';delete b.dataset.side;b.style.top=Math.round(hi?Math.min(H,ab&&ab.height?ab.top:H)-b.offsetHeight-6:6)+'px';
+    tutClear(b,6,parseFloat(b.style.top),W-12,b.offsetHeight);return;}
   const W=innerWidth,H=innerHeight,w=Math.min(340,W-16);b.style.width=w+'px';
   if(!tg){b.style.left=Math.round((W-w)/2)+'px';b.style.top=Math.round(H*.28)+'px';delete b.dataset.side;return;}
   const r=tg.getBoundingClientRect(),bh=b.offsetHeight,gap=12,upR=r.top-gap-8,dnR=H-r.bottom-gap-8;
@@ -24932,7 +24939,11 @@ function tutSkip(){const p=lvLoad();if(!p.dev)p.open=Math.max(p.open,4);p.pick=4
 function tutTitleBtns(){const p=lvLoad(),n=UI.lv|0;
   return `<button class="btn primary big" data-a="new">${n===1?'🎬 Start the Pilot':n>=2&&n<=3?'▶ Play '+esc(LADDER[n].name):'New run'}</button>${(p.dev?!p.won.some(n=>n>=3)&&(p.pick|0)<4:p.open<4)?'<button class="btn" data-a="tut-skip">I know auto-battlers</button>':''}`;}
 if(window.top!==window)addEventListener('wheel',e=>{if(e.defaultPrevented||e.ctrlKey||!e.deltaY)return;for(let el=e.target;el&&el!==document.body&&el.nodeType===1;el=el.parentElement){const c=getComputedStyle(el).overflowY;if((c==='auto'||c==='scroll')&&el.scrollHeight>el.clientHeight+1)return;}const se=document.scrollingElement,y=se.scrollTop;requestAnimationFrame(()=>{if(se.scrollTop===y)se.scrollBy(0,e.deltaMode===1?e.deltaY*40:e.deltaY);});},{passive:true});
-function tutEndBtns(win){const n=S.lv|0;if(S.chal)return '<button class="btn primary big" data-a="chal" data-v="again">↻ Same run again</button><button class="btn" data-a="title">🏠 Main menu</button>';if(S.daily)return `<button class="btn primary big" data-a="${S.late?'late':'daily'}" data-v="${S.daily}">↻ ${S.late?'Replay (practice)':'Replay this Daily'}</button><button class="btn" data-a="title">🏠 Main menu</button>`;if(n>3)return '<button class="btn primary big" data-a="nextep">▶ Next episode</button><button class="btn" data-a="title">🏠 Main menu</button>'; // v20.5
+// TRO-453 (SMI-78): the end screen's curtain call: your final team's figures on a lit stage (grey after a loss)
+function endCast(){if(typeof SPRITES==='undefined')return '';const o=[];fielded().slice().sort((a,b)=>b.level-a.level).slice(0,7).forEach((u,i)=>i%2?o.push(u):o.unshift(u));
+  const im=o.map((u,i)=>{const f=SPRITES[u.id+'_f']||SPRITES[u.id];return f?`<img src="${f}" alt="" draggable="false" style="--i:${i}">`:'';}).join('');
+  return im?`<div class="endcast" aria-hidden="true">${im}</div>`:'';}
+function tutEndBtns(win){const n=S.lv|0;if(S.chal)return '<button class="btn primary big" data-a="chal" data-v="again">↻ Same run again</button><button class="btn" data-a="title">🏠 Main menu</button>';if(S.daily)return `<button class="btn primary big" data-a="${S.late?'late':'daily'}" data-v="${S.daily}">↻ ${S.late?'Replay (practice)':'Replay this Daily'}</button><button class="btn" data-a="title">🏠 Main menu</button>`;if(n>3)return '<button class="btn primary big" data-a="nextep">'+(win?'▶ Next episode':'↻ Try again')+'</button><button class="btn" data-a="title">🏠 Main menu</button>'; // v20.5
   if(!win)return '<button class="btn primary big" data-a="nextep">↻ Try again</button><button class="btn" data-a="title">🏠 Main menu</button>';
   const lbl={2:'▶ Play Pilot, Part 2',3:'▶ Play the Table Read',4:'📺 Start the Season'}[S.newLv]||'New run';
   return `<button class="btn primary big" data-a="nextep">${lbl}</button><button class="btn" data-a="title">🏠 Main menu</button>`;}
@@ -25208,8 +25219,8 @@ SCR.end=()=>{
   const topOf=(m,k)=>Object.entries(m||{}).filter(([id])=>HERO[id]).sort((a,b)=>b[1]-a[1]).slice(0,k);
   const lst=(rows,ic)=>rows.length?rows.map(([id,v])=>`<div class="row endrow" data-a="endhero" data-v="${id}" data-l="${final.get(id)||1}">${heroPt(id,'sm')}<span><b>${esc(HERO[id].name)}</b><br><span class="sub">${ic} ${fmtN(v)}</span></span></div>`).join(''):'<p class="sub">None this run.</p>';
   const items=[S.legend?`<span class="endchip" data-a="endleg" data-v="${S.legend}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${ico(LEGENDS[S.legend])}</span>${esc(LEGENDS[S.legend].name)}</span>`:'',...S.trinkets.map(t=>`<span class="endchip" data-a="enditem" data-v="${t}" tabindex="0"><span class="emo" style="font-size:1.2rem;padding-left:4px">${ico(TR[t])}</span>${esc(TR[t].name)} <span class="istars">${'★'.repeat(ilv(t))}</span></span>`)].join('');
-  return `<section class="endwrap">
-    <div><div class="eyebrow">${S.daily?esc(dlyLabel())+' · ':S.chal?'🎯 Challenge · '+esc(lvNmC(S.lv))+' · ':S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":S.lead&&RIVAL[S.lead]?esc(RIVAL[S.lead].name)+"'s full cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
+  return `<section class="endwrap ${win?'ewin':'elose'}">${endCast()}
+    <div class="endtop"><div class="eyebrow">${S.daily?esc(dlyLabel())+' · ':S.chal?'🎯 Challenge · '+esc(lvNmC(S.lv))+' · ':S.gym?esc(runLong())+' · ':S.lv?lvNm(S.lv).replace(/^the S/,'The S')+' · ':''}${win?(S.gym?esc(gymWho(gymOf()))+"'s cast is down":S.lead&&RIVAL[S.lead]?esc(RIVAL[S.lead].name)+"'s full cast is down":rule('finale2')?'The finale is over':'Deus Ex Machina is down'):'Out of lives'}</div>
     <h1 class="title-word" style="${win?'':'color:var(--red)'}">${win?'Victory':'Defeat'}</h1>${dlyEndHTML()}${chalEndHTML()}${S.daily||S.chal?'':nearHTML()}${nxGoalHTML()}${stkHTML()}${dscEndHTML()}${!win&&UI.lastRes&&!UI.lastRes.win?`<div class="lwend"><div class="eyebrow">Your last fight</div>${lossWhyHTML(UI.lastRes)}</div>`:''}</div>
     ${S.gym?(win?`<p class="lvwin">${gymOf().be} <b>${esc(gymOf().badge)} Badge ${S.badgeNew?'won!':'(already yours)'}</b> Gym ${S.gym.n} is cleared. Its Leader now waits on the Ladder.</p>`:`<p class="lvwin">🏟️ No badge this time. Gyms are now part of the Ladder: Play, then pick ${esc(lvLong(ladTier(gymOf().id)||gymOf().lv))}.</p>`):S.newLv===4&&(S.lv|0)===3?tutWrapHTML()+lvNewHTML(4):S.newLv?`<p class="lvwin">🔓 <b>${lvNm(S.newLv).replace(/^the S/,'The S')} ${epsAll()?'is next!':'unlocked!'}</b> New: ${lvLine(S.newLv)}${rvDebutTxt(S.newLv)}</p>${S.newLv<5?lvNewHTML(S.newLv):''}${S.newLv===2?'<p class="lvnext">🎯 Two more Pilot runs to the Season: more genres, Legendaries and rival studios.</p>':S.newLv===3?'<p class="lvnext">🎯 Last stop before the Season.</p>':''}`:win&&S.lv===LV_MAX?'<p class="lvwin">🏆 <b>You beat the top Ascension.</b></p>':nextLvNote().replace('Win this run','Win a run on this difficulty')}
     ${epsHTML()}
@@ -25379,7 +25390,7 @@ function trinketDetail(id){const t=TR[id],L=S?ilv(id):0;
     +(L&&!itemUseful(id)?`<p style="font-size:.8rem;color:var(--red)">Does nothing on your board right now.</p>`:'')
     +(L?`<p class="muted" style="font-size:.78rem">${L<ITEM_MAX?'Pick it again later to upgrade it.':'Fully upgraded.'}</p>`:'')
     +(L&&(UI.screen==='plan'||UI.screen==='event')?`<div class="row">${itemSellBtn(id)}</div>`:'');}
-function itemSellBtn(id){return `<button class="btn sm danger" data-a="sell-item" data-v="${id}">${UI.armItem===id?'Tap again to sell for ':'Sell for '}🪙${itemSellValue(id)}</button>`;}
+function itemSellBtn(id){return `<button class="btn sm danger" data-a="sell-item" data-v="${id}">${UI.armItem===id?(canHover?'Click':'Tap')+' again to sell for ':'Sell for '}🪙${itemSellValue(id)}</button>`;}
 function legendDetail(id){const L=LEGENDS[id];return `<div class="eyebrow" style="color:var(--leg)">Legendary${L.genre?' · '+gico(L.genre)+' '+GENRES[L.genre].name:''}</div><h3 style="color:var(--leg)"><span class="emo">${ico(L,1)}</span> ${esc(L.name)}</h3>${L.s?`<p class="lgshort">${esc(L.s)}</p>${moreBox(esc(L.d))}`:`<p>${esc(L.d)}</p>`}${L.genre?`<p class="muted" style="font-size:.8rem">Offered after an Act 1, 2 or 3 boss when ${GENRES[L.genre].name} is one of your biggest genres (2 or more).</p>`:''}`;}
 function comboDetail(id){const x=CROSSOVERS.find(c=>c.id===id);return `<div class="eyebrow">Crossover</div><h3 style="color:var(--gold)">🔗 ${esc(x.name)}</h3><p>${esc(x.d)}</p><p class="muted" style="font-size:.82rem">Needs ${legend('crossep')?1:2} ${gico(x.a)} ${GENRES[x.a].name} + ${legend('crossep')?1:2} ${gico(x.b)} ${GENRES[x.b].name} characters on your board (Rare and up count as 2 from ★★).</p><div class="row"><button class="btn sm" data-a="xlist">🔗 All crossovers</button></div>`;}
 function enemyDetail(key,st){
@@ -25417,7 +25428,7 @@ function infoBody(I){
   if(I.kind==='rank')return rankDetail();
   if(I.kind==='unit'){const u=S.units.find(x=>x.uid===I.uid);if(!u)return '';
     const note=u.level>=maxLv(u.id)?`${'★'.repeat(maxLv(u.id))} is the top star for ${RARITY[HERO[u.id].tier-1]} characters, so the shop stops offering this one.`:maxedIds().has(u.id)?`Spare copy: your other ${esc(HERO[u.id].name)} is already maxed, so the shop won't sell more. Sell it, or field it as a second copy (copies don't count twice for genre bonuses).`:'';
-    return `<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?'Tap again to sell for ':'Sell for '}🪙${sellValue(u)}${sellValue(u)?'':' (no gold back)'}</button><span class="muted" style="font-size:.78rem">${!sellValue(u)?'Half of its 🪙1 price rounds down to 🪙0: sell it only to free a slot. ':sellValue(u)<(u.cost|0)?'Sells for half its price, rounded down. ':''}Drag it, or tap an empty slot, to move it.</span></div>`+bdRow(u)+heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'');}
+    return `<div class="row"><button class="btn sm danger" data-a="sell" data-v="${u.uid}">${UI.armSell===u.uid?(canHover?'Click':'Tap')+' again to sell for ':'Sell for '}🪙${sellValue(u)}${sellValue(u)?'':' (no gold back)'}</button><span class="muted" style="font-size:.78rem">${!sellValue(u)?'Half of its 🪙1 price rounds down to 🪙0: sell it only to free a slot. ':sellValue(u)<(u.cost|0)?'Sells for half its price, rounded down. ':''}Drag it, or tap an empty slot, to move it.</span></div>`+bdRow(u)+heroDetail(u.id,u.level)+(note?`<p class="muted" style="font-size:.8rem">${note}</p>`:'');}
   if(I.kind==='hero'){const o=I.shop!=null&&S&&S.shop[I.shop];return heroDetail(I.id,I.level||1)+(o&&o.id===I.id?`<div class="row"><button class="btn primary" data-a="buy" data-v="${I.shop}" ${canBuy(I.shop).ok?'':'disabled'}>Buy · 🪙${shopPrice(o)}</button></div>`:'');}
   if(I.kind==='trinket')return trinketDetail(I.id);
   if(I.kind==='legend')return legendDetail(I.id);
@@ -25884,7 +25895,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.143',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.144',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -26127,7 +26138,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.143',h:"character life",items:[["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Shop cards you already own glow and hop (2/3 shows how close a ★★ is), and events take the whole screen: Hide (Tab) shows your team and the shop while the event waits."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.144',h:"character life",items:[["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place, the episode title riding over it."], ["📱", "Phones: cleaner shop cards (bigger names, one icon row), fights use the full height, and tips sit at the edge of the screen instead of on your board."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Shop cards you already own glow and hop (2/3 shows how close a ★★ is), and events take the whole screen: Hide (Tab) shows your team and the shop while the event waits."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -29896,7 +29907,7 @@ function sh3Adopt(){const H=SH3.H;if(!H||!B||B.silent)return;SH3.H=null;clearTim
 // the fight's own camera is the target: arLayout (end) records it, then arGlide blends from the shop framing
 function arGlideTo(){const g=AR.gl,cam=AR.cam;if(!g)return;const V=TBA.THREE.Vector3,p=cam.position.clone(),d=cam.getWorldDirection(new V()),t=d.y<-.01?-p.y/d.y:30;
   g.to={p,g:p.clone().addScaledVector(d,t),asp:cam.aspect,vw:cam.view&&cam.view.enabled?Object.assign({},cam.view):null};if(!g.t0)g.t0=performance.now();}
-function arGlide(now){const g=AR.gl;if(!g||!g.to)return;const dk=document.documentElement;if(document.getElementById('tbx')){g.t0=now;g.t1=now;}dk.classList.add('glide');const cam=AR.cam,k=Math.min(1,(now-g.t0)/900),e=k*k*(3-2*k),A=g.from,Z0=g.to,L=(a,b)=>a+(b-a)*e;
+function arGlide(now){const g=AR.gl;if(!g||!g.to)return;const dk=document.documentElement;if(document.querySelector('#tbx:not(.ovl)')){g.t0=now;g.t1=now;}dk.classList.add('glide');const cam=AR.cam,k=Math.min(1,(now-g.t0)/900),e=k*k*(3-2*k),A=g.from,Z0=g.to,L=(a,b)=>a+(b-a)*e;
   for(const T of g.drop){const s=Math.max(.001,1-(now-g.t1)/350);T.root.scale.setScalar(T._s0*s);if(s<=.001&&!T._gone){T._gone=1;T.root.visible=false;}}
   if(k>=1){AR.gl=null;dk.classList.remove('glide');g.drop.forEach(T=>{try{arDispose(T.root);}catch(x){}});if(SH3.bm&&SH3.bm.parent&&!(AR.bt&&AR.bt.length))SH3.bm.parent.remove(SH3.bm);AR.W=-1;return;}
   cam.position.set(L(A.p.x,Z0.p.x),L(A.p.y,Z0.p.y),L(A.p.z,Z0.p.z));cam.aspect=L(A.asp,Z0.asp);cam.lookAt(L(A.g.x,Z0.g.x),L(A.g.y,Z0.g.y),L(A.g.z,Z0.g.z));
@@ -29952,7 +29963,9 @@ function sh3Bar(){if(!SH3.tag||!SH3.eid)return;const w=sh3Who(SH3.eid),n=sh3Orde
   SH3.tag.innerHTML=`<span aria-hidden="true">▲</span><b>${esc(w.name)}</b><small>${esc(w.sub)}</small><kbd>↑</kbd>`;SH3.tag.setAttribute('aria-label','Look at '+w.name+' ('+w.sub+')');
   SH3.bar.innerHTML=`${n>1?'<button data-s3="prev" aria-label="Previous rival"><kbd>Q</kbd> ◀</button>':''}<span><b>${esc(w.name)}</b><small>${esc(w.sub)}</small></span>${n>1?'<button data-s3="nextr" aria-label="Next rival">▶ <kbd>E</kbd></button>':''}`
     +`${SH3.eid!=='next'?'<button data-s3="info">Details</button>':''}<button class="s3home" data-s3="home">▼ My board <kbd>Esc</kbd></button>`;try{tyMark();}catch(e){}sh3Pop(SH3.view&&SH3.eid===sh3Next()?'pin':SH3.popT?'tag':0);}
-function sh3View(v){v=v?1:0;if(!SH3.on||SH3.view===v)return;SH3.view=v;document.documentElement.classList.toggle('s3e',!!v);try{hoverCard(null);}catch(e){}
+function sh3View(v){v=v?1:0;if(!SH3.on||SH3.view===v)return;SH3.view=v;
+  if(v&&(UI.insp||UI.sel||UI.armSell)){UI.insp=null;UI.sel=null;UI.armSell=null;setTimeout(()=>{if(UI.screen==='plan')render();},0);} // TRO-453 (SMI-82)
+  document.documentElement.classList.toggle('s3e',!!v);try{hoverCard(null);}catch(e){}
   if(!v&&SH3.eid!==sh3Next())sh3Show(sh3Next());sh3Bar();}
 function sh3Step(d){const L=sh3Order();if(L.length<2)return;const i=Math.max(0,L.indexOf(SH3.eid));sh3Show(L[(i+d+L.length)%L.length],d);}
 function sh3Zoom(id){if(!SH3.on)return false;if(id&&id!==SH3.eid)sh3Show(id,SH3.view?1:0);sh3View(1);return true;}
@@ -30544,6 +30557,74 @@ const _r=render;render=function(){_r.apply(this,arguments);tyMark();};window.tyM
 :is(.scard .xo,.idcn.foe,.btn.primary:not(.big),.btn.gold,.lvchip.on,.kw,.kw *){-webkit-text-stroke:0!important;text-shadow:none!important}
 .scard .xo{text-shadow:none!important}
 html.s3w #app>section{opacity:0!important;pointer-events:none}</style>
+<style id="tro453">/* TRO-453 (SMI-72..83) screen polish: docs/design/tro453/mock.css */
+/* SMI-74 phone shop: one icon row (genre + role, their glow shows a bonus step), no rarity word (the card's top edge and
+   tint carry it), no copies-left number (the i card has it), a crossover hint on one line; FRONT/BACK readable */
+@media (max-width:760px){
+  html:not(.dt) .shop .scard .rarl,html:not(.dt) .shop .scard .tx,html:not(.dt) .shop .scard .pleft,html:not(.dt) .shop .scard .gch .x2s{display:none!important}
+  html:not(.dt) .shop .scard .tags{flex-wrap:nowrap;gap:4px;margin-top:2px}
+  html:not(.dt) .shop .scard .nm{font:400 clamp(12px,3.3vw,13px)/1.16 var(--f-display);letter-spacing:.02em;-webkit-line-clamp:2;overflow-wrap:normal;word-break:normal;hyphens:manual;margin-top:2px;padding-block:1px}
+  @media (max-width:380px){html:not(.dt) .shop .scard .nm{letter-spacing:-.01em}}
+  html:not(.dt) .shop.nm3 .scard .nm{-webkit-line-clamp:2}
+  html:not(.dt) .shop.nm3 .scard>.sart::after{height:15px;font-size:10px}
+  html:not(.dt) .shop .scard>.sart>svg{display:none}
+}
+/* SMI-72 phone fight: the bench is a shorter strip (figures + stars, small label) and the bonus chips one scrolling row,
+   so the fight fits an 844 px phone without scrolling (the 3D board is width-bound: a taller arena only adds floor) */
+@media (max-width:760px) and (min-height:700px){
+  html:not(.dt) .bbq{margin-top:2px}
+  html:not(.dt) .bbq .board.bqboard{padding:2px 6px 3px}
+  html:not(.dt) .bbq .board.bqboard>.rowlbl.bqlbl{font-size:10px;line-height:12px;letter-spacing:.1em;margin:0 0 2px}
+  html:not(.dt) .bbq .board.bqboard>.frow.bench.bqrow{margin-top:0!important}
+  html:not(.dt) .bbq .frow.bench.bqrow>.slot{height:72px;min-height:0}
+  html:not(.dt) .bbq .frow.bench.bqrow>.slot :is(.nm,.rgem,.bstat){display:none}
+  html:not(.dt) .bbq+div{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;gap:6px}
+  html:not(.dt) .bbq+div>*{flex:none}
+  /* the crossover hint is a 🔗 badge in the art's corner (a name cut to 3 letters said nothing); the i card names it */
+  html:not(.dt) .shop .scard .xo{top:3px;left:3px;transform:none;width:22px;max-width:22px;height:20px;padding:0;white-space:nowrap;overflow:hidden;text-overflow:clip;font:800 0/20px var(--f-body);letter-spacing:0;text-align:center}
+  html:not(.dt) .shop .scard .xo::before{content:'🔗';font-size:12px}
+  /* genre band on the art: Slasher, Space Opera and Kaiju had no label */
+  html:not(.dt) .shop .scard.g-horror>.sart::after{content:'Slasher'}html:not(.dt) .shop .scard.g-space>.sart::after{content:'Space Opera'}html:not(.dt) .shop .scard.g-kaiju>.sart::after{content:'Kaiju'}
+  html:not(.dt) .board .slot.empty[data-v^="f"]::after,html:not(.dt) .board .slot.empty[data-v^="b"]::after{color:rgba(243,238,228,.5);font-size:11px;letter-spacing:.12em}
+}
+/* SMI-75 phone coach bubble: docked strip (see tutPlace), compact: text and Got it on one line */
+#tut.tdock .coach{padding:7px 8px 7px 10px;gap:8px;align-items:center;font-size:13px;line-height:1.3;box-shadow:0 10px 26px -6px rgba(0,0,0,.85),0 0 0 1px rgba(255,204,46,.35)}
+#tut.tdock .coach p{margin:0}#tut.tdock .coach .ci{display:none}#tut.tdock .coach .btn{flex:none;min-height:34px}
+/* SMI-77: the run's title card glides into the top-bar chip and fades; its entry animation (fill: both) pinned the
+   title at full opacity in place, leaving a ghost over the shop */
+#tbx.card.glide .tbcard>*{animation:none}
+/* SMI-76: on the 3D shop the Episode card is a band over the glide (no black screen, no wipe); clicks pass through */
+#tbx.bump.ovl{background:none;clip-path:none;opacity:0;pointer-events:none;align-items:start;transition:opacity .2s}
+#tbx.bump.ovl.on{opacity:1}#tbx.bump.ovl.out{opacity:0;transition-duration:.35s}#tbx.bump.ovl::before{display:none}
+#tbx.bump.ovl .tbep{margin-top:15vh;width:100vw;min-height:0;padding:16px;background:linear-gradient(90deg,transparent,rgba(9,8,12,.86) 24% 76%,transparent)}
+/* SMI-79: future acts' pips are dots (thin bars read as a barcode); empty item slots visible; wide screens read bigger */
+html.dt .top .strip.tl .act:not(.cur) .chips{align-items:center;min-height:22px;gap:3px}
+html.dt .top .strip.tl .act:not(.cur) i{width:7px;height:7px;border-radius:50%}
+html.dt .top .strip.tl .act:not(.cur) i.done::after{border-radius:50%}
+html .isocks i.isk{border:1.5px dashed rgba(243,238,228,.4)!important;background:rgba(255,255,255,.06)!important;opacity:1!important}
+@media (min-width:2200px){
+  html.dt #sheetpk .choices{zoom:1.18}
+  html.dt .rvstrip .rvc{font-size:13px}
+  html.dt .isocks .iall,html.dt .isocks>small{font-size:13px}
+}
+/* SMI-80: the bonus list names its genres and roles on desktop (icon + count alone needed a hover) */
+.syn .sn{display:none}
+html.dt .syns>.syn .sn{display:block;flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;font:700 13px/1.2 var(--f-body);letter-spacing:0;color:var(--ink);-webkit-text-stroke:0;text-shadow:none}
+/* SMI-78: end screen curtain call */
+.endcast{display:none}
+html.dt .endwrap{position:relative}
+html.dt .endwrap>.endtop{min-height:290px;max-width:46%;position:relative;z-index:1}
+html.dt .endcast{display:flex;position:absolute;top:10px;right:0;width:min(54%,1000px);height:300px;align-items:flex-end;justify-content:center;pointer-events:none;overflow:hidden;
+  background:radial-gradient(ellipse 58% 90% at 50% 100%,rgba(255,214,120,.2),transparent 72%)}
+html.dt .endcast::after{content:'';position:absolute;left:14%;right:14%;bottom:4px;height:30px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.6),transparent 70%)}
+.endcast>:is(img,canvas){position:relative;z-index:1;height:290px;width:auto;margin:0 -62px;filter:drop-shadow(0 8px 10px rgba(0,0,0,.55))}
+.endcast>:is(img,canvas):nth-child(even){height:262px}
+.endwrap.ewin .endcast>:is(img,canvas){animation:tbBob 2.4s ease-in-out infinite;animation-delay:calc(var(--i,0)*-.4s)}
+.endwrap.elose .endcast{background:radial-gradient(ellipse 58% 90% at 50% 100%,rgba(150,160,200,.13),transparent 72%)}
+.endwrap.elose .endcast>:is(img,canvas){filter:grayscale(.7) brightness(.7) drop-shadow(0 8px 10px rgba(0,0,0,.55))}
+html:not(.dt) .endcast{display:flex;height:128px;justify-content:center;align-items:flex-end;margin-bottom:-6px;overflow:hidden}
+html:not(.dt) .endcast>:is(img,canvas){height:120px;margin:0 -16px}html:not(.dt) .endcast>:is(img,canvas):nth-child(even){height:108px}
+</style>
 
 <script>(function(){var e=document.getElementById("tbload");if(e)e.remove();})();</script>
 <script>function tbMusic(){var m=document.createElement("script");m.src="music.js";document.body.appendChild(m);}</script>
