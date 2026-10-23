@@ -25875,7 +25875,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.137',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.138',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -26115,7 +26115,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.137',h:"character life",items:[["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E to swing through the other rivals.", 1], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."], ["✨", "Juicier screens: picks are dealt as big cards at the bottom centre, titles get real outlined lettering, and shop cards move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Put a figure next to another one on the board and the neighbours perk up."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.138',h:"character life",items:[["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E to swing through the other rivals.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."], ["✨", "Juicier screens: picks are dealt as big cards at the bottom centre, titles get real outlined lettering, and shop cards move: toys bob, rare cards shine, buys fly to their square."], ["👀", "Put a figure next to another one on the board and the neighbours perk up."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -27725,7 +27725,7 @@ function arLayout(){const {THREE}=TBA,f=AR.f,cam=AR.cam,slots=[...f.querySelecto
     const sx=r.left-fr.left,sy=r.top-fr.top,sc=Math.max(.5,Math.min(1.2,(q.x-l.x)/Math.max(1,r.width)));
     s.style.transformOrigin='50% 100%';s.style.transform=`translate(${(a.x-(sx+r.width/2)).toFixed(1)}px,${(a.y+18-(sy+r.height)).toFixed(1)}px) scale(${sc.toFixed(3)})`;}
   if(typeof B!=='undefined'&&B&&B.units)B.units.forEach(u=>{if(u.wide&&u.el&&u.el.parentNode)wideSize(u);});
-  arView(true);}
+  arView(true);arGlideTo();}
 // v19.56: the canvas covers the whole window; the camera still frames the board in the field's box (a view offset
 // widens the picture around it), so the stage, curtain and floor run to the screen edges
 function arView(force){const f=AR.f;if(!f)return;const r=f.getBoundingClientRect(),vw=innerWidth,vh=innerHeight,x=Math.round(r.left),y=Math.round(r.top)-AR.top;
@@ -27803,13 +27803,13 @@ function arProj(now){if(!AR.proj.length)return;const {THREE}=TBA,X=new THREE.Vec
 function arFrame(){AR.raf=0;const f=document.getElementById('field');
   if(!(SET.arena!==false&&!RM&&f&&UI.screen==='battle'&&typeof B!=='undefined'&&B&&!B.silent)){arOff();return;}
   if(!TBA.tried)tbaInit();if(!TBA.on||!arInit()){arOff();return;}
-  try{if(AR.f!==f||AR.B!==B){arOff();AR.f=f;AR.B=B;AR.last=0;AR.nf=0;f.classList.add('arena');arRvTint();arsFight();document.body.appendChild(AR.cv);document.documentElement.classList.add('ar3d');AR.W=-1;}
+  try{if(AR.f!==f||AR.B!==B){arOff();AR.f=f;AR.B=B;AR.last=0;AR.nf=0;f.classList.add('arena');arRvTint();arsFight();document.body.appendChild(AR.cv);document.documentElement.classList.add('ar3d');AR.W=-1;AR.gl=null;try{sh3Adopt();}catch(e){AR.gl=null;}}
     if(f.clientWidth!==AR.W||f.clientHeight!==AR.H0)arLayout();else arView();AR.cv.classList.toggle('shake',f.classList.contains('shake'));
     const now=performance.now(),gap=AR.last?now-AR.last:16;AR.dt=Math.min(.1,gap/1000);AR.last=now;
     // too slow (under ~20 frames a second): sharper pixels go first, then the ink outlines, then back to the flat board
     if(!AR.keep&&!document.hidden&&gap<1000){AR.ema=AR.nf?AR.ema*.92+gap*.08:gap;if(++AR.nf>45&&AR.ema>50){AR.nf=0;AR.q++;
       if(AR.q===1&&AR.R.getPixelRatio()>1){AR.R.setPixelRatio(1);AR.W=-1;}else if(AR.q<=2)AR.q=2;else{AR.dead=true;AR.why='too slow on this device';arOff();return;}}}
-    arUpdate(now);idcFrame(now);arProj(now);arPfx(now);try{arsFrame(now);}catch(e){}hfFrame(now);skcFrame(now);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
+    arUpdate(now);idcFrame(now);arProj(now);arPfx(now);try{arsFrame(now);}catch(e){}hfFrame(now);skcFrame(now);if(AR.gl)arGlide(now);if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
   catch(e){AR.dead=true;AR.why=String(e&&e.message||e).slice(0,80);arOff();return;}
   AR.raf=requestAnimationFrame(arFrame);}
 (()=>{try{document.head.insertAdjacentHTML('beforeend',`<style>
@@ -29787,8 +29787,45 @@ function sh3Loop(now){SH3.raf=0;if(!SH3.on)return;if(!sh3Want()){sh3Off();return
     if(AR.q>=2)AR.R.render(AR.scene,AR.cam);else AR.E.render(AR.scene,AR.cam);}
   catch(e){SH3.dead=true;SH3.why=String(e&&e.message||e).slice(0,80);sh3Off();try{render();}catch(_){}return;}
   SH3.raf=requestAnimationFrame(sh3Loop);}
+// ---- TRO-444 D: shop -> fight, no scene change. sh3Hand (the shop screen turned into the fight) parks the toys and the
+// camera in SH3.H; arFrame calls sh3Adopt when the fight's first frame has its units, which gives them our toys and the
+// foes' toys, and arGlide moves the camera from the shop framing to the fight framing.
+function sh3Hand(){try{if(!SH3.on||UI.screen!=='battle'||AR.dead||RM||SET.arena===false||!TBA.on||!AR.cam||!AR.R)return false;
+  const cam=AR.cam,V=TBA.THREE.Vector3,p=cam.position.clone(),d=cam.getWorldDirection(new V()),t=d.y<-.01?(.6-p.y)/d.y:30,vw=cam.view&&cam.view.enabled?Object.assign({},cam.view):null;
+  const H={toys:SH3.toys,sets:SH3.sets,eid:SH3.eid,t:performance.now(),cam:{p,g:p.clone().addScaledVector(d,t),asp:cam.aspect,vw}};
+  if(SH3.raf){cancelAnimationFrame(SH3.raf);SH3.raf=0;}SH3.on=false;
+  SH3.toys={};SH3.todo=[];SH3.sets={};SH3.an={};SH3.drag=null;SH3.eid=null;SH3.view=0;SH3.tv=0;SH3.sw0=0;
+  const R=document.documentElement;R.classList.remove('s3d');R.classList.remove('s3e');R.classList.add('ar3d');
+  AR.cv.style.background='radial-gradient(ellipse at 50% 45%,#2b2342 0%,#14111f 60%,#09080e 100%)';
+  if(SH3.dim){const dm=SH3.dim;dm.style.transition='opacity .6s';dm.style.opacity='0';setTimeout(()=>{dm.remove();dm.style.opacity='';dm.style.transition='';},700);}
+  if(SH3.tag)SH3.tag.remove();if(SH3.bar)SH3.bar.remove();
+  if(SH3.emats&&AR.eMat)AR.eMat.forEach((o,i)=>{if(SH3.emats[i])o.material=SH3.emats[i];});SH3.emats=null;
+  SH3.H=H;H.to=setTimeout(sh3Kill,1500);return true;}catch(e){return false;}}
+function sh3Kill(){const H=SH3.H;if(!H)return;SH3.H=null;clearTimeout(H.to);
+  Object.values(H.toys).forEach(sh3Drop);Object.values(H.sets).forEach(z=>z.toys.forEach(sh3Drop));
+  try{if(SH3.bm&&SH3.bm.parent)SH3.bm.parent.remove(SH3.bm);if(AR.cv){AR.cv.classList.remove('s3dcv');AR.cv.style.background='';if(!AR.f&&!RV3.on){document.documentElement.classList.remove('ar3d');if(AR.cam)AR.cam.clearViewOffset();if(AR.cv.parentNode)AR.cv.remove();}}}catch(e){}}
+function sh3Adopt(){const H=SH3.H;if(!H||!B||B.silent)return;SH3.H=null;clearTimeout(H.to);const now=performance.now(),drop=[],pool={};
+  AR.cv.classList.remove('s3dcv');AR.cv.style.background='';
+  const E=H.sets[(S.enemy&&S.enemy.rival)||'next'];if(E)E.toys.forEach(T=>{(pool[T.fk]||(pool[T.fk]=[])).push(T);});
+  const take=(u,T)=>{if(T.tag)T.tag.remove();T.u=u;u._ar=T;T.root.visible=true;T.born=now-1000;T.dt=0;T.yaw=T.root.rotation.y;T.home.set(T.root.position.x,.05,T.root.position.z);AR.toys.push(T);if(u.el)u.el.classList.add('t3d');};
+  const used=new Set();
+  for(const u of B.units){if(u._ar)continue;let T=null;
+    if(u.side==='A'){T=H.toys[u.ref];if(T&&T.sig===u.id+':'+u.level&&!T.bench){used.add(T);take(u,T);}}
+    else{const k=/^(?:rv|gh):/.test(u.key||'')?'h:'+String(u.key).split(':').pop()+':'+u.row[0]+u.col:'k:'+u.key+':'+u.row+':'+u.col,a=pool[k];if(a&&a.length){T=a.shift();used.add(T);take(u,T);}}}
+  Object.values(H.toys).forEach(T=>{if(!used.has(T)){T._s0=T.root.scale.x;drop.push(T);}});
+  Object.values(H.sets).forEach(z=>z.toys.forEach(T=>{if(!used.has(T)){T._s0=T.root.scale.x;drop.push(T);}}));
+  AR.gl={from:H.cam,to:null,t0:0,drop,t1:now};}
+// the fight's own camera is the target: arLayout (end) records it, then arGlide blends from the shop framing
+function arGlideTo(){const g=AR.gl,cam=AR.cam;if(!g)return;const V=TBA.THREE.Vector3,p=cam.position.clone(),d=cam.getWorldDirection(new V()),t=d.y<-.01?-p.y/d.y:30;
+  g.to={p,g:p.clone().addScaledVector(d,t),asp:cam.aspect,vw:cam.view&&cam.view.enabled?Object.assign({},cam.view):null};if(!g.t0)g.t0=performance.now();}
+function arGlide(now){const g=AR.gl;if(!g||!g.to)return;const cam=AR.cam,k=Math.min(1,(now-g.t0)/900),e=k*k*(3-2*k),A=g.from,Z0=g.to,L=(a,b)=>a+(b-a)*e;
+  for(const T of g.drop){const s=Math.max(.001,1-(now-g.t1)/350);T.root.scale.setScalar(T._s0*s);if(s<=.001&&!T._gone){T._gone=1;T.root.visible=false;}}
+  if(k>=1){AR.gl=null;g.drop.forEach(T=>{try{arDispose(T.root);}catch(x){}});if(SH3.bm&&SH3.bm.parent)SH3.bm.parent.remove(SH3.bm);AR.W=-1;return;}
+  cam.position.set(L(A.p.x,Z0.p.x),L(A.p.y,Z0.p.y),L(A.p.z,Z0.p.z));cam.aspect=L(A.asp,Z0.asp);cam.lookAt(L(A.g.x,Z0.g.x),L(A.g.y,Z0.g.y),L(A.g.z,Z0.g.z));
+  const a=A.vw,b=Z0.vw;if(a&&b)cam.setViewOffset(L(a.fullWidth,b.fullWidth),L(a.fullHeight,b.fullHeight),L(a.offsetX,b.offsetX),L(a.offsetY,b.offsetY),L(a.width,b.width),L(a.height,b.height));
+  cam.updateProjectionMatrix();cam.updateMatrixWorld();}
 function sh3Vars(){const R=document.documentElement.style,sp=document.querySelector('#app .dshop');R.setProperty('--s3side',sh3Side()+'px');R.setProperty('--s3shop',(sp?sp.getBoundingClientRect().height:330).toFixed(0)+'px');}
-function sh3On(){if(SH3.on)return;SH3.on=true;Object.assign(SH3,{last:0,ema:0,nf:0,vw:0,vh:0,drag:null,r:null});
+function sh3On(){if(SH3.on)return;sh3Kill();SH3.on=true;Object.assign(SH3,{last:0,ema:0,nf:0,vw:0,vh:0,drag:null,r:null});
   if(AR.raf){cancelAnimationFrame(AR.raf);AR.raf=0;}document.documentElement.classList.add('s3d');sh3Vars();
   try{arsFight();}catch(e){}if(SH3.bm&&SH3.bm.userData.n!==benchSlots.length){SH3.bm.traverse(o=>{if(o.geometry)o.geometry.dispose();});SH3.bm=null;}if(!SH3.bm)SH3.bm=sh3Bench();AR.scene.add(SH3.bm);
   AR.cv.classList.add('s3dcv');if(AR.cv.parentNode!==document.body)document.body.appendChild(AR.cv);
@@ -29815,7 +29852,7 @@ function sh3MakeE(f){let u,T=null;
   else{const d=EN[f.key];u={side:'E',key:f.key,name:d?d.name:f.key,art:foeSpr(f.key),row:f.row,col:f.col,wide:false,crowd:!!(d&&d.x&&d.x.crowd),alive:true,el:SH3_EL};}
   try{T=arToy(u);}catch(e){}const i=AR.toys.indexOf(T);if(i>=0)AR.toys.splice(i,1);if(!T)return null;
   const w=arWorld('E'+u.row[0]+Math.min(3,Math.max(0,u.col)));T.root.position.set(w.x+(u.wide?AR_X/2:0),.05,w.z);T.root.rotation.y=0;T.root.updateMatrixWorld(true);
-  T.top=new TBA.THREE.Box3().setFromObject(T.body).max.y;try{T.anim=idcK(u,T);}catch(e){T.anim='idle';}T.born=performance.now();
+  T.top=new TBA.THREE.Box3().setFromObject(T.body).max.y;try{T.anim=idcK(u,T);}catch(e){T.anim='idle';}T.born=performance.now();T.fk=f.h?'h:'+f.id+':'+f.slot:'k:'+f.key+':'+f.row+':'+f.col;
   const tg=document.createElement('div');tg.className='s3tag e';tg.setAttribute('aria-hidden','true');tg.style.opacity='0';T._op='0';
   tg.innerHTML=f.h?`<b>${'★'.repeat(f.level)}</b> ${esc(HERO[f.id].name)}`:esc(u.name);document.body.appendChild(tg);T.tag=tg;return T;}
 function sh3Show(id,d){const now=performance.now(),old=SH3.eid&&SH3.sets[SH3.eid];if(old)old.toys.forEach(T=>{T.root.visible=false;T.tag.style.opacity='0';T._op='0';});
@@ -29832,7 +29869,7 @@ function sh3View(v){v=v?1:0;if(!SH3.on||SH3.view===v)return;SH3.view=v;document.
 function sh3Step(d){const L=sh3Order();if(L.length<2)return;const i=Math.max(0,L.indexOf(SH3.eid));sh3Show(L[(i+d+L.length)%L.length],d);}
 function sh3Zoom(id){if(!SH3.on)return false;if(id&&id!==SH3.eid)sh3Show(id,SH3.view?1:0);sh3View(1);return true;}
 function sh3Sync(){try{if(sh3Want()){SH3.tries=0;sh3On();sh3Sig();sh3Toys();sh3Vars();document.querySelectorAll('#app .board .frow>.slot').forEach(el=>{el._s3q=null;});}
-  else{sh3Off();// the fight or a visit is still letting go of the arena: look again shortly
+  else{if(!sh3Hand())sh3Off();// the fight or a visit is still letting go of the arena: look again shortly
     if(UI.screen==='plan'&&(AR.f||RV3.on)&&!SH3.wait&&(SH3.tries=(SH3.tries||0)+1)<40)SH3.wait=setTimeout(()=>{SH3.wait=0;sh3Sync();},250);else if(!AR.f&&!RV3.on)SH3.tries=0;}}catch(e){}}
 (function(){try{if(typeof document==='undefined'||!document.addEventListener)return;
   document.head.insertAdjacentHTML('beforeend','<style id="s3css">'+SH3_CSS+'</style>');
