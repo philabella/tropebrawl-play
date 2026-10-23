@@ -26,7 +26,7 @@
      crisp square tiles with black outlines, so every position reads at a glance. */
   --bg:#1e1d21; --bg2:#26252a; --panel:#121114; --panel2:#2d2c32; --line:#3d3b43;
   --ink:#f3eee4; --muted:#aaa49b; --dim:#6d6962;
-  --gold:#ffcc2e; --gold-dk:#a37800; --red:#ff4d3d; --ground:#2f2924; --ground2:#3a322b; --inkline:#000; --good:#6cc47a; --mana:#5d95e6; --shield:#d9e1ec; --leg:#ff9f43;
+  --gold:#ffcc2e; --gold-dk:#a37800; --red:#ff4d3d; --ground:#2f2924; --ground2:#3a322b; --inkline:#000; --good:#6cc47a; --mana:#c07bff; --shield:#d9e1ec; --leg:#ff9f43;
   --dud:#3a3340;
   --r1:#b4adbf; --r2:#62d98b; --r3:#5aa9ff; --r4:#b98cff; --r5:#ff6b9d;
   --g-army:#a3b462; --g-orc:#de6f47; --g-elf:#5fcab8; --g-fin:#e9c352; --g-grim:#d84d60; --g-bug:#ab80ea; --g-ball:#4fa3f7; --g-undead:#8fd18a; --g-heist:#e9c352; --g-west:#e0874f; --g-horror:#e2507e; --g-space:#46c8e0; --g-kaiju:#cfe04a; --foe:#c45a4e;
@@ -249,7 +249,7 @@ strong.lvon{color:var(--gold);font-weight:800}
 .chiprow{display:flex;flex-wrap:wrap;gap:6px}
 .chiprow>span{display:inline-flex;align-items:center;gap:6px;background:var(--panel);border:1px solid var(--line);border-radius:999px;padding:3px 10px 3px 3px;font-size:.8rem}
 :root{--fs-xs:.72rem;--fs-s:.82rem;--fs-m:.92rem;--fs-l:1.12rem;--fs-h:1.55rem;
-  --k-dmg:#ff8a5c;--k-hp:#7fe08f;--k-sh:#bcd3f0;--k-mana:#7fb2ff;--k-gold:#ffd24a;--k-spd:#f7e27a}
+  --k-dmg:#ff8a5c;--k-hp:#7fe08f;--k-sh:#bcd3f0;--k-mana:#c07bff;--k-gold:#ffd24a;--k-spd:#f7e27a}
 #vtip{position:fixed;z-index:90;pointer-events:none;min-width:150px;max-width:min(310px,calc(100vw - 16px));overflow:hidden;overflow-wrap:anywhere;padding:0;border-radius:10px;
   background:linear-gradient(180deg,#2a2730,#16151a 70%);border:2px solid var(--gold-dk);
   box-shadow:0 0 0 1px #000,inset 0 0 0 1px rgba(255,204,46,.18),0 10px 28px rgba(0,0,0,.6);color:var(--ink);
@@ -508,9 +508,10 @@ i.rvp[data-tl]{border-color:#ff7a52 !important;background-color:rgba(255,122,82,
 .unit.foe{background:color-mix(in srgb,var(--foe) 10%,var(--panel))}
 .unit .pt{width:40px;height:40px;font-size:1.3rem}
 .unit .meta{display:flex;gap:4px;align-items:center;min-height:12px}
+.unit .meta .stars{color:var(--gold);font-size:clamp(.85rem,1.25vw,1.55rem);font-weight:900;letter-spacing:-.02em;line-height:1;text-shadow:0 0 2px #000,0 1px 0 #000,1px 0 0 #000,-1px 0 0 #000,0 -1px 0 #000}
 .hpb{position:relative;width:100%;height:11px;border-radius:3px;background:var(--bg);border:1px solid var(--line);overflow:hidden;margin-top:auto}
 .hpb .hf{position:absolute;inset:0 auto 0 0;background:#3fc8b4}
-.unit.foe .hpb .hf{background:repeating-linear-gradient(135deg,var(--red) 0 4px,#8f1f16 4px 8px)}
+.unit.foe .hpb .hf{background:var(--red)}
 .hpb .sf{position:absolute;inset:0 auto 0 0;background:var(--shield);opacity:.7}
 .mpb{width:100%;height:4px;border-radius:2px;background:var(--bg);overflow:hidden}
 .mpb i{display:block;height:100%;background:var(--mana)}
@@ -24006,9 +24007,9 @@ function mountUnit(u){
   el.innerHTML=`<div class="sts"></div>${art?(u.crowd?crowdSpr(art,bodies(u)):sprImg(art)):pt({e:u.e,genre:u.genre,trait:u.side==='A'?u.trait:null,foe:u.side==='E'})}
     <div class="meta">${u.level?stars(u.level):''}${u.crowd?`<span class="crowdn g-${u.genre||'foe'}">×<span class="bn">${bodies(u)}</span></span>`:''}</div>
     <div class="hpb"><i class="hg"></i><i class="hf"></i><i class="sf"></i></div><div class="mpb"><i></i></div>`;
-  el.title=u.name;
+  el.title=u.name+' | Bars: red HP'+(u.manaMax&&u.skill?', violet Energy (skill fires when full)':'')+', striped white-blue Shield';
   u.el=el;u.$hf=el.querySelector('.hf');u.$hg=el.querySelector('.hg');u.$sf=el.querySelector('.sf');u.$mp=el.querySelector('.mpb i');u.$st=el.querySelector('.sts');u.$bn=el.querySelector('.bn');u.$cs=el.querySelector('.crowdspr');
-  if(!u.manaMax)el.querySelector('.mpb').style.visibility='hidden';
+  if(!u.manaMax||!u.skill)el.querySelector('.mpb').style.visibility='hidden';
   placeUnit(u);
 }
 // which side of the board a character stands on (an invader stands on the enemy side but still fights for its own)
@@ -25874,10 +25875,11 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.132',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.133',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
+  {v:'20.133',items:[["⚡", "The energy bar is now violet (blue looked like a shield) and only shows on characters that have a skill; enemy health is plain red, only shields are striped. Hover a unit to see what each bar means."], ["⭐", "Star levels are big and gold over every figure, in fights and on a rival's board. The selected figure's ring now lies flat on the floor."]]},
   {v:'20.132',items:[["💃", "Victory dances: every genre has its own routine (Army drill, Bug skitter, Kaiju stomp, Heist tiptoe...) and each Legendary has a signature one. Your team dances when you win, a figure dances when it hits ★★★, and you can click a figure on your board to make it dance."]]},
   {v:'20.131',items:[["🕺", "Everyone has their own idle now: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat. No two figures on a board move in sync."]]},
   {v:'20.130',items:[["🩹", "Fixed: a dead enemy's health bar no longer stays floating on the arena after the fight."]]},
@@ -26109,7 +26111,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.132',h:"character life",items:[["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat.", 1], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.133',h:"character life",items:[["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat.", 1], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -29605,6 +29607,7 @@ function rv3Build(s,h,show){const d=HERO[h.id];if(!d)return;const el={classList:
   const u={side:'A',id:h.id,level:h.level,art:h.id,row:'front',col:+h.slot[1],wide:twoSlot(h.id),crowd:!!d.crowd,alive:true,el};
   let T=null;try{T=arToy(u);}catch(e){}const i=AR.toys.indexOf(T);if(i>=0)AR.toys.splice(i,1);if(!T)return;
   const w=arWorld((h.slot[0]==='f'?'Ab':'Af')+h.slot[1]);T.root.position.set(w.x+(u.wide?AR_X/2:0),.05,w.z);T.root.rotation.y=0;T.root.updateMatrixWorld(true);
+  {const THREE=TBA.THREE,hl=new THREE.Mesh(new THREE.RingGeometry(1.12,1.3,44),new THREE.MeshBasicMaterial({color:'#ffd76a',transparent:true,opacity:.95,depthWrite:false}));hl.rotation.x=-Math.PI/2;hl.position.y=.08;hl.visible=false;hl.userData.outlineParameters={visible:false};T.root.add(hl);T.sel=hl;}
   T.top=new TBA.THREE.Box3().setFromObject(T.body).max.y-.05;T.slot=h.slot;T.wide=u.wide;try{T.anim=idcK(u,T);}catch(e){T.anim='idle';}
   // a toy built ahead is drawn once at near-zero size, so its upload to the GPU happens now and not on the Q/E frame
   T.root.visible=true;T.root.scale.setScalar(show?.01:1e-4);if(!show)RV3.warm.push(T);T.born=performance.now();s.toys.push(T);RV3.built=1;}
@@ -29622,7 +29625,7 @@ function rv3Frame(el,az,r){const {THREE}=TBA,cam=AR.cam,v=new THREE.Vector3(),W=
 // the 4a tags (name + stars, click = card) follow their toy; the button box covers the toy so the figure is clickable
 function rv3Labels(r){const el=document.getElementById('rvv'),s=RV3.sets[RV3.id];if(!el||!r)return;const {THREE}=TBA,v=new THREE.Vector3(),vw=innerWidth,vh=innerHeight,by={};
   if(s)s.toys.forEach(T=>{by[T.slot]=T;});
-  el.querySelectorAll('.rvvfl .rvq[data-v]').forEach(b=>{const T=by[b.dataset.v];if(!T||!T.root.visible||T.root.scale.x<.3){if(b._rv3!=='h'){b._rv3='h';b.style.visibility='hidden';}return;}
+  el.querySelectorAll('.rvvfl .rvq[data-v]').forEach(b=>{const T=by[b.dataset.v];if(T&&T.sel)T.sel.visible=b.classList.contains('on');if(!T||!T.root.visible||T.root.scale.x<.3){if(b._rv3!=='h'){b._rv3='h';b.style.visibility='hidden';}return;}
     const p=T.root.position,sc=T.root.scale.x;v.set(p.x,p.y,p.z).project(AR.cam);const x=(v.x+1)/2*vw,y=(1-v.y)/2*vh;
     v.set(p.x,p.y+T.top*sc+.15,p.z).project(AR.cam);const ty=(1-v.y)/2*vh;v.set(p.x+AR_X*(T.wide?.86:.4),p.y,p.z).project(AR.cam);const w=Math.max(30,Math.abs((v.x+1)/2*vw-x)*2);
     // write only what changed: once the swing settles the tags stand still and the overlay is not repainted
@@ -29690,8 +29693,9 @@ body.rvv-on #app{visibility:hidden}
 .rvv.r3d .rvq{position:fixed;left:0;top:0;z-index:2;visibility:hidden;height:auto;will-change:transform}
 .rvv.r3d .rvq::before{left:6%;right:6%;bottom:-8px;height:24px;transform:none;border-radius:50%;background:transparent;border:0;box-shadow:none}
 .rvv.r3d .rvq:hover::before{box-shadow:0 0 0 2px rgba(255,255,255,.55)}
-.rvv.r3d .rvq.on::before{box-shadow:0 0 0 3px #ffd76a,0 0 26px 6px rgba(255,215,106,.5)}
+.rvv.r3d .rvq.on .rvql{box-shadow:0 0 0 2px #ffd76a,0 2px 8px rgba(0,0,0,.6)}
 .rvv.r3d .rvq:focus-visible::before{box-shadow:0 0 0 3px #fff}
+.rvv.r3d .rvql .scst{display:block;text-align:center;color:var(--gold);font-size:clamp(.95rem,1.4vw,1.7rem);line-height:1;letter-spacing:-.02em;text-shadow:0 0 2px #000,0 1px 0 #000}
 .rvv.r3d .rvql{top:0;transform:translate(-50%,-100%);font-size:.74rem;padding:1px 7px;box-shadow:0 2px 6px rgba(0,0,0,.5)}
 .rvv.r3d .rvvbn{align-self:center;background:rgba(14,11,9,.82);border:1px solid rgba(255,255,255,.12);border-radius:8px;padding:4px 10px}
 @media (max-width:760px){.rvv.r3d .rvvb{height:max(290px,46svh)}.rvv.r3d .rvql{font-size:.6rem;padding:0 4px}}
