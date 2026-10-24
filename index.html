@@ -2277,6 +2277,51 @@ html .rvep .rvtell{max-width:none;padding-right:96px}
   .mm-pitch{display:block;bottom:10vh;font-size:11px;white-space:normal;text-align:center;width:90vw}
   .mm-r .verl{display:none}
 }
+/* TRO-479: PC title screen (desktop) */
+.mmx{--u:min(1vh,.42vw);position:fixed;inset:0;z-index:1;overflow:hidden;max-width:none;margin:0;padding:0;color:#efe4c8}
+#app>section.screen.mmx,html.dt #app>section.screen.mmx{max-width:none;margin:0}
+.mmx-shade{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(2,9,11,.94) 0,rgba(2,9,11,.84) clamp(400px,26vw,600px),rgba(2,9,11,.35) clamp(600px,40vw,960px),transparent 56%)}
+.mmx-side{position:absolute;left:clamp(40px,4.4vw,110px);top:6.5vh;bottom:4vh;z-index:6;display:flex;flex-direction:column;width:clamp(360px,25vw,560px)}
+.mmx .mmx-side .title-word{margin:0;font-size:clamp(54px,10.5vh,132px);line-height:.88;letter-spacing:.01em;text-align:left;white-space:nowrap;text-shadow:0 5px 0 var(--inkline,#1c1824),0 0 36px rgba(255,190,60,.22)}
+.mmx-tag{margin:1.1vh 0 0 .2em;font-size:clamp(11px,1.45vh,16px);letter-spacing:.2em;text-transform:uppercase;color:#cfe3df;opacity:.72}
+.mmx-nav{display:flex;flex-direction:column;align-items:flex-start;gap:1vh;margin-top:auto;margin-bottom:auto;padding-top:3vh}
+.mmx-i{position:relative;display:block;width:100%;text-align:left;background:none;border:0;padding:.55vh 0 .55vh 0;margin:0;font-family:var(--f-display);font-size:clamp(22px,3.5vh,40px);line-height:1.05;letter-spacing:.035em;text-transform:uppercase;color:#d9ccb0;cursor:pointer;transition:color .12s,transform .14s;outline:none}
+.mmx-i::before{content:'';position:absolute;left:-22px;top:18%;bottom:18%;width:5px;border-radius:3px;background:var(--gold,#ffcf33);transform:scaleY(0);transition:transform .14s;box-shadow:0 0 12px rgba(255,200,60,.6)}
+.mmx-i:hover,.mmx-i:focus-visible,.mmx-i.on{color:#fff6dc;transform:translateX(10px)}
+.mmx-i:hover::before,.mmx-i:focus-visible::before,.mmx-i.on::before{transform:scaleY(1)}
+.mmx-i small{display:block;margin-top:.35vh;font-family:var(--f-body);font-size:clamp(12px,1.55vh,17px);letter-spacing:.01em;text-transform:none;color:#bfd2cd;opacity:.85}
+.mmx-i small .lnk,.mmx-sub .lnk{font-size:inherit;color:var(--gold,#ffcf33)}
+.mmx-i.pri{font-size:clamp(30px,5vh,58px);color:var(--gold,#ffcf33);text-shadow:0 3px 0 var(--inkline,#1c1824)}
+.mmx-i.pri:hover,.mmx-i.pri:focus-visible,.mmx-i.pri.on{color:#ffe27a}
+.mmx-sub{margin:.1vh 0 .9vh;font-size:clamp(12px,1.55vh,17px);color:#bfd2cd}
+.mmx-gap{height:1.6vh}
+.mmx-i.dly{margin:.9vh 0 1.1vh;padding:1.2vh 1.1vw 1.3vh;width:min(100%,30vw);border-radius:8px;background:linear-gradient(100deg,rgba(255,207,51,.16),rgba(12,32,36,.82) 55%);box-shadow:inset 0 0 0 1.5px rgba(255,207,51,.55),0 8px 30px rgba(0,0,0,.35);color:#fff1cf}
+.mmx-i.dly::before{left:-22px}
+.mmx-i.dly:hover,.mmx-i.dly:focus-visible,.mmx-i.dly.on{box-shadow:inset 0 0 0 2px var(--gold,#ffcf33),0 0 36px rgba(255,200,60,.28)}
+.mmx-dh{display:flex;align-items:center;gap:.5em}
+.mmx-dh .ico{width:1.1em;height:1.1em}
+.mmx-new{font-family:var(--f-body);font-weight:800;font-size:clamp(11px,1.3vh,14px);letter-spacing:.08em;padding:.25em .6em;border-radius:4px;background:#d01f45;color:#fff;box-shadow:0 0 14px rgba(255,60,95,.55);animation:mmxNew 1.6s ease-in-out infinite}
+@keyframes mmxNew{50%{box-shadow:0 0 4px rgba(255,79,109,.3)}}
+.mmx-dt{display:block;margin-top:.7vh;font-family:var(--f-body);font-size:clamp(13px,1.7vh,19px);letter-spacing:0;text-transform:none;color:#fff1cf;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmx-dt b{color:var(--gold,#ffcf33)}
+.mmx-dr{display:block;margin-top:.25vh;font-family:var(--f-body);font-size:clamp(12px,1.45vh,16px);letter-spacing:0;text-transform:none;color:#bfd2cd;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmx-df{display:flex;white-space:nowrap;align-items:center;gap:.8em;margin-top:.8vh;font-family:var(--f-body);font-size:clamp(11px,1.35vh,15px);letter-spacing:0;text-transform:none;color:#a9c2bd}
+.mmx-df .dlydots{display:inline-flex;gap:4px}
+.mmx-df .dlydots i{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.16)}
+.mmx-df .dlydots i.on{background:var(--gold,#ffcf33)}
+.mmx-cd{margin-left:auto;font-variant-numeric:tabular-nums}
+.mmx-q{color:var(--gold,#ffcf33)}
+.mmx-br{position:absolute;right:clamp(24px,2.4vw,60px);bottom:3vh;z-index:9;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
+.mmx-br .row1{display:flex;gap:6px}
+.mmx-ib{display:flex;align-items:center;justify-content:center;min-width:44px;min-height:44px;border:0;border-radius:8px;background:rgba(3,12,14,.7);font-size:20px;color:#e6dabb;cursor:pointer}
+.mmx-ib:hover,.mmx-ib:focus-visible{background:rgba(30,60,64,.9);color:#fff}
+.mmx-news{display:flex;align-items:center;gap:6px;max-width:min(420px,26vw);background:none;border:0;padding:0;font:inherit;font-size:13px;color:#cfe3df;opacity:.8;cursor:pointer;text-align:right}
+.mmx-news:hover,.mmx-news:focus-visible{opacity:1;color:var(--gold,#ffcf33)}
+.mmx-news .nwdot{position:static;flex:none}
+.mmx-news span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.mmx-br .verl{margin:0;font-size:11px;opacity:.45}
+html.mm3on .mmx-shade{display:block}
+@media (max-height:640px){.mmx-tag{display:none}.mmx-i{padding:.3vh 0}.mmx-i.dly{padding:.8vh 1vw}.mmx-df{display:none}}
 </style>
 
 <div id="tbg" aria-hidden="true" hidden></div>
@@ -24737,8 +24782,52 @@ function mmScene(){const B='<polygon points="0,-46 9,-20 34,-32 22,-8 48,0 22,8 
   return `<div class="mm-stage${ph?' ph':''}" aria-hidden="true">`
     +cast.filter(c=>SPRITES[c[0]+'_f']).map(([id,x,b,w,rot,z,dir,d])=>`<span class="tfig" style="left:${x}%;bottom:${u(b)};width:${u(w)};z-index:${z};--rot:${rot}deg;--dir:${dir};--d:${d}s"><i class="tsh"></i><img src="${SPRITES[id+'_f']}" alt="" draggable="false"></span>`).join('')
     +hits.map(([x,b,w,d])=>`<svg class="tburst" style="left:${x}%;bottom:${u(b)};width:${u(w)};--d:${d}s" viewBox="-50 -50 100 100">${B}</svg>`).join('')+'</div>';}
+// TRO-479: the PC title screen (desktop); phones keep mmHTML's layout
+function mmxCD(){const n=new Date(),m=Date.UTC(n.getUTCFullYear(),n.getUTCMonth(),n.getUTCDate()+1)-n.getTime(),h=Math.floor(m/36e5),mi=Math.floor(m%36e5/6e4);return h?`${h}h ${String(mi).padStart(2,'0')}m`:`${mi}m`;}
+function mmxHTML(sv,fresh){const p=lvLoad(),lo=lvMin();UI.lv=fresh?lo:Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh(),d=dlyToday(),tw=dlyTw(d),j=dlyLoad(),me=j.d[d];
+  const I=(a,t,sub,x)=>`<button class="mmx-i${x||''}" data-a="${a}">${t}${sub?`<small>${sub}</small>`:''}</button>`;
+  let h=fresh?I('new','Play the Pilot','5-minute tutorial',' pri')
+    :sv?I('continue','Continue',`${esc(lvNmC(sv.S.lv|0))} · Episode ${sv.S.round}`,' pri')+I('play','New Run','')
+    :I('play','Play',`Next: ${esc(lvTitle(UI.lv))}`,' pri');
+  if(dlyShow(p))h+=`<button class="mmx-i dly" data-a="daily-menu" data-v="${d}">`
+    +`<span class="mmx-dh">${ico('u_tv')}Daily Episode${me?'':'<i class="mmx-new">NEW</i>'}</span>`
+    +`<span class="mmx-dt">${tw.e} Today: <b>${esc(twName(tw))}</b></span><span class="mmx-dr">${esc(twRule(tw))}</span>`
+    +`<span class="mmx-df">${dlyStrip()}<span>${me?'Your best: '+dlyRes(me):'Same run for everyone'}</span><span class="mmx-cd">Next in <b data-mmxcd>${mmxCD()}</b></span></span></button>`;
+  if(!fresh&&lateShow(p)){const lr=lateGet(j,d);h+=I('late-menu','Late Show',lr?lateRes(lr):'One try a day, no saves');}
+  if(fresh)h+=I('tut-skip','Skip the tutorial','I know auto-battlers');
+  h+=`<div class="mmx-gap"></div>`;
+  const nx=!fresh&&p.open>=4?dscNext():null;
+  h+=I('codex','Codex',nx?`<span class="mmx-q">???</span> Next to find: ${nx.t.replace(/^an? (crossover of )?/,'')}`:'');
+  h+=I('settings','Settings','');
+  if(typeof window!=='undefined'&&window.tbApp)h+=I('appquit','Quit to Desktop','');
+  return `<section class="screen mmx mm${fresh?' mmfresh':''}"><div class="mm-bg" aria-hidden="true"></div>${mmScene()}<div class="mmx-shade" aria-hidden="true"></div>
+    <div class="mmx-side"><h1 class="title-word">${TITLE}</h1><p class="mmx-tag">Cast the clichés. Watch them brawl.</p>
+    ${UI.loadErr&&!sv?'<p class="tlderr" role="alert">This run couldn\'t be loaded. Start a new run.</p>':''}
+    <nav class="mmx-nav" aria-label="Main menu">${h}</nav></div>
+    <div class="mmx-br"><button class="mmx-news" data-a="news">${ns.length?'<i class="nwdot" aria-label="new"></i>':''}<span>${ns.length?newsLink().replace(/^New since your last visit: /,"What's new: "):"What's new"}</span></button>
+      <div class="row1"><button class="mmx-ib sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('mmx-ib mm-fs')}</div>
+      <p class="verl">v${TB_VERSION}${tlBadge()}</p></div>
+  </section>`;}
+function mmxWide(){return typeof innerWidth!=='undefined'&&innerWidth>=900&&innerHeight>=500;}
+// keyboard / gamepad: Up/Down (W/S, d-pad, stick) walk the menu, Enter / A selects; the mouse moves the same highlight
+function mmxStep(dir){const all=[...document.querySelectorAll('.mmx-nav .mmx-i')];if(!all.length)return false;let i=all.indexOf(document.activeElement);
+  i=i<0?(dir>0?0:all.length-1):(i+dir+all.length)%all.length;all[i].focus({preventScroll:true});return true;}
+function mmxKeys(){if(typeof document==='undefined'||!document.addEventListener||typeof requestAnimationFrame==='undefined'||window.__mmx)return;window.__mmx=1;
+  const on=()=>UI.screen==='title'&&!UI.sheetOpen&&!!document.querySelector('.mmx');
+  document.addEventListener('keydown',e=>{if(!on()||e.ctrlKey||e.metaKey||e.altKey)return;
+    const k=e.key;if(k==='ArrowDown'||k==='s'||k==='S'){if(mmxStep(1))e.preventDefault();}else if(k==='ArrowUp'||k==='w'||k==='W'){if(mmxStep(-1))e.preventDefault();}
+    else if(k==='Enter'&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.mmx'))){const b=document.querySelector('.mmx-nav .mmx-i');if(b){b.click();e.preventDefault();}}});
+  document.addEventListener('mouseover',e=>{const b=e.target&&e.target.closest&&e.target.closest('.mmx-nav .mmx-i');if(b&&document.activeElement!==b)b.focus({preventScroll:true});});
+  setInterval(()=>{document.querySelectorAll('[data-mmxcd]').forEach(b=>b.textContent=mmxCD());},30000);
+  let gp=0,held=0,run=0;const pad=()=>{const g=navigator.getGamepads?[...navigator.getGamepads()].find(x=>x):null;if(!g){run=0;return;}requestAnimationFrame(pad);if(!on())return;
+    const up=g.buttons[12]&&g.buttons[12].pressed||g.axes[1]<-.6,dn=g.buttons[13]&&g.buttons[13].pressed||g.axes[1]>.6,a=g.buttons[0]&&g.buttons[0].pressed,s=up?1:dn?2:a?3:0,now=performance.now();
+    if(s!==gp||(s&&s<3&&now-held>260)){if(s===1)mmxStep(-1);else if(s===2)mmxStep(1);else if(s===3&&gp!==3){const b=document.activeElement&&document.activeElement.closest&&document.activeElement.closest('.mmx-i');(b||document.querySelector('.mmx-nav .mmx-i'))?.click();}held=now;}gp=s;};
+  addEventListener('gamepadconnected',()=>{if(!run){run=1;requestAnimationFrame(pad);}});}
+// the 3D stage steps right so the menu column sits on empty floor (the patch puts this at the end of mm3Layout)
+function mmxCam(Z,W,H){if(mmxWide()&&W/H>=1.2)Z.cam.setViewOffset(W,H,-Math.round(W*.16),0,W,H);else Z.cam.clearViewOffset();}
+try{mmxKeys();}catch(e){}
 function mmIc(a,ic,t,x){return `<button class="mm-ib" data-a="${a}" aria-label="${t}" title="${t}">${ic}<span>${t}</span>${x||''}</button>`;}
-function mmHTML(sv,fresh){const p=lvLoad(),lo=lvMin();UI.lv=fresh?lo:Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh(),d=dlyToday(),tw=dlyTw(d);
+function mmHTML(sv,fresh){if(mmxWide())return mmxHTML(sv,fresh);const p=lvLoad(),lo=lvMin();UI.lv=fresh?lo:Math.max(lo,Math.min(UI.lv|0,p.open));const ns=newsFresh(),d=dlyToday(),tw=dlyTw(d);
   const main=fresh?`<button class="mm-play" data-a="new">▶ Play the Pilot</button><div class="mm-sub">5-minute tutorial<button class="lnk" data-a="tut-skip">I know auto-battlers</button></div>`
     :sv?`<button class="mm-play" data-a="continue">▶ Continue</button><div class="mm-sub"><span>${esc(lvNmC(sv.S.lv|0))} · Episode ${sv.S.round}</span><button class="lnk" data-a="play">New run</button></div>`
     :`<button class="mm-play" data-a="play">▶ Play</button><div class="mm-sub"><span>Next: ${esc(lvTitle(UI.lv))}</span></div>`;
@@ -25999,7 +26088,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.164',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.165',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -26243,7 +26332,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-24',from:'20.163',to:'20.164',h:"clearer shop cards",items:[["🃏", "Shop cards say how many copies you own toward a ★★, and say 'own' before the stars you already have, so a card no longer looks like it arrives upgraded.",1],["💎", "Rare, Epic and Mythic cards now say what their badge means: from ★★ they count twice for their genre bonus."],["✏️", "Big titles, banners and card names are one clean colour now (no more white top half)."]]},
+  {d:'2026-10-24',from:'20.163',to:'20.165',h:"a PC title screen",items:[["🎬", "New title screen on PC: a menu on the left you can steer with the mouse, the arrow keys or a controller, and the Daily Episode in its own box with the twist of the day, a countdown and a NEW tag until you play it.",1],["🃏", "Shop cards say how many copies you own toward a ★★, and say 'own' before the stars you already have, so a card no longer looks like it arrives upgraded."],["💎", "Rare, Epic and Mythic cards now say what their badge means: from ★★ they count twice for their genre bonus."],["✏️", "Big titles, banners and card names are one clean colour now (no more white top half)."]]},
   {d:'2026-10-23',from:'20.131',to:'20.162',h:"character life",items:[["🔧", "Screen fixes: shop name tags no longer cover each other, 3x fights show fewer skill banners, the rival's name is no longer doubled, and the Legendary pick fits short screens with no tip on top of it."], ["🦾", "No more arms bending backwards: every 3D figure keeps its elbows and shoulders in a natural range in idles, dances, attacks and reactions."], ["🪙", "Selling is quicker: every character gives some gold back, one tap sells a ★ Common, Uncommon or Rare, and a full board tells you to drop on a character to swap."], ["🪑", "The Pilot now helps you get your cast on the board, reminds you to spend gold before a big fight, and warns you what the mini-boss and boss do."], ["🧨", "Five items now ask where you stand: Sniper Scope wants a clear shot, Glass Cannon wants room around it, Flak Vest a buddy behind, Energy Drink pays your rerolls, War Banner pays a mixed cast. The item list shows what each one powers right now."], ["🎯", "A gentler first fight: Episode 1 is easier to win, so a bad opening hand costs fewer lives."],["🎬", "A new main menu: the nine Mythicals pose on a dark premiere stage under the spotlights. Every event and intermission set now has the shop's moody lighting too."],["🎭", "New in the Codex: Cast. Every character and enemy on a lit stage: turn them, play their attack, skill, dance and victory moves, and see them at each star."],["🎬", "Events and picks take the whole screen: the top bar steps aside until you pick. Hide (Tab or Esc) shows your team, gold and lives."],["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place, the episode title riding over it."], ["📱", "Phones: cleaner shop cards (bigger names, one icon row), fights use the full height, and tips sit at the edge of the screen instead of on your board. Coming back from the opponent's half, the camera glides straight back to your board and bench."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["⭐", "Shop cards you already own are impossible to miss: a gold border, a badge with your copies and the star they make, and a big ★★ when buying one finishes a star-up. Hover one to light up its copies on your board (and the other way round)."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
@@ -28331,7 +28420,7 @@ function mm3Layout(){const Z=MM3,W=innerWidth,H=innerHeight,asp=W/H;if(!Z.R)retu
   const port=asp<1,L=port?Z.CASTP:Z.CAST;Z.cam.fov=port?46:asp<1.6?34:30;Z.base=port?[0,2.2,19]:[0,1.1,13.5+Math.max(0,2.3-asp)*6];Z.look=port?[0,4.6,-1]:[0,3.3,-1];Z.cam.updateProjectionMatrix();
   const tn=Math.tan(Z.cam.fov*Math.PI/360);
   Z.figs.forEach(f=>{const e=L.find(x=>x[0]===f.id);if(!e)return;const [,side,fx,z,ry,s]=e,hw=tn*(Z.base[2]-z)*asp;f.g.position.set(side*fx*hw,0,z);f.g.rotation.y=ry;f.g.scale.setScalar(s);f.ry=ry;});
-  Z.aspect=asp;}
+  try{mmxCam(Z,W,H);}catch(e){}Z.aspect=asp;}
 function mm3Fail(why){MM3.dead=true;MM3.why=why;mm3Stop();mm3Show();}
 // one frame: idles (each Mythical's own), now and then a tough move, the camera drifts, beams sweep, haze drifts
 function mm3Frame(t){const Z=MM3;Z.raf=requestAnimationFrame(mm3Frame);if(!Z.on)return;if(Z.last&&t-Z.last<15)return;
