@@ -1,6 +1,6 @@
 {
  "fmt": 1,
- "built": "2026-10-24T18:14:25.558Z",
+ "built": "2026-10-24T20:57:57.068Z",
  "v": "20.165",
  "cal": {
   "lv": 10,
@@ -23,29 +23,29 @@
   "refs": 8
  },
  "runs": {
-  "files": 227,
-  "real": 47,
-  "withState": 39,
-  "verified": 38,
+  "files": 228,
+  "real": 48,
+  "withState": 40,
+  "verified": 39,
   "plausible": 0,
   "rejected": 1
  },
  "boards": {
-  "all": 281,
+  "all": 309,
   "consented": 0,
-  "before": 281,
+  "before": 309,
   "refused": 0,
   "uncalibrated": 0
  },
  "dropped": {
-  "boss or event round": 37,
+  "boss or event round": 41,
   "Pilot / tutorial level": 23,
   "board under 75% filled": 4,
   "run not verified": 1
  },
  "filtered": {
-  "over 15% from one player": 64,
-  "m outside 0.2-2.5": 3
+  "over 15% from one player": 90,
+  "m outside 0.2-2.5": 5
  },
  "served": {
   "4-8": {
