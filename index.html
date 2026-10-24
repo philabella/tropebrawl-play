@@ -6246,6 +6246,37 @@ function sampleEmote(e, t) { // smooth interpolation between keys, looping
   return o;
 }
 // pose a built figure: pose = sampleEmote(...) or null, k = blend 0..1. Returns the body's vertical offset (hops, squats).
+// TRO-478: natural joint ranges. Rel emotes (idles, dances, reactions, attacks) are added to the build pose; props held
+// by IK already bend the arm, so the sum could fold an elbow past 180 deg (forearm behind the upper arm), and Euler offsets
+// on a raised arm twist it round its own axis. jointLimits runs after every pose: elbows bend forward only (x -2.6..0 =
+// 0..150 deg), sideways under 130 deg, total bend 150 deg (the build pose's own bend is allowed); then the upper arm's twist
+// is kept within 120 deg of "palm forward" (measured from an out-front reference arm, so no reachable direction is
+// singular) by turning the arm round its own axis; the upper arm stays out of the chest and at most ~53 deg behind the
+// body. Visual only. Checked by tools/posecheck.js (same measure, 135 deg).
+const JLIM = { ex: [-2.6, .05], ez: 2.3, bend: -.857, tw: 2.09 }, _jv = [0, 1, 2, 3, 4, 5].map(() => new THREE.Vector3()), _jq = new THREE.Quaternion(), _jD = new THREE.Vector3(0, -1, 0);
+const _jR0 = [new THREE.Vector3(-.7, 0, .7).normalize(), new THREE.Vector3(.7, 0, .7).normalize()], _jF0 = _jR0.map(r => new THREE.Vector3(0, 0, 1).applyQuaternion(new THREE.Quaternion().setFromUnitVectors(_jD, r)));
+function jointLimits(R) {
+  for (const n of ['elbowR', 'elbowL']) (R[n] || []).forEach(o => { const r = o.rotation, b = o.userData.base.r;
+    const lo = Math.min(JLIM.ex[0], b.x), hi = Math.max(JLIM.ex[1], b.x), z = Math.max(JLIM.ez, Math.abs(b.z));
+    let x = r.x < lo ? lo : r.x > hi ? hi : r.x, zz = r.z < -z ? -z : r.z > z ? z : r.z;
+    const cb = Math.min(JLIM.bend, Math.cos(b.x) * Math.cos(b.z)), cz = Math.cos(zz);
+    if (Math.cos(x) * cz < cb && Math.abs(cz) > .2) x = -Math.acos(Math.max(-1, Math.min(1, cb / cz)));
+    if (x !== r.x || zz !== r.z) r.set(x, r.y, zz);
+    // humerus twist (shoulder = the elbow's parent joint; arm and forearm run along local -y)
+    const sh = o.parent; if (!sh || !/^shoulder/.test(sh.userData.joint || '')) return;
+    const [u, f, w, fz, fx, ax] = _jv, i = n === 'elbowR' ? 0 : 1, sx = i ? 1 : -1;
+    u.copy(o.position).applyQuaternion(sh.quaternion); if (u.lengthSq() < 1e-6) return; u.normalize();
+    // shoulder swing: at most ~53 deg past straight down towards the back, and never sideways through the chest
+    // (an upper arm pointing inward must be in front of the body); swing it forward, round the shoulder, to the limit
+    let sw = 0; if (u.z < -.8 && u.y < .5) sw = Math.asin(-u.z) - .927;
+    else if (u.x * sx < -.35 && Math.abs(u.z) < .25 && u.y > -.9) sw = .2527 - Math.asin(u.z);
+    if (sw > 0) { ax.set(0, 0, 1).cross(u).negate(); if (ax.lengthSq() > 1e-6) { ax.normalize(); sh.quaternion.premultiply(_jq.setFromAxisAngle(ax, sw)); u.applyQuaternion(_jq); } }
+    f.copy(_jD).applyQuaternion(o.quaternion).applyQuaternion(sh.quaternion);
+    const bend = Math.acos(Math.max(-1, Math.min(1, u.dot(f)))); if (bend < .3) return;
+    w.copy(f).addScaledVector(u, -u.dot(f)).normalize(); fz.copy(_jF0[i]).applyQuaternion(_jq.setFromUnitVectors(_jR0[i], u)); fx.crossVectors(u, fz);
+    const tw = Math.atan2(w.dot(fx), w.dot(fz)), ex = Math.abs(tw) - JLIM.tw; if (ex <= 0) return;
+    const fade = Math.min(1, (bend - .3) / .1); sh.quaternion.premultiply(_jq.setFromAxisAngle(u, -Math.sign(tw) * ex * fade)); });
+}
 function poseFigure(fig, pose, k, rel) {
   let R = fig.userData.rigJ; if (!R) { R = {}; fig.traverse(o => { const n = o.userData && o.userData.joint; if (n) { (R[n] = R[n] || []).push(o);
     o.userData.base = { r: o.rotation.clone(), p: o.position.clone(), s: o.scale.clone() }; } }); fig.userData.rigJ = R; }
@@ -6255,6 +6286,7 @@ function poseFigure(fig, pose, k, rel) {
   for (const [n, list] of Object.entries(R)) list.forEach(o => { const b = o.userData.base; o.rotation.copy(b.r); o.position.copy(b.p); o.scale.copy(b.s); });
   for (const [n, v] of Object.entries(P0)) if (!GEN.has(n) && R[n]) R[n].forEach(o => rot(o, v));
   if (P0.spine && R.spine) R.spine.forEach(o => rot(o, P0.spine));
+  jointLimits(R);
   if (P0.flap) for (const [n, s] of [['wingR', -1], ['wingL', 1]]) (R[n] || []).forEach(o => { o.rotation.z += s * P0.flap * k; });
   let dy = (P0.hop || 0) * H * .14 * k; const sq = (P0.squat || 0) * k, sR = (P0.stepR || 0) * k, sL = (P0.stepL || 0) * k, qs = (P0.squash || 0) * k + (human ? 0 : sq * .14);
   if (human) { const kn = R.kneeR && R.kneeR[0], ll = kn ? -2 * kn.userData.base.p.y : .26; const aR = Math.max(sq * .35, sR * .45), aL = Math.max(sq * .35, sL * .45);
@@ -24654,7 +24686,7 @@ function titleFreshHTML(){UI.lv=lvMin();
     <div class="row ticons">
       <span class="tic"><button class="btn sm ghost" data-a="codex" aria-label="Codex" title="Codex: every rule and character">📖</button><small>Codex</small></span>
       <span class="tic"><button class="btn sm ghost" data-a="settings" aria-label="Settings" title="Settings">⚙️</button><small>Settings</small></span>
-      <span class="tic"><button class="btn sm ghost" data-a="devstudio" aria-label="Animation Studio" title="Animation Studio">🎬</button><small>Animations</small></span>
+      <span class="tic"><button class="btn sm ghost" data-a="devstudio" aria-label="Animation Lab" title="Animation Lab">🎬</button><small>Animations</small></span>
       ${typeof window!=='undefined'&&window.tbApp?'<button class="btn sm ghost" data-a="appquit">Quit game</button>':''}
       <span class="tic"><button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button><small>Sound</small></span>${fsCan()?`<span class="tic">${fsBtn('sm ghost')}<small>Full screen</small></span>`:''}
     </div>
@@ -24727,7 +24759,7 @@ function titleMenuHTML(sv){const p=lvLoad(),lo=lvMin();UI.lv=Math.max(lo,Math.mi
       <button class="btn sm" data-a="codex">📖 Codex</button>
       <button class="btn sm" data-a="settings">⚙️ Settings</button>
       <button class="btn sm" data-a="news">📜 What's New${ns.length?'<i class="nwdot" aria-label="new"></i>':''}</button>
-      <button class="btn sm ghost" data-a="devstudio" aria-label="Animation Studio" title="Animation Studio">🎬</button>
+      <button class="btn sm ghost" data-a="devstudio" aria-label="Animation Lab" title="Animation Lab">🎬</button>
       ${typeof window!=='undefined'&&window.tbApp?'<button class="btn sm ghost" data-a="appquit">Quit game</button>':''}
       <button class="btn sm ghost sndbtn" data-a="mute" aria-pressed="${!SET.sound}" aria-label="Sound ${SET.sound?'on':'off'} (M)" title="Sound ${SET.sound?'on':'off'} (M)">${SET.sound?'🔊':'🔇'}</button>${fsBtn('sm ghost')}
     </div>
@@ -25964,7 +25996,7 @@ document.addEventListener('mouseover',e=>{
 if(typeof matchMedia==='function'){const mq=matchMedia('(min-width:1000px)');const f=()=>{if(UI.screen==='plan')render();};if(mq.addEventListener)mq.addEventListener('change',f);}
 
 // ================= render / save / boot =================
-const TB_VERSION='20.159',TL_KEY='tropebrawl-runlog';let TL=null;
+const TB_VERSION='20.160',TL_KEY='tropebrawl-runlog';let TL=null;
 // v19.19: What's new. Three short lines per version (newest first). The start menu shows the versions a returning
 // player hasn't seen (at most two), once; first-time players never see it. Settings -> What's new shows them all.
 const WHATS_NEW=[
@@ -26208,7 +26240,7 @@ const WHATS_NEW=[
 // What's New by day (TRO-291): one card per day, 3-5 plain lines for the player, the biggest change marked (3rd field 1).
 // Each patch updates today's card (or adds one) and sets `to`; versions after the top card's `to` show as 'Latest'.
 const NEWS_DAYS=[
-  {d:'2026-10-23',from:'20.131',to:'20.159',h:"character life",items:[["🪙", "Selling is quicker: every character gives some gold back, one tap sells a ★ Common, Uncommon or Rare, and a full board tells you to drop on a character to swap."], ["🪑", "The Pilot now helps you get your cast on the board, reminds you to spend gold before a big fight, and warns you what the mini-boss and boss do."], ["🧨", "Five items now ask where you stand: Sniper Scope wants a clear shot, Glass Cannon wants room around it, Flak Vest a buddy behind, Energy Drink pays your rerolls, War Banner pays a mixed cast. The item list shows what each one powers right now."], ["🎯", "A gentler first fight: Episode 1 is easier to win, so a bad opening hand costs fewer lives."],["🎬", "A new main menu: the nine Mythicals pose on a dark premiere stage under the spotlights. Every event and intermission set now has the shop's moody lighting too."],["🎭", "New in the Codex: Cast. Every character and enemy on a lit stage: turn them, play their attack, skill, dance and victory moves, and see them at each star."],["🎬", "Events and picks take the whole screen: the top bar steps aside until you pick. Hide (Tab or Esc) shows your team, gold and lives."],["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place, the episode title riding over it."], ["📱", "Phones: cleaner shop cards (bigger names, one icon row), fights use the full height, and tips sit at the edge of the screen instead of on your board. Coming back from the opponent's half, the camera glides straight back to your board and bench."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["⭐", "Shop cards you already own are impossible to miss: a gold border, a badge with your copies and the star they make, and a big ★★ when buying one finishes a star-up. Hover one to light up its copies on your board (and the other way round)."]]},
+  {d:'2026-10-23',from:'20.131',to:'20.160',h:"character life",items:[["🦾", "No more arms bending backwards: every 3D figure keeps its elbows and shoulders in a natural range in idles, dances, attacks and reactions."], ["🪙", "Selling is quicker: every character gives some gold back, one tap sells a ★ Common, Uncommon or Rare, and a full board tells you to drop on a character to swap."], ["🪑", "The Pilot now helps you get your cast on the board, reminds you to spend gold before a big fight, and warns you what the mini-boss and boss do."], ["🧨", "Five items now ask where you stand: Sniper Scope wants a clear shot, Glass Cannon wants room around it, Flak Vest a buddy behind, Energy Drink pays your rerolls, War Banner pays a mixed cast. The item list shows what each one powers right now."], ["🎯", "A gentler first fight: Episode 1 is easier to win, so a bad opening hand costs fewer lives."],["🎬", "A new main menu: the nine Mythicals pose on a dark premiere stage under the spotlights. Every event and intermission set now has the shop's moody lighting too."],["🎭", "New in the Codex: Cast. Every character and enemy on a lit stage: turn them, play their attack, skill, dance and victory moves, and see them at each star."],["🎬", "Events and picks take the whole screen: the top bar steps aside until you pick. Hide (Tab or Esc) shows your team, gold and lives."],["🩺", "Health bars stay on their character when it charges across the field, the camera glide no longer shows bars in the wrong place, and the victory panel sits over the bench so your whole team's dance stays visible."], ["🪑", "Your bench stays on screen during the fight: the same mats with your figures standing on them, just not clickable (v20.138 had shrunk it to a small bar)."], ["🎬", "The shop moved onto the 3D stage on bigger screens: your cast on your half, the next opponent across the line. Press Up to zoom over to them, Q and E slide the other rivals' boards in, and hovering a figure shows its card.", 1], ["🎥", "Pressing Fight no longer cuts to a new scene: the camera glides from the shop to the fight with everyone already in place, the episode title riding over it."], ["📱", "Phones: cleaner shop cards (bigger names, one icon row), fights use the full height, and tips sit at the edge of the screen instead of on your board. Coming back from the opponent's half, the camera glides straight back to your board and bench."], ["🕺", "Every character now has its own idle: the Safecracker spins a dial, the Pilot checks a watch, the Hacker types, giants breathe heavy, crowds chat."], ["💃", "Victory dances: every genre has its own routine and each Legendary a signature one. Click a figure on your board to make it dance, and neighbours perk up."], ["✨", "Juicier screens: a new body font, outlined lettering on labels and titles, events that fill the screen, picks dealt as big cards at the bottom centre, and shop cards that move: toys bob, rare cards shine, buys fly to their square."], ["⭐", "Shop cards you already own are impossible to miss: a gold border, a badge with your copies and the star they make, and a big ★★ when buying one finishes a star-up. Hover one to light up its copies on your board (and the other way round)."]]},
   {d:'2026-10-22',from:'20.90',to:'20.130',h:"the Pitch",items:[["🎬", "From Ascension 1, each Ladder run starts with a Pitch: pick 1 of 3 rules for the whole run, each with an upside and a cost.", 1], ["🧹", "A calmer shop: one line per item, a small next-fight card, and rival episodes marked ahead on the timeline."], ["💬", "Hover texts are now game cards with coloured keywords, and rules are short: a line or two, with More for the full rule."], ["📸", "Tap a rival in the Lobby to visit their set in 3D: the camera swings onto their side of the arena, their figures facing you, with their run beside it."], ["🖼️", "Faces are back in the genre panel and the rival cast box."], ["👁️", "Colour-blind friendly: enemy health bars are striped, yours are teal, and the fight recap uses symbols too."], ["🖥️", "Laptops and tablets: the shop and FIGHT now stay on screen at 1366x768 and on iPads, no scrolling every round. Tapping a bench character now shows its Sell button and text at the top of the panel, with no tip on top of it. On a computer, right-click anything for its details, with new cursors and scroll bars."], ["🏁", "The Pilot teaches the whole shop: Train is in, the mini-boss and boss hit harder to match, and winning it offers Part 2. Part 2 has a mini-boss in each act."], ["🐞", "If the game hits a bug it now sends us a short anonymous error note, so we can fix it even when you just close the tab."], ["🔭", "Clearer rival tells: a 🔭 marks a rival switching genres to beat yours, and every rival is marked AI rival. Those rivals now push less hard, so a one-genre team can beat them."], ["▶️", "The end of a run says what comes next (episodes, first mini-boss) and how close your last fight was. After a win you can share the run in one tap."], ["🎒", "Your Legendary has its own gold slot and all 5 item slots always show. Hover or tap any episode on the act strip to see what is at stake and how it went. A Free Agent pick with no room now says so, and you can sell a bench character to keep it. The Casting pool shows how often each character shows up and who holds its copies. New in the Codex: Discoveries, a ??? list of crossovers, ★★★ characters and wins still to find."], ["🌙", "The Late Show: a hard Daily for players who have won Ascension 5. One shared Ascension 10 run a day, and your first try is your result. From Act 3 the Season finale card shows their ★★★ next to yours."], ["🌟", "The Table Read has a mini-boss in Act 1, so the tutorial asks a real question before the Season."]]},
   {d:'2026-10-21',from:'20.45',to:'20.89',h:"rivals that read your team",items:[["🔭", "Rivals got smarter: they play by your rules (events, items, Legendaries), scout the team you fight with, and up to two of them switch to genres that beat it. A 🔭 on the Lobby strip shows who is countering you, and every rival is marked AI rival. After a rival fight, tap Why did it do that? to see its reasoning. Ascensions 13 and 14 join the Ladder.", 1], ["🎬", "Double Feature: a board of exactly two genres, with 2 or more of each, gets much stronger. A two-genre cast is now a real plan next to going all in on one genre."], ["🎥", "A new look: every fight is lit like a movie scene, on a film set that changes each act."], ["📅", "Daily Episode: one shared run a day with a twist, and challenge links to race a friend on the same run. Fights now also run at 3× speed. The Daily is on every title screen, and on phones one tap on a shop card hires. The Pilot now has a mini-boss halfway."], ["🎭", "A dozen characters got new skills so each genre does its own job: the Commando is now the Spotter, the Defense Force Tanks are now the Sky Screamers, and the Wraith raises the fallen."]]},
   {d:'2026-10-20',from:'20.12',to:'20.44',h:"the Ladder",items:[["🪜", "The Ladder: Play now opens a ladder of tiers. Each tier has a Leader who drafts in your lobby all run, and its full cast is the final boss. You share each run with 3 to 7 rival studios.", 1], ["⚔️", "Every genre has one job: its chip says which 2 genres it beats and which 2 it fears. Codex → Counter web shows them all."], ["🎬", "A real title screen, event scenes with a host on stage, and hits that land (flash, knockback, screen shake)."], ["📊", "After every fight, a recap shows what each of your characters did. After a loss it says who hurt you most and one thing to try."], ["🛒", "Bigger shop cards that show the whole character. Tap a character, then an empty slot, to move it."]]},
@@ -26371,7 +26403,7 @@ function settingsHTML(){
     <div class="row" style="margin:-2px 0 8px;gap:6px"><button class="btn sm ghost" data-a="tut-reset">↺ Replay the tutorial tips</button>${S&&!S.over&&S.ladder&&(S.lv|0)<=3?'<button class="btn sm ghost" data-a="tut-skip">⏭ Skip the Pilot</button>':''}</div>
     ${typeof window!=='undefined'&&fsCan()?sw('fs',fsOn(),'Fullscreen',window.tbApp?'Also F11 or Alt+Enter.':'Esc leaves fullscreen.'):''}
     ${sw('allLv',SET.allLv,'Unlock all Ascensions','Pick any Pilot run, the Season or any Ascension up to '+(LV_MAX-4)+' on the title screen. Wins don\'t count toward unlocking more while this is on.')}
-    <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🛠</span><span><b>Developer</b><small>Test panel (jump to any difficulty, event or round) and the Animation Studio (every animation, with notes).</small></span><span class="seg"><button class="btn sm" data-a="devpanel">Test panel</button><button class="btn sm" data-a="devstudio">🎬 Animation Studio</button></span></div>
+    <div class="setrow lookrow"><span class="lkic" aria-hidden="true">🛠</span><span><b>Developer</b><small>Test panel (jump to any difficulty, event or round) and the Animation Lab (every figure, every animation and effect; link: #animlab).</small></span><span class="seg"><button class="btn sm" data-a="devpanel">Test panel</button><button class="btn sm" data-a="devstudio">🎬 Animation Lab</button></span></div>
     <div class="setver"><span>Tropebrawl v${TB_VERSION}${tlBadge()}</span><button class="btn sm ghost" data-a="news">📜 What's new</button></div>
     ${tlTester()?'<div class="settst"><span>This device is marked as tester (not counted as a stranger)</span><button class="btn sm ghost" data-a="tst-off">Unmark</button></div>':''}
 `;}
@@ -26456,8 +26488,8 @@ function devHTML(){
     <button class="dvb" data-d="rank">Rank up</button><button class="dvb" data-d="cast">Add sample cast</button>
     <button class="dvb" data-d="end">End screen</button><button class="dvb" data-d="err">💥 Plant a test error</button></div>
     <div class="dvrow"><label class="dvchk" for="dv-round">Jump to round</label><select id="dv-round" data-d="round">${SCHEDULE.map((x,i)=>`<option value="${i+1}" ${run&&S.round===i+1?'selected':''}>${i+1} · ${x.type==='event'?(false?'The Cut':'event'):x.type}</option>`).join('')}</select></div></div>
-  <div class="dvsec"><h4>Animation Studio</h4><div class="dvrow"><button class="dvb hot" data-d="anstu">🎬 Open the Animation Studio</button></div>
-    <p class="dvnote">Any character, enemy or summon in any look; every animation, ability cue, projectile, banner and the cut-in, with notes on what triggers each.</p></div>
+  <div class="dvsec"><h4>Animation Lab</h4><div class="dvrow"><button class="dvb hot" data-d="anstu">🎬 Open the Animation Lab</button></div>
+    <p class="dvnote">Any character, enemy or summon in any look; every animation, ability cue, projectile, banner and the cut-in, with notes on what triggers each. Direct link: add <b>#animlab</b> to the address (<b>#animlab=babysitter</b> opens one figure).</p></div>
   <div class="dvsec"><div class="dvrow"><button class="dvb" data-d="off">Turn test mode off</button></div></div>`;}
 function devPaint(){const el=document.getElementById('dev');if(!el)return;el.hidden=!DEV.on;if(!DEV.on)return;
   el.className=DEV.open?'open':'';el.innerHTML=DEV.open?`<div class="dvpanel" role="dialog" aria-label="Test panel">${devHTML()}</div>`:`<button class="dvfab" data-d="open">🛠 Test</button>`;}
@@ -26485,6 +26517,10 @@ document.addEventListener('click',e=>{const t=e.target.closest&&e.target.closest
 document.addEventListener('change',e=>{const t=e.target.closest&&e.target.closest('#dev [data-d]');if(t&&(t.tagName==='SELECT'))devAct(t.dataset.d,t.value,t);});
 document.addEventListener('keydown',e=>{if(e.key==='`'&&!/INPUT|TEXTAREA|SELECT/.test((e.target.tagName||''))){DEV.on=true;DEV.open=!DEV.open;devSave();devPaint();}});
 if(typeof location!=='undefined'&&location.hash==='#dev'){DEV.on=true;devSave();}
+// TRO-478: #animlab opens the tester Animation Lab (test mode on); #animlab=<character or enemy id> opens on that figure
+if(typeof location!=='undefined'&&typeof window!=='undefined'){const al=()=>{const m=/^#animlab(?:=([a-z0-9_]+))?$/.exec(location.hash);if(!m)return;DEV.on=true;devSave();
+  setTimeout(()=>{if(typeof anStuOpen!=='function')return;anStuOpen();if(!ST||!m[1])return;const L=ST.lib,k=L.CAST.some(c=>c.id===m[1])?'hero':L.FOES.some(c=>c.id===m[1])?'foe':(L.SPAWNS||[]).some(c=>c.id===m[1])?'spawn':'';
+    if(!k)return;ST.kind=k;ST.id=m[1];ST.v=0;anStuBuild();anStuSet(k==='hero'&&L.EMOTES['idu_'+m[1]]?'e:idu_'+m[1]:ST.item);anStuPaint();},700);};al();window.addEventListener('hashchange',al);}
 if(typeof location!=='undefined'){const sm=/^#seed=(\d{1,10})$/.exec(location.hash);if(sm)SEED_NEXT=(+sm[1])%2147483647;} // TRO-86: seeded run link
 if(typeof location!=='undefined'){const dm=/^#daily=(\d{4}-\d\d-\d\d)$/.exec(location.hash);if(dm)DAILY_LINK=dlyOk(dm[1]);const lm=/^#late=(\d{4}-\d\d-\d\d)$/.exec(location.hash);if(lm)LATE_LINK=dlyOk(lm[1]);} // TRO-86 step 3: daily link; TRO-362: Late Show link
 if(typeof location!=='undefined'){const cm=/^#c=([A-Za-z0-9_-]{8,600})$/.exec(location.hash);if(cm)CHAL_LINK=chalDec(cm[1]);} // TRO-86 step 4: challenge link
@@ -27160,22 +27196,23 @@ const ANM_PROJ=['bullet','tracer','blaster','hex','heal','force','mind','holy','
 const ANM_CUES=['sigil','guard','mend','surge','strike','vanish','raise','rise','lock'],ANM_AURAS={bub:'shield bubble',tau:'taunt sigil',vei:'smoky veil (untargetable)',daz:'stun stars',hex:'hex ring (vulnerable)',hst:'haste streaks',chg:'charged next hit'};
 const ANM_BAN=[['fight','Fight!',''],['act','Act 1','Episodes 1–5'],['boss','Boss fight!',''],['win','Victory!',''],['lose','Defeat',''],['rank','Rank 5','Rares can now appear']];
 function anNote(key){let best=null;for(const r of ANM_NOTES){if(r[0]===key)return r;if(r[0].endsWith('*')&&key.startsWith(r[0].slice(0,-1))&&(!best||r[0].length>best[0].length))best=r;}return best;}
-function anStuLib(look){if(!ST.libs[look]){const sv=SET.models;SET.models=look;try{const L=TB3D(TBA.THREE,TB3LIB.RoundedBoxGeometry);L.setStyle('toy');ST.libs[look]=L;}finally{SET.models=sv;}}return ST.libs[look];}
+function anStuLib(look){if(!ST.libs[look]){const sv=SET.models;SET.models=look;try{const L=TB3D(TBA.THREE,TB3LIB.RoundedBoxGeometry);L.setStyle('toy');if(typeof idcEm==='function')idcEm(L);if(typeof iddEm==='function')iddEm(L);ST.libs[look]=L;}finally{SET.models=sv;}}return ST.libs[look];}
 function anWithLook(fn){const sm=SET.models,sl=TBA.lib;SET.models=ST.look;TBA.lib=ST.lib;try{return fn();}finally{SET.models=sm;TBA.lib=sl;}}
 function anStuList(){const L=ST.lib;return ST.kind==='foe'?L.FOES:ST.kind==='spawn'?L.SPAWNS:L.CAST;}
 function anStuItems(){const L=ST.lib,groups=new Map(),add=(g,v,n)=>{if(!groups.has(g))groups.set(g,[]);groups.get(g).push([v,n]);};
+  const mine=ST.kind==='hero'?['idu_'+ST.id,typeof iddKey==='function'?iddKey(ST.id):''].filter(k=>k&&L.EMOTES[k]):[];mine.forEach(k=>add('★ This figure (own idle, own dance)','e:'+k,k)); // TRO-478
   ANM_NOTES.forEach(r=>{if(!r[0].endsWith('*')&&L.EMOTES[r[0]])add(r[1],'e:'+r[0],r[0]);});
   const own=ST.kind==='hero'&&HERO[ST.id]?'sk_'+HERO[ST.id].skill:ST.kind==='foe'?'sk_e_'+ST.id:'';
   const sks=Object.keys(L.EMOTES).filter(k=>k.startsWith('sk_')).sort((a,b)=>(a===own?-1:b===own?1:a<b?-1:1));
   sks.forEach(k=>{const id=k.slice(3),h=HEROES.find(x=>x[6]===id),nm=SK[id]?SK[id].name:id;add('Abilities (sk_)','e:'+k,(k===own?'★ ':'')+k+' · '+nm+(h?' ('+h[1]+')':''));});
-  Object.keys(L.EMOTES).forEach(k=>{if(!k.startsWith('sk_')&&!ANM_NOTES.some(r=>r[0]===k))add('Other','e:'+k,k);});
+  Object.keys(L.EMOTES).forEach(k=>{if(k.startsWith('sk_')||mine.includes(k)||ANM_NOTES.some(r=>r[0]===k))return;add(k.startsWith('idu_')?'Signature idles (idu_, one per character)':k.startsWith('idd_')?'Dances (idd_, genre or Legendary)':L.EMOTES[k]._idle?'Idle loops':'Other','e:'+k,k);});
   if(typeof skcOne==='function'){ANM_CUES.forEach(c=>add('Ability cues (v19.91)','cue:'+c,'cue · '+c));Object.keys(ANM_AURAS).forEach(s=>add('Ability cues (v19.91)','aura:'+s,'aura · '+ANM_AURAS[s]));}
-  ANM_PROJ.forEach(p=>add('Projectiles','proj:'+p,p));ANM_BAN.forEach(b=>add('Screen','banner:'+b[0],'banner · '+b[0]));add('Screen','cutin','cut-in');
+  ANM_PROJ.forEach(p=>add('Projectiles (launch, flight, hit)','proj:'+p,p));ANM_BAN.forEach(b=>add('Screen','banner:'+b[0],'banner · '+b[0]));add('Screen','cutin','cut-in');
   return groups;}
 function anStuHTML(){const L=ST.lib,list=anStuList(),items=anStuItems(),o=(v,n,s)=>`<option value="${esc(v)}"${s?' selected':''}>${esc(n)}</option>`;
   const sp=[.25,.5,1,2].map(v=>`<button class="anst-b${ST.speed===v?' on':''}" data-s="speed" data-v="${v}">${v}x</button>`).join('');
   const lk=[['poly','Polygon'],['new','Cel-shaded'],['classic','Classic toys']].map(([v,n])=>`<button class="anst-b${ST.look===v?' on':''}" data-s="look" data-v="${v}">${n}</button>`).join('');
-  return `<div class="anst-h"><b>🎬 Animation Studio</b><span class="anst-m">test panel · nothing here changes the game</span><button class="anst-b anst-x" data-s="close" aria-label="Close the Animation Studio">✕ Close</button></div>
+  return `<div class="anst-h"><b>🎬 Animation Lab</b><span class="anst-m">test panel · nothing here changes the game</span><button class="anst-b anst-x" data-s="close" aria-label="Close the Animation Lab">✕ Close</button></div>
   <div class="anst-g"><div class="anst-c">
     <label>Who<select data-s="kind">${o('hero','Characters',ST.kind==='hero')}${o('foe','Enemies',ST.kind==='foe')}${o('spawn','Summons',ST.kind==='spawn')}</select></label>
     <label>Figure<select data-s="fig">${list.map(c=>o(c.id,(c.name||c.id)+(c.crowd?' (crowd)':''),c.id===ST.id)).join('')}</select></label>
@@ -27184,7 +27221,7 @@ function anStuHTML(){const L=ST.lib,list=anStuList(),items=anStuItems(),o=(v,n,s
     <div><div class="anst-l">Animation <span class="anst-m">(↑ ↓ or ← → to step)</span></div><div class="anst-row"><button class="anst-b" data-s="prev">◀ Prev</button><button class="anst-b" data-s="next">Next ▶</button></div>
       <div class="anst-list" role="listbox" aria-label="Animations">${[...items].map(([g,a])=>`<div class="anst-gh">${esc(g)}</div>${a.map(([v,n])=>`<button class="anst-it${v===ST.item?' on':''}" data-s="pick" data-v="${esc(v)}" role="option" aria-selected="${v===ST.item}">${esc(n)}</button>`).join('')}`).join('')}</div></div>
     <div><div class="anst-l">Speed</div><div class="anst-row">${sp}</div></div>
-    <div class="anst-row"><button class="anst-b" data-s="pause">${ST.paused?'▶ Play':'⏸ Pause'}</button><label class="anst-ck"><input type="checkbox" data-s="loop"${ST.loop?' checked':''}> Loop</label><label class="anst-ck"><input type="checkbox" data-s="auto"${ST.auto?' checked':''}> Turntable</label></div>
+    <div class="anst-row"><button class="anst-b" data-s="pause">${ST.paused?'▶ Play':'⏸ Pause'}</button><label class="anst-ck"><input type="checkbox" data-s="loop"${ST.loop?' checked':''}> Loop</label><label class="anst-ck"><input type="checkbox" data-s="crit"${ST.crit?' checked':''}> Crit hit</label><label class="anst-ck"><input type="checkbox" data-s="auto"${ST.auto?' checked':''}> Turntable</label></div>
     <label>Scrub<input type="range" min="0" max="1000" value="0" data-s="scrub" aria-label="Scrub the animation"></label>
     <p class="anst-m">Drag the preview to turn it. Esc closes.</p></div>
   <div class="anst-p"><div class="anst-pv"></div><div class="anst-n" aria-live="polite"></div>
@@ -27195,7 +27232,7 @@ function anStuNotes(){const n=ST.el.querySelector('.anst-n');if(!n)return;const 
   const blk=ST.cueBlock&&(it.startsWith('cue:')||it.startsWith('aura:'))?'<dd class="anst-w">Finish the fight first: the cues share the arena\'s effect pool.</dd>':'';
   n.innerHTML=`<b>${esc(key)}</b><dl><dt>Triggers</dt><dd>${esc(r[2])}</dd><dt>Added</dt><dd>${esc(r[3])}</dd><dt>Lives in</dt><dd>${esc(r[4])}</dd>${extra}${blk}</dl>`;}
 function anDisp(o){o.traverse(x=>{if(x.geometry)x.geometry.dispose();const m=x.material;if(m)(Array.isArray(m)?m:[m]).forEach(q=>{if(q.map)q.map.dispose();q.dispose();});});}
-function anStuDropFig(){anStuCueOff();if(ST.proj){ST.stand.remove(ST.proj);anDisp(ST.proj);ST.proj=null;}
+function anStuDropFig(){anStuCueOff();if(ST.proj){ST.stand.remove(ST.proj);anDisp(ST.proj);ST.proj=null;}anStuFxOff();
   if(ST.fig){ST.hold.remove(ST.fig);anDisp(ST.fig);ST.fig=null;}if(ST.disc){ST.table.remove(ST.disc);anDisp(ST.disc);ST.disc=null;}
   const fo=ST.stand.userData.fxO;if(fo){fo.forEach(q=>q.dispose());ST.stand.userData.fxO=null;}ST.T=null;}
 function anStuBuild(){const THREE=TBA.THREE;anStuDropFig();ST.lib=anStuLib(ST.look);const list=anStuList();let c=list.find(x=>x.id===ST.id);if(!c){c=list[0];ST.id=c.id;}
@@ -27207,8 +27244,8 @@ function anStuBuild(){const THREE=TBA.THREE;anStuDropFig();ST.lib=anStuLib(ST.lo
   anWithLook(()=>{tbaLights(ST.scene,false);tbaFrame(ST.stand,12,ST.cam,ST.fig,['idle','wave','cheer']);});
   const k=1.2;ST.cam.left*=k;ST.cam.right*=k;ST.cam.top*=k;ST.cam.bottom*=k;ST.cam.updateProjectionMatrix();
   ST.T={root:ST.stand,body:ST.hold,u:null,born:-1e9,home:ST.stand.position};}
-function anStuSet(item){anStuCueOff();if(ST.proj){ST.stand.remove(ST.proj);anDisp(ST.proj);ST.proj=null;}ST.item=item;ST.t=0;ST.cueBlock=false;ST.next=0;
-  if(item.startsWith('proj:')){const pk=item.slice(5),pid=pk==='orb'?['orb','#ffcc2e']:pk==='blaster'?['blaster','#46c8e0']:pk==='slash'?['slash','#ffcc2e']:pk==='arrow'?['arrow','#9fd88a']:[pk];try{const o=new TBA.THREE.Group();o.add(ST.lib.makeProj(pid[0],pid[1]));o.scale.setScalar(2.4);ST.proj=o;ST.stand.add(o);}catch(e){}}
+function anStuSet(item){anStuCueOff();if(ST.proj){ST.stand.remove(ST.proj);anDisp(ST.proj);ST.proj=null;}anStuFxOff();ST.item=item;ST.t=0;ST.cueBlock=false;ST.next=0;
+  if(item.startsWith('proj:')){const pk=item.slice(5),pid=pk==='orb'?['orb','#ffcc2e']:pk==='blaster'?['blaster','#46c8e0']:pk==='slash'?['slash','#ffcc2e']:pk==='arrow'?['arrow','#9fd88a']:[pk];try{const o=new TBA.THREE.Group();o.add(ST.lib.makeProj(pid[0],pid[1]));o.scale.setScalar(1.2);ST.proj=o;ST.pk=pid;ST.stand.add(o);}catch(e){}}
   if((item.startsWith('cue:')||item.startsWith('aura:'))&&typeof B!=='undefined'&&B&&!B.done&&!B.silent)ST.cueBlock=true;
   anStuNotes();}
 // ability cues: run the v19.91 cue code against the Studio's own scene, camera and a stand-in unit, on a virtual clock
@@ -27230,7 +27267,7 @@ function anStuFrame(ts){if(!ST)return;ST.raf=requestAnimationFrame(anStuFrame);c
       if(emo){const len=e.once||it.startsWith('proj:')?e.dur+.45:e.dur;if(ST.loop)t%=len;else if(t>len){t=len;if(!ST.paused){ST.paused=true;anStuPaint('pause');}}prog=Math.min(1,t/len);}
       const ps=anSample(L,e,Math.min(t,e.once?e.dur:t));ST.fig.position.y=L.poseFigure(ST.fig,ps,1,e.rel);ST.fig.rotation.x=0;ST.hold.position.y=0;ST.hold.rotation.x=-(ps.fall||0);
       const H=ST.fig.userData.rigH||2.4;ST.hold.rotation.y=ST.yaw+(ps.spin||0)*6.2832;ST.fig.position.x=(ps.slide||0)*H;}
-    if(ST.proj){const q=(ST.t*1.1)%1,on=q<.7,k=q/.7,H=ST.fig.userData.rigH||2.4;ST.proj.visible=on;ST.proj.position.set(-.2+k*3.4,H*.55+Math.sin(Math.PI*k)*.5,.6);ST.proj.rotation.z=TBA_SPIN.has(it.slice(5))||!TBA_PSZ[it.slice(5)]?-k*9:0;}
+    if(ST.proj){const q=(ST.t*1.1)%1,on=q<.7,k=q/.7,H=ST.fig.userData.rigH||2.4;ST.proj.visible=on;ST.proj.position.set(-.2+k*1.5,H*.55+Math.sin(Math.PI*k)*.3,.6);ST.proj.rotation.z=TBA_SPIN.has(it.slice(5))||!TBA_PSZ[it.slice(5)]?-k*9:0;anStuFx(q,H);}
     if(it.startsWith('cue:')||it.startsWith('aura:')){if(!ST.v0)ST.v0=performance.now()+1e6;anStuCue(ST.v0+ST.t*1000);prog=ST.cueL?((ST.t*1000)%ST.cueL)/ST.cueL:0;}
     if(it.startsWith('banner:')||it==='cutin'){const per=(it==='cutin'?1.4:2.4);prog=(ST.t%per)/per;if(!ST.paused&&ST.t>=ST.next&&(ST.loop||ST.next===0)){ST.next=ST.t+per;anStuScreen(it);}}
     if(!ST.scrubbing&&ST.sc){const v=Math.round(prog*1000);if(v!==ST.scv){ST.scv=v;ST.sc.value=String(v);}}
@@ -27241,18 +27278,28 @@ function anStuScreen(it){if(it.startsWith('banner:')){const b=ANM_BAN.find(x=>x[
   const c=document.createElement('div');c.className='cutin '+(h?'g-'+h.genre:'foe g-foe');c.style.animationDuration=ms+'ms';
   c.innerHTML=`<div class="cb"></div>${src?`<img class="ca" alt="" src="${src}" style="animation-duration:${ms}ms">`:'<span class="ce">✨</span>'}<div class="ct"><span class="cw">${esc(h?h.name:ST.id)}</span><span class="cn">${esc(sk)}</span></div>`;
   pv.appendChild(c);setTimeout(()=>c.remove(),ms+60);}
+// TRO-478: launch flash + impact burst (Polygon $fx_launch / $fx_hit, animated like the arena's arPfx) around the flying shot
+function anStuFxOff(){if(ST&&ST.fx)for(const k in ST.fx)if(ST.fx[k])ST.stand.remove(ST.fx[k]);if(ST)ST.fx={};}
+function anStuFx(q,H){const L=ST.lib;if(!L.fx||!ST.pk)return;if(!ST.fx)ST.fx={};const pk=ST.pk,mk=(key,f)=>{if(ST.fx[key]===undefined){try{const g=new TBA.THREE.Group();g.add(f());g.scale.setScalar(ARPF_S);g.visible=false;ST.stand.add(g);ST.fx[key]=g;}catch(e){ST.fx[key]=null;}}return ST.fx[key];};
+  const l=mk('l',()=>L.fx.$fx_launch(pk[0],pk[1])),h=mk(ST.crit?'c':'h',()=>L.fx.$fx_hit(pk[0],pk[1],!!ST.crit)),o=ST.fx[ST.crit?'h':'c'];if(o)o.visible=false;
+  if(l){l.visible=q<.16;if(l.visible){l.position.set(-.2,H*.55,.6);anPfxK(l.children[0],q/.16);}}
+  if(h){h.visible=q>=.7;if(h.visible){h.position.set(1.3,H*.55,.6);anPfxK(h.children[0],(q-.7)/.3);}}}
+function anPfxK(g,k){if(!g)return;const e=1-(1-k)*(1-k),f=k<.55?1:Math.max(0,1-(k-.55)/.45),S=ARPF_S;
+  for(const m of g.children){const u=m.userData;if(!u||!u.v)continue;const p=u.p;if(!u.r)u.r=[m.rotation.x,m.rotation.y,m.rotation.z];
+    m.position.set(p[0]+u.v[0]*e,(u.gr?-1.36/S:p[1])+u.v[1]*e-u.g*k*k,p[2]+u.v[2]*e);m.scale.setScalar(Math.max(.001,(u.s[0]+(u.s[1]-u.s[0])*e)*f));
+    if(u.sp)m.rotation.set(u.r[0]+u.sp*k,u.r[1]+u.sp*k*.7,u.r[2]);}}
 // v19.94: step through the animation list (wraps) and keep the playing one in view
 function anStuStep(d){if(!ST)return;const all=[...anStuItems()].flatMap(([g,a])=>a.map(x=>x[0])),i=all.indexOf(ST.item),n=all[((i<0?0:i+d)%all.length+all.length)%all.length];anStuSet(n);ST.paused=false;anStuPaint();}
 function anStuPaint(what){if(!ST)return;if(what==='pause'){const b=ST.el.querySelector('[data-s="pause"]');if(b)b.textContent=ST.paused?'▶ Play':'⏸ Pause';return;}
   const pv0=ST.cv;ST.el.innerHTML=anStuHTML();const pv=ST.el.querySelector('.anst-pv');pv.appendChild(pv0);ST.sc=ST.el.querySelector('[data-s="scrub"]');ST.scv=-1;anStuNotes();anStuSize();const on=ST.el.querySelector('.anst-list .on'),ls=ST.el.querySelector('.anst-list');if(on&&ls){ls.scrollTop=Math.max(0,on.offsetTop-ls.offsetTop-ls.clientHeight/2+on.offsetHeight/2);}}
 function anStuSize(){if(!ST)return;const pv=ST.el.querySelector('.anst-pv');if(!pv)return;const w=Math.max(160,Math.round(pv.clientWidth)),pr=Math.min(2,window.devicePixelRatio||1);
   if(w!==ST.w){ST.w=w;ST.R.setPixelRatio(pr);ST.R.setSize(w,w,false);}}
-function anStuOpen(){try{if(ST)return;if(!TBA.tried)tbaInit();if(!TBA.on){toast('Animation Studio needs 3D: '+(TBA.why||'WebGL is off'));return;}
-  const THREE=TBA.THREE,el=document.createElement('div');el.id='anstu';el.setAttribute('role','dialog');el.setAttribute('aria-label','Animation Studio');
+function anStuOpen(){try{if(ST)return;if(!TBA.tried)tbaInit();if(!TBA.on){toast('Animation Lab needs 3D: '+(TBA.why||'WebGL is off'));return;}
+  const THREE=TBA.THREE,el=document.createElement('div');el.id='anstu';el.setAttribute('role','dialog');el.setAttribute('aria-label','Animation Lab');
   const R=new THREE.WebGLRenderer({antialias:true,alpha:true});R.setClearColor(0,0);const E=new TB3LIB.OutlineEffect(R,{defaultThickness:.006,defaultColor:[.02,.02,.03],defaultAlpha:1});ANM.rN++;
   const scene=tbaScene(),stand=new THREE.Group(),table=new THREE.Group(),hold=new THREE.Group();stand.add(table);stand.add(hold);scene.add(stand);
   ST={el,R,E,cv:R.domElement,scene,stand,table,hold,cam:new THREE.OrthographicCamera(-1,1,1,-1,.1,100),libs:{},look:['poly','new','classic'].includes(SET.models)?SET.models:'poly',kind:'hero',id:'riot',v:0,
-    item:'e:robot',speed:1,loop:true,paused:false,auto:true,t:0,yaw:-.5,raf:0,last:0,w:0,next:0};
+    item:'e:idu_riot',speed:1,loop:true,paused:false,auto:true,t:0,yaw:-.5,raf:0,last:0,w:0,next:0};
   ST.lib=anStuLib(ST.look);document.body.appendChild(el);el.innerHTML=anStuHTML();el.querySelector('.anst-pv').appendChild(ST.cv);ST.sc=el.querySelector('[data-s="scrub"]');
   anStuSize();anStuBuild();anStuSet(ST.item);anStuBind();ST.raf=requestAnimationFrame(anStuFrame);}catch(e){ANM.err=String(e&&e.message||e);anStuClose();}}
 function anStuBind(){const el=ST.el;
@@ -27263,7 +27310,7 @@ function anStuBind(){const el=ST.el;
   el.addEventListener('change',e=>{const t=e.target,s=t.dataset&&t.dataset.s;if(!s||!ST)return;
     if(s==='kind'){ST.kind=t.value;ST.id=anStuList()[0].id;ST.v=0;anStuBuild();anStuSet(ST.item);anStuPaint();}
     else if(s==='fig'){ST.id=t.value;anStuBuild();anStuSet(ST.item);anStuPaint();}else if(s==='var'){ST.v=+t.value;anStuBuild();anStuSet(ST.item);}
-    else if(s==='anim'){anStuSet(t.value);ST.paused=false;anStuPaint('pause');}else if(s==='loop'){ST.loop=t.checked;}else if(s==='auto'){ST.auto=t.checked;}});
+    else if(s==='anim'){anStuSet(t.value);ST.paused=false;anStuPaint('pause');}else if(s==='loop'){ST.loop=t.checked;}else if(s==='crit'){ST.crit=t.checked;}else if(s==='auto'){ST.auto=t.checked;}});
   el.addEventListener('input',e=>{const t=e.target;if(!ST||!t.dataset||t.dataset.s!=='scrub')return;ST.scrubbing=true;ST.paused=true;anStuPaint('pause');
     const it=ST.item,e2=it.startsWith('e:')?ST.lib.EMOTES[it.slice(2)]:ST.lib.EMOTES.atkShoot,len=it.startsWith('cue:')?(ST.cueL||1400)/1000:it.startsWith('banner:')?2.4:it==='cutin'?1.4:(e2.once||it.startsWith('proj:')?e2.dur+.45:e2.dur);
     ST.t=(+t.value/1000)*len*.999;ST.scrubbing=false;});
