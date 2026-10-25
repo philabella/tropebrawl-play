@@ -1,7 +1,7 @@
 {
  "fmt": 1,
- "built": "2026-10-25T01:20:01.174Z",
- "v": "20.166",
+ "built": "2026-10-25T06:17:28.436Z",
+ "v": "20.171",
  "cal": {
   "lv": 10,
   "refs": "GHOSTS of the round, else real boards of the round",
@@ -23,7 +23,7 @@
   "refs": 8
  },
  "runs": {
-  "files": 229,
+  "files": 232,
   "real": 48,
   "withState": 40,
   "verified": 39,
@@ -44,8 +44,8 @@
   "run not verified": 1
  },
  "filtered": {
-  "over 15% from one player": 90,
-  "m outside 0.2-2.5": 5
+  "over 15% from one player": 89,
+  "m outside 0.2-2.5": 6
  },
  "served": {
   "4-8": {
