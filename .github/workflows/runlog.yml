@@ -5,7 +5,10 @@ name: runlog
 # It lives in this public repo because Actions minutes are free here (moved from the private tropebrawl repo, 2026-10-15).
 on:
   schedule:
-    - cron: '23 * * * *'
+    - cron: '3,23,43 * * * *'   # GitHub starts scheduled runs late and skips some (seen 2026-10-25: gaps of 3-5 h), so ask three times an hour
+  push:
+    branches: [main]
+    paths: ['runlog/summary.mjs', 'runs.html']
   workflow_dispatch:
     inputs:
       selftest:

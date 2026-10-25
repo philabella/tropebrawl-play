@@ -81,5 +81,5 @@ const totals = {
   origin: { daily: [st.filter(j => j.daily).length, st.length], dailyPlayers: new Set(st.filter(j => j.daily).map(j => j.pid)).size, challenge: st.filter(j => j.chal).length,
     from: Object.entries(fromP).map(([k, s]) => [k, s.size]).sort((a, b) => b[1] - a[1]).slice(0, 6) },
 };
-fs.writeFileSync(process.env.TB_OUT || 'summary.json', JSON.stringify({ built, rows, errors, totals }));
+fs.writeFileSync(process.env.TB_OUT || 'summary.json', JSON.stringify({ built, generated: new Date().toISOString(), rows, errors, totals }));
 console.log('summary.json:', rows.length, 'rows,', errors.length, 'errors; totals:', JSON.stringify({ s: totals.strangers, g: totals.groups, like: totals.like }));
