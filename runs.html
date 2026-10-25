@@ -41,6 +41,18 @@
   .eg:first-of-type { border-top:0; }
   .eg code { font:12.5px/1.35 ui-monospace, Consolas, monospace; word-break:break-word; }
   .eg .n { float:right; font-weight:650; font-variant-numeric:tabular-nums; }
+  .tot { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin:6px 0 10px; }
+  .tot h2 { margin:0 0 6px; font-size:13px; text-transform:uppercase; letter-spacing:1px; color:var(--mut); font-weight:600; }
+  .big { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; text-align:center; }
+  .big b { display:block; font-size:30px; line-height:1.1; font-variant-numeric:tabular-nums; color:var(--str); }
+  .big span, .tl span.k { color:var(--mut); font-size:12px; }
+  .tl { display:flex; justify-content:space-between; gap:8px; padding:3px 0; border-top:1px solid var(--line); font-size:14px; }
+  .tl:first-of-type { border-top:0; }
+  .tl b { font-variant-numeric:tabular-nums; white-space:nowrap; }
+  .bars { display:flex; align-items:flex-end; gap:2px; height:44px; margin-top:8px; }
+  .bars i { flex:1; background:var(--str); min-height:2px; border-radius:2px 2px 0 0; opacity:.85; }
+  .bars i.z { background:var(--line); }
+  .note { color:var(--mut); font-size:11.5px; margin-top:4px; }
   .tag.test { background:#ffffff14; color:var(--mut); }
 </style>
 </head>
@@ -56,7 +68,7 @@
     <button data-v="1" id="vis">Show visits</button>
   </div>
 </header>
-<main><div id="errs"></div><div id="list"></div></main>
+<main><div id="tot"></div><div id="errs"></div><div id="list"></div></main>
 <script>
 // Data: summary.json on the runlog branch, rebuilt every hour by .github/workflows/runlog.yml.
 const SRC = 'https://raw.githubusercontent.com/philabella/tropebrawl-play/runlog/summary.json';
@@ -89,7 +101,39 @@ function renderErrs() {
   }).join('');
   document.getElementById('errs').innerHTML = `<details class="errs"${g.size ? ' open' : ''}><summary>Errors ${g.size ? `(${es.length}, ${g.size} kinds, ${wk} in 7 days)` : '<span class="none">none with this filter</span>'}</summary>${body}</details>`;
 }
+// TRO-501: totals from summary.json "totals" (built by runlog/summary.mjs; aggregates only, not touched by the filter buttons)
+function renderTotals() {
+  const T = data.totals, el = document.getElementById('tot');
+  if (!T) { el.innerHTML = ''; return; }
+  const pc = ([n, of]) => of ? `<b>${Math.round(100 * n / of)}%</b>` : '<b>–</b>', fr = ([n, of]) => of ? `${n} of ${of}` : 'no data yet';
+  const line = (k, v) => `<div class="tl"><span class="k">${k}</span>${v}</div>`;
+  const S = T.strangers, mx = Math.max(1, ...S.newPerDay.map(d => d[1])), G = T.groups, L = T.like, P = T.play, O = T.origin;
+  const h = m => m >= 90 ? (m / 60).toFixed(1) + ' h' : m + ' min';
+  const grp = (n, g) => line(n, `<b>${g.runs} runs · ${h(g.min)}</b>`) + line('&nbsp;&nbsp;last 7 days', `<b>${g.runs7} runs · ${h(g.min7)}</b>`);
+  const list = a => a.length ? a.map(([k, n]) => esc(k) + ' <b>' + n + '</b>').join(' · ') : 'none yet';
+  el.innerHTML = `<div class="tot"><h2>Strangers (not testers, not you)</h2>
+    <div class="big"><div><b>${S.all}</b><span>all time</span></div><div><b>${S.week}</b><span>last 7 days</span></div><div><b>${S.today}</b><span>today</span></div></div>
+    <div class="bars" title="new strangers per day, last 30 days">${S.newPerDay.map(([d, n]) => `<i class="${n ? '' : 'z'}" style="height:${n ? Math.max(8, 100 * n / mx) : 4}%" title="${d}: ${n} new"></i>`).join('')}</div>
+    <div class="note">New strangers per day, last 30 days (peak ${mx}) · days are Winnipeg days</div></div>
+  <div class="tot"><h2>Runs and minutes played</h2>${grp('Strangers · ' + G.stranger.players + ' players', G.stranger)}${grp('Testers · ' + G.tester.players, G.tester)}${grp('You', G.me)}
+    <div class="note">Median stranger run: ${L.medianRunMin ?? '–'} min</div></div>
+  <div class="tot"><h2>Do they like it? (read from the run log, nobody is asked)</h2>
+    ${line(`Got past round 3 on their first run <span class="k">(${fr(L.past3)})</span>`, pc(L.past3))}
+    ${line(`Played a 2nd run in the same visit <span class="k">(${fr(L.sameVisit)})</span>`, pc(L.sameVisit))}
+    ${line(`Came back on another day <span class="k">(${fr(L.cameBack)}, first played before today)</span>`, pc(L.cameBack))}
+    ${line(`Won at least one run <span class="k">(${fr(L.won)})</span>`, pc(L.won))}
+    ${line(`Reached the Encore <span class="k">(${fr(L.encore)}, since v20.167)</span>`, pc(L.encore))}
+    <div class="note">Under 30 strangers is direction only. Same filters as fastsim/retention.js.</div></div>
+  <div class="tot"><h2>What they play (strangers)</h2>
+    ${line('Levels (runs)', '<span>' + list(P.levels) + '</span>')}
+    ${line('Genres (4+ on the final board)', '<span>' + list(P.genres) + '</span>')}
+    ${line(`Showrunners (since v20.173, ${P.srRuns} runs)`, '<span>' + list(P.showrunners) + '</span>')}
+    ${line('Game version (runs)', '<span>' + P.versions.map(([v, n, p]) => 'v' + esc(v) + ' <b>' + n + '</b>').join(' · ') + '</span>')}
+    ${line('Where from', '<span>' + list(O.from.map(([k, n]) => [k, n + ' pl.'])) + '</span>')}
+    ${line('Daily runs / challenge links', '<b>' + O.daily[0] + ' of ' + O.daily[1] + ' runs (' + O.dailyPlayers + ' pl.) / ' + O.challenge + '</b>')}</div>`;
+}
 function render() {
+  renderTotals();
   renderErrs();
   document.querySelectorAll('.ctl button[data-f]').forEach(b => b.classList.toggle('on', b.dataset.f === filt));
   document.getElementById('vis').classList.toggle('on', showVis);
