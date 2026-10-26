@@ -1,6 +1,6 @@
 {
  "fmt": 1,
- "built": "2026-10-26T06:19:56.663Z",
+ "built": "2026-10-26T13:15:53.880Z",
  "v": "20.173",
  "cal": {
   "lv": 10,
@@ -23,17 +23,17 @@
   "refs": 8
  },
  "runs": {
-  "files": 238,
-  "real": 51,
-  "withState": 43,
-  "verified": 41,
+  "files": 240,
+  "real": 52,
+  "withState": 44,
+  "verified": 42,
   "plausible": 0,
   "rejected": 2
  },
  "boards": {
-  "all": 323,
+  "all": 327,
   "consented": 0,
-  "before": 323,
+  "before": 327,
   "refused": 0,
   "uncalibrated": 0
  },
@@ -44,7 +44,7 @@
   "run not verified": 2
  },
  "filtered": {
-  "over 15% from one player": 100,
+  "over 15% from one player": 104,
   "m outside 0.2-2.5": 5
  },
  "served": {
